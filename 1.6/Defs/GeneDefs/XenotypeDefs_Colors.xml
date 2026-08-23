@@ -478,4 +478,192 @@
     </genes>
   </XenotypeDef>
 
+  <!-- ============================== sub-tiers ==============================
+
+    Only sub-tiers with a stated GENETIC basis get a XenotypeDef. The reference
+    pages are explicit about which those are:
+
+      Ultraheavy       "bred on The Rim ... bodies are larger and denser"
+      Lurcher          "genetically-altered to have superior senses"
+      Fulgur Bellator  "bred for hardiness ... bodies tend to be thicker"
+      Ascomanni        "further modifying themselves over several centuries"
+      Stained          elite class, "among the strongest warriors of their caste"
+      Rose             "rare and highly valued class", bred and trained in Gardens
+
+    Everything else is achieved, occupational or chemical, and belongs in
+    Milestone 5 as Ideology roles or precepts rather than as genetics:
+    Peerless Scarred / Graduate / Shamed / Iron Gold / Pixie (Gold), Skuggi,
+    Berserkers (drug-induced via Fever Cloud), Shamans, Eaters (outcasts) for
+    Obsidian, Hetaera (Pink), Psychotech (Green, implant-based - M4), Medici
+    (Yellow), Artificer / Bladeweaver / Master Maker (Orange - M4 gates razor
+    production), Master Carver / Carver (Violet - M5 gates carving itself),
+    Growers (Brown), highRed / lowRed, MineMagistrate / Actarius (Copper),
+    Logos / Justice / Chance / Arbiter (White), helmBlue / comBlue / ripWing (Blue).
+  -->
+
+  <XenotypeDef>
+    <defName>RR_Green_FulgurBellator</defName>
+    <label>Fulgur Bellator</label>
+    <description>A Green built to be taken outside. Where the caste is normally grown slight and kept behind a console, these are thickened and toughened deliberately, then attached to a Gray squad and walked into places where the electronics need persuading at close range.\n\nThe work is the same work. The difference is that a Fulgur Bellator is expected to survive doing it, which their cousins in the server halls find both admirable and faintly horrifying.</description>
+    <descriptionShort>Combat-hardened Greens, bred thicker and tougher and attached to Gray squads to break enemy electronics in the field.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Green_FulgurBellator</iconPath>
+    <displayPriority>75</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>0.4</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_ShortOnly</li>
+      <li>Eyes_Green</li>
+      <li>Body_Standard</li>
+      <li>Robust</li>
+      <li>EBSG_HighCarryCapacity</li>
+      <li>AptitudeRemarkable_Intellectual</li>
+      <li>AptitudeStrong_Crafting</li>
+      <li>AptitudePoor_Social</li>
+      <li>AptitudeTerrible_Artistic</li>
+    </genes>
+  </XenotypeDef>
+
+  <XenotypeDef>
+    <defName>RR_Gray_Lurcher</defName>
+    <label>Lurcher</label>
+    <description>Named for a dog bred to bring down game heavier than itself, and the name is the whole doctrine. Lurchers are Grays given senses the rest of their caste never got - sight and scent sharpened well past baseline - and then trained for one specific quarry.\n\nThe Society is careful about how many it makes. A caste built to kill highColors is a useful thing to own and a dangerous thing to have.</description>
+    <descriptionShort>Grays altered for superior sight and scent and trained to kill highColors. Deadly, watchful, and produced in deliberately small numbers.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Gray_Lurcher</iconPath>
+    <displayPriority>105</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>0.3</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_Gray</li>
+      <li>Eyes_Gray</li>
+      <li>Skin_SlateGray</li>
+      <li>Body_Standard</li>
+      <li>EBSG_StrongVision</li>
+      <li>EBSG_GreatSmell</li>
+      <li>AptitudeRemarkable_Shooting</li>
+      <li>AptitudeStrong_Melee</li>
+      <li>AptitudeTerrible_Intellectual</li>
+      <li>AptitudePoor_Artistic</li>
+      <li>AptitudePoor_Social</li>
+      <li>Aggression_DeadCalm</li>
+      <li>Pain_Reduced</li>
+      <li>Mood_Pessimist</li>
+    </genes>
+  </XenotypeDef>
+
+  <XenotypeDef>
+    <defName>RR_Obsidian_Stained</defName>
+    <label>Stained</label>
+    <description>The strongest of a caste already grown to frighten. Stained are picked out of the Martian tribes and finished properly - bigger, harder, and marked so that everyone can see what they are before they are close enough to matter.\n\nThey are as rare and as expensive as anything the Society trades in, and a highColor who owns one is careful to mention it.</description>
+    <descriptionShort>Elite Obsidian warriors, the strongest of their caste. Enormous, near-unstoppable, and as rare and costly as anything the Society trades.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Obsidian_Stained</iconPath>
+    <displayPriority>112</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>0.3</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_SnowWhite</li>
+      <li>Eyes_DarkestGray</li>
+      <li>Skin_InkBlack</li>
+      <li>Body_Hulk</li>
+      <li>Jaw_Heavy</li>
+      <li>AG_LargerBodySize</li>
+      <li>AptitudeRemarkable_Melee</li>
+      <li>AptitudeStrong_Shooting</li>
+      <li>AptitudeTerrible_Intellectual</li>
+      <li>AptitudeTerrible_Social</li>
+      <li>AptitudeTerrible_Artistic</li>
+      <li>MeleeDamage_Strong</li>
+      <li>Robust</li>
+      <li>Unstoppable</li>
+      <li>Pain_Reduced</li>
+      <li>MinTemp_LargeDecrease</li>
+      <li>Aggression_Aggressive</li>
+      <li>Learning_Slow</li>
+    </genes>
+  </XenotypeDef>
+
+  <XenotypeDef>
+    <defName>RR_Obsidian_Ascomanni</defName>
+    <label>Ascomanni</label>
+    <description>The warlords who ran for the dark after the revolt failed, and everything that has happened to their descendants since. Centuries out past the last useful sunlight, cutting at their own genome with no Board looking over their shoulder, they have drifted a long way from the tribes they left.\n\nWhat came back is bigger, colder, faster to anger, and entirely uninterested in the hierarchy that exiled it. They are spoken of on the ice the way the ice is spoken of everywhere else.</description>
+    <descriptionShort>Obsidian exiles from the outer dark, self-modified over centuries beyond Society oversight. Enormous, cold-adapted, and savagely aggressive.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Obsidian_Ascomanni</iconPath>
+    <displayPriority>114</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>0.25</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_SnowWhite</li>
+      <li>Eyes_DarkestGray</li>
+      <li>Skin_InkBlack</li>
+      <li>Body_Hulk</li>
+      <li>AG_LargerBodySize</li>
+      <li>DarkVision</li>
+      <li>MinTemp_LargeDecrease</li>
+      <li>AptitudeRemarkable_Melee</li>
+      <li>AptitudeTerrible_Intellectual</li>
+      <li>AptitudeTerrible_Social</li>
+      <li>AptitudeTerrible_Artistic</li>
+      <li>MeleeDamage_Strong</li>
+      <li>Robust</li>
+      <li>Pain_Reduced</li>
+      <li>Aggression_HyperAggressive</li>
+      <li>Learning_Slow</li>
+    </genes>
+  </XenotypeDef>
+
+  <XenotypeDef>
+    <defName>RR_Pink_Rose</defName>
+    <label>Rose</label>
+    <description>The Gardens produce a great many Pinks and, occasionally, a Rose. The difference is not effort - every Pink is trained past exhaustion - but something in the stock that the trainers can recognise early and the buyers will ruin themselves over.\n\nA Rose reads a room the way a Blue reads a ship. They are priced accordingly, and the pricing is the point: to own one is to be seen owning one.</description>
+    <descriptionShort>The finest Pinks, rare and ruinously expensive. Unmatched at reading and moving a room, and as fragile as the rest of their caste.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Pink_Rose</iconPath>
+    <displayPriority>122</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>0.25</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_Pink</li>
+      <li>Eyes_Pink</li>
+      <li>Skin_PaleRed</li>
+      <li>Body_Thin</li>
+      <li>AG_SmallerBodySize</li>
+      <li>AptitudeRemarkable_Social</li>
+      <li>AptitudeRemarkable_Artistic</li>
+      <li>AptitudeTerrible_Melee</li>
+      <li>AptitudeTerrible_Mining</li>
+      <li>Beauty_Beautiful</li>
+      <li>Mood_Optimist</li>
+      <li>Delicate</li>
+      <li>Pain_Extra</li>
+      <li>MeleeDamage_Weak</li>
+    </genes>
+  </XenotypeDef>
+
+  <XenotypeDef>
+    <defName>RR_Red_Ultraheavy</defName>
+    <label>Ultraheavy</label>
+    <description>Reds bred for the Rim, where the gravity runs well past twice Earth's and the radiation never stops. They are built dense rather than tall, and they are built to keep working in conditions that would fold anything else the Society makes.\n\nThe engineering does what it was asked to do. It also burns through them quickly, and everyone involved has decided that is an acceptable trade.</description>
+    <descriptionShort>Reds bred for the Rim's crushing gravity and radiation. Dense, immensely strong, radiation-hardened, and burned through fast.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Red_Ultraheavy</iconPath>
+    <displayPriority>145</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>0.5</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_BrightRed</li>
+      <li>Eyes_Red</li>
+      <li>Skin_Melanin2</li>
+      <li>Body_Hulk</li>
+      <li>AG_LargerBodySize</li>
+      <li>ToxicEnvironmentResistance_Total</li>
+      <li>EBSG_VeryHighCarryCapacity</li>
+      <li>Robust</li>
+      <li>AptitudeRemarkable_Mining</li>
+      <li>AptitudeStrong_Construction</li>
+      <li>AptitudeTerrible_Social</li>
+      <li>AptitudeTerrible_Intellectual</li>
+      <li>Pain_Reduced</li>
+      <li>Learning_Slow</li>
+      <li>ShortestLifespan</li>
+      <li>Fertile</li>
+    </genes>
+  </XenotypeDef>
+
 </Defs>

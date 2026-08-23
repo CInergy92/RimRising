@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!--
+      RimWorld 1.6 runs on Unity's Mono, which targets .NET Framework 4.7.2.
+      Microsoft.NETFramework.ReferenceAssemblies supplies the reference assemblies
+      so this builds on a machine with no .NET Framework targeting pack installed.
+    -->
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>RimRising</AssemblyName>
+    <RootNamespace>RimRising</RootNamespace>
+    <LangVersion>latest</LangVersion>
+
+    <!-- The mod ships only the DLL; RimWorld loads it from 1.6/Assemblies. -->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>$(MSBuildProjectDirectory)\..\..\1.6\Assemblies\</OutputPath>
+    <DebugType>none</DebugType>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Deterministic>true</Deterministic>
+
+    <!-- Never copy the game's assemblies into the mod folder. -->
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RimWorldManaged>D:\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed</RimWorldManaged>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(RimWorldManaged)\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(RimWorldManaged)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>

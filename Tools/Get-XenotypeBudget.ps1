@@ -252,6 +252,46 @@ if ($rows.Count -eq 0) {
 
 $rows | Sort-Object Source, Cpx -Descending | Format-Table -AutoSize
 
+# --------------------------------------------- metabolic efficiency floor
+#
+# Vanilla: GeneTuning.BiostatRange = IntRange(-5, 5), and GeneCreationDialogBase
+# refuses to assemble a xenogerm whose total metabolism is below TrueMin. A
+# xenotype under that floor therefore cannot be built as a xenogerm at all, which
+# silently makes it impossible to carve anyone into. Nothing warns you.
+#
+# Source/RimRising/BiostatRangePatch.cs widens that floor to -10 at startup, so
+# our own Colors are checked against the patched value. Anything below the VANILLA
+# floor is still flagged as a note, since it depends on our assembly being loaded.
+
+$patchedFloor = -10
+$vanillaFloor = -5
+
+$patchFile = Join-Path $ModRoot 'Source\RimRising\BiostatRangePatch.cs'
+if (Test-Path $patchFile) {
+    $m = Select-String -Path $patchFile -Pattern 'MinMetabolism\s*=\s*(-?\d+)' | Select-Object -First 1
+    if ($m) { $patchedFloor = [int]$m.Matches[0].Groups[1].Value }
+}
+
+$modRows      = @($rows | Where-Object { $_.Source -eq 'mod' })
+$belowPatched = @($modRows | Where-Object { $_.Met -lt $patchedFloor })
+$belowVanilla = @($modRows | Where-Object { $_.Met -lt $vanillaFloor -and $_.Met -ge $patchedFloor })
+
+if ($belowPatched.Count -gt 0) {
+    Write-Host ("  ERROR: {0} xenotype(s) below the patched metabolism floor of {1}." -f $belowPatched.Count, $patchedFloor) -ForegroundColor Red
+    Write-Host '  These CANNOT be assembled as a xenogerm, so nothing can be carved into them.' -ForegroundColor Red
+    foreach ($r in $belowPatched) {
+        Write-Host ("    {0}  met {1}" -f $r.Xenotype, $r.Met) -ForegroundColor Red
+    }
+    Write-Host ''
+} elseif ($belowVanilla.Count -gt 0) {
+    Write-Host ("  NOTE: {0} xenotype(s) below vanilla's -5 floor but within our patched {1}." -f $belowVanilla.Count, $patchedFloor) -ForegroundColor Yellow
+    Write-Host '  These rely on Source/RimRising/BiostatRangePatch.cs being loaded.' -ForegroundColor DarkYellow
+    foreach ($r in $belowVanilla) {
+        Write-Host ("    {0}  met {1}" -f $r.Xenotype, $r.Met) -ForegroundColor DarkYellow
+    }
+    Write-Host ''
+}
+
 $broken = @($rows | Where-Object { $_.Unresolved })
 if ($broken.Count -gt 0) {
     Write-Host ("  WARNING: {0} xenotype(s) reference genes that did not resolve." -f $broken.Count) -ForegroundColor Red

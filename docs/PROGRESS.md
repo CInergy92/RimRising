@@ -228,6 +228,64 @@ economy. Not a weak pawn — Remarkable melee, strong shooting and social, Robus
 It fights like a Gold; what it lacks is the polish its own caste measures itself by, hence
 `Mood_Pessimist`.
 
+### Sub-tiers — six added, roster now 21
+
+Only sub-tiers with a **stated genetic basis** became xenotypes. The reference is explicit about
+which those are, and the rest are achieved, occupational or chemical.
+
+| Xenotype | Parent | Basis |
+|---|---|---|
+| **Ultraheavy** | Red | "bred on The Rim… bodies are larger and denser", 2.4g and heavy radiation, short-lived |
+| **Lurcher** | Gray | "genetically-altered to have superior senses, such as smell and sight" |
+| **Fulgur Bellator** | Green | "bred for hardiness… bodies tend to be thicker" |
+| **Stained** | Obsidian | elite class, "among the strongest warriors of their caste" |
+| **Ascomanni** | Obsidian | "further modifying themselves over several centuries", genetically distinct |
+| **Rose** | Pink | "rare and highly valued class", bred and trained in the Gardens |
+
+Deliberately **not** xenotypes — these are M5 Ideology roles, M4 implants, or job titles:
+Peerless Scarred / Graduate / Shamed / Iron Gold / Pixie (Gold); Skuggi, Berserkers (drug-induced
+via Fever Cloud), Shamans, Eaters (outcasts) (Obsidian); Hetaera (Pink); Psychotech (Green,
+implant-based); Medici (Yellow); Artificer / Bladeweaver / Master Maker (Orange); Master Carver /
+Carver (Violet); Growers (Brown); highRed / lowRed; MineMagistrate / Actarius (Copper); Logos /
+Justice / Chance / Arbiter (White); helmBlue / comBlue / ripWing (Blue).
+
+### First C# — the xenogerm metabolism floor
+
+Decompiling `RimWorld.GeneTuning` settled a question that was quietly shaping the whole design:
+
+```csharp
+public static readonly IntRange BiostatRange = new IntRange(-5, 5);
+```
+
+`GeneCreationDialogBase` refuses to assemble a xenogerm below `BiostatRange.TrueMin`. **A Color
+below −5 metabolism can never be carved into** — the xenogerm cannot be built, and nothing warns
+you. Silver and Obsidian were both at −6.
+
+`Source/RimRising/BiostatRangePatch.cs` widens the floor to **−10** via reflection at startup. No
+Harmony required: the field is `public static readonly`, but it is a plain static field and
+reflection assigns it. It is a global change, which suits a total conversion.
+
+Also decompiled, and it closes **U8**:
+
+```
+MetabolismToFoodConsumptionFactorCurve:  (-5, 2.25)  (0, 1.0)  (5, 0.5)
+```
+
+**Metabolism −5 means 2.25x food, and the curve ends there** — `SimpleCurve` clamps at endpoints,
+so below −5 costs 2.25x and no more. Gold at −4 lands near 2x food: "much more food", exactly as
+asked, and bounded. U8 needed no in-game measurement after all.
+
+`Get-XenotypeBudget.ps1` now checks the floor, reads the patched value out of the C# source, and
+distinguishes "below vanilla's floor but legal under our patch" from "broken".
+
+### Build tooling
+
+`Tools/Build-Mod.ps1` wraps `dotnet build`. The project targets `net472` and pulls reference
+assemblies from NuGet; `Source/NuGet.config` pins nuget.org for that folder only, because this
+machine's global NuGet feed is offline-only and lacks
+`Microsoft.NETFramework.ReferenceAssemblies`. `Publish-Mod.ps1` ships `1.6/Assemblies/RimRising.dll`
+and still excludes `Source/`.
+
 ### Revised budgets
 
 | Color | Cpx | Met |

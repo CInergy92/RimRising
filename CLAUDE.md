@@ -46,6 +46,44 @@ updated or the scan is broken.
 runs this mod. That is the user's explicit direction and each earns its place, but do not add an
 eighth without asking.
 
+### The xenogerm metabolism floor — decompiled, not guessed
+
+`ilspycmd` on `Assembly-CSharp.dll` (`RimWorld.GeneTuning`) gives the real numbers:
+
+```csharp
+public static readonly IntRange BiostatRange = new IntRange(-5, 5);
+public const int BaseMaxComplexity = 6;
+
+public static readonly SimpleCurve MetabolismToFoodConsumptionFactorCurve = new SimpleCurve
+{
+    new CurvePoint(-5f, 2.25f),
+    new CurvePoint(0f,  1f),
+    new CurvePoint(5f,  0.5f)
+};
+```
+
+Three consequences that drive real decisions:
+
+1. **A xenotype below −5 metabolism cannot be assembled as a xenogerm at all.**
+   `GeneCreationDialogBase` blocks it with `MetabolismTooLowToCreateXenogerm`. Nothing warns you at
+   design time — the Color simply becomes impossible to carve into. `Get-XenotypeBudget.ps1` now
+   checks this.
+2. **Metabolism −5 is 2.25x food, and the curve ends there.** `SimpleCurve` clamps at its
+   endpoints, so anything below −5 still costs 2.25x and no more. Lowering the floor buys design
+   room without an unbounded food penalty.
+3. `BaseMaxComplexity` is 6; gene processors raise it. Gold at complexity 49 needs a serious
+   assembler build-out.
+
+`Source/RimRising/BiostatRangePatch.cs` widens the floor to **−10** by reflection at startup. The
+field is `public static readonly`, so there is no setter, but it is a plain static field and
+reflection assigns it fine — no Harmony needed, since no method body is being altered. It is a
+global change affecting other mods too, which is acceptable for a total conversion but is not a
+local tweak.
+
+**To decompile anything else:** `ilspycmd -t <FullTypeName> <path-to-Assembly-CSharp.dll>`.
+Install with `dotnet tool install -g ilspycmd --version 8.2.0.7535 --add-source https://api.nuget.org/v3/index.json`
+— the unpinned latest fails to install, and this machine's global NuGet feed is offline-only.
+
 ### The metabolism/complexity lever
 
 This is the single most useful balance fact in the project. Biotech couples capability to
