@@ -222,6 +222,43 @@ function Get-InstalledModPaths {
     return , $map
 }
 
+# RimWorld does not resolve transitive dependencies. If a mod we require itself
+# requires something we do not declare, the user gets no warning in the mod list -
+# they find out from a red log. This catches that at build time instead.
+function Test-TransitiveDependencies {
+    param([string[]] $PackageIds, [hashtable] $ModPaths)
+
+    $declared = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+    foreach ($id in $PackageIds) { [void]$declared.Add($id) }
+
+    $missing = @{}
+
+    foreach ($id in $PackageIds) {
+        $key = $id.ToLowerInvariant()
+        if (-not $ModPaths.ContainsKey($key)) { continue }
+
+        $aboutPath = Join-Path $ModPaths[$key] 'About\About.xml'
+        if (-not (Test-Path $aboutPath)) { continue }
+
+        $doc = New-Object System.Xml.XmlDocument
+        try { $doc.Load($aboutPath) } catch { continue }
+
+        $depName = $doc.SelectSingleNode('/ModMetaData/name')
+        $label = if ($depName) { $depName.InnerText.Trim() } else { $id }
+
+        foreach ($node in $doc.SelectNodes('/ModMetaData/modDependencies/li/packageId')) {
+            if (-not $node.InnerText) { continue }
+            $req = $node.InnerText.Trim()
+            # DLC are covered by our own modDependencies / the vanilla scan.
+            if ($req -match '^(?i)ludeon\.rimworld') { continue }
+            if ($declared.Contains($req)) { continue }
+            if (-not $missing.ContainsKey($req)) { $missing[$req] = @() }
+            $missing[$req] += $label
+        }
+    }
+    return , $missing
+}
+
 function Build-DependencyGeneIndex {
     param([string[]] $PackageIds, [hashtable] $ModPaths)
 
@@ -355,6 +392,12 @@ if ($declaredDeps.Count -gt 0) {
     foreach ($m in $depIndex.Missing) {
         Add-Problem -Severity WARN -Check 'DependencyNotInstalled' -File 'About/About.xml' `
             -Message ("declared dependency '{0}' is not installed, so its defs cannot be verified." -f $m)
+    }
+
+    $transitive = Test-TransitiveDependencies -PackageIds $declaredDeps -ModPaths $modPaths
+    foreach ($req in $transitive.Keys) {
+        Add-Problem -Severity ERROR -Check 'MissingTransitiveDependency' -File 'About/About.xml' `
+            -Message ("'{0}' is required by {1}, but we do not declare it. RimWorld does not resolve transitive dependencies, so the user gets no warning - add it to modDependencies." -f $req, (($transitive[$req] | Sort-Object -Unique) -join ', '))
     }
 }
 
