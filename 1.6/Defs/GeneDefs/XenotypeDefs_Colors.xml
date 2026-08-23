@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The fourteen Colors.
+
+  Structure mirrored from Biotech/Defs/GeneDefs/XenotypeDefs.xml. Only fields
+  observed on vanilla XenotypeDefs are used: defName, label, description,
+  descriptionShort, iconPath, displayPriority, factionlessGenerationWeight,
+  inheritable, genes.
+
+  Every gene named below is either a vanilla GeneDef, a vanilla gene template
+  expansion (AptitudeX_Skill), or one of ours from GeneDefs_RimRising.xml.
+  Test-ModDefs.ps1 verifies all three cases.
+
+  All Colors are inheritable: a child of two parents of a Color is that Color.
+  Crossing Colors is done by carving - xenogerm implantation - which grants
+  xenogenes and is therefore NOT inherited. See docs/DESIGN.md.
+
+  displayPriority orders the list to match the hierarchy, highColors first.
+
+  Design note on Gold: per direction, Gold has no capability weakness. Its only
+  costs are scarcity (low factionlessGenerationWeight) and slow reproduction
+  (RR_Fertility_Reduced). ArchiteMetabolism carries three jobs at once - it
+  raises complexity, offsets the metabolic cost of Gold's many advantages, and
+  contributes biostatArc, which means a Gold xenogerm cannot be assembled
+  without archite capsules. Carving someone into a Gold is therefore gated by
+  the rarest material in the game, which is exactly right.
+-->
+<Defs>
+
+  <!-- ============================ highColors ============================ -->
+
+  <XenotypeDef>
+    <defName>RR_Gold</defName>
+    <label>Gold</label>
+    <description>Engineered to rule and built without apology. Golds are stronger, quicker, and sharper than anything else walking, with a physiology tuned for command and for the duel. There is no compensating weakness written into them; the architects saw no reason to install one.\n\nWhat limits Gold is arithmetic. They conceive rarely, gestate fully, and are assembled at enormous cost, so there have never been many and there never will be. A caste that could replace its losses freely would not have stayed a caste for long. Scarcity is the design.</description>
+    <descriptionShort>Engineered to rule, with no compensating weakness. Superior in body and mind, and deliberately rare - Golds conceive rarely and cost enormously to make.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Gold</iconPath>
+    <displayPriority>10</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>0.3</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_Blonde</li>
+      <li>Skin_Melanin3</li>
+      <li>Body_Standard</li>
+      <li>ArchiteMetabolism</li>
+      <li>RR_Fertility_Reduced</li>
+      <!--
+        AptitudeRemarkable and AptitudeStrong both cost 2 complexity, but
+        Remarkable costs 3 metabolism against Strong's 1. Gold takes Remarkable
+        only where the caste is defined by it - command and the duel - and Strong
+        elsewhere. Same complexity, far less hunger.
+      -->
+      <li>AptitudeRemarkable_Social</li>
+      <li>AptitudeRemarkable_Melee</li>
+      <li>AptitudeStrong_Intellectual</li>
+      <li>AptitudeStrong_Shooting</li>
+      <li>AptitudeStrong_Artistic</li>
+      <li>AptitudeStrong_Medicine</li>
+      <li>Learning_Fast</li>
+      <li>Mood_Sanguine</li>
+      <li>Robust</li>
+      <li>MeleeDamage_Strong</li>
+      <li>Beauty_Pretty</li>
+    </genes>
+  </XenotypeDef>
+
+  <XenotypeDef>
+    <defName>RR_Silver</defName>
+    <label>Silver</label>
+    <description>Silvers move capital, contracts, and cargo, and they are built for the parts of that work that happen in a room with other people. Quick with a figure and quicker with a counterparty, they hold the accounts that everything else runs on.\n\nThey were never engineered for labor of any kind, and it shows the moment one is asked to lift something.</description>
+    <descriptionShort>Financiers and traders, engineered for negotiation and rapid calculation. Physically slight and useless at manual work.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Silver</iconPath>
+    <displayPriority>20</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>1.5</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_SnowWhite</li>
+      <li>Skin_LightGray</li>
+      <li>Body_Standard</li>
+      <li>AptitudeRemarkable_Social</li>
+      <li>AptitudeRemarkable_Intellectual</li>
+      <li>AptitudeTerrible_Melee</li>
+      <li>AptitudeTerrible_Construction</li>
+      <li>Learning_Fast</li>
+      <li>Mood_Optimist</li>
+      <li>Beauty_Pretty</li>
+      <li>Delicate</li>
+    </genes>
+  </XenotypeDef>
+
+  <XenotypeDef>
+    <defName>RR_White</defName>
+    <label>White</label>
+    <description>Whites arbitrate. They hold the rites, read the law, and pronounce on questions the other Colors are not permitted to settle among themselves. Their authority is procedural rather than physical, and it is absolute within its scope.\n\nEngineered for composure and for the long view, a White is difficult to rattle and nearly impossible to hurry. They are also, by construction, no threat to anyone in a room.</description>
+    <descriptionShort>Clergy and judges, engineered for composure, rhetoric, and the long view. Serene, persuasive, and physically harmless.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_White</iconPath>
+    <displayPriority>30</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>1.5</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_SnowWhite</li>
+      <li>Skin_SheerWhite</li>
+      <li>Body_Standard</li>
+      <li>AptitudeRemarkable_Social</li>
+      <li>AptitudeStrong_Intellectual</li>
+      <li>AptitudeStrong_Artistic</li>
+      <li>AptitudeTerrible_Melee</li>
+      <li>AptitudeTerrible_Shooting</li>
+      <li>Mood_Sanguine</li>
+      <li>Learning_Fast</li>
+      <li>PsychicAbility_Enhanced</li>
+      <li>Delicate</li>
+    </genes>
+  </XenotypeDef>
+
+  <XenotypeDef>
+    <defName>RR_Copper</defName>
+    <label>Copper</label>
+    <description>Coppers run the machinery of administration: the filings, the licences, the vast indifferent apparatus through which every other Color's life is processed. They are engineered for retention and for procedure, and they genuinely enjoy both.\n\nA Copper's power is entirely borrowed from the forms they control, which is why they guard them so jealously.</description>
+    <descriptionShort>Administrators and lawyers, engineered for memory, procedure, and paperwork. Sharp, sociable, and physically negligible.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Copper</iconPath>
+    <displayPriority>40</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>1.5</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_ReddishBrown</li>
+      <li>Skin_Orange</li>
+      <li>Body_Standard</li>
+      <li>AptitudeRemarkable_Intellectual</li>
+      <li>AptitudeRemarkable_Social</li>
+      <li>AptitudeStrong_Artistic</li>
+      <li>AptitudeTerrible_Melee</li>
+      <li>AptitudeTerrible_Mining</li>
+      <li>Learning_Fast</li>
+      <li>Mood_Optimist</li>
+      <li>Delicate</li>
+    </genes>
+  </XenotypeDef>
+
+  <!-- ============================= midColors ============================ -->
+
+  <XenotypeDef>
+    <defName>RR_Blue</defName>
+    <label>Blue</label>
+    <description>Blues are grown for the bridge. Spatial reasoning, reaction time, and a tolerance for confinement that would break most people are all written in, along with a comfort in cold and dark that comes from generations spent nowhere near a planet.\n\nOn a deck they are irreplaceable. On the ground they are visibly out of their element, pale and slightly wrong-footed by open sky.</description>
+    <descriptionShort>Pilots and bridge crew, engineered for spatial reasoning and reaction time. Brilliant aboard ship, frail and awkward on the ground.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Blue</iconPath>
+    <displayPriority>50</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>2</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_LightBlue</li>
+      <li>Skin_Blue</li>
+      <li>Body_Thin</li>
+      <li>AptitudeRemarkable_Intellectual</li>
+      <li>AptitudeStrong_Shooting</li>
+      <li>AptitudePoor_Melee</li>
+      <li>AptitudeTerrible_Mining</li>
+      <li>AptitudeTerrible_Construction</li>
+      <li>ElongatedFingers</li>
+      <li>Learning_Fast</li>
+      <li>MinTemp_SmallDecrease</li>
+      <li>Delicate</li>
+    </genes>
+  </XenotypeDef>
+
+  <XenotypeDef>
+    <defName>RR_Yellow</defName>
+    <label>Yellow</label>
+    <description>Yellows are the Society's physicians and researchers, engineered with the fine motor control and the retentive memory that both trades demand. They are also engineered to be entirely incapable of violence in any useful sense, which is not an oversight - a caste that holds everyone's life in its hands is safer without hands that can take one.\n\nThey are quiet, exact, and famously difficult to hurry.</description>
+    <descriptionShort>Doctors and researchers with fine motor control and rapid learning. Precise and studious, and deliberately hopeless in a fight.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Yellow</iconPath>
+    <displayPriority>60</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>2</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_SandyBlonde</li>
+      <li>Skin_PaleYellow</li>
+      <li>Body_Thin</li>
+      <li>AptitudeRemarkable_Medicine</li>
+      <li>AptitudeStrong_Intellectual</li>
+      <li>AptitudeTerrible_Melee</li>
+      <li>AptitudeTerrible_Shooting</li>
+      <li>ElongatedFingers</li>
+      <li>Learning_Fast</li>
+      <li>Delicate</li>
+    </genes>
+  </XenotypeDef>
+
+  <XenotypeDef>
+    <defName>RR_Green</defName>
+    <label>Green</label>
+    <description>Greens keep the networks running. They were built to hold enormous structures in their heads and to stay awake doing it, and they tend to regard the physical world as a poorly documented inconvenience.\n\nThe sleep engineering was a productivity measure. Its effect on Green temperament was noted at the time and considered acceptable.</description>
+    <descriptionShort>Programmers and technicians, engineered to hold vast structures in mind and to need very little sleep. Brilliant, insular, physically frail.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Green</iconPath>
+    <displayPriority>70</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>2</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_LightGreen</li>
+      <li>Skin_Green</li>
+      <li>Body_Thin</li>
+      <li>AptitudeRemarkable_Intellectual</li>
+      <li>AptitudeStrong_Crafting</li>
+      <li>AptitudeTerrible_Melee</li>
+      <li>AptitudeTerrible_Social</li>
+      <li>ElongatedFingers</li>
+      <li>LowSleep</li>
+      <li>Delicate</li>
+    </genes>
+  </XenotypeDef>
+
+  <XenotypeDef>
+    <defName>RR_Violet</defName>
+    <label>Violet</label>
+    <description>Violets make the things the higher Colors display to one another. Sculpture, performance, ornament, spectacle - the entire apparatus by which power demonstrates that it is more than force.\n\nThey are engineered for taste and for expressiveness, and they are among the few Colors permitted, quietly, to be strange.</description>
+    <descriptionShort>Artisans and performers, engineered for expressiveness and fine craft. Charming and inventive, with no aptitude for hard labor.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Violet</iconPath>
+    <displayPriority>80</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>2</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_LightPurple</li>
+      <li>Skin_Purple</li>
+      <li>Body_Standard</li>
+      <li>AptitudeRemarkable_Artistic</li>
+      <li>AptitudeStrong_Social</li>
+      <li>AptitudePoor_Melee</li>
+      <li>AptitudeTerrible_Mining</li>
+      <li>ElongatedFingers</li>
+      <li>Mood_Optimist</li>
+      <li>Beauty_Pretty</li>
+    </genes>
+  </XenotypeDef>
+
+  <XenotypeDef>
+    <defName>RR_Orange</defName>
+    <label>Orange</label>
+    <description>Oranges build and maintain everything the Society actually runs on. Reactors, hulls, lifts, weapons - if it has moving parts, an Orange somewhere is keeping it moving, usually without being told and usually without being thanked.\n\nThey are engineered with the hands and the patience for it, and with an unshakeable conviction that they are the only Color doing real work.</description>
+    <descriptionShort>Mechanics and engineers with exceptional hands and endless patience for machines. Skilled and practical, poor with people.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Orange</iconPath>
+    <displayPriority>90</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>2.5</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_LightOrange</li>
+      <li>Skin_DeepYellow</li>
+      <li>Body_Standard</li>
+      <li>AptitudeRemarkable_Crafting</li>
+      <li>AptitudeRemarkable_Construction</li>
+      <li>AptitudeStrong_Intellectual</li>
+      <li>AptitudePoor_Social</li>
+      <li>AptitudeTerrible_Melee</li>
+      <li>ElongatedFingers</li>
+    </genes>
+  </XenotypeDef>
+
+  <XenotypeDef>
+    <defName>RR_Gray</defName>
+    <label>Gray</label>
+    <description>Grays are the hand that actually touches the other Colors. Police, garrison, escort, enforcement - the ordinary daily violence of keeping a hierarchy in place, performed by people engineered to perform it without much feeling about it either way.\n\nThey are steady, disciplined, hard to provoke and hard to stop. They are also, as a caste, not happy, and the engineers who built their temperament regarded that as a feature.</description>
+    <descriptionShort>Soldiers and police, engineered for marksmanship and cold discipline. Steady and hard to rattle, and constitutionally grim.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Gray</iconPath>
+    <displayPriority>100</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>3</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_Gray</li>
+      <li>Skin_SlateGray</li>
+      <li>Eyes_Gray</li>
+      <li>Body_Standard</li>
+      <li>AptitudeRemarkable_Shooting</li>
+      <li>AptitudeStrong_Melee</li>
+      <li>AptitudeStrong_Medicine</li>
+      <li>AptitudePoor_Artistic</li>
+      <li>AptitudePoor_Intellectual</li>
+      <li>Aggression_DeadCalm</li>
+      <li>Pain_Reduced</li>
+      <li>Immunity_Strong</li>
+      <li>Mood_Pessimist</li>
+    </genes>
+  </XenotypeDef>
+
+  <!-- ============================= lowColors ============================ -->
+
+  <XenotypeDef>
+    <defName>RR_Obsidian</defName>
+    <label>Obsidian</label>
+    <description>The largest and most dangerous thing the Society ever grew, and it keeps them at the bottom of its own hierarchy on purpose. Obsidians are enormous, cold-adapted, and engineered to keep moving through injuries that would end anyone else.\n\nEverything that makes them formidable was paired with something that makes them governable. They learn slowly, they were never given the words to argue, and what they were taught about the Colors above them was not taught as history.</description>
+    <descriptionShort>Enormous cold-adapted warriors, engineered for lethality and paired with slow learning and few words. Kept at the bottom of the hierarchy deliberately.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Obsidian</iconPath>
+    <displayPriority>110</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>2</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_InkBlack</li>
+      <li>Skin_InkBlack</li>
+      <li>Body_Hulk</li>
+      <li>Jaw_Heavy</li>
+      <li>AptitudeRemarkable_Melee</li>
+      <li>AptitudeStrong_Shooting</li>
+      <li>AptitudeTerrible_Intellectual</li>
+      <li>AptitudeTerrible_Social</li>
+      <li>MeleeDamage_Strong</li>
+      <li>Robust</li>
+      <li>Pain_Reduced</li>
+      <li>WoundHealing_Fast</li>
+      <li>MinTemp_LargeDecrease</li>
+      <li>Aggression_Aggressive</li>
+      <li>Learning_Slow</li>
+    </genes>
+  </XenotypeDef>
+
+  <XenotypeDef>
+    <defName>RR_Pink</defName>
+    <label>Pink</label>
+    <description>Pinks are engineered for company - for reading a room faster than anyone in it, for grace, for the performance of ease. It is genuine skill, and the Society is careful never to call it that.\n\nThey were also built breakable. Slight frames, low pain tolerance, no capacity for a fight worth the name. A caste kept for its presence is not permitted the means to leave.</description>
+    <descriptionShort>Social functionaries, engineered for beauty, grace, and reading people. Genuinely skilled, and deliberately built fragile.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Pink</iconPath>
+    <displayPriority>120</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>1.5</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_Pink</li>
+      <li>Skin_PaleRed</li>
+      <li>Body_Thin</li>
+      <li>AptitudeRemarkable_Social</li>
+      <li>AptitudeStrong_Artistic</li>
+      <li>AptitudeTerrible_Melee</li>
+      <li>AptitudePoor_Mining</li>
+      <li>Beauty_Beautiful</li>
+      <li>Delicate</li>
+      <li>Pain_Extra</li>
+      <li>MeleeDamage_Weak</li>
+    </genes>
+  </XenotypeDef>
+
+  <XenotypeDef>
+    <defName>RR_Brown</defName>
+    <label>Brown</label>
+    <description>Browns cook, clean, carry, and keep house for every Color above them, which is all of them. The work is endless and almost entirely invisible, and it is performed by people engineered to be placid about that.\n\nThey are hardy in the small ways that matter for the job - iron stomachs, even tempers, an unusual tolerance for being ignored.</description>
+    <descriptionShort>Servants and cooks, engineered placid and hardy with iron stomachs. Capable in the kitchen and the household, and nowhere else.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Brown</iconPath>
+    <displayPriority>130</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>3</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_DarkBrown</li>
+      <li>Skin_Melanin6</li>
+      <li>Body_Standard</li>
+      <li>AptitudeStrong_Cooking</li>
+      <li>AptitudeStrong_Plants</li>
+      <li>AptitudeTerrible_Melee</li>
+      <li>AptitudePoor_Intellectual</li>
+      <li>Aggression_DeadCalm</li>
+      <li>StrongStomach</li>
+      <li>Learning_Slow</li>
+      <li>Fertile</li>
+    </genes>
+  </XenotypeDef>
+
+  <XenotypeDef>
+    <defName>RR_Red</defName>
+    <label>Red</label>
+    <description>The base of the pyramid and the largest Color by an enormous margin. Reds cut, haul, and drill in heat and dark that would kill anyone not built for it, and they were built for it - compact frames, tolerance for foul air and high temperature, eyes that work by lamplight.\n\nThey were also engineered to breed early and often, and denied the education that would let them do anything else. The result is a caste that is very good at one thing and has been carefully prevented from discovering it could be good at others.</description>
+    <descriptionShort>Miners and laborers, built compact and heat-tolerant with eyes for the dark. Numerous and quick to reproduce, and denied any education.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Red</iconPath>
+    <displayPriority>140</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>8</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_BrightRed</li>
+      <li>Skin_Melanin2</li>
+      <li>Eyes_Red</li>
+      <li>Body_Thin</li>
+      <li>AptitudeRemarkable_Mining</li>
+      <li>AptitudeStrong_Construction</li>
+      <li>AptitudeTerrible_Social</li>
+      <li>AptitudePoor_Intellectual</li>
+      <li>DarkVision</li>
+      <li>CaveDweller</li>
+      <li>MaxTemp_SmallIncrease</li>
+      <li>Pain_Reduced</li>
+      <li>Learning_Slow</li>
+      <li>Fertile</li>
+    </genes>
+  </XenotypeDef>
+
+</Defs>

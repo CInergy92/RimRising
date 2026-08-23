@@ -319,7 +319,7 @@ red error could originate in any of 150 other mods and we will burn time bisecti
 
 For your sign-off:
 
-- **packageId:** `cinergy92.redrising` from CONFIG. RimWorld lowercases packageIds internally, so
+- **packageId:** `cinergy92.rimrising` from CONFIG. RimWorld lowercases packageIds internally, so
   case in `About.xml` is cosmetic.
 - **defName prefix:** `RR_` on everything we own. Chosen to avoid `AG_` (Alpha Genes), `VFE`,
   `CE_` (Combat Extended), and `BS_` (Big and Small). No active mod appears to use `RR_`.

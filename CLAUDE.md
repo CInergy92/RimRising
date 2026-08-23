@@ -19,7 +19,7 @@ the field.
 | Vanilla defs | `<install>\Data\{Core,Royalty,Ideology,Biotech,Anomaly,Odyssey}\Defs\` |
 | Player log | `%USERPROFILE%\AppData\LocalLow\Ludeon Studios\RimWorld by Ludeon Studios\Player.log` |
 | Mod config | `...\RimWorld by Ludeon Studios\Config\ModsConfig.xml` |
-| packageId | `cinergy92.redrising` |
+| packageId | `cinergy92.rimrising` |
 | DLC owned | All five, all active |
 
 Vanilla index size, as a sanity check for the validator: **11,586 defNames, 838 `Name=` abstract
@@ -72,7 +72,7 @@ Big and Small ships `IfModActive="Ludeon.Rimworld.Royalty"` (lowercase `w`) and 
 ### About.xml field safety
 
 ```xml
-<modIconPath IgnoreIfNoMatchingField="True">UI/RedRisingModIcon</modIconPath>
+<modIconPath IgnoreIfNoMatchingField="True">UI/RimRisingModIcon</modIconPath>
 ```
 
 `IgnoreIfNoMatchingField="True"` makes a field safe against game versions that lack it.

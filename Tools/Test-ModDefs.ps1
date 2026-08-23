@@ -71,8 +71,10 @@ function Get-RelativePath {
 function Build-VanillaIndex {
     param([string] $DataRoot)
 
-    $defNames = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    $defNames  = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     $nameAttrs = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    $geneDefs  = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    $geneTemplates = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 
     $files = Get-ChildItem -Path $DataRoot -Filter *.xml -Recurse -File -ErrorAction SilentlyContinue |
              Where-Object { $_.FullName -match '\\Defs\\' }
@@ -89,7 +91,12 @@ function Build-VanillaIndex {
             if ($node.NodeType -ne [System.Xml.XmlNodeType]::Element) { continue }
 
             $dn = $node.SelectSingleNode('defName')
-            if ($dn -and $dn.InnerText) { [void]$defNames.Add($dn.InnerText.Trim()) }
+            if ($dn -and $dn.InnerText) {
+                $name = $dn.InnerText.Trim()
+                [void]$defNames.Add($name)
+                if ($node.Name -eq 'GeneDef')         { [void]$geneDefs.Add($name) }
+                if ($node.Name -eq 'GeneTemplateDef') { [void]$geneTemplates.Add($name) }
+            }
 
             $na = $node.Attributes['Name']
             if ($na -and $na.Value) { [void]$nameAttrs.Add($na.Value.Trim()) }
@@ -97,8 +104,10 @@ function Build-VanillaIndex {
     }
 
     [pscustomobject]@{
-        DefNames  = @($defNames)
-        NameAttrs = @($nameAttrs)
+        DefNames      = @($defNames)
+        NameAttrs     = @($nameAttrs)
+        GeneDefs      = @($geneDefs)
+        GeneTemplates = @($geneTemplates)
     }
 }
 
@@ -115,15 +124,21 @@ function Get-VanillaIndex {
     if (-not (Test-Path $cacheDir)) { $null = New-Item -ItemType Directory -Path $cacheDir }
     $cacheFile = Join-Path $cacheDir 'vanilla-defs.json'
 
+    # Bumped whenever the cached shape changes, so an old cache is rebuilt rather
+    # than read with missing fields.
+    $cacheSchema = 2
+
     if (-not $Refresh -and (Test-Path $cacheFile)) {
         try {
             $cached = Get-Content $cacheFile -Raw | ConvertFrom-Json
-            if ($cached.Version -eq $version) {
-                Write-Host ("  vanilla index: cache hit ({0} defs, game {1})" -f $cached.DefNames.Count, $version) -ForegroundColor DarkGray
+            if ($cached.Version -eq $version -and $cached.Schema -eq $cacheSchema) {
+                Write-Host ("  vanilla index: cache hit ({0} defs, {1} genes, game {2})" -f $cached.DefNames.Count, $cached.GeneDefs.Count, $version) -ForegroundColor DarkGray
                 return [pscustomobject]@{
-                    DefNames  = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.DefNames, [StringComparer]::Ordinal)
-                    NameAttrs = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.NameAttrs, [StringComparer]::Ordinal)
-                    Version   = $version
+                    DefNames      = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.DefNames, [StringComparer]::Ordinal)
+                    NameAttrs     = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.NameAttrs, [StringComparer]::Ordinal)
+                    GeneDefs      = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.GeneDefs, [StringComparer]::Ordinal)
+                    GeneTemplates = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.GeneTemplates, [StringComparer]::Ordinal)
+                    Version       = $version
                 }
             }
             Write-Host ("  vanilla index: stale (cached {0}, installed {1}) - rebuilding" -f $cached.Version, $version) -ForegroundColor Yellow
@@ -137,17 +152,22 @@ function Get-VanillaIndex {
 
     $idx = Build-VanillaIndex -DataRoot $dataRoot
     [pscustomobject]@{
-        Version   = $version
-        DefNames  = $idx.DefNames
-        NameAttrs = $idx.NameAttrs
+        Version       = $version
+        Schema        = $cacheSchema
+        DefNames      = $idx.DefNames
+        NameAttrs     = $idx.NameAttrs
+        GeneDefs      = $idx.GeneDefs
+        GeneTemplates = $idx.GeneTemplates
     } | ConvertTo-Json -Depth 3 -Compress | Set-Content -Path $cacheFile -Encoding UTF8
 
-    Write-Host ("  vanilla index: built ({0} defs, {1} abstract names)" -f $idx.DefNames.Count, $idx.NameAttrs.Count) -ForegroundColor DarkGray
+    Write-Host ("  vanilla index: built ({0} defs, {1} abstract names, {2} genes, {3} gene templates)" -f $idx.DefNames.Count, $idx.NameAttrs.Count, $idx.GeneDefs.Count, $idx.GeneTemplates.Count) -ForegroundColor DarkGray
 
     [pscustomobject]@{
-        DefNames  = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.DefNames, [StringComparer]::Ordinal)
-        NameAttrs = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.NameAttrs, [StringComparer]::Ordinal)
-        Version   = $version
+        DefNames      = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.DefNames, [StringComparer]::Ordinal)
+        NameAttrs     = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.NameAttrs, [StringComparer]::Ordinal)
+        GeneDefs      = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.GeneDefs, [StringComparer]::Ordinal)
+        GeneTemplates = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.GeneTemplates, [StringComparer]::Ordinal)
+        Version       = $version
     }
 }
 
@@ -267,6 +287,10 @@ $seenDefNames = @{}
 $modNameAttrs = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 # deferred ParentName checks: resolution needs the full mod-wide Name set first
 $parentRefs = [System.Collections.Generic.List[object]]::new()
+# GeneDefs this mod declares, for cross-reference resolution
+$modGeneDefs = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+# deferred <genes><li> checks from XenotypeDefs
+$geneRefs = [System.Collections.Generic.List[object]]::new()
 
 foreach ($file in $xmlFiles) {
     $rel = Get-RelativePath $file.FullName
@@ -305,6 +329,25 @@ foreach ($file in $xmlFiles) {
                 if ($vanilla.DefNames.Contains($dn)) {
                     Add-Problem -Severity ERROR -Check 'VanillaCollision' -File $rel `
                         -Message ("defName '{0}' collides with a vanilla def. Rename it (RR_ prefix)." -f $dn)
+                }
+            }
+
+            # --- record our own GeneDefs ------------------------------------
+            if ($node.Name -eq 'GeneDef' -and $dnNode -and $dnNode.InnerText) {
+                [void]$modGeneDefs.Add($dnNode.InnerText.Trim())
+            }
+
+            # --- check 6: queue <genes><li> refs from XenotypeDefs ----------
+            if ($node.Name -eq 'XenotypeDef') {
+                $owner = if ($dnNode) { $dnNode.InnerText.Trim() } else { '<unnamed>' }
+                foreach ($g in $node.SelectNodes('genes/li')) {
+                    $gName = $g.InnerText
+                    if ([string]::IsNullOrWhiteSpace($gName)) { continue }
+                    $geneRefs.Add([pscustomobject]@{
+                        Gene  = $gName.Trim()
+                        File  = $rel
+                        Owner = $owner
+                    })
                 }
             }
 
@@ -363,6 +406,32 @@ foreach ($ref in $parentRefs) {
     if ($vanilla.NameAttrs.Contains($ref.Parent)) { continue }
     Add-Problem -Severity ERROR -Check 'MissingParent' -File $ref.File `
         -Message ("def '{0}' has ParentName='{1}' which matches no Name= def in this mod or vanilla." -f $ref.Def, $ref.Parent)
+}
+
+# --- check 6 resolution: XenotypeDef gene references -------------------------
+#
+# A xenotype naming a gene that does not exist produces "Could not resolve
+# cross-reference" at load. With fourteen xenotypes referencing well over a
+# hundred gene names between them, catching typos here rather than in the log is
+# the difference between one pass and a dozen.
+#
+# Template-generated genes (AptitudeRemarkable_Mining, Skin_LightGray, ...) do
+# not exist as GeneDefs in XML; the game synthesises them at runtime from
+# GeneTemplateDefs. We accept "<KnownTemplate>_<anything>" as plausible. That is
+# an approximation: it will not catch a bad suffix such as
+# AptitudeRemarkable_Blacksmithing. Those still surface in the game log.
+foreach ($ref in $geneRefs) {
+    if ($modGeneDefs.Contains($ref.Gene))      { continue }
+    if ($vanilla.GeneDefs.Contains($ref.Gene)) { continue }
+
+    $underscore = $ref.Gene.IndexOf('_')
+    if ($underscore -gt 0) {
+        $prefix = $ref.Gene.Substring(0, $underscore)
+        if ($vanilla.GeneTemplates.Contains($prefix)) { continue }
+    }
+
+    Add-Problem -Severity ERROR -Check 'MissingGene' -File $ref.File `
+        -Message ("xenotype '{0}' references gene '{1}', which is not a GeneDef in this mod or vanilla and does not match a known gene template." -f $ref.Owner, $ref.Gene)
 }
 
 # ----------------------------------------------------------------- reporting

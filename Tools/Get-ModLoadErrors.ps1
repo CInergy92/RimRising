@@ -41,8 +41,8 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$PackageId = 'cinergy92.redrising'
-$ModName   = 'Red Rising'
+$PackageId = 'cinergy92.rimrising'
+$ModName   = 'RimRising'
 $DefPrefix = 'RR_'
 $FolderName = 'RimRising'
 

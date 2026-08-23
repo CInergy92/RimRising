@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Custom genes. Kept deliberately small: the Colors are built almost entirely
+  from verified vanilla genes, so this file only holds what vanilla has no
+  equivalent for.
+
+  Mirrored from:
+    Biotech/Defs/GeneDefs/GeneDefs_Health.xml  (FertilityBase, Sterile, Fertile)
+    Biotech/Defs/GeneDefs/GeneDefs_Misc.xml    (Inbred, for the Fertility statFactor)
+
+  Vanilla ships only two points on the fertility scale: Sterile (Fertility 0)
+  and Fertile (Fertility 2). Gold needs a partial reduction, which does not
+  exist, hence this def. `Inbred` proves a fractional <Fertility> statFactor is
+  valid - it uses 0.5.
+-->
+<Defs>
+
+  <GeneDef>
+    <defName>RR_Fertility_Reduced</defName>
+    <label>engineered scarcity</label>
+    <labelShortAdj>scarce</labelShortAdj>
+    <description>Carriers conceive rarely and with difficulty. The trait is not a defect but a control: a caste that cannot casually replace its own losses stays small, and a caste that stays small stays valuable. Every birth is an administrative event.</description>
+    <iconPath>UI/Icons/Genes/RR_FertilityReduced</iconPath>
+    <displayCategory>Reproduction</displayCategory>
+    <displayOrderInCategory>120</displayOrderInCategory>
+    <exclusionTags>
+      <li>Fertility</li>
+    </exclusionTags>
+    <statFactors>
+      <Fertility>0.4</Fertility>
+    </statFactors>
+    <biostatMet>1</biostatMet>
+    <biostatCpx>1</biostatCpx>
+  </GeneDef>
+
+</Defs>

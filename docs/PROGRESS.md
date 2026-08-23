@@ -2,7 +2,7 @@
 
 Milestone status, open questions, known errors. Updated as work lands.
 
-Game target: **RimWorld 1.6.4871 rev590**. packageId: `cinergy92.redrising`.
+Game target: **RimWorld 1.6.4871 rev590**. packageId: `cinergy92.rimrising`.
 
 ---
 
@@ -11,8 +11,8 @@ Game target: **RimWorld 1.6.4871 rev590**. packageId: `cinergy92.redrising`.
 | # | Milestone | Status |
 |---|---|---|
 | 0 | Discovery | **Done.** `docs/DISCOVERY.md` |
-| 1 | Skeleton | **Loaded in game. One texture bug found and fixed; awaiting re-verification** |
-| 2 | The Color system | Not started — blocked on M1 verification |
+| 1 | Skeleton | **Loaded in game. Texture bug fixed; awaiting re-verification** |
+| 2 | The Color system | **Built, validated, published; awaiting in-game verification** |
 | 3 | Factions and pawn kinds | Not started |
 | 4 | Tech and equipment | Not started |
 | 5 | Ideology and hierarchy | Not started |
@@ -29,7 +29,7 @@ Game target: **RimWorld 1.6.4871 rev590**. packageId: `cinergy92.redrising`.
   Ideology, `loadAfter` naming all five DLC plus Harmony.
 - `LoadFolders.xml` — root plus `1.6`. Conditional folders are listed as comments only; they get
   added when the folder actually exists, since referencing a missing path is unverified.
-- `1.6/Defs/ThingDefs_Items/Items_Resource_RedRising.xml` — one trivial `ThingDef`, `RR_Ionsteel`,
+- `1.6/Defs/ThingDefs_Items/Items_Resource_RimRising.xml` — one trivial `ThingDef`, `RR_Ionsteel`,
   mirrored node-for-node from `ComponentIndustrial` with `ParentName="ResourceBase"`.
 - `Tools/` — all four PowerShell scripts.
 - Placeholder art — item texture, `Preview.png`, `ModIcon.png`, mod icon.
@@ -63,8 +63,10 @@ path, and the validator passed it because a file genuinely existed there — a f
 `New-PlaceholderTextures.ps1` emits `_a`/`_b`/`_c` variants in a folder. Confirmed the validator
 now catches the exact condition the game reported, then regenerated and republished.
 
-Mod renamed to **RimRising** in `About.xml`. packageId left as `cinergy92.redrising` per the
-original CONFIG — see "Open questions".
+Mod renamed to **RimRising**, and packageId changed from `cinergy92.redrising` to
+`cinergy92.rimrising` at the user's direction. Done now while it is free — packageId is what save
+files and other mods key on, so changing it later would be expensive. The mod icon texture and its
+`modIconPath` were renamed to match.
 
 ### Still to verify
 
@@ -78,7 +80,7 @@ The fixed textures have not been loaded yet. Re-verify per the steps below.
 pwsh -File Tools/Publish-Mod.ps1
 ```
 
-2. Launch RimWorld. In the mod list, confirm **Red Rising** appears with its placeholder preview
+2. Launch RimWorld. In the mod list, confirm **RimRising** appears with its placeholder preview
    image and no yellow warning triangle.
 3. Enable it alongside Core and the DLC. Accept the restart prompt.
 4. After restart, open the debug log (the `~` key opens the console; the message log is under the
@@ -100,22 +102,114 @@ Report back what happens, including anything red, and Milestone 1 closes.
 
 ---
 
+## Milestone 2 — the Color system
+
+### Built
+
+- `1.6/Defs/GeneDefs/XenotypeDefs_Colors.xml` — all **14 Colors** as inheritable `XenotypeDef`s.
+- `1.6/Defs/GeneDefs/GeneDefs_RimRising.xml` — one custom gene, `RR_Fertility_Reduced`. Vanilla
+  ships only Sterile (Fertility 0) and Fertile (Fertility 2); Gold needs a partial reduction, which
+  does not exist. `Inbred` proves a fractional `<Fertility>` statFactor is valid.
+- Placeholder icons for 14 xenotypes (64x64) and 1 gene (128x128).
+- `Tools/Get-XenotypeBudget.ps1` — new. Sums member-gene biostats per xenotype, resolving mod genes,
+  vanilla genes, and template-generated genes.
+
+**Everything else is composed from verified vanilla genes.** Only one custom gene exists, which
+keeps the dependency surface at Core + Biotech + Ideology and the texture workload near zero.
+
+### Computed budgets
+
+| Tier | Colors | Cpx | Met |
+|---|---|---|---|
+| Gold | Gold | **24** (arc 2) | −13 |
+| highColors | White 13, Copper 12, Silver 10 | 10–13 | −4 to −5 |
+| midColors | Blue 10, Yellow 9, Green 9, Violet 9, Orange 9, Gray 8 | 8–10 | −1 to −5 |
+| lowColors | Obsidian 6, Pink 6, Brown 6, Red 6 | 6 | +3 to −5 |
+
+For scale, vanilla runs Impid 2 → Waster 11, with Sanguophage the outlier at 41. Our non-Gold
+Colors sit inside vanilla's ordinary band; Gold is deliberately outside it.
+
+### Gold: the metabolism trade-off — needs a ruling
+
+Per direction, Gold has **no capability weakness**. Its costs are scarcity
+(`factionlessGenerationWeight` 0.3 against Red's 8) and slow reproduction
+(`RR_Fertility_Reduced`, Fertility ×0.4).
+
+Biotech's economy will not let that be entirely free. Complexity and metabolism are coupled: every
+advantage costs metabolism, and **every met-positive gene in vanilla is a drawback** — hemogen
+dependency, deathrest, instability, depression, UV sensitivity. There is no clean way to buy
+capability back.
+
+Gold currently sits at **met −13**, i.e. Golds eat substantially more than baseline. Mitigations
+already applied:
+
+- `ArchiteMetabolism` (cpx +6, met **+6**, arc +2) — the one gene that raises complexity while
+  *refunding* metabolism. It also contributes `biostatArc`, which means a Gold xenogerm cannot be
+  assembled without archite capsules. **Carving into Gold is therefore gated behind the rarest
+  material in the game**, which is exactly the difficulty asked for.
+- Preferring `AptitudeStrong` (cpx 2, met −1) over `AptitudeRemarkable` (cpx 2, met −3) wherever the
+  caste is not *defined* by that skill. Same complexity, a third of the hunger.
+
+**My read:** high food consumption is not a capability flaw — it is an economic one, and "Golds are
+enormously expensive to keep" is squarely on-theme for the ruling given. Recommend keeping it. Say
+the word if you would rather trim Gold's advantages to bring met toward zero, at the cost of making
+carving easier.
+
+### Validation
+
+`Test-ModDefs.ps1`: 16 defs, 0 errors, 0 warnings.
+
+A sixth check was added first — **`MissingGene`**, cross-referencing every `<genes><li>` in a
+XenotypeDef against mod GeneDefs, vanilla GeneDefs, and gene-template expansions. With 14 xenotypes
+naming ~160 genes between them, catching a typo here rather than in the game log is worth a lot.
+Negative-tested: `Skin_Chartreuse` and `AptitudeAmazing_Melee` both caught, valid names passed.
+
+### How to verify — what to click
+
+1. Launch RimWorld with RimRising enabled.
+2. Start a new colony. At the **scenario / starting pawn** screen, open the xenotype selector — all
+   14 Colors should be listed, each with a labelled placeholder icon.
+3. Confirm the descriptions read correctly and each Color shows plausible genes.
+4. **Check the budgets against the game's own numbers.** Open a Color in the gene assembler or the
+   xenotype editor and compare its complexity and metabolism against the table above. This closes
+   U2 — my figures are inferred, the game's are authoritative.
+5. **Test carving (U1).** Assemble a xenogerm from a Color's exact gene set and implant it. Does the
+   pawn read as that Color, or as "Hybrid"? This is the one unknown the whole carving design rests
+   on.
+6. Dev-mode spawn a few pawns of different Colors and confirm hair and skin colors are visibly
+   distinct.
+7. `pwsh -File Tools/Get-ModLoadErrors.ps1`
+
+### Known limitation
+
+Vanilla ships only two eye-color genes, `Eyes_Red` and `Eyes_Gray`, so only Red and Gray get
+caste-matched eyes. Hair and skin are distinct for all 14. This is exactly why both reference mods
+depend on EyeGenes2 — deliberately not taken on yet, to keep the dependency surface small.
+
+Vanilla also has no body-size gene, so Red's compact build and Obsidian's bulk are approximated with
+`Body_Thin` and `Body_Hulk`. Big and Small would fix this properly.
+
+---
+
 ## Open questions
 
-Carried in `docs/DESIGN.md` §7. None block Milestone 1.
+Carried in `docs/DESIGN.md` §8.
 
-1. **Roster: canonical 14 Colors, or the original 10?** The reference the user supplied gives
-   fourteen; the original brief listed ten, omitting Copper, Green, Violet and Brown. Design now
-   covers all fourteen. *Lore call, user's.* Recommendation: 14.
-2. **Prefixes for the five Colors with no established one** — invent, or leave prefix-less?
+### Resolved
+
+- **Roster: all 14 Colors.** Ruled by the user.
+- **Gold's flaw: scarcity, not weakness.** Golds are rare and reproduce slowly. No stat penalty —
+  Gold is genuinely superior, and the constraint is how few of them there are. See DESIGN §2.5.
+- **packageId: `cinergy92.rimrising`.** Changed at the user's direction.
+- **Mod name: RimRising.**
+
+### Still open
+
+1. **Prefixes for the five Colors with no established one** — invent, or leave prefix-less?
    *Lore call, user's.*
-3. **Pink's framing** — social functionary with no adult content in the base mod and RJW content
+2. **Pink's framing** — social functionary with no adult content in the base mod and RJW content
    gated, or something more pointed. *Lore call, user's.*
-4. **May the player reject the hierarchy?** *Lore call, user's.*
-5. **Should Gold carry a real engineered flaw**, or pay only in complexity? *Lore call, user's.*
-6. **packageId.** Still `cinergy92.redrising` per the original CONFIG, while the mod is now named
-   RimRising. Changing it is free today and expensive later, since packageId is what other mods and
-   save files key on. *Technical, but the user's call — say the word and it changes.*
+3. **May the player reject the hierarchy?** *Lore call, user's.*
 
 ---
 
