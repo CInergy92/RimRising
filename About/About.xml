@@ -43,6 +43,21 @@ This mod is a work in progress.</description>
       <displayName>Alpha Genes</displayName>
       <steamWorkshopUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=2891845502</steamWorkshopUrl>
     </li>
+    <li>
+      <packageId>EBSG.Archite</packageId>
+      <displayName>Expanded Archite Genes</displayName>
+      <steamWorkshopUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=3039936922</steamWorkshopUrl>
+    </li>
+    <li>
+      <packageId>Petre27.BiotechCapacitorGenes</packageId>
+      <displayName>Biotech Capacitor Genes</displayName>
+      <steamWorkshopUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=2882220355</steamWorkshopUrl>
+    </li>
+    <li>
+      <packageId>BobnikTheIII.LifespanExpectancyGenes</packageId>
+      <displayName>Lifespan Expectancy Genes</displayName>
+      <steamWorkshopUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=3364691662</steamWorkshopUrl>
+    </li>
   </modDependencies>
 
   <loadAfter>
@@ -57,6 +72,9 @@ This mod is a work in progress.</description>
     <li>Oppey.EyeGenes2</li>
     <li>EBSG.AiO</li>
     <li>sarg.alphagenes</li>
+    <li>EBSG.Archite</li>
+    <li>Petre27.BiotechCapacitorGenes</li>
+    <li>BobnikTheIII.LifespanExpectancyGenes</li>
     <!--
       Optional, not required: the user commonly runs it, so we load after it to
       keep ordering correct when it is present. Not a modDependency - the mod

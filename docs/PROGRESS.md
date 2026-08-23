@@ -196,6 +196,38 @@ All four are now declared dependencies, and all four are installed and indexed.
 index those mods' GeneDefs. Without that, the budget tool silently omitted third-party genes and
 produced plausible-but-wrong totals — it reported 13 unresolved references before the fix.
 
+### Gold is now playable — U8 resolved
+
+`Capacity_Boost_Tier_3` from Biotech Capacitor Genes trades **+15 metabolism for +15 complexity**,
+a straight 1:1 swap with no side effects (verified: the def carries biostats and nothing else).
+
+That resolves the whole tension. Gold pays for its advantages in **complexity** rather than in
+hunger or weakness — and complexity is the carving gate, so paying there is a feature:
+
+| | Before | Now |
+|---|---|---|
+| Metabolism | −20 | **−4** |
+| Complexity | 26 | **49** |
+| Archite | 2 | **4** |
+
+Golds now eat moderately above baseline instead of ruinously, are bad at nothing, and a Gold
+xenogerm needs a large gene-assembly setup plus four archite capsules to build.
+
+`EBSG_ArchiteWoundHealing` (cpx 6, arc 2, **met 0**) adds the canonical rapid healing for free on
+the metabolism axis.
+
+### Bronzie — the fifteenth xenotype
+
+Built. The only Gold tier that is *genetic* rather than achieved, so the only one that belongs as a
+xenotype; Peerless Scarred, Graduate, Shamed, Iron Gold and Pixie are earned or behavioural and
+belong in M5 as Ideology roles.
+
+**Complexity 9, archite 0, metabolism −4** against true Gold's 49 / 4 / −4. That makes Bronzie the
+cheap Gold: assemblable and carvable early, and viable as a starting pawn without a Gold's food
+economy. Not a weak pawn — Remarkable melee, strong shooting and social, Robust, MeleeDamage_Strong.
+It fights like a Gold; what it lacks is the polish its own caste measures itself by, hence
+`Mood_Pessimist`.
+
 ### Revised budgets
 
 | Color | Cpx | Met |

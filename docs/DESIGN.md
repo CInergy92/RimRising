@@ -191,6 +191,55 @@ mechanically interesting. Lore call, so it is yours.
 
 ---
 
+## 2.7 Per-Color corrections from the reference pages
+
+The summary table on the main Color page is not enough — the individual pages contradict it in
+places. Corrections applied:
+
+| Color | Finding | Change |
+|---|---|---|
+| **Obsidian** | Hair **white**, eyes **black** — not black hair | `Hair_SnowWhite` |
+| **Blue** | Hair listed as **Bald**: DigiTats are tattooed on a shaved scalp. Brains are neurodevelopmentally sculpted for machine interfacing, which *impairs communication outside their sect*. | `Hair_BaldOnly`, added `AptitudeTerrible_Social` |
+| **Violet** | Raised in Groves on forced psychedelics to boost artistic output. Many leave **very unstable**. | `Mood_Optimist` → `Instability_Mild` |
+| **Red** | lowReds **rarely live past thirty**; forties is elderly. | `ShortLifespan` (also refunds metabolism) |
+| **Gray** | Explicitly **not** superhuman — "easily dispatched in large numbers by Gold and Obsidian". Their edge is numbers and discipline. | Dropped `Immunity_Strong` |
+| **Silver** | Hair and eyes silver. | `Hair_SnowWhite` → `Hair_Gray`, freeing SnowWhite for White and Obsidian |
+| **Gold** | Skin varies by ancestry; 150+ year lifespans | No skin gene; `ExtremeLifespanExtension` |
+
+Confirmed already correct: Copper (copper hair/eyes), Yellow (blonde hair, yellow eyes), Brown
+(brown/brown), Orange (orange/orange), Pink (pink hair, pink eyes, beautiful and fragile), White
+(white/white), Green (green eyes; hair shaved or short → `Hair_ShortOnly`).
+
+### Population ratios
+
+The pages give hard numbers, and they do not form a simple pyramid: Grays outnumber Golds
+**a thousand to one**, Coppers outnumber Silvers **ten to one**, and Violets are as rare as Whites.
+Notably **Gold outnumbers both Copper and Silver** — the top of the hierarchy is not its smallest
+tier. Weights now reflect this, with Red at 30 as the overwhelming bulk and Silver at 0.4 as the
+rarest.
+
+### Sub-tiers not yet built
+
+Several Colors have genetic sub-tiers that could each be a xenotype. Only Bronzie is built. Flagged
+for a decision, not assumed:
+
+- **Ultraheavy** (Red) — bred for the Rim, 2.4g and heavy radiation; larger and denser than other
+  Reds, shorter-lived.
+- **Lurcher** (Gray) — genetically altered for superior smell and sight, trained to kill highColors.
+- **Fulgur Bellator** (Green) — bred hardy, thicker-bodied, paired with Gray squads.
+- **Rose** (Pink) and **Stained** (Obsidian) — described as comparably rare and valuable.
+- Some Pinks carry **Pheromonal Defense Mechanisms**.
+
+### Two strong hooks for later milestones
+
+- **Carvers are Violets.** Master Carver and Carver are Violet tiers — the artist caste performs
+  bio-modification. So the caste that makes carving possible is a midColor, not a Gold. That is a
+  gift for Milestone 5: the surgery at the heart of the mod belongs to a specific Color.
+- **Bladeweavers are Oranges.** A sub-tier of Artificer specifically builds razors. Milestone 4
+  should gate razor production behind an Orange.
+
+---
+
 ## 3. Carving — crossing Colors
 
 Your ruling: possible, but very difficult. This is also canonical — Carvers exist in the setting

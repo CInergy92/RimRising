@@ -30,14 +30,40 @@ updated or the scan is broken.
 
 ## Dependencies
 
-Four third-party mods are **hard dependencies**, all confirmed installed and indexed:
+**Seven** third-party mods are hard dependencies, all confirmed installed and indexed:
 
-| Mod | packageId | Workshop | Why |
+| Mod | packageId | Workshop | What we use it for |
 |---|---|---|---|
 | [NL] Facial Animation | `Nals.FacialAnimation` | 1635901197 | Required by EyeGenes2 |
-| [BT] EyeGenes2 | `Oppey.EyeGenes2` | 2898151329 | 34 eye-color genes incl. `Eyes_Golden`. Caste-matched eyes for all 14 Colors. |
-| Expanded Biotech Style Genes AiO | `EBSG.AiO` | 3020821838 | 633 genes; `EBSG_FertilityShortening*` for lowColor early reproduction |
-| Alpha Genes | `sarg.alphagenes` | 2891845502 | `AG_LargerBodySize`, `AG_SmallerBodySize`, `AG_ExtraordinaryLifespan` |
+| [BT] EyeGenes2 | `Oppey.EyeGenes2` | 2898151329 | 34 eye-color genes incl. `Eyes_Golden`. Caste-matched eyes for every Color. |
+| Expanded Biotech Style Genes AiO | `EBSG.AiO` | 3020821838 | `EBSG_FertilityShortening` for lowRed early reproduction |
+| Alpha Genes | `sarg.alphagenes` | 2891845502 | `AG_LargerBodySize`, `AG_SmallerBodySize` |
+| Expanded Archite Genes | `EBSG.Archite` | 3039936922 | `EBSG_ArchiteWoundHealing` — cpx 6, arc 2, **met 0** |
+| Biotech Capacitor Genes | `Petre27.BiotechCapacitorGenes` | 2882220355 | `Capacity_Boost_Tier_N` — **+N met for +N cpx**, the Gold dial |
+| Lifespan Expectancy Genes | `BobnikTheIII.LifespanExpectancyGenes` | 3364691662 | `ExtremeLifespanExtension` (Gold), `ShortLifespan` (Red) |
+
+**The dependency surface is now large.** Every one is a required subscription for anyone else who
+runs this mod. That is the user's explicit direction and each earns its place, but do not add an
+eighth without asking.
+
+### The metabolism/complexity lever
+
+This is the single most useful balance fact in the project. Biotech couples capability to
+metabolism, and **every met-positive vanilla gene is itself a drawback** (hemogen dependency,
+deathrest, instability, depression, UV sensitivity). So a xenotype that is good at everything
+normally has to eat ruinously.
+
+Three genes break that coupling:
+
+| Gene | cpx | met | arc |
+|---|---|---|---|
+| `Capacity_Boost_Tier_1..5` | +5..+25 | **+5..+25** | 0 |
+| `ArchiteMetabolism` | +6 | **+6** | +2 |
+| `EBSG_ArchiteWoundHealing` | +6 | 0 | +2 |
+
+They let a xenotype pay in **complexity** instead of in hunger or weakness. For this mod that is
+free real estate, because complexity is the carving gate — spending there deepens the mechanic we
+want deep. Gold went from met −20/cpx 26 to met −4/cpx 49 with no capability change at all.
 
 Optional, in `loadAfter` only: `Nals.FacialAnimationExperimentals` (1635901197's companion; the user
 commonly runs it, but the mod works without it).

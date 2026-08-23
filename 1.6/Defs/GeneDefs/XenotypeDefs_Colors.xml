@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
-  The fourteen Colors.
+  The fourteen Colors, plus Bronzie - fifteen xenotypes in total.
 
   Structure mirrored from Biotech/Defs/GeneDefs/XenotypeDefs.xml. Only fields
   observed on vanilla XenotypeDefs are used: defName, label, description,
   descriptionShort, iconPath, displayPriority, factionlessGenerationWeight,
   inheritable, genes.
 
-  Every gene named below is either a vanilla GeneDef, a vanilla gene template
-  expansion (AptitudeX_Skill), or one of ours from GeneDefs_RimRising.xml.
-  Test-ModDefs.ps1 verifies all three cases.
+  Every gene named below is a vanilla GeneDef, a vanilla gene template expansion
+  (AptitudeX_Skill), one of ours from GeneDefs_RimRising.xml, or one from a
+  declared dependency. Test-ModDefs.ps1 verifies all four cases; it reads
+  modDependencies straight out of About.xml.
+
+  Colouring, tiers and physiology follow the per-Color reference pages rather
+  than the summary table: Obsidian hair is white rather than black, Blues are
+  bald because their DigiTats are tattooed on a shaved scalp, Violets leave the
+  Grove chemically unstable, and Reds rarely see forty.
 
   All Colors are inheritable: a child of two parents of a Color is that Color.
   Crossing Colors is done by carving - xenogerm implantation - which grants
@@ -17,13 +23,19 @@
 
   displayPriority orders the list to match the hierarchy, highColors first.
 
-  Design note on Gold: per direction, Gold has no capability weakness. Its only
-  costs are scarcity (low factionlessGenerationWeight) and slow reproduction
-  (RR_Fertility_Reduced). ArchiteMetabolism carries three jobs at once - it
-  raises complexity, offsets the metabolic cost of Gold's many advantages, and
-  contributes biostatArc, which means a Gold xenogerm cannot be assembled
-  without archite capsules. Carving someone into a Gold is therefore gated by
-  the rarest material in the game, which is exactly right.
+  Design note on Gold. Per direction, Gold has no capability weakness - its costs
+  are scarcity and slow reproduction. Biotech's coupling makes that awkward, since
+  every advantage costs metabolism and every met-positive vanilla gene is itself a
+  drawback. Three genes resolve it without giving Gold a flaw:
+
+    ArchiteMetabolism          cpx +6   met +6   arc +2
+    EBSG_ArchiteWoundHealing   cpx +6   met  0   arc +2   canonical rapid healing
+    Capacity_Boost_Tier_3      cpx +15  met +15  arc  0   straight 1:1 trade
+
+  Gold therefore pays for everything in COMPLEXITY rather than in weakness or in
+  hunger. Complexity is the carving gate, so paying there is the point: a Gold
+  xenogerm needs a large gene-assembly setup and four archite capsules, while the
+  pawn itself eats only moderately above baseline and is bad at nothing.
 -->
 <Defs>
 
@@ -43,7 +55,7 @@
       <li>Eyes_Golden</li>
       <li>Body_Standard</li>
       <li>AG_LargerBodySize</li>
-      <li>AG_ExtraordinaryLifespan</li>
+      <li>ExtremeLifespanExtension</li>
       <li>ArchiteMetabolism</li>
       <li>RR_Fertility_Reduced</li>
       <li>RR_HighbornAppetite</li>
@@ -64,6 +76,63 @@
       <li>Robust</li>
       <li>MeleeDamage_Strong</li>
       <li>Beauty_Pretty</li>
+      <!--
+        Canonical "massive healing". EBSG_ArchiteWoundHealing is cpx 6 / arc 2 at
+        ZERO metabolism, so it buys Gold a signature ability without worsening
+        the hunger problem, and its archite cost deepens the carving gate.
+      -->
+      <li>EBSG_ArchiteWoundHealing</li>
+      <!--
+        The dial that makes Gold playable. Capacity_Boost_Tier_3 is +15 metabolism
+        for +15 complexity, a straight 1:1 trade. Gold pays in complexity - which
+        is the carving gate, so paying there is a feature - and gets back the food
+        economy. Still lands metabolism-negative: Golds eat well above baseline,
+        just not ruinously.
+      -->
+      <li>Capacity_Boost_Tier_3</li>
+    </genes>
+  </XenotypeDef>
+
+  <!--
+    Bronzie: the fifteenth xenotype, and the only Gold tier that is genetic
+    rather than achieved. Peerless Scarred, Graduate, Shamed, Iron Gold and Pixie
+    are all earned or behavioural, and belong in Milestone 5 as Ideology roles.
+    Inferior stock is inherited, so it belongs here.
+
+    Mechanically this is the cheap Gold. No ArchiteMetabolism, no archite
+    healing, no capacitor - so complexity 9 and archite 0 against true Gold's
+    47 and 4. That makes a Bronzie something a colony can actually assemble and
+    carve early, and something a player can start with without the food economy
+    of a true Gold.
+
+    It is emphatically not a weak pawn. Remarkable melee, strong shooting and
+    social, Robust and MeleeDamage_Strong: a Bronzie fights like a Gold. What it
+    lacks is the polish its own caste measures itself by, and it is reminded of
+    that constantly - hence Mood_Pessimist.
+  -->
+  <XenotypeDef>
+    <defName>RR_Bronzie</defName>
+    <label>Bronzie</label>
+    <description>Gold by birth and by every legal measure, and never once allowed to forget the asterisk. Bronzies come from stock the breeding registries marked down: shorter, plainer, khaki where a Gold should gleam, and denied the archite work that makes their cousins nearly unkillable.\n\nNone of which makes one safe to stand in front of. A Bronzie fights like what they are, and the ones who survive being underestimated tend to become the most dangerous people their caste ever produced. The Society has never worked out whether that is a flaw in the breeding or a flaw in the contempt.</description>
+    <descriptionShort>Gold of inferior stock - khaki-colored, unaugmented, and looked down on by their own caste. Still fights like a Gold, and costs a fraction as much to make.</descriptionShort>
+    <iconPath>UI/Icons/Xenotypes/RR_Bronzie</iconPath>
+    <displayPriority>15</displayPriority>
+    <inheritable>true</inheritable>
+    <factionlessGenerationWeight>0.5</factionlessGenerationWeight>
+    <genes>
+      <li>Hair_SandyBlonde</li>
+      <li>Eyes_DarkYellow</li>
+      <li>Body_Standard</li>
+      <li>RR_Fertility_Reduced</li>
+      <li>AptitudeRemarkable_Melee</li>
+      <li>AptitudeStrong_Social</li>
+      <li>AptitudeStrong_Shooting</li>
+      <li>AptitudePoor_Intellectual</li>
+      <li>AptitudePoor_Artistic</li>
+      <li>Robust</li>
+      <li>MeleeDamage_Strong</li>
+      <li>Pain_Reduced</li>
+      <li>Mood_Pessimist</li>
     </genes>
   </XenotypeDef>
 
@@ -75,9 +144,9 @@
     <iconPath>UI/Icons/Xenotypes/RR_Silver</iconPath>
     <displayPriority>20</displayPriority>
     <inheritable>true</inheritable>
-    <factionlessGenerationWeight>1.5</factionlessGenerationWeight>
+    <factionlessGenerationWeight>0.4</factionlessGenerationWeight>
     <genes>
-      <li>Hair_SnowWhite</li>
+      <li>Hair_Gray</li>
       <li>Eyes_Silver</li>
       <li>Skin_LightGray</li>
       <li>Body_Standard</li>
@@ -100,7 +169,7 @@
     <iconPath>UI/Icons/Xenotypes/RR_White</iconPath>
     <displayPriority>30</displayPriority>
     <inheritable>true</inheritable>
-    <factionlessGenerationWeight>1.5</factionlessGenerationWeight>
+    <factionlessGenerationWeight>0.5</factionlessGenerationWeight>
     <genes>
       <li>Hair_SnowWhite</li>
       <li>Eyes_White</li>
@@ -126,7 +195,7 @@
     <iconPath>UI/Icons/Xenotypes/RR_Copper</iconPath>
     <displayPriority>40</displayPriority>
     <inheritable>true</inheritable>
-    <factionlessGenerationWeight>1.5</factionlessGenerationWeight>
+    <factionlessGenerationWeight>1</factionlessGenerationWeight>
     <genes>
       <li>Hair_ReddishBrown</li>
       <li>Eyes_LightBrown</li>
@@ -155,13 +224,14 @@
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>2</factionlessGenerationWeight>
     <genes>
-      <li>Hair_LightBlue</li>
+      <li>Hair_BaldOnly</li>
       <li>Eyes_Blue</li>
       <li>Skin_Blue</li>
       <li>Body_Thin</li>
       <li>AptitudeRemarkable_Intellectual</li>
       <li>AptitudeStrong_Shooting</li>
       <li>AptitudePoor_Melee</li>
+      <li>AptitudeTerrible_Social</li>
       <li>AptitudeTerrible_Mining</li>
       <li>AptitudeTerrible_Construction</li>
       <li>ElongatedFingers</li>
@@ -205,7 +275,7 @@
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>2</factionlessGenerationWeight>
     <genes>
-      <li>Hair_LightGreen</li>
+      <li>Hair_ShortOnly</li>
       <li>Eyes_Green</li>
       <li>Skin_Green</li>
       <li>Body_Thin</li>
@@ -227,7 +297,7 @@
     <iconPath>UI/Icons/Xenotypes/RR_Violet</iconPath>
     <displayPriority>80</displayPriority>
     <inheritable>true</inheritable>
-    <factionlessGenerationWeight>2</factionlessGenerationWeight>
+    <factionlessGenerationWeight>0.5</factionlessGenerationWeight>
     <genes>
       <li>Hair_LightPurple</li>
       <li>Eyes_Purple</li>
@@ -238,7 +308,7 @@
       <li>AptitudePoor_Melee</li>
       <li>AptitudeTerrible_Mining</li>
       <li>ElongatedFingers</li>
-      <li>Mood_Optimist</li>
+      <li>Instability_Mild</li>
       <li>Beauty_Pretty</li>
     </genes>
   </XenotypeDef>
@@ -251,7 +321,7 @@
     <iconPath>UI/Icons/Xenotypes/RR_Orange</iconPath>
     <displayPriority>90</displayPriority>
     <inheritable>true</inheritable>
-    <factionlessGenerationWeight>2.5</factionlessGenerationWeight>
+    <factionlessGenerationWeight>4</factionlessGenerationWeight>
     <genes>
       <li>Hair_LightOrange</li>
       <li>Eyes_Orange</li>
@@ -274,7 +344,7 @@
     <iconPath>UI/Icons/Xenotypes/RR_Gray</iconPath>
     <displayPriority>100</displayPriority>
     <inheritable>true</inheritable>
-    <factionlessGenerationWeight>3</factionlessGenerationWeight>
+    <factionlessGenerationWeight>10</factionlessGenerationWeight>
     <genes>
       <li>Hair_Gray</li>
       <li>Skin_SlateGray</li>
@@ -286,7 +356,6 @@
       <li>AptitudePoor_Intellectual</li>
       <li>Aggression_DeadCalm</li>
       <li>Pain_Reduced</li>
-      <li>Immunity_Strong</li>
       <li>Mood_Pessimist</li>
     </genes>
   </XenotypeDef>
@@ -303,7 +372,7 @@
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>2</factionlessGenerationWeight>
     <genes>
-      <li>Hair_InkBlack</li>
+      <li>Hair_SnowWhite</li>
       <li>Eyes_DarkestGray</li>
       <li>Skin_InkBlack</li>
       <li>Body_Hulk</li>
@@ -357,7 +426,7 @@
     <iconPath>UI/Icons/Xenotypes/RR_Brown</iconPath>
     <displayPriority>130</displayPriority>
     <inheritable>true</inheritable>
-    <factionlessGenerationWeight>3</factionlessGenerationWeight>
+    <factionlessGenerationWeight>6</factionlessGenerationWeight>
     <genes>
       <li>Hair_DarkBrown</li>
       <li>Eyes_Brown</li>
@@ -405,6 +474,7 @@
         arrives early, which is the mechanical shape of that.
       -->
       <li>EBSG_FertilityShortening</li>
+      <li>ShortLifespan</li>
     </genes>
   </XenotypeDef>
 
