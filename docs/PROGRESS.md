@@ -11,7 +11,7 @@ Game target: **RimWorld 1.6.4871 rev590**. packageId: `cinergy92.redrising`.
 | # | Milestone | Status |
 |---|---|---|
 | 0 | Discovery | **Done.** `docs/DISCOVERY.md` |
-| 1 | Skeleton | **Built, awaiting in-game verification** |
+| 1 | Skeleton | **Loaded in game. One texture bug found and fixed; awaiting re-verification** |
 | 2 | The Color system | Not started — blocked on M1 verification |
 | 3 | Factions and pawn kinds | Not started |
 | 4 | Tech and equipment | Not started |
@@ -43,10 +43,32 @@ The validator was negative-tested against a fixture containing all five fault cl
 XML, duplicate defName, vanilla collision, missing texture, unresolvable ParentName — and produced
 five errors with exit 1. It is not merely returning green.
 
-### Not yet verified — this is the gate on Milestone 2
+### First in-game load — one real bug, found and fixed
 
-**Nothing here has been loaded by RimWorld.** The mod has not been published or launched. Until the
-game loads it with zero red errors, Milestone 1 is not done.
+The mod loaded. `About.xml` parsed, packageId resolved, no dependency complaints. RimSort's
+"Missing Publish Field ID" notice is expected for a local mod and needs no action.
+
+One genuine error in `Player.log`:
+
+```
+Collection cannot init: No textures found at path Things/Item/Resource/RR_Ionsteel
+```
+
+**Cause:** `Graphic_StackCount` derives from `Graphic_Collection` and resolves `texPath` as a
+*folder* of images, not a single file. The placeholder generator had written one flat PNG at that
+path, and the validator passed it because a file genuinely existed there — a false green.
+
+**Fixed:** both tools are now graphic-class aware. `Test-ModDefs.ps1` requires at least one image
+*under* `<texPath>/` for collection classes and reports `MissingTextureCollection`;
+`New-PlaceholderTextures.ps1` emits `_a`/`_b`/`_c` variants in a folder. Confirmed the validator
+now catches the exact condition the game reported, then regenerated and republished.
+
+Mod renamed to **RimRising** in `About.xml`. packageId left as `cinergy92.redrising` per the
+original CONFIG — see "Open questions".
+
+### Still to verify
+
+The fixed textures have not been loaded yet. Re-verify per the steps below.
 
 ### How to verify — what to click
 
@@ -82,11 +104,18 @@ Report back what happens, including anything red, and Milestone 1 closes.
 
 Carried in `docs/DESIGN.md` §7. None block Milestone 1.
 
-1. **Pink's framing** — service caste with no adult content in the base mod, RJW content gated, or
-   something more pointed. *Lore call, user's.*
-2. **May the player reject the hierarchy?** *Lore call, user's.*
-3. **Is the ten-way specialization split right?** *Lore call, user's.*
-4. **Should Gold carry a real engineered flaw**, or pay only in complexity? *Lore call, user's.*
+1. **Roster: canonical 14 Colors, or the original 10?** The reference the user supplied gives
+   fourteen; the original brief listed ten, omitting Copper, Green, Violet and Brown. Design now
+   covers all fourteen. *Lore call, user's.* Recommendation: 14.
+2. **Prefixes for the five Colors with no established one** — invent, or leave prefix-less?
+   *Lore call, user's.*
+3. **Pink's framing** — social functionary with no adult content in the base mod and RJW content
+   gated, or something more pointed. *Lore call, user's.*
+4. **May the player reject the hierarchy?** *Lore call, user's.*
+5. **Should Gold carry a real engineered flaw**, or pay only in complexity? *Lore call, user's.*
+6. **packageId.** Still `cinergy92.redrising` per the original CONFIG, while the mod is now named
+   RimRising. Changing it is free today and expensive later, since packageId is what other mods and
+   save files key on. *Technical, but the user's call — say the word and it changes.*
 
 ---
 
@@ -106,7 +135,17 @@ Carried in `docs/DESIGN.md` §7. None block Milestone 1.
 
 ## Known errors
 
-None. Nothing has been run in game yet, which is itself the point above.
+None outstanding. One found and fixed on first load — see "First in-game load" above.
+
+## Prior art
+
+Two Workshop mods cover adjacent ground; details in `docs/DESIGN.md` §7. Both independently use the
+full fourteen-Color roster, and both depend on Expanded Biotech Style Genes plus EyeGenes2 and
+Facial Animation for caste appearance. **RimRising stays on vanilla Biotech spectrum genes for now**
+so it runs on Core + Biotech + Ideology alone. Revisit once the system works.
+
+Neither appears to implement carving as a playable mechanic, which makes it the most distinctive
+thing this mod can do.
 
 ---
 

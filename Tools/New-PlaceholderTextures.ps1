@@ -191,7 +191,17 @@ $xmlFiles = @(
         Where-Object { $_.FullName -match '\\(Defs|Patches)\\' -and $_.FullName -notmatch '\\\.git\\' }
 )
 
-$referenced = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+# texPath -> $true when the declared graphicClass derives from Graphic_Collection,
+# which resolves the path as a FOLDER of images rather than a single file.
+# Verified against Rimatomics (workshop 1127530465): its Graphic_StackCount
+# texPaths are folders containing <leaf>_a / _b / _c.
+$referenced = @{}
+
+function Test-IsCollectionGraphicClass {
+    param([string] $GraphicClass)
+    if ([string]::IsNullOrWhiteSpace($GraphicClass)) { return $false }
+    return $GraphicClass -match 'StackCount|Random|Collection'
+}
 
 foreach ($file in $xmlFiles) {
     $doc = New-Object System.Xml.XmlDocument
@@ -206,7 +216,21 @@ foreach ($file in $xmlFiles) {
         if ($node.ChildNodes.Count -ne 1) { continue }
         $val = $node.InnerText
         if ([string]::IsNullOrWhiteSpace($val)) { continue }
-        [void]$referenced.Add(($val.Trim() -replace '\\', '/').TrimStart('/'))
+        $key = ($val.Trim() -replace '\\', '/').TrimStart('/')
+
+        $graphicClass = $null
+        if ($node.ParentNode) {
+            $gc = $node.ParentNode.SelectSingleNode('graphicClass')
+            if ($gc) { $graphicClass = $gc.InnerText.Trim() }
+        }
+        $isCollection = Test-IsCollectionGraphicClass -GraphicClass $graphicClass
+
+        # If any reference wants a collection, the path must be a folder.
+        if ($referenced.ContainsKey($key)) {
+            $referenced[$key] = $referenced[$key] -or $isCollection
+        } else {
+            $referenced[$key] = $isCollection
+        }
     }
 }
 
@@ -215,8 +239,8 @@ Write-Host ("  found    : {0} referenced texture path(s)" -f $referenced.Count) 
 # Only generate for paths this mod owns. A non-RR_ path is almost certainly a
 # vanilla texture living inside a Unity asset bundle, and writing a placeholder
 # over one of those would shadow real game art.
-$owned = @($referenced | Where-Object { (($_ -split '/')[-1]) -like 'RR_*' })
-$foreign = @($referenced | Where-Object { (($_ -split '/')[-1]) -notlike 'RR_*' })
+$owned   = @($referenced.Keys | Where-Object { (($_ -split '/')[-1]) -like 'RR_*' })
+$foreign = @($referenced.Keys | Where-Object { (($_ -split '/')[-1]) -notlike 'RR_*' })
 
 if ($foreign.Count -gt 0) {
     Write-Host ("  skipping : {0} non-RR_ path(s), assumed vanilla" -f $foreign.Count) -ForegroundColor DarkGray
@@ -226,22 +250,33 @@ $created = 0
 $skipped = 0
 
 foreach ($texPath in ($owned | Sort-Object)) {
-    $outFile = Join-Path $texturesRoot (($texPath -replace '/', '\') + '.png')
+    $size  = Get-PlaceholderSize -TexPath $texPath
+    $leaf  = ($texPath -split '/')[-1]
+    $label = $leaf -replace '^RR_', ''
+    $color = Get-PathColor -TexPath $texPath
 
-    if ((Test-Path $outFile) -and -not $Force) {
-        $skipped++
+    if ($referenced[$texPath]) {
+        # Collection graphic: the path is a folder, and RimWorld loads every image
+        # inside it. Three variants matches the vanilla stack-size convention.
+        $folder = Join-Path $texturesRoot ($texPath -replace '/', '\')
+        foreach ($variant in @('a', 'b', 'c')) {
+            $outFile = Join-Path $folder ("{0}_{1}.png" -f $leaf, $variant)
+            if ((Test-Path $outFile) -and -not $Force) { $skipped++; continue }
+            if (-not $PSCmdlet.ShouldProcess($outFile, "write ${size}x${size} placeholder")) { continue }
+            New-PlaceholderPng -OutFile $outFile -Size $size -Label ("{0}`n{1}" -f $label, $variant) -Color $color
+            Write-Host ("  + {0}/{1}_{2}.png  ({3}x{3}, collection)" -f $texPath, $leaf, $variant, $size) -ForegroundColor Green
+            $created++
+        }
         continue
     }
 
-    $size  = Get-PlaceholderSize -TexPath $texPath
-    $label = ($texPath -split '/')[-1] -replace '^RR_', ''
-    $color = Get-PathColor -TexPath $texPath
+    $outFile = Join-Path $texturesRoot (($texPath -replace '/', '\') + '.png')
+    if ((Test-Path $outFile) -and -not $Force) { $skipped++; continue }
+    if (-not $PSCmdlet.ShouldProcess($outFile, "write ${size}x${size} placeholder")) { continue }
 
-    if ($PSCmdlet.ShouldProcess($outFile, "write ${size}x${size} placeholder")) {
-        New-PlaceholderPng -OutFile $outFile -Size $size -Label $label -Color $color
-        Write-Host ("  + {0}  ({1}x{1})" -f $texPath, $size) -ForegroundColor Green
-        $created++
-    }
+    New-PlaceholderPng -OutFile $outFile -Size $size -Label $label -Color $color
+    Write-Host ("  + {0}  ({1}x{1})" -f $texPath, $size) -ForegroundColor Green
+    $created++
 }
 
 # ------------------------------------------------------------------- mod art

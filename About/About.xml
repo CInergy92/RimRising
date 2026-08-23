@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
-  <name>Red Rising</name>
+  <name>RimRising</name>
   <author>cinergy92</author>
   <packageId>cinergy92.redrising</packageId>
   <modIconPath IgnoreIfNoMatchingField="True">UI/RedRisingModIcon</modIconPath>

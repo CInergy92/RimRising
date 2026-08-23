@@ -147,6 +147,29 @@ inside Unity asset bundles. Consequences:
   missing `RR_*` texture and only **warns** on a missing non-`RR_` one.
 - Never write a placeholder over a non-`RR_` path; it would shadow real game art.
 
+### Collection graphics resolve texPath as a FOLDER
+
+**This cost a false green. Do not repeat it.**
+
+Graphic classes deriving from `Graphic_Collection` — `Graphic_StackCount`, `Graphic_Random` —
+resolve `texPath` as a **directory** and load every image inside it, conventionally
+`<leaf>_a`, `_b`, `_c`. Pointing one at a single file produces this at load:
+
+```
+Collection cannot init: No textures found at path Things/Item/Resource/RR_Ionsteel
+```
+
+A naive file-exists check passes it, because a file really is sitting at that exact path. Both
+tools are now graphic-class aware: `Test-ModDefs.ps1` requires at least one image *under*
+`<texPath>/` for a collection class, and `New-PlaceholderTextures.ps1` emits a folder of `_a/_b/_c`
+variants instead of one file.
+
+*Verified against Rimatomics (workshop `1127530465`), whose `Graphic_StackCount` texPaths are
+folders of `_a`/`_b`/`_c` files.*
+
+The general lesson: **a texture check that only asks "does a file exist at this path" is not a
+texture check.** The graphic class decides what the path means.
+
 ### Measured dimensions
 
 Taken from installed reference mods, not from memory:
@@ -201,7 +224,15 @@ or from decompiling `RimWorldWin64_Data\Managed\Assembly-CSharp.dll`. No decompi
    one becomes `Object[]`. Return `, $set` with the comma operator, or wrap it in a `pscustomobject`.
 3. **The literal `0xFFFFFFFF` parses as Int32 `-1`.** Casting that to an unsigned type throws.
    Write `4294967295`, or suffix the literal.
-4. Bash heredocs choke on this repo's markdown. Use the file-writing tool for docs, not `cat <<EOF`.
+4. **`$x = if (...) { @() }` assigns `$null`**, because the empty array unrolls. Same root cause as
+   (2). Use `, @()`. This bit `Get-ModLoadErrors.ps1` on its first clean run.
+5. Bash heredocs choke on this repo's markdown. Use the file-writing tool for docs, not `cat <<EOF`.
+
+### RimSort "Missing Publish Field ID" is expected
+
+RimSort flags local mods for having no Publish Field ID. That field only exists on Workshop-published
+mods, so a local development mod will always be flagged. **Not an error, no action.** It resolves
+itself if and when the mod is published to the Workshop. Package ID is separate and is present.
 
 ### grep note
 

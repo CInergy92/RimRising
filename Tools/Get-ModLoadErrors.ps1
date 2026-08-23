@@ -131,7 +131,8 @@ $mineBlocks  = @($errorBlocks | Where-Object { ($_.Text -join "`n") -match $mine
 Write-Host ("  {0} error block(s) in log, {1} attributable to this mod" -f $errorBlocks.Count, $mineBlocks.Count) -ForegroundColor DarkGray
 Write-Host ''
 
-$toShow = if ($All) { $errorBlocks } else { $mineBlocks }
+# Comma operator: an if-expression returning an empty array unrolls to $null.
+$toShow = if ($All) { , $errorBlocks } else { , $mineBlocks }
 
 if ($toShow.Count -eq 0) {
     if ($All) {

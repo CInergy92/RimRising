@@ -168,6 +168,27 @@ function Test-IsTexturePathNode {
     return $false
 }
 
+# Graphic classes deriving from Graphic_Collection resolve texPath as a FOLDER and
+# load every image inside it, conventionally <leaf>_a, _b, _c. Pointing one at a
+# single file produces "Collection cannot init: No textures found at path ..." at
+# load time, which a naive file-exists check happily passes.
+# Verified against Rimatomics (workshop 1127530465), whose Graphic_StackCount
+# texPaths are folders of _a/_b/_c files.
+function Test-IsCollectionGraphicClass {
+    param([string] $GraphicClass)
+    if ([string]::IsNullOrWhiteSpace($GraphicClass)) { return $false }
+    return $GraphicClass -match 'StackCount|Random|Collection'
+}
+
+# For a texPath node, find the graphicClass declared alongside it.
+function Get-SiblingGraphicClass {
+    param([System.Xml.XmlNode] $TexNode)
+    if (-not $TexNode.ParentNode) { return $null }
+    $gc = $TexNode.ParentNode.SelectSingleNode('graphicClass')
+    if ($gc) { return $gc.InnerText.Trim() }
+    return $null
+}
+
 function Get-ModTextureSet {
     param([string] $TexturesRoot)
 
@@ -190,12 +211,25 @@ function Get-ModTextureSet {
 function Test-TextureResolves {
     param(
         [string] $TexPath,
-        [System.Collections.Generic.HashSet[string]] $Available
+        [System.Collections.Generic.HashSet[string]] $Available,
+        [switch] $AsCollection
     )
     $p = $TexPath.Trim().TrimStart('/')
+
+    if ($AsCollection) {
+        # Must be a folder holding at least one image, i.e. at least one known
+        # texture path starts with "<texPath>/". A file sitting AT the path does
+        # not satisfy a collection.
+        $prefix = $p + '/'
+        foreach ($known in $Available) {
+            if ($known.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase)) { return $true }
+        }
+        return $false
+    }
+
     if ($Available.Contains($p)) { return $true }
-    # RimWorld also accepts directional / indexed variants of a base path.
-    foreach ($suffix in @('_north', '_south', '_east', '_west', '_a', '_b', '_c', 'a', 'b', 'c')) {
+    # RimWorld also accepts directional variants of a single-graphic base path.
+    foreach ($suffix in @('_north', '_south', '_east', '_west')) {
         if ($Available.Contains($p + $suffix)) { return $true }
     }
     return $false
@@ -297,7 +331,10 @@ foreach ($file in $xmlFiles) {
             if ([string]::IsNullOrWhiteSpace($texPath)) { continue }
             $texPath = $texPath.Trim()
 
-            if (Test-TextureResolves -TexPath $texPath -Available $modTextures) { continue }
+            $graphicClass = Get-SiblingGraphicClass -TexNode $texNode
+            $isCollection = Test-IsCollectionGraphicClass -GraphicClass $graphicClass
+
+            if (Test-TextureResolves -TexPath $texPath -Available $modTextures -AsCollection:$isCollection) { continue }
 
             # A path we own must exist. A path we do not own is probably a
             # vanilla texture, and vanilla textures ship inside Unity asset
@@ -305,8 +342,13 @@ foreach ($file in $xmlFiles) {
             # from disk. Fail on ours, warn on theirs.
             $leaf = ($texPath -split '[\\/]')[-1]
             if ($leaf -like 'RR_*') {
-                Add-Problem -Severity ERROR -Check 'MissingTexture' -File $rel `
-                    -Message ("<{0}> '{1}' has no file under Textures/. Run New-PlaceholderTextures.ps1." -f $texNode.Name, $texPath)
+                if ($isCollection) {
+                    Add-Problem -Severity ERROR -Check 'MissingTextureCollection' -File $rel `
+                        -Message ("<{0}> '{1}' uses {2}, which needs a FOLDER of images at that path (<leaf>_a, _b, _c), not a single file. Run New-PlaceholderTextures.ps1." -f $texNode.Name, $texPath, $graphicClass)
+                } else {
+                    Add-Problem -Severity ERROR -Check 'MissingTexture' -File $rel `
+                        -Message ("<{0}> '{1}' has no file under Textures/. Run New-PlaceholderTextures.ps1." -f $texNode.Name, $texPath)
+                }
             } else {
                 Add-Problem -Severity WARN -Check 'UnverifiedTexture' -File $rel `
                     -Message ("<{0}> '{1}' not found under Textures/ - assumed vanilla, cannot verify from disk." -f $texNode.Name, $texPath)
