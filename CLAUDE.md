@@ -255,6 +255,41 @@ folders of `_a`/`_b`/`_c` files.*
 The general lesson: **a texture check that only asks "does a file exist at this path" is not a
 texture check.** The graphic class decides what the path means.
 
+### Icon ownership — two generators, do not cross the streams
+
+| Script | Owns |
+|---|---|
+| `New-XenotypeIcons.ps1` | `UI/Icons/Xenotypes/*` and `UI/Icons/Genes/*` — real geometric glyph artwork |
+| `New-PlaceholderTextures.ps1` | everything else `RR_*` — labelled flat squares |
+
+`New-PlaceholderTextures.ps1` explicitly skips the icon paths, **including under `-Force`**, so it
+cannot silently undo the icon set. If you add a new xenotype, add its glyph recipe to
+`New-XenotypeIcons.ps1`; do not let the placeholder script fill it.
+
+### Xenotype icons are tinted, and hue survives
+
+`RimWorld.XenotypeDef.IconColor` is `Color(0.75, 0.75, 0.75)` — a uniform grey multiply. Uniform
+multiplication scales all channels equally, so **hue is preserved and only brightness drops**.
+Caste-colored glyphs therefore read correctly in the UI. Verified by decompiling `XenotypeDef`.
+
+Every glyph is drawn twice: a dark translucent underlay at 1.7x stroke width, then the colored
+stroke on top, so marks keep their edges against both pale and dark backgrounds.
+
+### Copyright line on the sigils
+
+The published Red Rising sigils are copyrighted artwork by a named illustrator and are **not
+reproduced**, in whole or in part. `New-XenotypeIcons.ps1` composes original marks from a shared
+primitive vocabulary (rings, bars, triangles, chevrons, crescents, spokes, arrows, dots). Only the
+*idiom* — terse geometric marks in the manner of alchemical symbols — is shared, and an idiom is a
+style, not an asset.
+
+Where an obvious form would land too close to a published mark, it was deliberately changed: Red is
+a shaft-and-rungs ladder rather than a ringed downward arrow, because the latter sits too near the
+real Red sigil.
+
+Sub-tiers inherit the parent glyph plus a modifier, so lineage is readable at a glance across a
+21-xenotype list.
+
 ### Measured dimensions
 
 Taken from installed reference mods, not from memory:

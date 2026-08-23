@@ -278,6 +278,32 @@ asked, and bounded. U8 needed no in-game measurement after all.
 `Get-XenotypeBudget.ps1` now checks the floor, reads the patched value out of the C# source, and
 distinguishes "below vanilla's floor but legal under our patch" from "broken".
 
+### Icon pass — done
+
+`Tools/New-XenotypeIcons.ps1` replaces the labelled placeholder squares with an original geometric
+glyph set: 21 xenotypes plus the mod's 2 gene icons.
+
+- **Original designs.** The published sigils are copyrighted artwork and are not reproduced. Only
+  the idiom is shared — terse geometric marks in the manner of alchemical symbols. Red was
+  deliberately redesigned as a shaft-and-rungs ladder rather than a ringed downward arrow, since
+  that form sat too close to the real Red sigil.
+- **Lineage is visible.** Sub-tiers inherit the parent glyph plus a modifier, so a Lurcher reads as
+  a Gray and an Ascomanni as an Obsidian. Useful in a 21-entry list.
+- **Caste-colored.** `XenotypeDef.IconColor` is a uniform 0.75 grey multiply, which preserves hue,
+  so colored glyphs read correctly. Each is drawn with a dark underlay so it holds its edges on any
+  background.
+
+`New-PlaceholderTextures.ps1` now refuses to touch icon paths even under `-Force`, so it cannot
+silently undo the set.
+
+### U1 — parked, not blocking
+
+The user's read is that a carved pawn will show as **Hybrid**, and that this is flavour rather than
+a blocker. That matches the mechanics: the wiki confirms germline genes are *suppressed*, not
+removed, so a carved Red keeps its Red endogenes underneath. Thematically that is the right answer
+anyway — a carved Red is always a Red wearing Gold. To be confirmed in game whenever convenient;
+work continues either way.
+
 ### Build tooling
 
 `Tools/Build-Mod.ps1` wraps `dotnet build`. The project targets `net472` and pulls reference

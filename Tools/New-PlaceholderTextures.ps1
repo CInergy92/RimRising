@@ -246,6 +246,17 @@ if ($foreign.Count -gt 0) {
     Write-Host ("  skipping : {0} non-RR_ path(s), assumed vanilla" -f $foreign.Count) -ForegroundColor DarkGray
 }
 
+# New-XenotypeIcons.ps1 owns the xenotype glyphs and our own gene icons, and draws
+# real artwork rather than labelled squares. Never overwrite those here - not even
+# with -Force, which would otherwise silently undo the whole icon set.
+$ownedElsewhere = @($owned | Where-Object {
+    $_ -like 'UI/Icons/Xenotypes/*' -or $_ -like 'UI/Icons/Genes/*'
+})
+if ($ownedElsewhere.Count -gt 0) {
+    $owned = @($owned | Where-Object { $ownedElsewhere -notcontains $_ })
+    Write-Host ("  skipping : {0} icon path(s) owned by New-XenotypeIcons.ps1" -f $ownedElsewhere.Count) -ForegroundColor DarkGray
+}
+
 $created = 0
 $skipped = 0
 
