@@ -63,7 +63,51 @@ $geneSources = @(
     (Join-Path $ModRoot  '1.6\Defs\GeneDefs')
 ) | Where-Object { Test-Path $_ }
 
-foreach ($file in (Get-ChildItem $geneSources -Filter *.xml -File)) {
+# Genes also come from declared dependency mods (EyeGenes2, EBSG, Alpha Genes).
+# Without these the totals silently exclude every third-party gene, which is
+# worse than failing - it produces plausible but wrong numbers.
+$aboutPath = Join-Path $ModRoot 'About\About.xml'
+$depFiles = @()
+if (Test-Path $aboutPath) {
+    $aboutDoc = New-Object System.Xml.XmlDocument
+    try { $aboutDoc.Load($aboutPath) } catch { $aboutDoc = $null }
+
+    if ($aboutDoc) {
+        $depIds = @()
+        foreach ($n in $aboutDoc.SelectNodes('/ModMetaData/modDependencies/li/packageId')) {
+            if ($n.InnerText -and $n.InnerText -notmatch '^(?i)ludeon\.rimworld') {
+                $depIds += $n.InnerText.Trim().ToLowerInvariant()
+            }
+        }
+
+        if ($depIds.Count -gt 0) {
+            $searchRoots = @(
+                (Join-Path $GameInstall 'Mods')
+                (Join-Path (Split-Path -Parent (Split-Path -Parent $GameInstall)) 'workshop\content\294100')
+            ) | Where-Object { Test-Path $_ }
+
+            foreach ($root in $searchRoots) {
+                Get-ChildItem -Path (Join-Path $root '*\About\About.xml') -ErrorAction SilentlyContinue | ForEach-Object {
+                    $md = New-Object System.Xml.XmlDocument
+                    try { $md.Load($_.FullName) } catch { return }
+                    $pkgId = $md.SelectSingleNode('/ModMetaData/packageId')
+                    if (-not $pkgId -or -not $pkgId.InnerText) { return }
+                    if ($depIds -notcontains $pkgId.InnerText.Trim().ToLowerInvariant()) { return }
+
+                    $modPath = Split-Path -Parent (Split-Path -Parent $_.FullName)
+                    $script:depFiles += @(
+                        Get-ChildItem -Path $modPath -Filter *.xml -Recurse -File -ErrorAction SilentlyContinue |
+                            Where-Object { $_.FullName -match '\\Defs\\' }
+                    )
+                }
+            }
+        }
+    }
+}
+
+$allGeneFiles = @(Get-ChildItem $geneSources -Filter *.xml -File) + $depFiles
+
+foreach ($file in $allGeneFiles) {
     $doc = New-Object System.Xml.XmlDocument
     try { $doc.Load($file.FullName) } catch { continue }
     if (-not $doc.DocumentElement) { continue }

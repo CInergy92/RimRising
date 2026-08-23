@@ -28,6 +28,27 @@ updated or the scan is broken.
 
 ---
 
+## Dependencies
+
+Four third-party mods are **hard dependencies**, all confirmed installed and indexed:
+
+| Mod | packageId | Workshop | Why |
+|---|---|---|---|
+| [NL] Facial Animation | `Nals.FacialAnimation` | 1635901197 | Required by EyeGenes2 |
+| [BT] EyeGenes2 | `Oppey.EyeGenes2` | 2898151329 | 34 eye-color genes incl. `Eyes_Golden`. Caste-matched eyes for all 14 Colors. |
+| Expanded Biotech Style Genes AiO | `EBSG.AiO` | 3020821838 | 633 genes; `EBSG_FertilityShortening*` for lowColor early reproduction |
+| Alpha Genes | `sarg.alphagenes` | 2891845502 | `AG_LargerBodySize`, `AG_SmallerBodySize`, `AG_ExtraordinaryLifespan` |
+
+Optional, in `loadAfter` only: `Nals.FacialAnimationExperimentals` (1635901197's companion; the user
+commonly runs it, but the mod works without it).
+
+**`Test-ModDefs.ps1` reads `modDependencies` from our own About.xml** and indexes those mods'
+GeneDefs automatically, so gene cross-references resolve. Add a dependency to About.xml and the
+validator picks it up with no code change. `Get-XenotypeBudget.ps1` does the same — it must, or its
+totals silently omit third-party genes and produce plausible-but-wrong numbers.
+
+---
+
 ## Naming
 
 - **`RR_` prefix on every defName we own.** No exceptions. Chosen to avoid collisions with the
@@ -226,7 +247,9 @@ or from decompiling `RimWorldWin64_Data\Managed\Assembly-CSharp.dll`. No decompi
    Write `4294967295`, or suffix the literal.
 4. **`$x = if (...) { @() }` assigns `$null`**, because the empty array unrolls. Same root cause as
    (2). Use `, @()`. This bit `Get-ModLoadErrors.ps1` on its first clean run.
-5. Bash heredocs choke on this repo's markdown. Use the file-writing tool for docs, not `cat <<EOF`.
+5. **`$pid` is a read-only automatic variable.** Assigning it throws
+   "Cannot overwrite variable PID because it is read-only or constant." Use `$pkgId`.
+6. Bash heredocs choke on this repo's markdown. Use the file-writing tool for docs, not `cat <<EOF`.
 
 ### RimSort "Missing Publish Field ID" is expected
 

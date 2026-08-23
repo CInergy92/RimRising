@@ -33,4 +33,44 @@
     <biostatCpx>1</biostatCpx>
   </GeneDef>
 
+  <!--
+    Gold's appetite and expectations.
+
+    Golds are engineered larger, denser and faster than anything else walking,
+    and that physiology has to be fed. They are also raised never once having
+    encountered a room that was not arranged for them, which turns out to be
+    just as expensive.
+
+    Neither is a capability weakness - a hungry, fussy Gold is still the most
+    dangerous person in the room. Both are economic costs, which is the shape
+    the caste's constraint is meant to take.
+
+    Mechanically:
+      biostatMet -3     -> markedly higher food consumption
+      forcedTraits Greedy -> mood loss without an impressive bedroom, i.e.
+                             higher expectations, expressed the only way vanilla
+                             exposes in pure XML. ExpectationDefs exist but are
+                             driven by wealth and royal title, not by genes;
+                             raising them per-pawn would need C#.
+
+    forcedTraits verified on Biotech/Defs/GeneDefs/GeneDefs_Misc.xml (KindInstinct).
+    Greedy verified in Core/Defs/TraitDefs/Traits_Singular.xml.
+    Miscellaneous verified as a GeneCategoryDef in Core/Defs/GeneDefs/GeneDefs_Endogenes.xml.
+  -->
+  <GeneDef>
+    <defName>RR_HighbornAppetite</defName>
+    <label>highborn appetite</label>
+    <labelShortAdj>highborn</labelShortAdj>
+    <description>An engineered body of this quality is not cheap to run. Carriers eat prodigiously and take it as unremarkable, having never been asked to do otherwise, and they are wretched in accommodation they consider beneath them. Neither trait slows them down in the slightest. Both are simply part of what it costs to keep one.</description>
+    <iconPath>UI/Icons/Genes/RR_HighbornAppetite</iconPath>
+    <displayCategory>Miscellaneous</displayCategory>
+    <displayOrderInCategory>120</displayOrderInCategory>
+    <forcedTraits>
+      <li>
+        <def>Greedy</def>
+      </li>
+    </forcedTraits>
+    <biostatMet>-3</biostatMet>
+  </GeneDef>
+
 </Defs>

@@ -37,13 +37,16 @@
     <iconPath>UI/Icons/Xenotypes/RR_Gold</iconPath>
     <displayPriority>10</displayPriority>
     <inheritable>true</inheritable>
-    <factionlessGenerationWeight>0.3</factionlessGenerationWeight>
+    <factionlessGenerationWeight>0.1</factionlessGenerationWeight>
     <genes>
       <li>Hair_Blonde</li>
-      <li>Skin_Melanin3</li>
+      <li>Eyes_Golden</li>
       <li>Body_Standard</li>
+      <li>AG_LargerBodySize</li>
+      <li>AG_ExtraordinaryLifespan</li>
       <li>ArchiteMetabolism</li>
       <li>RR_Fertility_Reduced</li>
+      <li>RR_HighbornAppetite</li>
       <!--
         AptitudeRemarkable and AptitudeStrong both cost 2 complexity, but
         Remarkable costs 3 metabolism against Strong's 1. Gold takes Remarkable
@@ -75,6 +78,7 @@
     <factionlessGenerationWeight>1.5</factionlessGenerationWeight>
     <genes>
       <li>Hair_SnowWhite</li>
+      <li>Eyes_Silver</li>
       <li>Skin_LightGray</li>
       <li>Body_Standard</li>
       <li>AptitudeRemarkable_Social</li>
@@ -99,6 +103,7 @@
     <factionlessGenerationWeight>1.5</factionlessGenerationWeight>
     <genes>
       <li>Hair_SnowWhite</li>
+      <li>Eyes_White</li>
       <li>Skin_SheerWhite</li>
       <li>Body_Standard</li>
       <li>AptitudeRemarkable_Social</li>
@@ -124,6 +129,7 @@
     <factionlessGenerationWeight>1.5</factionlessGenerationWeight>
     <genes>
       <li>Hair_ReddishBrown</li>
+      <li>Eyes_LightBrown</li>
       <li>Skin_Orange</li>
       <li>Body_Standard</li>
       <li>AptitudeRemarkable_Intellectual</li>
@@ -150,6 +156,7 @@
     <factionlessGenerationWeight>2</factionlessGenerationWeight>
     <genes>
       <li>Hair_LightBlue</li>
+      <li>Eyes_Blue</li>
       <li>Skin_Blue</li>
       <li>Body_Thin</li>
       <li>AptitudeRemarkable_Intellectual</li>
@@ -175,6 +182,7 @@
     <factionlessGenerationWeight>2</factionlessGenerationWeight>
     <genes>
       <li>Hair_SandyBlonde</li>
+      <li>Eyes_Yellow</li>
       <li>Skin_PaleYellow</li>
       <li>Body_Thin</li>
       <li>AptitudeRemarkable_Medicine</li>
@@ -198,6 +206,7 @@
     <factionlessGenerationWeight>2</factionlessGenerationWeight>
     <genes>
       <li>Hair_LightGreen</li>
+      <li>Eyes_Green</li>
       <li>Skin_Green</li>
       <li>Body_Thin</li>
       <li>AptitudeRemarkable_Intellectual</li>
@@ -221,6 +230,7 @@
     <factionlessGenerationWeight>2</factionlessGenerationWeight>
     <genes>
       <li>Hair_LightPurple</li>
+      <li>Eyes_Purple</li>
       <li>Skin_Purple</li>
       <li>Body_Standard</li>
       <li>AptitudeRemarkable_Artistic</li>
@@ -244,6 +254,7 @@
     <factionlessGenerationWeight>2.5</factionlessGenerationWeight>
     <genes>
       <li>Hair_LightOrange</li>
+      <li>Eyes_Orange</li>
       <li>Skin_DeepYellow</li>
       <li>Body_Standard</li>
       <li>AptitudeRemarkable_Crafting</li>
@@ -267,7 +278,6 @@
     <genes>
       <li>Hair_Gray</li>
       <li>Skin_SlateGray</li>
-      <li>Eyes_Gray</li>
       <li>Body_Standard</li>
       <li>AptitudeRemarkable_Shooting</li>
       <li>AptitudeStrong_Melee</li>
@@ -294,8 +304,10 @@
     <factionlessGenerationWeight>2</factionlessGenerationWeight>
     <genes>
       <li>Hair_InkBlack</li>
+      <li>Eyes_DarkestGray</li>
       <li>Skin_InkBlack</li>
       <li>Body_Hulk</li>
+      <li>AG_LargerBodySize</li>
       <li>Jaw_Heavy</li>
       <li>AptitudeRemarkable_Melee</li>
       <li>AptitudeStrong_Shooting</li>
@@ -322,8 +334,10 @@
     <factionlessGenerationWeight>1.5</factionlessGenerationWeight>
     <genes>
       <li>Hair_Pink</li>
+      <li>Eyes_Pink</li>
       <li>Skin_PaleRed</li>
       <li>Body_Thin</li>
+      <li>AG_SmallerBodySize</li>
       <li>AptitudeRemarkable_Social</li>
       <li>AptitudeStrong_Artistic</li>
       <li>AptitudeTerrible_Melee</li>
@@ -346,6 +360,7 @@
     <factionlessGenerationWeight>3</factionlessGenerationWeight>
     <genes>
       <li>Hair_DarkBrown</li>
+      <li>Eyes_Brown</li>
       <li>Skin_Melanin6</li>
       <li>Body_Standard</li>
       <li>AptitudeStrong_Cooking</li>
@@ -367,12 +382,13 @@
     <iconPath>UI/Icons/Xenotypes/RR_Red</iconPath>
     <displayPriority>140</displayPriority>
     <inheritable>true</inheritable>
-    <factionlessGenerationWeight>8</factionlessGenerationWeight>
+    <factionlessGenerationWeight>30</factionlessGenerationWeight>
     <genes>
       <li>Hair_BrightRed</li>
-      <li>Skin_Melanin2</li>
       <li>Eyes_Red</li>
+      <li>Skin_Melanin2</li>
       <li>Body_Thin</li>
+      <li>AG_SmallerBodySize</li>
       <li>AptitudeRemarkable_Mining</li>
       <li>AptitudeStrong_Construction</li>
       <li>AptitudeTerrible_Social</li>
@@ -383,6 +399,12 @@
       <li>Pain_Reduced</li>
       <li>Learning_Slow</li>
       <li>Fertile</li>
+      <!--
+        lowReds are engineered and socialised to pair off and reproduce young.
+        EBSG's fertility-shortening compresses the fertility curve so the peak
+        arrives early, which is the mechanical shape of that.
+      -->
+      <li>EBSG_FertilityShortening</li>
     </genes>
   </XenotypeDef>
 

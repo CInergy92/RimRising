@@ -180,14 +180,42 @@ Negative-tested: `Skin_Chartreuse` and `AptitudeAmazing_Melee` both caught, vali
    distinct.
 7. `pwsh -File Tools/Get-ModLoadErrors.ps1`
 
-### Known limitation
+### Dependencies added — earlier limitations now resolved
 
-Vanilla ships only two eye-color genes, `Eyes_Red` and `Eyes_Gray`, so only Red and Gray get
-caste-matched eyes. Hair and skin are distinct for all 14. This is exactly why both reference mods
-depend on EyeGenes2 — deliberately not taken on yet, to keep the dependency surface small.
+The user made EyeGenes2 and Facial Animation hard requirements, and pointed at EBSG and Alpha Genes.
+All four are now declared dependencies, and all four are installed and indexed.
 
-Vanilla also has no body-size gene, so Red's compact build and Obsidian's bulk are approximated with
-`Body_Thin` and `Body_Hulk`. Big and Small would fix this properly.
+| Was a limitation | Now |
+|---|---|
+| Only two vanilla eye genes, so only Red and Gray had caste eyes | **All 14 Colors have caste-matched eyes.** `Eyes_Golden` exists in EyeGenes2, which is exactly canonical for Gold. |
+| No body-size gene | `AG_LargerBodySize` on Gold and Obsidian, `AG_SmallerBodySize` on Red and Pink |
+| No lifespan gene | `AG_ExtraordinaryLifespan` on Gold — canon has Golds past 150 |
+| No way to model lowColor early reproduction | `EBSG_FertilityShortening` on Red |
+
+`Test-ModDefs.ps1` and `Get-XenotypeBudget.ps1` both now read `modDependencies` from About.xml and
+index those mods' GeneDefs. Without that, the budget tool silently omitted third-party genes and
+produced plausible-but-wrong totals — it reported 13 unresolved references before the fix.
+
+### Revised budgets
+
+| Color | Cpx | Met |
+|---|---|---|
+| Gold | 26 | **−20** (arc 2) |
+| White 13, Copper 12, Silver 10, Blue 10 | 10–13 | −1 to −6 |
+| Yellow, Green, Violet, Orange 9, Gray 8 | 8–9 | −1 to −5 |
+| Obsidian, Pink, Red 7, Brown 6 | 6–7 | +2 to −6 |
+
+### U8 — Gold's metabolism needs an in-game check
+
+Gold is at **met −20**, which is what "much more food" means mechanically, and is now deliberate
+rather than incidental. But it is far outside vanilla's range — every vanilla xenotype sits between
+−1 and +2 — and **I cannot verify the hunger-rate curve from disk**; it is C# in the gene tracker.
+
+If Golds turn out to starve constantly rather than merely eat lavishly, the dial is easy: reduce
+`RR_HighbornAppetite`'s `biostatMet` from −3, or drop `Beauty_Pretty` and `Robust`.
+`ArchiteMetabolism` already refunds +6; without it Gold would be −26.
+
+**Please check the hunger rate on a Gold pawn and report back.**
 
 ---
 

@@ -141,6 +141,56 @@ call, so it is yours.
 
 ---
 
+## 2.6 Gold in detail
+
+From the reference, and now built:
+
+| Trait | Implementation |
+|---|---|
+| Golden irises | `Eyes_Golden` (EyeGenes2) |
+| Golden or blonde hair | `Hair_Blonde` |
+| **Skin varies by ancestry** | **No skin gene at all** — Gold is the only Color without one, so skin rolls naturally. This is deliberate and canonical. |
+| Bone density ~5x, superhuman strength | `Robust`, `MeleeDamage_Strong` |
+| Taller than other Colors, most over 2m | `AG_LargerBodySize` |
+| Lives past 150, fit into old age | `AG_ExtraordinaryLifespan` |
+| Enhanced cognition | `AptitudeStrong_Intellectual`, `Learning_Fast` |
+| ~0.22% of population (40M of 18B) | `factionlessGenerationWeight` **0.1** against Red's **30** |
+
+Not implemented, no vanilla or dependency mechanism found: five-minute breath-holding.
+
+### Appetite and expectations
+
+Per direction, `RR_HighbornAppetite`:
+
+- `biostatMet -3` — markedly higher food consumption.
+- `forcedTraits: Greedy` — mood loss without an impressive bedroom. This is the only way vanilla
+  exposes "higher expectations" in pure XML. `ExpectationDef`s exist (`ExtremelyLow` → `Royal`) but
+  are driven by wealth and royal title, not genes; raising them per-pawn needs C#.
+
+Neither is a capability weakness. A hungry, fussy Gold is still the most dangerous person in the
+room — both are economic costs, which is the shape the constraint was asked to take.
+
+### Gold tiers — M5, not M2
+
+The reference gives Gold a rank structure. Only one of these is genetic:
+
+| Tier | Nature | Where it belongs |
+|---|---|---|
+| **Peerless Scarred** | Achieved — top Institute performance | Ideology role (M5) |
+| **Graduate** | Achieved — attended, no distinction | Ideology role (M5) |
+| **Shamed** | Achieved — performed poorly | Ideology role (M5) |
+| **Iron Gold** | Behavioural — martial exemplar | Precept / thought (M5) |
+| **Pixie** | Behavioural — decadent, self-indulgent | Precept / thought (M5) |
+| **Bronzie** | **Genetic** — inferior stock, smaller and weaker, khaki hair and eyes | Could be a 15th xenotype |
+
+**Open question:** the roster is fourteen Colors, but Bronzie is a genetic sub-grade of Gold rather
+than a rank, so it is the one tier that would naturally be its own `XenotypeDef` — a cheaper Gold
+with lower complexity, khaki colouring, and none of the size or lifespan genes. Worth adding as a
+fifteenth xenotype? It would also give carving a *cheaper* target than true Gold, which is
+mechanically interesting. Lore call, so it is yours.
+
+---
+
 ## 3. Carving — crossing Colors
 
 Your ruling: possible, but very difficult. This is also canonical — Carvers exist in the setting

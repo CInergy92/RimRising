@@ -23,6 +23,26 @@ This mod is a work in progress.</description>
       <packageId>Ludeon.RimWorld.Ideology</packageId>
       <displayName>Ideology</displayName>
     </li>
+    <li>
+      <packageId>Nals.FacialAnimation</packageId>
+      <displayName>[NL] Facial Animation</displayName>
+      <steamWorkshopUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=1635901197</steamWorkshopUrl>
+    </li>
+    <li>
+      <packageId>Oppey.EyeGenes2</packageId>
+      <displayName>[BT] EyeGenes2 | Base - [NL] Facial Animation</displayName>
+      <steamWorkshopUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=2898151329</steamWorkshopUrl>
+    </li>
+    <li>
+      <packageId>EBSG.AiO</packageId>
+      <displayName>Expanded Biotech Style Genes - All in One</displayName>
+      <steamWorkshopUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=3020821838</steamWorkshopUrl>
+    </li>
+    <li>
+      <packageId>sarg.alphagenes</packageId>
+      <displayName>Alpha Genes</displayName>
+      <steamWorkshopUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=2891845502</steamWorkshopUrl>
+    </li>
   </modDependencies>
 
   <loadAfter>
@@ -33,5 +53,15 @@ This mod is a work in progress.</description>
     <li>Ludeon.RimWorld.Anomaly</li>
     <li>Ludeon.RimWorld.Odyssey</li>
     <li>brrainz.harmony</li>
+    <li>Nals.FacialAnimation</li>
+    <li>Oppey.EyeGenes2</li>
+    <li>EBSG.AiO</li>
+    <li>sarg.alphagenes</li>
+    <!--
+      Optional, not required: the user commonly runs it, so we load after it to
+      keep ordering correct when it is present. Not a modDependency - the mod
+      works without it.
+    -->
+    <li>Nals.FacialAnimationExperimentals</li>
   </loadAfter>
 </ModMetaData>

@@ -171,6 +171,86 @@ function Get-VanillaIndex {
     }
 }
 
+# --------------------------------------------------- dependency mod indexing
+
+# Genes can come from mods we declare as dependencies, not just from vanilla.
+# Without this, every reference to an EyeGenes2 or EBSG gene reads as a typo.
+#
+# Dependencies are read from our own About.xml rather than hardcoded, so the
+# index follows the mod's declared requirements automatically.
+
+function Get-DeclaredDependencies {
+    param([string] $ModRoot)
+
+    $aboutPath = Join-Path $ModRoot 'About\About.xml'
+    if (-not (Test-Path $aboutPath)) { return @() }
+
+    $doc = New-Object System.Xml.XmlDocument
+    try { $doc.Load($aboutPath) } catch { return @() }
+
+    $ids = @()
+    foreach ($node in $doc.SelectNodes('/ModMetaData/modDependencies/li/packageId')) {
+        if ($node.InnerText) { $ids += $node.InnerText.Trim() }
+    }
+    # DLC are part of the vanilla Data scan already; skip them here.
+    return @($ids | Where-Object { $_ -notmatch '^(?i)ludeon\.rimworld' })
+}
+
+function Get-InstalledModPaths {
+    param([string] $GameInstall)
+
+    $searchRoots = @(
+        (Join-Path $GameInstall 'Mods')
+        (Join-Path (Split-Path -Parent (Split-Path -Parent $GameInstall)) 'workshop\content\294100')
+    ) | Where-Object { Test-Path $_ }
+
+    $map = @{}
+    foreach ($root in $searchRoots) {
+        Get-ChildItem -Path (Join-Path $root '*\About\About.xml') -ErrorAction SilentlyContinue | ForEach-Object {
+            $doc = New-Object System.Xml.XmlDocument
+            try { $doc.Load($_.FullName) } catch { return }
+            # NOT $pid - that is a read-only PowerShell automatic variable.
+            $pkgId = $doc.SelectSingleNode('/ModMetaData/packageId')
+            if (-not $pkgId -or -not $pkgId.InnerText) { return }
+            $key = $pkgId.InnerText.Trim().ToLowerInvariant()
+            # First match wins; a packageId should be unique across installs.
+            if (-not $map.ContainsKey($key)) {
+                $map[$key] = Split-Path -Parent (Split-Path -Parent $_.FullName)
+            }
+        }
+    }
+    return , $map
+}
+
+function Build-DependencyGeneIndex {
+    param([string[]] $PackageIds, [hashtable] $ModPaths)
+
+    $genes = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    $missing = @()
+
+    foreach ($id in $PackageIds) {
+        $key = $id.ToLowerInvariant()
+        if (-not $ModPaths.ContainsKey($key)) { $missing += $id; continue }
+
+        $modPath = $ModPaths[$key]
+        $files = Get-ChildItem -Path $modPath -Filter *.xml -Recurse -File -ErrorAction SilentlyContinue |
+                 Where-Object { $_.FullName -match '\\Defs\\' }
+
+        foreach ($f in $files) {
+            $doc = New-Object System.Xml.XmlDocument
+            try { $doc.Load($f.FullName) } catch { continue }
+            if (-not $doc.DocumentElement) { continue }
+            foreach ($node in $doc.DocumentElement.ChildNodes) {
+                if ($node.Name -ne 'GeneDef') { continue }
+                $dn = $node.SelectSingleNode('defName')
+                if ($dn -and $dn.InnerText) { [void]$genes.Add($dn.InnerText.Trim()) }
+            }
+        }
+    }
+
+    return [pscustomobject]@{ Genes = $genes; Missing = $missing }
+}
+
 # ------------------------------------------------------------ texture lookup
 
 # Node names that carry a texture path. Derived by grepping vanilla Core,
@@ -263,6 +343,20 @@ Write-Host ("  mod root : {0}" -f $ModRoot) -ForegroundColor DarkGray
 Write-Host ("  game     : {0}" -f $GameInstall) -ForegroundColor DarkGray
 
 $vanilla = Get-VanillaIndex -GameInstall $GameInstall -Refresh:$RefreshVanillaCache
+
+$declaredDeps = @(Get-DeclaredDependencies -ModRoot $ModRoot)
+$depGenes = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+
+if ($declaredDeps.Count -gt 0) {
+    $modPaths = Get-InstalledModPaths -GameInstall $GameInstall
+    $depIndex = Build-DependencyGeneIndex -PackageIds $declaredDeps -ModPaths $modPaths
+    $depGenes = $depIndex.Genes
+    Write-Host ("  deps     : {0} declared, {1} gene(s) indexed" -f $declaredDeps.Count, $depGenes.Count) -ForegroundColor DarkGray
+    foreach ($m in $depIndex.Missing) {
+        Add-Problem -Severity WARN -Check 'DependencyNotInstalled' -File 'About/About.xml' `
+            -Message ("declared dependency '{0}' is not installed, so its defs cannot be verified." -f $m)
+    }
+}
 
 $texturesRoot = Join-Path $ModRoot 'Textures'
 $modTextures = Get-ModTextureSet -TexturesRoot $texturesRoot
@@ -423,6 +517,7 @@ foreach ($ref in $parentRefs) {
 foreach ($ref in $geneRefs) {
     if ($modGeneDefs.Contains($ref.Gene))      { continue }
     if ($vanilla.GeneDefs.Contains($ref.Gene)) { continue }
+    if ($depGenes.Contains($ref.Gene))         { continue }
 
     $underscore = $ref.Gene.IndexOf('_')
     if ($underscore -gt 0) {
