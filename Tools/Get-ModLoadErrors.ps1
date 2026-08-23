@@ -72,38 +72,25 @@ if ($age.TotalHours -gt 12) {
 
 $lines = Get-Content -Path $LogPath -Encoding UTF8
 
-# ------------------------------------------------------------- block splitting
+# -------------------------------------------------------------- error location
 
-# RimWorld writes each error as a message line followed by an indented stack
-# trace, with blank lines between entries.
-$blocks = [System.Collections.Generic.List[object]]::new()
-$current = [System.Collections.Generic.List[string]]::new()
-$startLine = 1
-
-for ($i = 0; $i -lt $lines.Count; $i++) {
-    $line = $lines[$i]
-    if ([string]::IsNullOrWhiteSpace($line)) {
-        if ($current.Count -gt 0) {
-            $blocks.Add([pscustomobject]@{ Line = $startLine; Text = $current.ToArray() })
-            $current.Clear()
-        }
-        $startLine = $i + 2
-        continue
-    }
-    if ($current.Count -eq 0) { $startLine = $i + 1 }
-    $current.Add($line)
-}
-if ($current.Count -gt 0) {
-    $blocks.Add([pscustomobject]@{ Line = $startLine; Text = $current.ToArray() })
-}
+# RimWorld's log does NOT reliably separate entries with blank lines - the whole
+# startup header arrives as one unbroken run. Splitting on blank lines therefore
+# produced enormous blocks and smeared attribution across unrelated mods. The
+# unit here is the matching LINE, with a few following lines as context.
 
 # ------------------------------------------------------------- classification
 
 # Patterns that mark a block as a red error in RimWorld's log.
+#
+# NOTE: several real RimWorld errors contain none of the words "error",
+# "exception" or "failed". "Collection cannot init: No textures found at path X"
+# is one, and this tool missed it on the first run while the bug was live. Add a
+# pattern whenever a real error slips through rather than assuming coverage.
 $errorPatterns = @(
     'Could not resolve cross-reference'
     'Could not find a type named'
-    'Could not load UnityEngine.Texture2D at'
+    'Could not load'
     'XML error'
     'Config error in'
     'Exception'
@@ -113,6 +100,17 @@ $errorPatterns = @(
     'Unknown field'
     'Duplicate .* def'
     'defName .* is '
+    # texture and graphic failures
+    'Collection cannot init'
+    'No textures found at path'
+    'Could not get texture at path'
+    'Texture .* not found'
+    'Graphic .* not found'
+    # def and content failures
+    'cannot init'
+    'is null or empty'
+    'Missing .*Def'
+    'tried to (get|find|use)'
 )
 $errorRegex = ($errorPatterns -join '|')
 
@@ -125,8 +123,26 @@ $minePatterns = @(
 )
 $mineRegex = ($minePatterns -join '|')
 
-$errorBlocks = @($blocks | Where-Object { ($_.Text -join "`n") -match $errorRegex })
-$mineBlocks  = @($errorBlocks | Where-Object { ($_.Text -join "`n") -match $mineRegex })
+$errorBlocks = [System.Collections.Generic.List[object]]::new()
+
+for ($i = 0; $i -lt $lines.Count; $i++) {
+    if ($lines[$i] -notmatch $errorRegex) { continue }
+
+    $end = [Math]::Min($lines.Count - 1, $i + $Context)
+    $text = $lines[$i..$end]
+
+    # Attribute on the matching line plus its context, not on the whole file.
+    $isMine = (($text -join "`n") -match $mineRegex)
+
+    $errorBlocks.Add([pscustomobject]@{
+        Line   = $i + 1
+        Text   = $text
+        IsMine = $isMine
+    })
+}
+
+$errorBlocks = @($errorBlocks)
+$mineBlocks  = @($errorBlocks | Where-Object { $_.IsMine })
 
 Write-Host ("  {0} error block(s) in log, {1} attributable to this mod" -f $errorBlocks.Count, $mineBlocks.Count) -ForegroundColor DarkGray
 Write-Host ''
@@ -148,22 +164,16 @@ if ($toShow.Count -eq 0) {
 }
 
 foreach ($block in $toShow) {
-    $joined = $block.Text -join "`n"
-    $isMine = $joined -match $mineRegex
-
-    $tag   = if ($isMine) { 'OURS ' } else { 'other' }
-    $color = if ($isMine) { 'Red' } else { 'DarkGray' }
+    $tag   = if ($block.IsMine) { 'OURS ' } else { 'other' }
+    $color = if ($block.IsMine) { 'Red' } else { 'DarkGray' }
 
     Write-Host ("  [{0}] Player.log:{1}" -f $tag, $block.Line) -ForegroundColor $color
 
-    $shown = 0
+    $first = $true
     foreach ($line in $block.Text) {
-        if ($shown -ge ($Context + 1)) {
-            Write-Host ("        ... {0} more line(s)" -f ($block.Text.Count - $shown)) -ForegroundColor DarkGray
-            break
-        }
-        Write-Host ("        {0}" -f $line.TrimEnd()) -ForegroundColor $color
-        $shown++
+        $prefix = if ($first) { '      > ' } else { '        ' }
+        Write-Host ("{0}{1}" -f $prefix, $line.TrimEnd()) -ForegroundColor $(if ($first) { $color } else { 'DarkGray' })
+        $first = $false
     }
     Write-Host ''
 }
