@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Pawn kinds for the Colors.
+
+  Mirrored from Royalty/Defs/PawnKinds/PawnKinds_Empire.xml. Royalty-only fields
+  (minTitleRequired, royalTitle*) are deliberately not used - Royalty is not a
+  dependency.
+
+  THE KEY FIELD
+
+    <useFactionXenotypes>false</useFactionXenotypes>
+    <xenotypeSet><xenotypeChances><RR_Gray>1</RR_Gray></xenotypeChances></xenotypeSet>
+
+  This pins a pawn kind to a Color, overriding the faction's own spread. It is how
+  the caste system becomes visible in play: a Society legion arrives and it is
+  Grays with Obsidian shock troops and a Gold at the head, because each role is
+  bound to the Color that the Society breeds for it. Verified on
+  Empire_Fighter_Trooper.
+
+  Weapon and apparel tags are all vanilla and all verified present. Milestone 4
+  adds RimRising's own equipment; these will be revisited then to use it.
+
+  combatPower drives raid arithmetic. Values are set relative to vanilla anchors
+  (Empire trooper 65) so points-based raids are not wildly mis-sized.
+-->
+<Defs>
+
+  <!-- =========================== abstract bases =========================== -->
+
+  <PawnKindDef Name="RR_ColorPawnBase" Abstract="True">
+    <race>Human</race>
+    <maxGenerationAge>65</maxGenerationAge>
+    <useFactionXenotypes>false</useFactionXenotypes>
+  </PawnKindDef>
+
+  <PawnKindDef Name="RR_SocietyFighterBase" ParentName="RR_ColorPawnBase" Abstract="True">
+    <defaultFactionDef>RR_Society</defaultFactionDef>
+    <itemQuality>Normal</itemQuality>
+    <apparelAllowHeadgearChance>0.7</apparelAllowHeadgearChance>
+    <apparelTags>
+      <li>IndustrialMilitaryBasic</li>
+      <li>IndustrialMilitaryAdvanced</li>
+      <li>SpacerMilitary</li>
+    </apparelTags>
+    <apparelDisallowTags>
+      <li>Western</li>
+      <li>Tribal</li>
+    </apparelDisallowTags>
+  </PawnKindDef>
+
+  <!-- ========================= the Society: martial ======================== -->
+
+  <!-- Gray: the caste that actually does the Society's daily violence. -->
+  <PawnKindDef ParentName="RR_SocietyFighterBase">
+    <defName>RR_Society_Legionary</defName>
+    <label>legionary</label>
+    <combatPower>70</combatPower>
+    <apparelColor>(120,126,133)</apparelColor>
+    <apparelMoney>900~1800</apparelMoney>
+    <weaponMoney>800~1700</weaponMoney>
+    <weaponTags>
+      <li>IndustrialGunAdvanced</li>
+      <li>SpacerGun</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Shooting</skill><range>5~11</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Gray>1</RR_Gray>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <!-- Lurcher: bred to hunt the castes above it. Rare, and pointed. -->
+  <PawnKindDef ParentName="RR_SocietyFighterBase">
+    <defName>RR_Society_Lurcher</defName>
+    <label>lurcher</label>
+    <combatPower>115</combatPower>
+    <apparelColor>(96,102,110)</apparelColor>
+    <apparelMoney>1400~2600</apparelMoney>
+    <weaponMoney>1500~2800</weaponMoney>
+    <itemQuality>Good</itemQuality>
+    <weaponTags>
+      <li>SpacerGun</li>
+      <li>IndustrialGunAdvanced</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Shooting</skill><range>9~15</range></li>
+      <li><skill>Melee</skill><range>6~11</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Gray_Lurcher>1</RR_Gray_Lurcher>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <!-- Obsidian: enormous, close-range, and legally property. -->
+  <PawnKindDef ParentName="RR_SocietyFighterBase">
+    <defName>RR_Society_Obsidian_Knight</defName>
+    <label>obsidian knight</label>
+    <combatPower>130</combatPower>
+    <apparelColor>(46,44,52)</apparelColor>
+    <apparelMoney>1200~2400</apparelMoney>
+    <weaponMoney>1200~2600</weaponMoney>
+    <weaponTags>
+      <li>MedievalMeleeAdvanced</li>
+      <li>UltratechMelee</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Melee</skill><range>10~16</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Obsidian>0.8</RR_Obsidian>
+        <RR_Obsidian_Stained>0.2</RR_Obsidian_Stained>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <!-- Bronzie: Gold enough to command, cheap enough to spend. -->
+  <PawnKindDef ParentName="RR_SocietyFighterBase">
+    <defName>RR_Society_Bronzie_Officer</defName>
+    <label>bronzie officer</label>
+    <combatPower>140</combatPower>
+    <apparelColor>(176,138,70)</apparelColor>
+    <apparelMoney>1800~3200</apparelMoney>
+    <weaponMoney>1800~3400</weaponMoney>
+    <itemQuality>Good</itemQuality>
+    <weaponTags>
+      <li>SpacerGun</li>
+      <li>UltratechMelee</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Melee</skill><range>9~15</range></li>
+      <li><skill>Shooting</skill><range>7~13</range></li>
+      <li><skill>Social</skill><range>6~12</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Bronzie>1</RR_Bronzie>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <!-- Gold: rare by construction. One of these leads; there is never a squad. -->
+  <PawnKindDef ParentName="RR_SocietyFighterBase">
+    <defName>RR_Society_Gold_Praetor</defName>
+    <label>praetor</label>
+    <combatPower>240</combatPower>
+    <apparelColor>(232,194,74)</apparelColor>
+    <apparelMoney>3000~5200</apparelMoney>
+    <weaponMoney>3000~5500</weaponMoney>
+    <itemQuality>Excellent</itemQuality>
+    <apparelAllowHeadgearChance>0.5</apparelAllowHeadgearChance>
+    <weaponTags>
+      <li>UltratechMelee</li>
+      <li>SpacerGun</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Melee</skill><range>13~19</range></li>
+      <li><skill>Shooting</skill><range>10~16</range></li>
+      <li><skill>Social</skill><range>10~16</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Gold>1</RR_Gold>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <!-- ======================= the Society: civilian ========================= -->
+
+  <PawnKindDef ParentName="RR_ColorPawnBase">
+    <defName>RR_Society_Silver_Factor</defName>
+    <label>factor</label>
+    <defaultFactionDef>RR_Society</defaultFactionDef>
+    <combatPower>35</combatPower>
+    <trader>true</trader>
+    <apparelColor>(203,210,218)</apparelColor>
+    <apparelMoney>1200~2400</apparelMoney>
+    <weaponMoney>250~600</weaponMoney>
+    <apparelTags>
+      <li>Clothing</li>
+      <li>IndustrialAdvanced</li>
+      <li>Spacefarer</li>
+    </apparelTags>
+    <weaponTags>
+      <li>Revolver</li>
+      <li>Autopistol</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Social</skill><range>10~17</range></li>
+      <li><skill>Intellectual</skill><range>8~14</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Silver>1</RR_Silver>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <PawnKindDef ParentName="RR_ColorPawnBase">
+    <defName>RR_Society_Copper_Official</defName>
+    <label>official</label>
+    <defaultFactionDef>RR_Society</defaultFactionDef>
+    <combatPower>32</combatPower>
+    <apparelColor>(206,124,70)</apparelColor>
+    <apparelMoney>900~1900</apparelMoney>
+    <weaponMoney>200~500</weaponMoney>
+    <apparelTags>
+      <li>Clothing</li>
+      <li>IndustrialAdvanced</li>
+    </apparelTags>
+    <weaponTags>
+      <li>Autopistol</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Intellectual</skill><range>10~16</range></li>
+      <li><skill>Social</skill><range>8~14</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Copper>1</RR_Copper>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <PawnKindDef ParentName="RR_ColorPawnBase">
+    <defName>RR_Society_Yellow_Medicus</defName>
+    <label>medicus</label>
+    <defaultFactionDef>RR_Society</defaultFactionDef>
+    <combatPower>30</combatPower>
+    <apparelColor>(230,212,79)</apparelColor>
+    <apparelMoney>800~1700</apparelMoney>
+    <weaponMoney>150~400</weaponMoney>
+    <apparelTags>
+      <li>Clothing</li>
+      <li>IndustrialAdvanced</li>
+    </apparelTags>
+    <skills>
+      <li><skill>Medicine</skill><range>12~19</range></li>
+      <li><skill>Intellectual</skill><range>8~14</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Yellow>1</RR_Yellow>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <PawnKindDef ParentName="RR_ColorPawnBase">
+    <defName>RR_Society_Brown_Servant</defName>
+    <label>servant</label>
+    <defaultFactionDef>RR_Society</defaultFactionDef>
+    <combatPower>22</combatPower>
+    <apparelColor>(156,119,82)</apparelColor>
+    <apparelMoney>250~700</apparelMoney>
+    <weaponMoney>0~120</weaponMoney>
+    <apparelTags>
+      <li>BasicClothing</li>
+      <li>Worker</li>
+    </apparelTags>
+    <skills>
+      <li><skill>Cooking</skill><range>7~13</range></li>
+      <li><skill>Plants</skill><range>6~12</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Brown>1</RR_Brown>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <PawnKindDef ParentName="RR_ColorPawnBase">
+    <defName>RR_Society_Red_Laborer</defName>
+    <label>laborer</label>
+    <defaultFactionDef>RR_Society</defaultFactionDef>
+    <combatPower>25</combatPower>
+    <apparelColor>(168,72,72)</apparelColor>
+    <apparelMoney>200~650</apparelMoney>
+    <weaponMoney>0~150</weaponMoney>
+    <apparelTags>
+      <li>BasicClothing</li>
+      <li>Worker</li>
+    </apparelTags>
+    <skills>
+      <li><skill>Mining</skill><range>9~16</range></li>
+      <li><skill>Construction</skill><range>6~12</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Red>0.85</RR_Red>
+        <RR_Red_Ultraheavy>0.15</RR_Red_Ultraheavy>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <!-- ========================== the resistance ============================ -->
+
+  <PawnKindDef Name="RR_AresFighterBase" ParentName="RR_ColorPawnBase" Abstract="True">
+    <defaultFactionDef>RR_SonsOfAres</defaultFactionDef>
+    <itemQuality>Normal</itemQuality>
+    <apparelAllowHeadgearChance>0.4</apparelAllowHeadgearChance>
+    <apparelTags>
+      <li>IndustrialBasic</li>
+      <li>IndustrialMilitaryBasic</li>
+      <li>Worker</li>
+    </apparelTags>
+    <apparelDisallowTags>
+      <li>Royal</li>
+    </apparelDisallowTags>
+  </PawnKindDef>
+
+  <PawnKindDef ParentName="RR_AresFighterBase">
+    <defName>RR_Ares_Red_Fighter</defName>
+    <label>red fighter</label>
+    <combatPower>55</combatPower>
+    <apparelColor>(184,64,64)</apparelColor>
+    <apparelMoney>350~950</apparelMoney>
+    <weaponMoney>450~1200</weaponMoney>
+    <weaponTags>
+      <li>SimpleGun</li>
+      <li>IndustrialGunAdvanced</li>
+      <li>Grenades</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Shooting</skill><range>3~9</range></li>
+      <li><skill>Mining</skill><range>8~14</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Red>0.8</RR_Red>
+        <RR_Red_Ultraheavy>0.2</RR_Red_Ultraheavy>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <PawnKindDef ParentName="RR_AresFighterBase">
+    <defName>RR_Ares_Orange_Saboteur</defName>
+    <label>saboteur</label>
+    <combatPower>65</combatPower>
+    <apparelColor>(227,138,56)</apparelColor>
+    <apparelMoney>500~1200</apparelMoney>
+    <weaponMoney>600~1500</weaponMoney>
+    <weaponTags>
+      <li>IndustrialGunAdvanced</li>
+      <li>Grenades</li>
+      <li>GrenadeEMP</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Crafting</skill><range>10~16</range></li>
+      <li><skill>Shooting</skill><range>4~10</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Orange>1</RR_Orange>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <!-- A Gray who walked. The Society finds these especially embarrassing. -->
+  <PawnKindDef ParentName="RR_AresFighterBase">
+    <defName>RR_Ares_Gray_Defector</defName>
+    <label>defector</label>
+    <combatPower>85</combatPower>
+    <apparelColor>(120,126,133)</apparelColor>
+    <apparelMoney>700~1600</apparelMoney>
+    <weaponMoney>900~2000</weaponMoney>
+    <weaponTags>
+      <li>IndustrialGunAdvanced</li>
+      <li>SpacerGun</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Shooting</skill><range>8~14</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Gray>0.9</RR_Gray>
+        <RR_Gray_Lurcher>0.1</RR_Gray_Lurcher>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <PawnKindDef ParentName="RR_AresFighterBase">
+    <defName>RR_Ares_Obsidian_Freed</defName>
+    <label>freed obsidian</label>
+    <combatPower>125</combatPower>
+    <apparelColor>(52,50,58)</apparelColor>
+    <apparelMoney>500~1400</apparelMoney>
+    <weaponMoney>800~2000</weaponMoney>
+    <weaponTags>
+      <li>MedievalMeleeAdvanced</li>
+      <li>UltratechMelee</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Melee</skill><range>10~16</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Obsidian>0.85</RR_Obsidian>
+        <RR_Obsidian_Stained>0.15</RR_Obsidian_Stained>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <!-- The rarest thing in the resistance, and its most useful weapon. -->
+  <PawnKindDef ParentName="RR_AresFighterBase">
+    <defName>RR_Ares_Gold_Turncoat</defName>
+    <label>turncoat</label>
+    <combatPower>200</combatPower>
+    <apparelColor>(176,138,70)</apparelColor>
+    <apparelMoney>1500~3000</apparelMoney>
+    <weaponMoney>2000~4000</weaponMoney>
+    <itemQuality>Good</itemQuality>
+    <weaponTags>
+      <li>UltratechMelee</li>
+      <li>SpacerGun</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Melee</skill><range>12~18</range></li>
+      <li><skill>Social</skill><range>9~15</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Bronzie>0.7</RR_Bronzie>
+        <RR_Gold>0.3</RR_Gold>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <!-- ========================== Obsidian tribes =========================== -->
+
+  <PawnKindDef Name="RR_TribeBase" ParentName="RR_ColorPawnBase" Abstract="True">
+    <defaultFactionDef>RR_ObsidianTribes</defaultFactionDef>
+    <itemQuality>Normal</itemQuality>
+    <apparelAllowHeadgearChance>0.35</apparelAllowHeadgearChance>
+    <apparelTags>
+      <li>Tribal</li>
+      <li>Neolithic</li>
+    </apparelTags>
+    <apparelDisallowTags>
+      <li>Royal</li>
+      <li>SpacerMilitary</li>
+      <li>IndustrialMilitaryAdvanced</li>
+    </apparelDisallowTags>
+  </PawnKindDef>
+
+  <PawnKindDef ParentName="RR_TribeBase">
+    <defName>RR_Tribe_Obsidian_Warrior</defName>
+    <label>tribe warrior</label>
+    <combatPower>90</combatPower>
+    <apparelColor>(60,58,68)</apparelColor>
+    <apparelMoney>200~700</apparelMoney>
+    <weaponMoney>200~600</weaponMoney>
+    <weaponTags>
+      <li>NeolithicMeleeAdvanced</li>
+      <li>NeolithicRangedDecent</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Melee</skill><range>8~14</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Obsidian>1</RR_Obsidian>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <PawnKindDef ParentName="RR_TribeBase">
+    <defName>RR_Tribe_Obsidian_Stained</defName>
+    <label>stained</label>
+    <combatPower>165</combatPower>
+    <apparelColor>(40,38,46)</apparelColor>
+    <apparelMoney>400~1100</apparelMoney>
+    <weaponMoney>500~1400</weaponMoney>
+    <itemQuality>Good</itemQuality>
+    <weaponTags>
+      <li>NeolithicMeleeAdvanced</li>
+      <li>MedievalMeleeAdvanced</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Melee</skill><range>13~19</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Obsidian_Stained>1</RR_Obsidian_Stained>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <!-- ============================= Ascomanni ============================== -->
+
+  <PawnKindDef Name="RR_AscomanniBase" ParentName="RR_ColorPawnBase" Abstract="True">
+    <defaultFactionDef>RR_Ascomanni</defaultFactionDef>
+    <itemQuality>Normal</itemQuality>
+    <apparelAllowHeadgearChance>0.6</apparelAllowHeadgearChance>
+    <apparelTags>
+      <li>Armor</li>
+      <li>IndustrialMilitaryBasic</li>
+      <li>Tribal</li>
+    </apparelTags>
+  </PawnKindDef>
+
+  <PawnKindDef ParentName="RR_AscomanniBase">
+    <defName>RR_Ascomanni_Raider</defName>
+    <label>ascomanni raider</label>
+    <combatPower>120</combatPower>
+    <apparelColor>(64,60,74)</apparelColor>
+    <apparelMoney>500~1400</apparelMoney>
+    <weaponMoney>700~1800</weaponMoney>
+    <weaponTags>
+      <li>MedievalMeleeAdvanced</li>
+      <li>IndustrialGunAdvanced</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Melee</skill><range>10~16</range></li>
+      <li><skill>Shooting</skill><range>5~11</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Obsidian_Ascomanni>1</RR_Obsidian_Ascomanni>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <PawnKindDef ParentName="RR_AscomanniBase">
+    <defName>RR_Ascomanni_Warlord</defName>
+    <label>ascomanni warlord</label>
+    <combatPower>210</combatPower>
+    <apparelColor>(48,44,60)</apparelColor>
+    <apparelMoney>1200~2600</apparelMoney>
+    <weaponMoney>1600~3200</weaponMoney>
+    <itemQuality>Good</itemQuality>
+    <weaponTags>
+      <li>UltratechMelee</li>
+      <li>MedievalMeleeAdvanced</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Melee</skill><range>14~20</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Obsidian_Ascomanni>1</RR_Obsidian_Ascomanni>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+</Defs>

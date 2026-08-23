@@ -75,6 +75,7 @@ function Build-VanillaIndex {
     $nameAttrs = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     $geneDefs  = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     $geneTemplates = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    $vanillaTexPaths = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 
     $files = Get-ChildItem -Path $DataRoot -Filter *.xml -Recurse -File -ErrorAction SilentlyContinue |
              Where-Object { $_.FullName -match '\\Defs\\' }
@@ -100,6 +101,17 @@ function Build-VanillaIndex {
 
             $na = $node.Attributes['Name']
             if ($na -and $na.Value) { [void]$nameAttrs.Add($na.Value.Trim()) }
+
+            # Every texture path vanilla itself references. Vanilla art lives in
+            # asset bundles so we cannot check the filesystem, but a path vanilla
+            # uses is certainly real - and a non-RR_ path that appears NOWHERE in
+            # vanilla is almost certainly a typo or an invention.
+            foreach ($tex in $node.SelectNodes('.//*')) {
+                if (-not (Test-IsTexturePathNode $tex.Name)) { continue }
+                if ($tex.ChildNodes.Count -ne 1) { continue }
+                if ([string]::IsNullOrWhiteSpace($tex.InnerText)) { continue }
+                [void]$vanillaTexPaths.Add(($tex.InnerText.Trim() -replace '\\', '/').TrimStart('/'))
+            }
         }
     }
 
@@ -108,6 +120,7 @@ function Build-VanillaIndex {
         NameAttrs     = @($nameAttrs)
         GeneDefs      = @($geneDefs)
         GeneTemplates = @($geneTemplates)
+        TexPaths      = @($vanillaTexPaths)
     }
 }
 
@@ -126,7 +139,7 @@ function Get-VanillaIndex {
 
     # Bumped whenever the cached shape changes, so an old cache is rebuilt rather
     # than read with missing fields.
-    $cacheSchema = 2
+    $cacheSchema = 3
 
     if (-not $Refresh -and (Test-Path $cacheFile)) {
         try {
@@ -138,6 +151,7 @@ function Get-VanillaIndex {
                     NameAttrs     = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.NameAttrs, [StringComparer]::Ordinal)
                     GeneDefs      = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.GeneDefs, [StringComparer]::Ordinal)
                     GeneTemplates = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.GeneTemplates, [StringComparer]::Ordinal)
+                    TexPaths      = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.TexPaths, [StringComparer]::OrdinalIgnoreCase)
                     Version       = $version
                 }
             }
@@ -158,6 +172,7 @@ function Get-VanillaIndex {
         NameAttrs     = $idx.NameAttrs
         GeneDefs      = $idx.GeneDefs
         GeneTemplates = $idx.GeneTemplates
+        TexPaths      = $idx.TexPaths
     } | ConvertTo-Json -Depth 3 -Compress | Set-Content -Path $cacheFile -Encoding UTF8
 
     Write-Host ("  vanilla index: built ({0} defs, {1} abstract names, {2} genes, {3} gene templates)" -f $idx.DefNames.Count, $idx.NameAttrs.Count, $idx.GeneDefs.Count, $idx.GeneTemplates.Count) -ForegroundColor DarkGray
@@ -167,6 +182,7 @@ function Get-VanillaIndex {
         NameAttrs     = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.NameAttrs, [StringComparer]::Ordinal)
         GeneDefs      = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.GeneDefs, [StringComparer]::Ordinal)
         GeneTemplates = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.GeneTemplates, [StringComparer]::Ordinal)
+        TexPaths      = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.TexPaths, [StringComparer]::OrdinalIgnoreCase)
         Version       = $version
     }
 }
@@ -529,9 +545,15 @@ foreach ($file in $xmlFiles) {
                     Add-Problem -Severity ERROR -Check 'MissingTexture' -File $rel `
                         -Message ("<{0}> '{1}' has no file under Textures/. Run New-PlaceholderTextures.ps1." -f $texNode.Name, $texPath)
                 }
+            } elseif ($vanilla.TexPaths.Contains($texPath)) {
+                # Vanilla references this exact path itself, so it is real even
+                # though it lives in an asset bundle we cannot inspect. Silent.
             } else {
-                Add-Problem -Severity WARN -Check 'UnverifiedTexture' -File $rel `
-                    -Message ("<{0}> '{1}' not found under Textures/ - assumed vanilla, cannot verify from disk." -f $texNode.Name, $texPath)
+                # Not ours, and vanilla never references it either. Almost always a
+                # typo or an invented path - "World/WorldObjects/Expanding/Settlement"
+                # looks plausible and does not exist.
+                Add-Problem -Severity ERROR -Check 'UnknownTexturePath' -File $rel `
+                    -Message ("<{0}> '{1}' is not under Textures/ and is referenced nowhere in vanilla. Check for a typo, or add the file." -f $texNode.Name, $texPath)
             }
         }
     }

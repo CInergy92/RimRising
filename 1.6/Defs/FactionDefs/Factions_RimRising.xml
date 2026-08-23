@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Factions.
+
+  Mirrored from Royalty/Defs/FactionDefs/Faction_Empire.xml and
+  Core/Defs/FactionDefs/Factions_Misc.xml. Royalty-only machinery (royalFavor*,
+  royalTitle*) is deliberately absent - Royalty is not a dependency.
+
+  techLevel values verified against the TechLevel enum by decompiling
+  Assembly-CSharp: Undefined, Animal, Neolithic, Medieval, Industrial, Spacer,
+  Ultra, Archotech.
+
+  THE HIERARCHY SHOULD BE LEGIBLE ON THE WORLD MAP
+
+  Each faction's xenotypeSet is its demographic profile, and its pawnGroupMakers
+  decide who actually turns up. The Society fields Grays in bulk with Obsidian
+  shock troops and, rarely, a single Gold. The resistance fields Reds in bulk with
+  whatever it has managed to turn. You should be able to read a faction's politics
+  off the raid that arrives, before reading a word of description.
+
+  Faction icons and name makers reuse vanilla assets for now; bespoke ones are art
+  and naming work for a later pass.
+-->
+<Defs>
+
+  <!-- ============================== the Society =========================== -->
+
+  <FactionDef ParentName="FactionBase">
+    <defName>RR_Society</defName>
+    <label>the Society</label>
+    <description>The order that owns the solar system, and the arithmetic that keeps it standing. Every person inside it is born into a Color, works the trade that Color was engineered for, and answers to the Colors above. It is not presented as politics. It is presented as biology, which is much harder to argue with.\n\nAt the top sit the Golds, who are genuinely superior and have spent eight centuries making sure everyone knows it. Beneath them the high, mid and low Colors grade downward through administration, craft and labor to the Reds in the mines, who are numerous, short-lived, and told they are lucky.\n\nThe Society trades, garrisons and occasionally obliterates. It regards a colony of mixed Colors doing as it pleases as a clerical error awaiting correction.</description>
+    <pawnSingular>Society citizen</pawnSingular>
+    <pawnsPlural>Society citizens</pawnsPlural>
+    <categoryTag>RR_Society</categoryTag>
+    <listOrderPriority>60</listOrderPriority>
+    <settlementGenerationWeight>1.2</settlementGenerationWeight>
+    <requiredCountAtGameStart>1</requiredCountAtGameStart>
+    <maxConfigurableAtWorldCreation>3</maxConfigurableAtWorldCreation>
+    <canSiege>true</canSiege>
+    <canStageAttacks>true</canStageAttacks>
+    <leaderTitle>sovereign</leaderTitle>
+    <techLevel>Spacer</techLevel>
+    <factionIconPath>World/WorldObjects/Expanding/Town</factionIconPath>
+    <factionNameMaker>NamerFactionOutlander</factionNameMaker>
+    <settlementNameMaker>NamerSettlementOutlander</settlementNameMaker>
+    <colorSpectrum>
+      <li>(0.85, 0.72, 0.28)</li>
+      <li>(1.0, 0.92, 0.62)</li>
+    </colorSpectrum>
+    <xenotypeSet>
+      <!--
+        Demographics, not power ranking. Reds are the overwhelming bulk; Golds are
+        a rounding error who nonetheless run the place.
+      -->
+      <xenotypeChances>
+        <RR_Red>0.34</RR_Red>
+        <RR_Gray>0.14</RR_Gray>
+        <RR_Brown>0.11</RR_Brown>
+        <RR_Orange>0.08</RR_Orange>
+        <RR_Obsidian>0.05</RR_Obsidian>
+        <RR_Pink>0.05</RR_Pink>
+        <RR_Green>0.04</RR_Green>
+        <RR_Blue>0.04</RR_Blue>
+        <RR_Yellow>0.04</RR_Yellow>
+        <RR_Copper>0.03</RR_Copper>
+        <RR_Violet>0.02</RR_Violet>
+        <RR_White>0.02</RR_White>
+        <RR_Silver>0.015</RR_Silver>
+        <RR_Bronzie>0.012</RR_Bronzie>
+        <RR_Gold>0.008</RR_Gold>
+      </xenotypeChances>
+    </xenotypeSet>
+    <pawnGroupMakers>
+      <li>
+        <kindDef>Combat</kindDef>
+        <commonality>100</commonality>
+        <options>
+          <RR_Society_Legionary>10</RR_Society_Legionary>
+          <RR_Society_Obsidian_Knight>3</RR_Society_Obsidian_Knight>
+          <RR_Society_Lurcher>1.5</RR_Society_Lurcher>
+          <RR_Society_Bronzie_Officer>1.5</RR_Society_Bronzie_Officer>
+          <RR_Society_Gold_Praetor>0.4</RR_Society_Gold_Praetor>
+        </options>
+      </li>
+      <li>
+        <kindDef>Trader</kindDef>
+        <traders>
+          <RR_Society_Silver_Factor>1</RR_Society_Silver_Factor>
+        </traders>
+        <carriers>
+          <Muffalo>6</Muffalo>
+          <Dromedary>5</Dromedary>
+          <Alpaca>2</Alpaca>
+          <Elephant>1</Elephant>
+        </carriers>
+        <guards>
+          <RR_Society_Legionary>10</RR_Society_Legionary>
+          <RR_Society_Obsidian_Knight>2</RR_Society_Obsidian_Knight>
+          <RR_Society_Bronzie_Officer>1</RR_Society_Bronzie_Officer>
+        </guards>
+      </li>
+      <li>
+        <kindDef>Peaceful</kindDef>
+        <options>
+          <RR_Society_Copper_Official>6</RR_Society_Copper_Official>
+          <RR_Society_Yellow_Medicus>4</RR_Society_Yellow_Medicus>
+          <RR_Society_Silver_Factor>3</RR_Society_Silver_Factor>
+          <RR_Society_Brown_Servant>6</RR_Society_Brown_Servant>
+          <RR_Society_Red_Laborer>8</RR_Society_Red_Laborer>
+          <RR_Society_Legionary>4</RR_Society_Legionary>
+        </options>
+      </li>
+      <li>
+        <kindDef>Settlement</kindDef>
+        <options>
+          <RR_Society_Legionary>10</RR_Society_Legionary>
+          <RR_Society_Obsidian_Knight>3</RR_Society_Obsidian_Knight>
+          <RR_Society_Lurcher>1</RR_Society_Lurcher>
+          <RR_Society_Bronzie_Officer>1.5</RR_Society_Bronzie_Officer>
+          <RR_Society_Gold_Praetor>0.3</RR_Society_Gold_Praetor>
+        </options>
+      </li>
+    </pawnGroupMakers>
+  </FactionDef>
+
+  <!-- ============================ the Rim Dominion ========================= -->
+
+  <FactionDef ParentName="FactionBase">
+    <defName>RR_RimDominion</defName>
+    <label>Rim Dominion</label>
+    <description>Gold rule as practised a very long way from anyone who could correct it. The Dominion keeps the Colors, keeps the breeding registries, and keeps a cordial distance from the Society it technically belongs to - an arrangement both sides describe as tradition and neither mistakes for loyalty.\n\nDistance has made them harder. Their Reds are bred dense for crushing gravity, their fleets are older and better handled, and their Golds regard the inner worlds as decadent. What the Dominion wants is rarely the same as what the Society wants, and it has never once been asked.</description>
+    <pawnSingular>Dominion citizen</pawnSingular>
+    <pawnsPlural>Dominion citizens</pawnsPlural>
+    <categoryTag>RR_Society</categoryTag>
+    <listOrderPriority>55</listOrderPriority>
+    <settlementGenerationWeight>0.7</settlementGenerationWeight>
+    <maxConfigurableAtWorldCreation>2</maxConfigurableAtWorldCreation>
+    <canSiege>true</canSiege>
+    <canStageAttacks>true</canStageAttacks>
+    <leaderTitle>archgovernor</leaderTitle>
+    <techLevel>Spacer</techLevel>
+    <factionIconPath>World/WorldObjects/Expanding/Town</factionIconPath>
+    <factionNameMaker>NamerFactionOutlander</factionNameMaker>
+    <settlementNameMaker>NamerSettlementOutlander</settlementNameMaker>
+    <colorSpectrum>
+      <li>(0.62, 0.55, 0.30)</li>
+      <li>(0.90, 0.84, 0.55)</li>
+    </colorSpectrum>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Red>0.22</RR_Red>
+        <RR_Red_Ultraheavy>0.14</RR_Red_Ultraheavy>
+        <RR_Gray>0.13</RR_Gray>
+        <RR_Obsidian>0.09</RR_Obsidian>
+        <RR_Brown>0.09</RR_Brown>
+        <RR_Blue>0.07</RR_Blue>
+        <RR_Orange>0.07</RR_Orange>
+        <RR_Yellow>0.04</RR_Yellow>
+        <RR_Green>0.03</RR_Green>
+        <RR_Copper>0.03</RR_Copper>
+        <RR_White>0.02</RR_White>
+        <RR_Silver>0.015</RR_Silver>
+        <RR_Bronzie>0.015</RR_Bronzie>
+        <RR_Gold>0.01</RR_Gold>
+      </xenotypeChances>
+    </xenotypeSet>
+    <pawnGroupMakers>
+      <li>
+        <kindDef>Combat</kindDef>
+        <commonality>100</commonality>
+        <options>
+          <RR_Society_Legionary>9</RR_Society_Legionary>
+          <RR_Society_Obsidian_Knight>4</RR_Society_Obsidian_Knight>
+          <RR_Society_Bronzie_Officer>2</RR_Society_Bronzie_Officer>
+          <RR_Society_Gold_Praetor>0.5</RR_Society_Gold_Praetor>
+        </options>
+      </li>
+      <li>
+        <kindDef>Trader</kindDef>
+        <traders>
+          <RR_Society_Silver_Factor>1</RR_Society_Silver_Factor>
+        </traders>
+        <carriers>
+          <Muffalo>6</Muffalo>
+          <Dromedary>5</Dromedary>
+        </carriers>
+        <guards>
+          <RR_Society_Legionary>8</RR_Society_Legionary>
+          <RR_Society_Obsidian_Knight>3</RR_Society_Obsidian_Knight>
+        </guards>
+      </li>
+      <li>
+        <kindDef>Peaceful</kindDef>
+        <options>
+          <RR_Society_Copper_Official>5</RR_Society_Copper_Official>
+          <RR_Society_Red_Laborer>8</RR_Society_Red_Laborer>
+          <RR_Society_Brown_Servant>5</RR_Society_Brown_Servant>
+          <RR_Society_Legionary>4</RR_Society_Legionary>
+        </options>
+      </li>
+      <li>
+        <kindDef>Settlement</kindDef>
+        <options>
+          <RR_Society_Legionary>10</RR_Society_Legionary>
+          <RR_Society_Obsidian_Knight>4</RR_Society_Obsidian_Knight>
+          <RR_Society_Bronzie_Officer>1.5</RR_Society_Bronzie_Officer>
+        </options>
+      </li>
+    </pawnGroupMakers>
+  </FactionDef>
+
+  <!-- ============================ the resistance =========================== -->
+
+  <FactionDef ParentName="FactionBase">
+    <defName>RR_SonsOfAres</defName>
+    <label>Sons of Ares</label>
+    <description>A rebellion assembled out of the people the hierarchy was built to use. Reds out of the mines, Obsidians off the ice, Oranges who know exactly which part of a thing to break, and the occasional Gray who read the standing orders one time too many.\n\nThey are outgunned in every engagement they choose and they choose them carefully. What they have instead is that the Society cannot function without the Colors it despises, and every one of those Colors knows where the load-bearing walls are.\n\nThey will take help from anyone who does not ask what a person's Color is first.</description>
+    <pawnSingular>Ares fighter</pawnSingular>
+    <pawnsPlural>Ares fighters</pawnsPlural>
+    <categoryTag>RR_Resistance</categoryTag>
+    <listOrderPriority>50</listOrderPriority>
+    <settlementGenerationWeight>0.8</settlementGenerationWeight>
+    <requiredCountAtGameStart>1</requiredCountAtGameStart>
+    <maxConfigurableAtWorldCreation>2</maxConfigurableAtWorldCreation>
+    <canSiege>true</canSiege>
+    <canStageAttacks>true</canStageAttacks>
+    <leaderTitle>ares</leaderTitle>
+    <techLevel>Industrial</techLevel>
+    <factionIconPath>World/WorldObjects/Expanding/VillageRough</factionIconPath>
+    <factionNameMaker>NamerFactionOutlander</factionNameMaker>
+    <settlementNameMaker>NamerSettlementOutlander</settlementNameMaker>
+    <colorSpectrum>
+      <li>(0.70, 0.16, 0.16)</li>
+      <li>(0.95, 0.45, 0.40)</li>
+    </colorSpectrum>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Red>0.44</RR_Red>
+        <RR_Red_Ultraheavy>0.07</RR_Red_Ultraheavy>
+        <RR_Obsidian>0.11</RR_Obsidian>
+        <RR_Orange>0.10</RR_Orange>
+        <RR_Brown>0.08</RR_Brown>
+        <RR_Gray>0.06</RR_Gray>
+        <RR_Pink>0.05</RR_Pink>
+        <RR_Green>0.03</RR_Green>
+        <RR_Violet>0.02</RR_Violet>
+        <RR_Blue>0.02</RR_Blue>
+        <RR_Bronzie>0.015</RR_Bronzie>
+        <RR_Gold>0.005</RR_Gold>
+      </xenotypeChances>
+    </xenotypeSet>
+    <pawnGroupMakers>
+      <li>
+        <kindDef>Combat</kindDef>
+        <commonality>100</commonality>
+        <options>
+          <RR_Ares_Red_Fighter>12</RR_Ares_Red_Fighter>
+          <RR_Ares_Orange_Saboteur>3</RR_Ares_Orange_Saboteur>
+          <RR_Ares_Obsidian_Freed>2.5</RR_Ares_Obsidian_Freed>
+          <RR_Ares_Gray_Defector>2</RR_Ares_Gray_Defector>
+          <RR_Ares_Gold_Turncoat>0.3</RR_Ares_Gold_Turncoat>
+        </options>
+      </li>
+      <li>
+        <kindDef>Trader</kindDef>
+        <traders>
+          <RR_Society_Silver_Factor>1</RR_Society_Silver_Factor>
+        </traders>
+        <carriers>
+          <Muffalo>6</Muffalo>
+          <Dromedary>4</Dromedary>
+        </carriers>
+        <guards>
+          <RR_Ares_Red_Fighter>10</RR_Ares_Red_Fighter>
+          <RR_Ares_Obsidian_Freed>2</RR_Ares_Obsidian_Freed>
+        </guards>
+      </li>
+      <li>
+        <kindDef>Peaceful</kindDef>
+        <options>
+          <RR_Ares_Red_Fighter>8</RR_Ares_Red_Fighter>
+          <RR_Ares_Orange_Saboteur>3</RR_Ares_Orange_Saboteur>
+          <RR_Society_Brown_Servant>2</RR_Society_Brown_Servant>
+        </options>
+      </li>
+      <li>
+        <kindDef>Settlement</kindDef>
+        <options>
+          <RR_Ares_Red_Fighter>12</RR_Ares_Red_Fighter>
+          <RR_Ares_Orange_Saboteur>3</RR_Ares_Orange_Saboteur>
+          <RR_Ares_Obsidian_Freed>3</RR_Ares_Obsidian_Freed>
+          <RR_Ares_Gray_Defector>2</RR_Ares_Gray_Defector>
+        </options>
+      </li>
+    </pawnGroupMakers>
+  </FactionDef>
+
+  <!-- =========================== the Obsidian tribes ======================= -->
+
+  <FactionDef ParentName="FactionBase">
+    <defName>RR_ObsidianTribes</defName>
+    <label>obsidian tribes</label>
+    <description>After the revolt failed, the survivors were moved to the poles, stripped of every tool that could be turned into a weapon worth the name, and given gods who look exactly like the people who put them there. Eight centuries later the arrangement holds, and the tribes fight each other over ice.\n\nThey are the largest and strongest human beings anyone makes, armed with spears, and entirely convinced that the Colors above them are divine. The Society considers this its finest piece of engineering. It is not the genetics it is proud of.</description>
+    <pawnSingular>tribesperson</pawnSingular>
+    <pawnsPlural>tribespeople</pawnsPlural>
+    <categoryTag>RR_Tribe</categoryTag>
+    <listOrderPriority>45</listOrderPriority>
+    <settlementGenerationWeight>0.9</settlementGenerationWeight>
+    <maxConfigurableAtWorldCreation>2</maxConfigurableAtWorldCreation>
+    <canSiege>true</canSiege>
+    <canStageAttacks>true</canStageAttacks>
+    <leaderTitle>queen</leaderTitle>
+    <techLevel>Neolithic</techLevel>
+    <factionIconPath>World/WorldObjects/Expanding/VillageSavage</factionIconPath>
+    <factionNameMaker>NamerFactionTribal</factionNameMaker>
+    <settlementNameMaker>NamerSettlementTribal</settlementNameMaker>
+    <colorSpectrum>
+      <li>(0.28, 0.27, 0.33)</li>
+      <li>(0.62, 0.60, 0.70)</li>
+    </colorSpectrum>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Obsidian>0.88</RR_Obsidian>
+        <RR_Obsidian_Stained>0.12</RR_Obsidian_Stained>
+      </xenotypeChances>
+    </xenotypeSet>
+    <pawnGroupMakers>
+      <li>
+        <kindDef>Combat</kindDef>
+        <commonality>100</commonality>
+        <options>
+          <RR_Tribe_Obsidian_Warrior>12</RR_Tribe_Obsidian_Warrior>
+          <RR_Tribe_Obsidian_Stained>1.5</RR_Tribe_Obsidian_Stained>
+        </options>
+      </li>
+      <li>
+        <kindDef>Peaceful</kindDef>
+        <options>
+          <RR_Tribe_Obsidian_Warrior>10</RR_Tribe_Obsidian_Warrior>
+        </options>
+      </li>
+      <li>
+        <kindDef>Settlement</kindDef>
+        <options>
+          <RR_Tribe_Obsidian_Warrior>12</RR_Tribe_Obsidian_Warrior>
+          <RR_Tribe_Obsidian_Stained>2</RR_Tribe_Obsidian_Stained>
+        </options>
+      </li>
+    </pawnGroupMakers>
+  </FactionDef>
+
+  <!-- ============================== Ascomanni ============================= -->
+
+  <FactionDef ParentName="FactionBase">
+    <defName>RR_Ascomanni</defName>
+    <label>ascomanni</label>
+    <description>What the outer dark did to the warbands that ran from the revolt, given eight hundred years and no oversight. They kept cutting at themselves the whole way out, and whatever they were aiming for, they arrived somewhere else.\n\nThey do not raid for territory and they do not negotiate. Ships come out of the cold with their hulls decorated, and the crews do not appear to want anything that can be given to them.</description>
+    <pawnSingular>ascomanni</pawnSingular>
+    <pawnsPlural>ascomanni</pawnsPlural>
+    <categoryTag>RR_Ascomanni</categoryTag>
+    <listOrderPriority>40</listOrderPriority>
+    <settlementGenerationWeight>0.5</settlementGenerationWeight>
+    <maxConfigurableAtWorldCreation>1</maxConfigurableAtWorldCreation>
+    <canSiege>true</canSiege>
+    <canStageAttacks>true</canStageAttacks>
+    <permanentEnemy>true</permanentEnemy>
+    <leaderTitle>warlord</leaderTitle>
+    <techLevel>Industrial</techLevel>
+    <factionIconPath>World/WorldObjects/Expanding/PirateOutpost</factionIconPath>
+    <factionNameMaker>NamerFactionPirate</factionNameMaker>
+    <settlementNameMaker>NamerSettlementPirate</settlementNameMaker>
+    <colorSpectrum>
+      <li>(0.20, 0.18, 0.26)</li>
+      <li>(0.50, 0.44, 0.62)</li>
+    </colorSpectrum>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Obsidian_Ascomanni>1</RR_Obsidian_Ascomanni>
+      </xenotypeChances>
+    </xenotypeSet>
+    <pawnGroupMakers>
+      <li>
+        <kindDef>Combat</kindDef>
+        <commonality>100</commonality>
+        <options>
+          <RR_Ascomanni_Raider>10</RR_Ascomanni_Raider>
+          <RR_Ascomanni_Warlord>1</RR_Ascomanni_Warlord>
+        </options>
+      </li>
+      <li>
+        <kindDef>Settlement</kindDef>
+        <options>
+          <RR_Ascomanni_Raider>10</RR_Ascomanni_Raider>
+          <RR_Ascomanni_Warlord>1.5</RR_Ascomanni_Warlord>
+        </options>
+      </li>
+    </pawnGroupMakers>
+  </FactionDef>
+
+</Defs>
