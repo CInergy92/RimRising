@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Milestone 1 skeleton item.
+
+  Every node below is mirrored from a verified vanilla example:
+    ParentName="ResourceBase"  -> Core/Defs/ThingDefs_Items/Items_Resource_Base.xml
+    node set + graphicData     -> Core/Defs/ThingDefs_Items/Items_Resource_Manufactured.xml
+                                  (ComponentIndustrial)
+    <li>Manufactured</li>      -> Core/Defs/ThingCategoryDefs/ (line 73), verified present
+    Metal_Drop / Standard_Drop -> Core/Defs/SoundDefs/Interact_Oneshots_PickupDrop.xml
+-->
+<Defs>
+
+  <ThingDef ParentName="ResourceBase">
+    <defName>RR_Ionsteel</defName>
+    <label>ionsteel</label>
+    <description>A lattice-forged alloy, grown rather than smelted, whose grain is aligned under sustained magnetic load. It holds an edge past the point where ordinary steel deforms, and it is correspondingly miserable to work. The crews who pour it rarely see what gets made from it.</description>
+    <graphicData>
+      <texPath>Things/Item/Resource/RR_Ionsteel</texPath>
+      <graphicClass>Graphic_StackCount</graphicClass>
+    </graphicData>
+    <soundInteract>Metal_Drop</soundInteract>
+    <soundDrop>Standard_Drop</soundDrop>
+    <stackLimit>75</stackLimit>
+    <healthAffectsPrice>false</healthAffectsPrice>
+    <statBases>
+      <MaxHitPoints>120</MaxHitPoints>
+      <MarketValue>18</MarketValue>
+      <Mass>0.5</Mass>
+      <Flammability>0.2</Flammability>
+      <DeteriorationRate>1.0</DeteriorationRate>
+    </statBases>
+    <thingCategories>
+      <li>Manufactured</li>
+    </thingCategories>
+  </ThingDef>
+
+</Defs>

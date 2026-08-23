@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+  <name>Red Rising</name>
+  <author>cinergy92</author>
+  <packageId>cinergy92.redrising</packageId>
+  <modIconPath IgnoreIfNoMatchingField="True">UI/RedRisingModIcon</modIconPath>
+  <description>A total conversion built around an engineered caste hierarchy: ten Colors, each a xenotype with its own capabilities and its own costs, bound together by a social order that gives the hierarchy real mechanical weight.
+
+Requires Biotech for the Color system and Ideology for the caste hierarchy.
+
+This mod is a work in progress.</description>
+
+  <supportedVersions>
+    <li>1.6</li>
+  </supportedVersions>
+
+  <modDependencies>
+    <li>
+      <packageId>Ludeon.RimWorld.Biotech</packageId>
+      <displayName>Biotech</displayName>
+    </li>
+    <li>
+      <packageId>Ludeon.RimWorld.Ideology</packageId>
+      <displayName>Ideology</displayName>
+    </li>
+  </modDependencies>
+
+  <loadAfter>
+    <li>Ludeon.RimWorld</li>
+    <li>Ludeon.RimWorld.Royalty</li>
+    <li>Ludeon.RimWorld.Ideology</li>
+    <li>Ludeon.RimWorld.Biotech</li>
+    <li>Ludeon.RimWorld.Anomaly</li>
+    <li>Ludeon.RimWorld.Odyssey</li>
+    <li>brrainz.harmony</li>
+  </loadAfter>
+</ModMetaData>

@@ -1,0 +1,18 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+
+# Tooling cache (vanilla def index, rebuilt on demand)
+Tools/.cache/
+
+# The compiled mod assembly is a build artifact of /Source.
+# Uncomment once Source/ produces it, so it is not committed twice.
+# 1.6/Assemblies/*.dll
+# 1.6/Assemblies/*.pdb
+
+# OS noise
+Thumbs.db
+desktop.ini
+.DS_Store

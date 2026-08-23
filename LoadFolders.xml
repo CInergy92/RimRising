@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Load order for RimRising.
+
+  <li>/</li>  = the repo root, holding version-independent assets:
+                Textures/, Sounds/, Languages/
+  <li>1.6</li> = version-specific content: Defs/, Patches/, Assemblies/
+
+  Conditional folders are added here ONLY once the folder actually exists.
+  Listing a path that is not on disk has not been verified as safe, so we do
+  not speculate. Planned additions, each gated by IfModActive:
+
+    1.6/Mods/RimJobWorld      IfModActive="rim.job.world"
+    1.6/Mods/CombatExtended   IfModActive="ceteam.combatextended"
+    1.6/Mods/Royalty          IfModActive="Ludeon.RimWorld.Royalty"
+    1.6/Mods/Anomaly          IfModActive="Ludeon.RimWorld.Anomaly"
+    1.6/Mods/Odyssey          IfModActive="Ludeon.RimWorld.Odyssey"
+-->
+<loadFolders>
+  <v1.6>
+    <li>/</li>
+    <li>1.6</li>
+  </v1.6>
+</loadFolders>
