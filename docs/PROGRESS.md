@@ -17,7 +17,7 @@ Game target: **RimWorld 1.6.4871 rev590**. packageId: `cinergy92.rimrising`.
 | 4 | Tech and equipment | **Verified in game.** Razor, pulse fist, pulse armor, scarabSkin, demonHelm |
 | 5 | Ideology and hierarchy | **Verified in game.** Memes, 13 knighthoods, razor lock, caste romance, Gold ladder |
 | 6 | Scenarios and world | **Verified in game.** Two starts, two biomes, faction placement |
-| 7 | Vanilla suppression | **Built, validated, published; awaiting in-game verification** |
+| 7 | Vanilla suppression | **Verified in game.** Settings toggle, xenotypes + generic factions, two merchant houses |
 
 ---
 
