@@ -52,8 +52,24 @@
     </roleRequiredWorkTags>
     <expectationsOffset>2</expectationsOffset>
     <impact>High</impact>
-    <activationBelieverCount>5</activationBelieverCount>
-    <deactivationBelieverCount>2</deactivationBelieverCount>
+    <!--
+      Vanilla's own numbers, from Ideology/Defs/PreceptDefs/Precepts_Role.xml, and
+      they were 5/2 here until a knighthood kept switching itself off.
+
+      Precept_RoleSingle.RecacheActivity deactivates when
+      ideo.ColonistBelieverCountCached <= deactivationBelieverCount, and that count
+      is COLONISTS - which does not include pawns despawned into a vehicle, a
+      caravan, or a cryptosleep casket. Boarding the Drachenjaeger with its
+      three-pawn crew therefore dropped a small colony to 2 believers and stripped
+      every knight, restoring them on dismount.
+
+      That is ordinary RimWorld behaviour rather than a Vehicle Framework fault -
+      a caravan does the same thing. But 5/2 was tight enough to hit it in normal
+      play, and a Society-wide title has no business lapsing because three people
+      got into a machine. At 1, the colony has to be down to a single believer.
+    -->
+    <activationBelieverCount>3</activationBelieverCount>
+    <deactivationBelieverCount>1</deactivationBelieverCount>
   </PreceptDef>
 
   <!-- ============================ the thirteen ============================= -->
