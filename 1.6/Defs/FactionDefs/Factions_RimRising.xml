@@ -39,7 +39,18 @@
     <canSiege>true</canSiege>
     <canStageAttacks>true</canStageAttacks>
     <leaderTitle>sovereign</leaderTitle>
-    <techLevel>Spacer</techLevel>
+    <!--
+      Royalty title machinery. royalTitleTags must match the <tags> on the titles
+      in Defs/RoyalTitles. Golds earn standing by serving the Society; the
+      Institute is what confers it in the fiction, and favor is the only currency
+      RimWorld's title system understands.
+    -->
+    <royalFavorLabel>standing</royalFavorLabel>
+    <royalFavorIconPath>UI/Icons/RoyalFavor</royalFavorIconPath>
+    <royalTitleTags>
+      <li>RR_GoldTitle</li>
+    </royalTitleTags>
+    <royalTitleInheritanceWorkerClass>RoyalTitleInheritanceWorker</royalTitleInheritanceWorkerClass>    <techLevel>Spacer</techLevel>
     <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>
     <factionIconPath>World/WorldObjects/Expanding/Town</factionIconPath>
     <factionNameMaker>NamerFactionOutlander</factionNameMaker>
@@ -174,7 +185,18 @@
     <canSiege>true</canSiege>
     <canStageAttacks>true</canStageAttacks>
     <leaderTitle>archgovernor</leaderTitle>
-    <techLevel>Spacer</techLevel>
+    <!--
+      Royalty title machinery. royalTitleTags must match the <tags> on the titles
+      in Defs/RoyalTitles. Golds earn standing by serving the Society; the
+      Institute is what confers it in the fiction, and favor is the only currency
+      RimWorld's title system understands.
+    -->
+    <royalFavorLabel>standing</royalFavorLabel>
+    <royalFavorIconPath>UI/Icons/RoyalFavor</royalFavorIconPath>
+    <royalTitleTags>
+      <li>RR_GoldTitle</li>
+    </royalTitleTags>
+    <royalTitleInheritanceWorkerClass>RoyalTitleInheritanceWorker</royalTitleInheritanceWorkerClass>    <techLevel>Spacer</techLevel>
     <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>
     <factionIconPath>World/WorldObjects/Expanding/Town</factionIconPath>
     <factionNameMaker>NamerFactionOutlander</factionNameMaker>

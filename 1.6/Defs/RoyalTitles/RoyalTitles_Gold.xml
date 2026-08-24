@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The Gold rank ladder.
+
+  Shamed, Graduate, Peerless Scarred. These are RoyalTitleDefs rather than
+  Ideology roles because they are PROGRESSION - a pawn climbs from one to the
+  next, and any number of Golds may hold each rank at once. Contrast the
+  knighthoods, which are singular and therefore live on Precept_RoleSingle.
+
+  Structure mirrored from Royalty/Defs/RoyalTitles/RoyalTitles_Empire.xml.
+
+  Earned at the Institute in the fiction; earned in favor here, which is the only
+  currency RimWorld's title system understands. Close enough: standing with the
+  Society is what the Institute confers.
+
+  Requirements are deliberately far lighter than the Empire's. The Empire's ladder
+  is the centrepiece of its DLC, with permits, decrees and elaborate throne rooms.
+  This ladder is a status marker inside a much larger mod, and burdening a colony
+  with throne-room construction to represent a school result would be tedious. So:
+  expectations, apparel at the top, and a modest bedroom for the Peerless.
+
+  NOT GATED TO GOLD YET. RimWorld's title system has no xenotype condition, and
+  unlike RoleRequirement there is no clean abstract to subclass - titles are
+  awarded through quests and RoyalTitleAwardWorker, neither of which asks who the
+  pawn is. Gating this properly means patching the award path. See docs/PROGRESS.md.
+-->
+<Defs>
+
+  <RoyalTitleDef Abstract="True" Name="RR_GoldTitleBase">
+    <tags>
+      <li>RR_GoldTitle</li>
+    </tags>
+    <awardThought>GainedTitle</awardThought>
+    <lostThought>LostTitle</lostThought>
+    <awardWorkerClass>RoyalTitleAwardWorker_Instant</awardWorkerClass>
+  </RoyalTitleDef>
+
+  <!-- ================================ Shamed ============================== -->
+
+  <RoyalTitleDef ParentName="RR_GoldTitleBase">
+    <defName>RR_Title_Shamed</defName>
+    <label>Shamed</label>
+    <description>A Gold who went to the Institute and came back out the bottom. The title is not stripped from them - they remain Gold, and the law still protects them as such - but nothing further will be offered, and everyone in the room already knows.\n\nThe Shamed are given administrative posts on the far edges of the system, where the work is exhausting, the company is thin, and nobody important has to look at them.</description>
+    <seniority>0</seniority>
+    <favorCost>1</favorCost>
+    <changeHeirQuestPoints>800</changeHeirQuestPoints>
+    <allowDignifiedMeditationFocus>False</allowDignifiedMeditationFocus>
+    <canBeInherited>False</canBeInherited>
+    <commonality>1.5</commonality>
+  </RoyalTitleDef>
+
+  <!-- =============================== Graduate ============================= -->
+
+  <RoyalTitleDef ParentName="RR_GoldTitleBase">
+    <defName>RR_Title_Graduate</defName>
+    <label>Graduate</label>
+    <description>Attended the Institute, survived it, and distinguished themselves at nothing in particular. Most Golds are Graduates, which is exactly the complaint.\n\nA Graduate may command, govern and advance, and a great many do perfectly well. What they will never do is walk into a room and have it go quiet.</description>
+    <seniority>200</seniority>
+    <favorCost>6</favorCost>
+    <minExpectation>Moderate</minExpectation>
+    <changeHeirQuestPoints>1400</changeHeirQuestPoints>
+    <recruitmentResistanceOffset>15</recruitmentResistanceOffset>
+    <canBeInherited>True</canBeInherited>
+    <commonality>3</commonality>
+    <disabledWorkTags>
+      <li>ManualDumb</li>
+    </disabledWorkTags>
+  </RoyalTitleDef>
+
+  <!-- =========================== Peerless Scarred ========================= -->
+
+  <RoyalTitleDef ParentName="RR_GoldTitleBase">
+    <defName>RR_Title_PeerlessScarred</defName>
+    <label>Peerless Scarred</label>
+    <description>The brightest and the hardest of their Color, marked on the face so that the fact travels ahead of them. The scar is not decoration and is not concealed; it is a citation, and it is the only credential the Society entirely trusts.\n\nHigh office is effectively closed to Golds without it. Those who carry it are aware of this, and so is everybody else.</description>
+    <seniority>500</seniority>
+    <favorCost>14</favorCost>
+    <minExpectation>High</minExpectation>
+    <changeHeirQuestPoints>2000</changeHeirQuestPoints>
+    <recruitmentResistanceOffset>35</recruitmentResistanceOffset>
+    <canBeInherited>False</canBeInherited>
+    <commonality>1</commonality>
+    <disabledWorkTags>
+      <li>ManualDumb</li>
+      <li>Cleaning</li>
+      <li>Hauling</li>
+    </disabledWorkTags>
+    <!--
+      Deliberately no throne room requirement. The Empire demands one because its
+      ladder IS the Royalty DLC; here the rank is one status marker among many, and
+      making a colony build a throne room to represent a school result would be
+      tedious rather than characterful.
+    -->
+    <bedroomRequirements>
+      <li Class="RoomRequirement_Area">
+        <area>20</area>
+      </li>
+      <li Class="RoomRequirement_Impressiveness">
+        <impressiveness>30</impressiveness>
+      </li>
+    </bedroomRequirements>
+    <foodRequirement>
+      <minQuality>MealFine</minQuality>
+      <allowedTypes>Processed, Liquor</allowedTypes>
+      <allowedDefs>
+        <li>Ambrosia</li>
+      </allowedDefs>
+    </foodRequirement>
+  </RoyalTitleDef>
+
+</Defs>

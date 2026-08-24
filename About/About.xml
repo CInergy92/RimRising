@@ -24,6 +24,9 @@ This mod is a work in progress.</description>
       <displayName>Ideology</displayName>
     </li>
     <li>
+      <packageId>Ludeon.RimWorld.Royalty</packageId>
+      <displayName>Royalty</displayName>
+    </li>    <li>
       <packageId>Nals.FacialAnimation</packageId>
       <displayName>[NL] Facial Animation</displayName>
       <steamWorkshopUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=1635901197</steamWorkshopUrl>
