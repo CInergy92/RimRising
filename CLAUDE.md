@@ -223,6 +223,42 @@ visible in XML. Must be tested in game before Milestone 2 is called done.
 
 ---
 
+## Faction relations are player-relative — NPC-to-NPC is not authorable
+
+**Correct an instinct here before wasting time on it.** RimWorld does not let a mod set how two NPC
+factions feel about each other. Decompiling `GoodwillSituationWorker` shows every method takes only
+`Faction other`, and the concrete workers resolve the second party as `Faction.OfPlayer`:
+
+```csharp
+private bool Applies(Faction other)
+{
+    if (!Applies(Faction.OfPlayer, other)) { return Applies(other, Faction.OfPlayer); }
+    return true;
+}
+```
+
+So `GoodwillSituationDef` answers "how does this faction feel about the colony", nothing else.
+`FactionDef` has no `startingGoodwill` either — NPC relations are randomised at worldgen.
+
+What *is* authorable:
+
+| Lever | Effect |
+|---|---|
+| `permanentEnemy` | permanently hostile to the player |
+| `permanentEnemyToEveryoneExcept` | hostile to **all factions**, listing FactionDef defNames as exceptions. The only true NPC-to-NPC lever. |
+| `naturalEnemy` | hostile to the player by default |
+| `hostileToFactionlessHumanlikes` | |
+| `GoodwillSituationDef` + `naturalGoodwillOffset` | player-relative goodwill, optionally keyed on memes |
+
+**Consequence for this mod:** "the Society hates the resistance" cannot be expressed directly. The
+version that works is ideoligion-driven and belongs in Milestone 5 — a `GoodwillSituationDef` keyed
+on our Color-hierarchy memes, so a colony running the Society's ideoligion is liked by the Society
+and loathed by the resistance, and the reverse. That is pure XML once the memes exist, and it is the
+version that actually matters in play, since the player is the only party whose relations the game
+simulates meaningfully.
+
+---
+
 ## Textures
 
 **Vanilla textures are not loose files.** There is no `Data/Core/Textures/` — vanilla art ships

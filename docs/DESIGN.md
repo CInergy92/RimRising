@@ -312,6 +312,39 @@ call, so it is yours.
 
 ---
 
+## 4.1 Titles — the Olympic Knights, and how titles should work
+
+The Olympic Knights are an order of thirteen Golds who answer to the Compact rather than to the
+Sovereign, held to be the best warriors alive. **After the Second Moon Lord Rebellion the order
+split into a Core branch and a Rim branch**, so the Society *and* the Rim Dominion each appoint
+their own — which is why the knight pawn kind appears in both factions.
+
+Named knighthoods, each held by one person at a time: **Morning, Rage, Protean, Storm, Wind,
+Hearth, Truth, Joy, Death, Cloud, Fear, Love**, plus the **Shadow Knight** standing apart.
+
+### The decision: Royalty titles or Ideology roles?
+
+These are titles, not a pawn type, and RimWorld has two systems that could carry them. **This is a
+real fork and it is yours.**
+
+| | Royalty `RoyalTitleDef` | Ideology role precepts |
+|---|---|---|
+| Fit | Purpose-built for titles. Granted by a faction, ranked, inheritable. | Built for ideoligious roles, not ranks. |
+| Gives | Honor economy, permits, apparel and bedroom requirements, title progression | An ability or two, apparel requirements, thoughts |
+| Count | Many titles, freely defined | **Hard cap of a few roles per ideoligion** |
+| Cost | Adds **Royalty** as a dependency | Ideology is already a dependency |
+| Also covers | The Gold rank ladder — Peerless Scarred / Graduate / Shamed — cleanly | Would compete for the same scarce role slots |
+
+**My recommendation: take the Royalty dependency and use `RoyalTitleDef`.** You own Royalty, the
+dependency surface is already deliberately large, and it is the only system that can carry both the
+thirteen knighthoods *and* the Gold rank ladder without fighting Ideology for slots. Ideology roles
+should then be spent on what only they can do — the caste hierarchy itself (§4).
+
+Nothing has been built either way yet. The knight exists for now as an elite pawn kind
+(`RR_Society_OlympicKnight`, combatPower 340 — one is worth more than a whole Society squad).
+
+---
+
 ## 5. Factions — Milestone 3 sketch
 
 `Royalty/Defs/FactionDefs/Faction_Empire.xml` is the reference for a stratified faction whose

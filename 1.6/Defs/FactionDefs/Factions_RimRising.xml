@@ -80,6 +80,7 @@
           <RR_Society_Lurcher>1.5</RR_Society_Lurcher>
           <RR_Society_Bronzie_Officer>1.5</RR_Society_Bronzie_Officer>
           <RR_Society_Gold_Praetor>0.4</RR_Society_Gold_Praetor>
+          <RR_Society_OlympicKnight>0.08</RR_Society_OlympicKnight>
         </options>
       </li>
       <li>
@@ -118,6 +119,7 @@
           <RR_Society_Lurcher>1</RR_Society_Lurcher>
           <RR_Society_Bronzie_Officer>1.5</RR_Society_Bronzie_Officer>
           <RR_Society_Gold_Praetor>0.3</RR_Society_Gold_Praetor>
+          <RR_Society_OlympicKnight>0.06</RR_Society_OlympicKnight>
         </options>
       </li>
     </pawnGroupMakers>
@@ -173,6 +175,7 @@
           <RR_Society_Obsidian_Knight>4</RR_Society_Obsidian_Knight>
           <RR_Society_Bronzie_Officer>2</RR_Society_Bronzie_Officer>
           <RR_Society_Gold_Praetor>0.5</RR_Society_Gold_Praetor>
+          <RR_Society_OlympicKnight>0.1</RR_Society_OlympicKnight>
         </options>
       </li>
       <li>
@@ -364,6 +367,17 @@
     <canSiege>true</canSiege>
     <canStageAttacks>true</canStageAttacks>
     <permanentEnemy>true</permanentEnemy>
+    <!--
+      Hostile to every faction, not merely to the player. This is the one genuine
+      NPC-to-NPC relations lever RimWorld exposes: GoodwillSituationDef workers all
+      resolve against Faction.OfPlayer, so they cannot express "these two factions
+      hate each other" - only how a faction feels about the colony.
+      Field takes FactionDef defNames; verified against Anomaly's Entities faction,
+      which lists Insect as its sole exception.
+    -->
+    <permanentEnemyToEveryoneExcept>
+      <li>RR_Ascomanni</li>
+    </permanentEnemyToEveryoneExcept>
     <leaderTitle>warlord</leaderTitle>
     <techLevel>Industrial</techLevel>
     <factionIconPath>World/WorldObjects/Expanding/PirateOutpost</factionIconPath>

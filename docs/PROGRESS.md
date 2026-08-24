@@ -335,6 +335,45 @@ If Golds turn out to starve constantly rather than merely eat lavishly, the dial
 
 ---
 
+## Milestone 3 — factions and pawn kinds
+
+Five factions, 20 pawn kinds, 49 defs total, validating clean.
+
+| Faction | Tech | Shape |
+|---|---|---|
+| the Society | Spacer | 34% Red, 0.8% Gold. Grays in bulk, Obsidian shock, rare Gold praetor. |
+| Rim Dominion | Spacer | Rival Golds. Heavy on Ultraheavy Reds bred for Rim gravity. |
+| Sons of Ares | Industrial | 44% Red. Saboteurs, freed Obsidians, turned Grays. |
+| obsidian tribes | Neolithic | Obsidian and Stained only. Stripped of technology. |
+| Ascomanni | Industrial | Ascomanni only. Hostile to everyone. |
+
+**Olympic Knights** exist as `RR_Society_OlympicKnight`, appearing for both the Society and the
+Dominion, since the order split into Core and Rim branches. combatPower 340 — one is worth more
+than a full Society squad. The thirteen named knighthoods are titles, not a pawn type; see
+DESIGN §4.1 for the Royalty-versus-Ideology decision, which is open.
+
+### Correction — faction relations are player-relative
+
+I previously said inter-faction relations "need Goodwill def work". That was wrong, and decompiling
+settled it: `GoodwillSituationWorker` resolves the second party as `Faction.OfPlayer`, and
+`FactionDef` has no `startingGoodwill`. **RimWorld does not let a mod set how two NPC factions feel
+about each other.**
+
+The one real NPC-to-NPC lever is `permanentEnemyToEveryoneExcept`, now used to make the Ascomanni
+hostile to every faction rather than only to the player.
+
+"The Society hates the resistance" therefore has to be expressed player-relatively, via a
+`GoodwillSituationDef` keyed on the Color-hierarchy memes — which lands in Milestone 5 and is pure
+XML once those memes exist. That is also the version that matters, since the player is the only
+party whose relations the game simulates with any weight.
+
+### Not yet verified in game
+
+Factions generating on the world map, and a raid arriving with the right Colors, is the M3 success
+criterion and has not been checked.
+
+---
+
 ## Open questions
 
 Carried in `docs/DESIGN.md` §8.

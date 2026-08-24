@@ -170,6 +170,54 @@
     </xenotypeSet>
   </PawnKindDef>
 
+  <!--
+    Olympic Knight.
+
+    An order of thirteen Golds who answer to the Compact rather than to the
+    Sovereign, and are held to be the best warriors alive. After the Second Moon
+    Lord Rebellion the order split in two, one branch for the Core and one for the
+    Rim, so BOTH the Society and the Rim Dominion field them - hence this kind
+    appearing in both factions' group makers.
+
+    The knighthoods themselves - Morning, Rage, Storm, Fear, Death and the rest -
+    are titles held by one person at a time, not a pawn type. They are recorded in
+    docs/DESIGN.md for Milestone 5; see the note there on Royalty titles versus
+    Ideology roles.
+
+    This is the strongest human pawn in the mod. combatPower 340 puts one knight
+    above a full Society squad, which is the intent: a raid containing one is a
+    different kind of problem.
+  -->
+  <PawnKindDef ParentName="RR_SocietyFighterBase">
+    <defName>RR_Society_OlympicKnight</defName>
+    <label>olympic knight</label>
+    <combatPower>340</combatPower>
+    <apparelColor>(244,208,96)</apparelColor>
+    <apparelMoney>4500~7000</apparelMoney>
+    <weaponMoney>4500~7500</weaponMoney>
+    <itemQuality>Masterwork</itemQuality>
+    <apparelAllowHeadgearChance>0.85</apparelAllowHeadgearChance>
+    <apparelTags>
+      <li>SpacerMilitary</li>
+      <li>IndustrialMilitaryAdvanced</li>
+      <li>Armor</li>
+    </apparelTags>
+    <weaponTags>
+      <li>UltratechMelee</li>
+      <li>SpacerGun</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Melee</skill><range>18~20</range></li>
+      <li><skill>Shooting</skill><range>14~19</range></li>
+      <li><skill>Social</skill><range>10~16</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Gold>1</RR_Gold>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
   <!-- ======================= the Society: civilian ========================= -->
 
   <PawnKindDef ParentName="RR_ColorPawnBase">
