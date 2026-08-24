@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The Olympic Knights.
+
+  Thirteen titles, each held by one person at a time. That singularity is why
+  these are Ideology ROLES rather than Royalty titles: Precept_RoleSingle is
+  singular by construction, so "there can be only one Rage Knight" comes free.
+  The Gold rank ladder - Shamed, Graduate, Peerless Scarred - is progression
+  rather than singularity and goes on Royalty titles instead.
+
+  Structure mirrored from Ideology/Defs/PreceptDefs/Precepts_Role.xml, using the
+  IdeoRole issue and Precept_RoleSingle, with roleEffects and grantedAbilities as
+  IdeoRole_MeleeSpecialist uses them.
+
+  TWO GATES
+
+  1. requiredMemes RR_ColorHierarchy - the order exists to uphold the Compact, so
+     it only appears for ideoligions that believe in the Colors at all. The
+     resistance cannot appoint knights.
+  2. RoleRequirement_Xenotype - Gold only. Vanilla ships no xenotype role
+     requirement, so this is ours, in Source/RimRising/RoleRequirement_Xenotype.cs.
+     Without it an order of thirteen Golds could be filled by anyone.
+
+  Bronzies are admitted. They are Gold by birth and by law, and the order judges
+  on the Institute and the duel rather than on the breeding registry - which is
+  also where most of the interesting friction in the setting comes from.
+
+  Each knighthood is themed on its name rather than being thirteen copies with
+  different labels. Effects are modest by design: the title is a social fact
+  first, and a stat block second.
+-->
+<Defs>
+
+  <PreceptDef Abstract="True" Name="RR_OlympicKnightBase" ParentName="PreceptRoleSingleBase">
+    <iconPath>UI/Roles/RR_OlympicKnight</iconPath>
+    <requiredMemes>
+      <li>RR_ColorHierarchy</li>
+    </requiredMemes>
+    <roleRequirements Inherit="False">
+      <li Class="RoleRequirement_SameIdeo">
+        <labelKey>RoleRequirementLabelSameIdeo</labelKey>
+      </li>
+      <li Class="RimRising.RoleRequirement_Xenotype">
+        <xenotypes>
+          <li>RR_Gold</li>
+          <li>RR_Bronzie</li>
+        </xenotypes>
+      </li>
+    </roleRequirements>
+    <roleRequiredWorkTags>
+      <li>Violent</li>
+    </roleRequiredWorkTags>
+    <expectationsOffset>2</expectationsOffset>
+    <impact>High</impact>
+    <activationBelieverCount>5</activationBelieverCount>
+    <deactivationBelieverCount>2</deactivationBelieverCount>
+  </PreceptDef>
+
+  <!-- ============================ the thirteen ============================= -->
+
+  <PreceptDef ParentName="RR_OlympicKnightBase">
+    <defName>RR_Knight_Morning</defName>
+    <label>Morning Knight</label>
+    <description>First of the order in precedence and the one the rest are measured against. The Morning Knight is expected to be seen, to be brilliant, and to make the Compact look like something worth dying for.</description>
+    <displayOrderInImpact>1</displayOrderInImpact>
+    <roleEffects>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>SocialImpact</statDef>
+        <modifier>0.25</modifier>
+      </li>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>MeleeHitChance</statDef>
+        <modifier>4</modifier>
+      </li>
+    </roleEffects>
+  </PreceptDef>
+
+  <PreceptDef ParentName="RR_OlympicKnightBase">
+    <defName>RR_Knight_Rage</defName>
+    <label>Rage Knight</label>
+    <description>The order's blade. Where the Compact needs someone opened up in front of witnesses, the Rage Knight is who arrives to do it, and the post has never once been held by someone reluctant.</description>
+    <displayOrderInImpact>2</displayOrderInImpact>
+    <roleEffects>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>MeleeHitChance</statDef>
+        <modifier>8</modifier>
+      </li>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>MeleeDodgeChance</statDef>
+        <modifier>6</modifier>
+      </li>
+    </roleEffects>
+  </PreceptDef>
+
+  <PreceptDef ParentName="RR_OlympicKnightBase">
+    <defName>RR_Knight_Fear</defName>
+    <label>Fear Knight</label>
+    <description>The one sent where the Society would rather not be seen going. The Fear Knight's work is quiet, thorough, and almost never entered into any record that survives.</description>
+    <displayOrderInImpact>3</displayOrderInImpact>
+    <roleEffects>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>MeleeHitChance</statDef>
+        <modifier>6</modifier>
+      </li>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>NegotiationAbility</statDef>
+        <modifier>0.20</modifier>
+      </li>
+    </roleEffects>
+  </PreceptDef>
+
+  <PreceptDef ParentName="RR_OlympicKnightBase">
+    <defName>RR_Knight_Death</defName>
+    <label>Death Knight</label>
+    <description>An executioner with a title and a cloak. The distinction the order draws between the Death Knight and an assassin is procedural, and the order considers procedure to be the entire difference.</description>
+    <displayOrderInImpact>4</displayOrderInImpact>
+    <roleEffects>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>MeleeHitChance</statDef>
+        <modifier>7</modifier>
+      </li>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>MeleeDamageFactor</statDef>
+        <modifier>0.15</modifier>
+      </li>
+    </roleEffects>
+  </PreceptDef>
+
+  <PreceptDef ParentName="RR_OlympicKnightBase">
+    <defName>RR_Knight_Storm</defName>
+    <label>Storm Knight</label>
+    <description>Given the fleets and the open sky. A Storm Knight is expected to arrive suddenly, in force, and to have already worked out what happens afterwards.</description>
+    <displayOrderInImpact>5</displayOrderInImpact>
+    <roleEffects>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>ShootingAccuracyPawn</statDef>
+        <modifier>4</modifier>
+      </li>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>MoveSpeed</statDef>
+        <modifier>0.25</modifier>
+      </li>
+    </roleEffects>
+  </PreceptDef>
+
+  <PreceptDef ParentName="RR_OlympicKnightBase">
+    <defName>RR_Knight_Wind</defName>
+    <label>Wind Knight</label>
+    <description>Fast, mobile, and rarely where they were last reported. The Wind Knight carries word and settlement between houses that would otherwise only exchange fire.</description>
+    <displayOrderInImpact>6</displayOrderInImpact>
+    <roleEffects>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>MoveSpeed</statDef>
+        <modifier>0.4</modifier>
+      </li>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>MeleeDodgeChance</statDef>
+        <modifier>5</modifier>
+      </li>
+    </roleEffects>
+  </PreceptDef>
+
+  <PreceptDef ParentName="RR_OlympicKnightBase">
+    <defName>RR_Knight_Protean</defName>
+    <label>Protean Knight</label>
+    <description>The generalist of the order, and quietly the one the others send for when a problem refuses to be any single kind of problem.</description>
+    <displayOrderInImpact>7</displayOrderInImpact>
+    <roleEffects>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>GlobalLearningFactor</statDef>
+        <modifier>0.35</modifier>
+      </li>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>WorkSpeedGlobal</statDef>
+        <modifier>0.15</modifier>
+      </li>
+    </roleEffects>
+  </PreceptDef>
+
+  <PreceptDef ParentName="RR_OlympicKnightBase">
+    <defName>RR_Knight_Truth</defName>
+    <label>Truth Knight</label>
+    <description>Holds the Compact's inquiries. A Truth Knight is empowered to ask questions that would end anyone else's career for asking them, and is not obliged to explain why.</description>
+    <displayOrderInImpact>8</displayOrderInImpact>
+    <roleEffects>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>NegotiationAbility</statDef>
+        <modifier>0.35</modifier>
+      </li>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>SocialImpact</statDef>
+        <modifier>0.20</modifier>
+      </li>
+    </roleEffects>
+  </PreceptDef>
+
+  <PreceptDef ParentName="RR_OlympicKnightBase">
+    <defName>RR_Knight_Hearth</defName>
+    <label>Hearth Knight</label>
+    <description>Keeps the houses. Where the order's other posts are about ending things, the Hearth Knight is responsible for what remains standing afterwards, which is thought by some to be the harder assignment.</description>
+    <displayOrderInImpact>9</displayOrderInImpact>
+    <roleEffects>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>SocialImpact</statDef>
+        <modifier>0.25</modifier>
+      </li>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>WorkSpeedGlobal</statDef>
+        <modifier>0.12</modifier>
+      </li>
+    </roleEffects>
+  </PreceptDef>
+
+  <PreceptDef ParentName="RR_OlympicKnightBase">
+    <defName>RR_Knight_Cloud</defName>
+    <label>Cloud Knight</label>
+    <description>Given the high orbits and the long watches. The Cloud Knight sees a battle before anyone in it does, and is expected to say something useful about it in time.</description>
+    <displayOrderInImpact>10</displayOrderInImpact>
+    <roleEffects>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>ShootingAccuracyPawn</statDef>
+        <modifier>6</modifier>
+      </li>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>AimingDelayFactor</statDef>
+        <modifier>-0.15</modifier>
+      </li>
+    </roleEffects>
+  </PreceptDef>
+
+  <PreceptDef ParentName="RR_OlympicKnightBase">
+    <defName>RR_Knight_Joy</defName>
+    <label>Joy Knight</label>
+    <description>The order's face at triumphs, weddings and funerals. It is a soft post held by people who are not, and the appointment is usually a warning to somebody.</description>
+    <displayOrderInImpact>11</displayOrderInImpact>
+    <roleEffects>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>SocialImpact</statDef>
+        <modifier>0.35</modifier>
+      </li>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>NegotiationAbility</statDef>
+        <modifier>0.20</modifier>
+      </li>
+    </roleEffects>
+  </PreceptDef>
+
+  <PreceptDef ParentName="RR_OlympicKnightBase">
+    <defName>RR_Knight_Love</defName>
+    <label>Love Knight</label>
+    <description>Guards the Sovereign's person, and the post is inherited about as often as it is earned. Whatever the name suggests, the duty is standing between one specific body and everything that wants to reach it.</description>
+    <displayOrderInImpact>12</displayOrderInImpact>
+    <roleEffects>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>MeleeDodgeChance</statDef>
+        <modifier>8</modifier>
+      </li>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>MeleeHitChance</statDef>
+        <modifier>5</modifier>
+      </li>
+    </roleEffects>
+  </PreceptDef>
+
+  <!--
+    The Shadow Knight stands apart from the twelve - unacknowledged, and not
+    counted in the order's own reckoning. Kept here because it is a knighthood,
+    but flagged so it is not mistaken for one of the numbered posts.
+  -->
+  <PreceptDef ParentName="RR_OlympicKnightBase">
+    <defName>RR_Knight_Shadow</defName>
+    <label>Shadow Knight</label>
+    <description>A post the order does not list and does not discuss. Whether it is currently held is not a question anyone entitled to an answer has thought it wise to ask.</description>
+    <displayOrderInImpact>13</displayOrderInImpact>
+    <roleEffects>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>MeleeHitChance</statDef>
+        <modifier>6</modifier>
+      </li>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>MoveSpeed</statDef>
+        <modifier>0.2</modifier>
+      </li>
+    </roleEffects>
+  </PreceptDef>
+
+</Defs>
