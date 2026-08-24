@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  What a bond across Colors means.
+
+  Three positions on the same act, and the distinction between the first two is
+  the real difference between the Society and the Rim.
+
+    Society - lowColors are tools, and a tool that is used up is replaced. A Gold
+      who forms an attachment across Colors has not broken a rule so much as
+      demonstrated a defect.
+    Rim     - lowColors are still tools, but tools a house owns, maintains and is
+      answerable for. The disapproval is about station and duty rather than about
+      contamination, and it is not indifferent.
+    Ares    - none of it was ever real.
+
+  RimWorld raises no history event for romance, marriage or death, so
+  RR_InterColorUnion is raised from Source/RimRising/CasteRelationsPatches.cs when
+  a Lover, Fiance or Spouse relation forms between two different Colors.
+
+  SEPARATE FROM CONCEPTION. These precepts govern the social fact of a bond.
+  Whether a mixed pairing can produce a child is not an opinion and is not here -
+  it is a hard block in the same patch file, because the castes were engineered
+  too far apart to interbreed. Sex across Colors is possible; children are not,
+  short of a Carver.
+-->
+<Defs>
+
+  <IssueDef>
+    <defName>RR_InterColorUnion</defName>
+    <label>bonds across Colors</label>
+    <iconPath>UI/Issues/RR_InterColorUnion</iconPath>
+  </IssueDef>
+
+  <HistoryEventDef>
+    <defName>RR_InterColorUnion</defName>
+    <label>bonded across Colors</label>
+  </HistoryEventDef>
+
+  <!-- ============================== the Society =========================== -->
+
+  <PreceptDef>
+    <defName>RR_InterColorUnion_Defect</defName>
+    <issue>RR_InterColorUnion</issue>
+    <label>a defect</label>
+    <description>Affection downward is not romance. It is a fault in the person feeling it, and the registries exist precisely to catch faults. What the lesser Colors are for does not include being loved.</description>
+    <impact>High</impact>
+    <displayOrderInIssue>10</displayOrderInIssue>
+    <associatedMemes>
+      <li>RR_ColorHierarchy</li>
+    </associatedMemes>
+    <conflictingMemes>
+      <li>RR_ColorEquality</li>
+    </conflictingMemes>
+    <comps>
+      <li Class="PreceptComp_UnwillingToDo">
+        <eventDef>RR_InterColorUnion</eventDef>
+        <description>Bond with another Color</description>
+      </li>
+      <li Class="PreceptComp_SelfTookMemoryThought">
+        <eventDef>RR_InterColorUnion</eventDef>
+        <thought>RR_BondedAcrossColors_Shame</thought>
+        <description>Bonded across Colors</description>
+      </li>
+      <li Class="PreceptComp_KnowsMemoryThought">
+        <eventDef>RR_InterColorUnion</eventDef>
+        <thought>RR_KnowBondedAcrossColors_Disgust</thought>
+        <description>Someone bonded across Colors</description>
+      </li>
+    </comps>
+  </PreceptDef>
+
+  <!-- ============================ the Rim Dominion ======================== -->
+
+  <PreceptDef>
+    <defName>RR_InterColorUnion_Unbecoming</defName>
+    <issue>RR_InterColorUnion</issue>
+    <label>unbecoming</label>
+    <description>A house is answerable for everyone under its roof, and that includes the ones who were made to serve it. Treat them well, keep them fed, and do not confuse any of that with standing beside them.\n\nIt is not disgust. It is a question of what a name is worth.</description>
+    <impact>Medium</impact>
+    <displayOrderInIssue>20</displayOrderInIssue>
+    <associatedMemes>
+      <li>RR_ColorHierarchy</li>
+    </associatedMemes>
+    <conflictingMemes>
+      <li>RR_ColorEquality</li>
+    </conflictingMemes>
+    <comps>
+      <li Class="PreceptComp_SelfTookMemoryThought">
+        <eventDef>RR_InterColorUnion</eventDef>
+        <thought>RR_BondedAcrossColors_Unbecoming</thought>
+        <description>Bonded across Colors</description>
+      </li>
+      <li Class="PreceptComp_KnowsMemoryThought">
+        <eventDef>RR_InterColorUnion</eventDef>
+        <thought>RR_KnowBondedAcrossColors_Unbecoming</thought>
+        <description>Someone bonded across Colors</description>
+      </li>
+    </comps>
+  </PreceptDef>
+
+  <!-- ============================= the resistance ========================= -->
+
+  <PreceptDef>
+    <defName>RR_InterColorUnion_Free</defName>
+    <issue>RR_InterColorUnion</issue>
+    <label>no such thing</label>
+    <description>There is no across. There was never an across. Somebody drew the line, wrote the law, and killed people over it for eight hundred years, and the line was always just a line.</description>
+    <impact>Medium</impact>
+    <displayOrderInIssue>30</displayOrderInIssue>
+    <associatedMemes>
+      <li>RR_ColorEquality</li>
+    </associatedMemes>
+    <conflictingMemes>
+      <li>RR_ColorHierarchy</li>
+    </conflictingMemes>
+    <comps>
+      <li Class="PreceptComp_KnowsMemoryThought">
+        <eventDef>RR_InterColorUnion</eventDef>
+        <thought>RR_KnowBondedAcrossColors_Defiance</thought>
+        <description>Someone bonded across Colors</description>
+      </li>
+    </comps>
+  </PreceptDef>
+
+  <!-- ================================ thoughts ============================ -->
+
+  <ThoughtDef>
+    <defName>RR_BondedAcrossColors_Shame</defName>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>25</durationDays>
+    <stages>
+      <li>
+        <label>bonded beneath myself</label>
+        <description>I let it happen, and there is something wrong with me for letting it. The registries would have caught it eventually. Perhaps they still will.</description>
+        <baseMoodEffect>-12</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>RR_KnowBondedAcrossColors_Disgust</defName>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>15</durationDays>
+    <stackLimit>4</stackLimit>
+    <stages>
+      <li>
+        <label>someone bonded across Colors</label>
+        <description>Somebody here has forgotten what they are, and what the other one is for.</description>
+        <baseMoodEffect>-8</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>RR_BondedAcrossColors_Unbecoming</defName>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>20</durationDays>
+    <stages>
+      <li>
+        <label>bonded below my station</label>
+        <description>They are worth something. That was never the question. The question is what my house is worth now.</description>
+        <baseMoodEffect>-6</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>RR_KnowBondedAcrossColors_Unbecoming</defName>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>10</durationDays>
+    <stackLimit>3</stackLimit>
+    <stages>
+      <li>
+        <label>someone bonded below their station</label>
+        <description>An awkward business. Nobody is going to say anything, and everybody is going to remember.</description>
+        <baseMoodEffect>-3</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>RR_KnowBondedAcrossColors_Defiance</defName>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>15</durationDays>
+    <stackLimit>4</stackLimit>
+    <stages>
+      <li>
+        <label>someone bonded across Colors</label>
+        <description>Two people who were told it was impossible went ahead anyway, in front of everyone. Good.</description>
+        <baseMoodEffect>6</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+</Defs>

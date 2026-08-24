@@ -8,4 +8,7 @@
   <!-- Shown when a pawn whose ideoligion reserves razors to Gold tries to equip one. -->
   <RR_CannotBearRazor>{PAWN_nameDef} is not of Gold, and {PAWN_possessive} ideoligion forbids any lesser Color to bear a razor.</RR_CannotBearRazor>
 
+  <!-- Shown when a cross-Color pairing is checked for whether it could ever conceive. -->
+  <RR_CannotConceiveAcrossColors>{PAWN1_nameDef} and {PAWN2_nameDef} are different Colors. The castes were engineered too far apart to interbreed; only a Carver could bridge it.</RR_CannotConceiveAcrossColors>
+
 </LanguageData>
