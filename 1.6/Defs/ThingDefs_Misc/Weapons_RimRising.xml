@@ -59,17 +59,11 @@
     </comps>
     <smeltable>false</smeltable>
     <burnableByRecipe>false</burnableByRecipe>
-    <thingCategories>
-      <li>WeaponsMelee</li>
-    </thingCategories>
     <weaponTags>
       <li>UltratechMelee</li>
     </weaponTags>
-    <tradeTags>
-      <li>WeaponMelee</li>
-    </tradeTags>
+    <!-- Melee comes from BaseMeleeWeapon; only the additions are declared here. -->
     <weaponClasses>
-      <li>Melee</li>
       <li>Ultratech</li>
       <li>MeleePiercer</li>
     </weaponClasses>

@@ -68,6 +68,18 @@ function Get-RelativePath {
 
 # --------------------------------------------------------- vanilla def index
 
+# List-valued ThingDef fields that append on inherit. Re-declaring a value an
+# ancestor already has duplicates it. thingCategories is the one RimWorld actually
+# reports ("has duplicate thingCategory X"); the rest fail silently.
+$script:InheritedListFields = @(
+    'thingCategories'
+    'weaponClasses'
+    'weaponTags'
+    'tradeTags'
+    'thingSetMakerTags'
+    'techHediffsTags'
+)
+
 function Build-VanillaIndex {
     param([string] $DataRoot)
 
@@ -76,6 +88,12 @@ function Build-VanillaIndex {
     $geneDefs  = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     $geneTemplates = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     $vanillaTexPaths = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+
+    # Abstract (Name=) defs and the list-valued fields they declare, so a child can
+    # be checked for re-declaring something it already inherits. RimWorld APPENDS
+    # list fields on inherit rather than replacing them, so a duplicate entry is
+    # silently created - and for thingCategories it becomes a load-time config error.
+    $abstracts = @{}
 
     $files = Get-ChildItem -Path $DataRoot -Filter *.xml -Recurse -File -ErrorAction SilentlyContinue |
              Where-Object { $_.FullName -match '\\Defs\\' }
@@ -100,7 +118,30 @@ function Build-VanillaIndex {
             }
 
             $na = $node.Attributes['Name']
-            if ($na -and $na.Value) { [void]$nameAttrs.Add($na.Value.Trim()) }
+            if ($na -and $na.Value) {
+                $absName = $na.Value.Trim()
+                [void]$nameAttrs.Add($absName)
+
+                $pn = $node.Attributes['ParentName']
+                $entry = @{
+                    Parent = if ($pn) { $pn.Value.Trim() } else { $null }
+                    Lists  = @{}
+                }
+                foreach ($lf in $script:InheritedListFields) {
+                    $listNode = $node.SelectSingleNode($lf)
+                    if (-not $listNode) { continue }
+                    # Inherit="False" replaces rather than appends, so a child
+                    # re-declaring under it is legitimate.
+                    $inh = $listNode.Attributes['Inherit']
+                    if ($inh -and $inh.Value -eq 'False') { continue }
+                    $vals = @()
+                    foreach ($li in $listNode.SelectNodes('li')) {
+                        if ($li.InnerText) { $vals += $li.InnerText.Trim() }
+                    }
+                    if ($vals.Count -gt 0) { $entry.Lists[$lf] = $vals }
+                }
+                if (-not $abstracts.ContainsKey($absName)) { $abstracts[$absName] = $entry }
+            }
 
             # Every texture path vanilla itself references. Vanilla art lives in
             # asset bundles so we cannot check the filesystem, but a path vanilla
@@ -121,6 +162,7 @@ function Build-VanillaIndex {
         GeneDefs      = @($geneDefs)
         GeneTemplates = @($geneTemplates)
         TexPaths      = @($vanillaTexPaths)
+        Abstracts     = $abstracts
     }
 }
 
@@ -139,7 +181,7 @@ function Get-VanillaIndex {
 
     # Bumped whenever the cached shape changes, so an old cache is rebuilt rather
     # than read with missing fields.
-    $cacheSchema = 3
+    $cacheSchema = 4
 
     if (-not $Refresh -and (Test-Path $cacheFile)) {
         try {
@@ -152,6 +194,7 @@ function Get-VanillaIndex {
                     GeneDefs      = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.GeneDefs, [StringComparer]::Ordinal)
                     GeneTemplates = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.GeneTemplates, [StringComparer]::Ordinal)
                     TexPaths      = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.TexPaths, [StringComparer]::OrdinalIgnoreCase)
+                    Abstracts     = $cached.Abstracts
                     Version       = $version
                 }
             }
@@ -173,7 +216,8 @@ function Get-VanillaIndex {
         GeneDefs      = $idx.GeneDefs
         GeneTemplates = $idx.GeneTemplates
         TexPaths      = $idx.TexPaths
-    } | ConvertTo-Json -Depth 3 -Compress | Set-Content -Path $cacheFile -Encoding UTF8
+        Abstracts     = $idx.Abstracts
+    } | ConvertTo-Json -Depth 8 -Compress | Set-Content -Path $cacheFile -Encoding UTF8
 
     Write-Host ("  vanilla index: built ({0} defs, {1} abstract names, {2} genes, {3} gene templates)" -f $idx.DefNames.Count, $idx.NameAttrs.Count, $idx.GeneDefs.Count, $idx.GeneTemplates.Count) -ForegroundColor DarkGray
 
@@ -183,6 +227,7 @@ function Get-VanillaIndex {
         GeneDefs      = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.GeneDefs, [StringComparer]::Ordinal)
         GeneTemplates = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.GeneTemplates, [StringComparer]::Ordinal)
         TexPaths      = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.TexPaths, [StringComparer]::OrdinalIgnoreCase)
+        Abstracts     = $idx.Abstracts
         Version       = $version
     }
 }
@@ -521,6 +566,9 @@ $parentRefs = [System.Collections.Generic.List[object]]::new()
 $modGeneDefs = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 # deferred <genes><li> checks from XenotypeDefs
 $geneRefs = [System.Collections.Generic.List[object]]::new()
+# our own Name= abstracts, and deferred inherited-list checks
+$modAbstracts = @{}
+$listRefs = [System.Collections.Generic.List[object]]::new()
 
 foreach ($file in $xmlFiles) {
     $rel = Get-RelativePath $file.FullName
@@ -633,7 +681,39 @@ foreach ($file in $xmlFiles) {
 
             # --- record Name= for ParentName resolution ---------------------
             $nameAttr = $node.Attributes['Name']
-            if ($nameAttr -and $nameAttr.Value) { [void]$modNameAttrs.Add($nameAttr.Value.Trim()) }
+            $parentAttrEarly = $node.Attributes['ParentName']
+
+            # Collect this def's own list-field declarations once; used both to
+            # register our abstracts and to queue the inherited-duplicate check.
+            $ownLists = @{}
+            foreach ($lf in $script:InheritedListFields) {
+                $listNode = $node.SelectSingleNode($lf)
+                if (-not $listNode) { continue }
+                $inh = $listNode.Attributes['Inherit']
+                if ($inh -and $inh.Value -eq 'False') { continue }
+                $vals = @()
+                foreach ($li in $listNode.SelectNodes('li')) {
+                    if ($li.InnerText) { $vals += $li.InnerText.Trim() }
+                }
+                if ($vals.Count -gt 0) { $ownLists[$lf] = $vals }
+            }
+
+            if ($nameAttr -and $nameAttr.Value) {
+                [void]$modNameAttrs.Add($nameAttr.Value.Trim())
+                $modAbstracts[$nameAttr.Value.Trim()] = @{
+                    Parent = if ($parentAttrEarly) { $parentAttrEarly.Value.Trim() } else { $null }
+                    Lists  = $ownLists
+                }
+            }
+
+            if ($parentAttrEarly -and $ownLists.Count -gt 0) {
+                $listRefs.Add([pscustomobject]@{
+                    Def    = if ($dnNode) { $dnNode.InnerText.Trim() } elseif ($nameAttr) { $nameAttr.Value.Trim() } else { '<unnamed>' }
+                    Parent = $parentAttrEarly.Value.Trim()
+                    Lists  = $ownLists
+                    File   = $rel
+                })
+            }
 
             # --- check 5: queue ParentName ----------------------------------
             $parentAttr = $node.Attributes['ParentName']
@@ -692,6 +772,66 @@ foreach ($ref in $parentRefs) {
     if ($vanilla.NameAttrs.Contains($ref.Parent)) { continue }
     Add-Problem -Severity ERROR -Check 'MissingParent' -File $ref.File `
         -Message ("def '{0}' has ParentName='{1}' which matches no Name= def in this mod or vanilla." -f $ref.Def, $ref.Parent)
+}
+
+# --- check 8: list values already supplied by an ancestor --------------------
+#
+# RimWorld APPENDS list fields on inherit. Re-declaring a value the parent chain
+# already has creates a duplicate entry. For thingCategories that surfaces as
+# "Config error: has duplicate thingCategory X"; for weaponTags, tradeTags and the
+# rest it happens silently and the def just carries the value twice.
+#
+# Caught the razor declaring thingCategories WeaponsMelee, weaponClasses Melee and
+# tradeTags WeaponMelee, all three of which BaseMeleeWeapon already provides.
+
+function Get-InheritedListValues {
+    param([string] $ParentName, [hashtable] $ModAbstracts, $VanillaAbstracts)
+
+    $result = @{}
+    $cur = $ParentName
+    $guard = 0
+
+    while ($cur -and $guard -lt 12) {
+        $guard++
+        $entry = $null
+        if ($ModAbstracts.ContainsKey($cur)) {
+            $entry = $ModAbstracts[$cur]
+        } elseif ($VanillaAbstracts -and $VanillaAbstracts.PSObject.Properties[$cur]) {
+            $entry = $VanillaAbstracts.PSObject.Properties[$cur].Value
+        }
+        if (-not $entry) { break }
+
+        $lists = $entry.Lists
+        if ($lists) {
+            foreach ($field in $script:InheritedListFields) {
+                $vals = $null
+                if ($lists -is [hashtable]) {
+                    if ($lists.ContainsKey($field)) { $vals = $lists[$field] }
+                } elseif ($lists.PSObject.Properties[$field]) {
+                    $vals = $lists.PSObject.Properties[$field].Value
+                }
+                if (-not $vals) { continue }
+                if (-not $result.ContainsKey($field)) { $result[$field] = @() }
+                $result[$field] += @($vals)
+            }
+        }
+
+        $cur = if ($entry.Parent) { $entry.Parent } else { $null }
+    }
+    return , $result
+}
+
+foreach ($ref in $listRefs) {
+    $inherited = Get-InheritedListValues -ParentName $ref.Parent -ModAbstracts $modAbstracts -VanillaAbstracts $vanilla.Abstracts
+    foreach ($field in $ref.Lists.Keys) {
+        if (-not $inherited.ContainsKey($field)) { continue }
+        foreach ($val in $ref.Lists[$field]) {
+            if ($inherited[$field] -contains $val) {
+                Add-Problem -Severity ERROR -Check 'DuplicateInheritedListValue' -File $ref.File `
+                    -Message ("'{0}' re-declares <{1}> value '{2}', which it already inherits from '{3}'. List fields append on inherit - remove it, or mark the list Inherit=False." -f $ref.Def, $field, $val, $ref.Parent)
+            }
+        }
+    }
 }
 
 # --- check 6 resolution: XenotypeDef gene references -------------------------
