@@ -14,10 +14,10 @@ Game target: **RimWorld 1.6.4871 rev590**. packageId: `cinergy92.rimrising`.
 | 1 | Skeleton | **Done** |
 | 2 | The Color system | **Built and published; U1 parked as flavour** |
 | 3 | Factions and pawn kinds | **Verified: planet generates, log clean** |
-| 4 | Tech and equipment | **Built, validated, published; awaiting in-game verification** |
-| 5 | Ideology and hierarchy | Not started |
-| 6 | Scenarios and world | Not started |
-| 7 | Vanilla suppression | Not started |
+| 4 | Tech and equipment | **Verified in game.** Razor, pulse fist, pulse armor, scarabSkin, demonHelm |
+| 5 | Ideology and hierarchy | **Verified in game.** Memes, 13 knighthoods, razor lock, caste romance, Gold ladder |
+| 6 | Scenarios and world | **Verified in game.** Two starts, two biomes, faction placement |
+| 7 | Vanilla suppression | Not started — needs a scope decision from the user |
 
 ---
 
