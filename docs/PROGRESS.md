@@ -721,6 +721,78 @@ check produced confident false positives instead.
 
 ---
 
+## The stealth and siege kit
+
+### ghostCloak — no new dependency
+
+Apparel granting a self-targeted invisibility ability on a cooldown.
+`ApparelProperties.abilities` is a **Core** field (decompiled to confirm); Odyssey's
+mechlord suit is the only vanilla def that uses it, but the field is unconditional.
+Cloak shape from Core's `Apparel_Cape`, hediff from Core's `PsychicInvisibility`.
+
+Deliberately not psychic — vanilla `Invisibility` is a level 5 psycast scaling on
+`PsychicSensitivity`, and a Howler is not a psycaster. Cooldown rather than charges,
+because `CompProperties_ApparelReloadable` would need an ammo item whose only purpose
+is feeding one cloak.
+
+Occupies `Shell`, so it stacks with scarabSkin and demonHelm but **conflicts with
+pulse armor**. The stealth kit and the power armour are alternatives, by design.
+
+### Ninth false green — a gizmo that did nothing
+
+Reported in game: Refract appeared but clicking it did nothing. Two faults, neither
+logged, because an ability with no reachable target is not an error — it is inert.
+
+1. No `targetRequired false` / `targetable false` / `nonInterruptingSelfCast`, so
+   clicking dropped the pawn into target-selection mode.
+2. `canTargetSelf true` alongside `canTargetPawns false`. **Self is a pawn**, so that
+   excluded the only legal target.
+
+I had copied the shape from vanilla `Invisibility`, which is a psycast aimed at
+*other* pawns. The right template was Anomaly's `MetalbloodInjection` — a self-only
+buff granted by worn equipment. Closed with `AbilityUntargetable`, which flags both
+faults independently. Negative-tested.
+
+### starShell — on the Exosuit Framework, gated
+
+I first assumed a starShell was over-armour worn on pulse armor and had worked out
+that a custom `ApparelLayerDef` would let it stack with no dependency at all. **That
+was wrong.** In the source it is a four-metre, three-tonne powered suit with modular
+weapon mounts, thrusters and heavy fuel use — exactly what the framework models. The
+user's original read was correct.
+
+Built as Core, sensor hood and cannon-arm module pairs plus a suit-scale pulse cannon,
+behind `IfModActive="Aoba.Exosuit.Framework"`. Each module is a pair by framework
+requirement: `ModuleItem<Slot>` carrying `EquipedThingDef`, `ModuleApparel<Slot>`
+carrying `ItemDef`. **The duplicated entries in the debug spawner are that pair, not a
+double load** — the worn half is `destroyOnDrop` and untradeable so it surfaces
+nowhere else.
+
+### Drachenjäger does not belong here
+
+Forty metres, filed under Vehicles on the wiki, with a cockpit instead of a head and
+pilots who bolt into it. That is a piloted vehicle, not worn apparel, so the Exosuit
+Framework is the wrong tool no matter how hard it is bent. **Vehicle Framework
+(`SmashPhil.VehicleFramework`) is the right tool and is already installed.** Left
+unbuilt rather than built badly.
+
+### Placeholders have to be diagnostic, not decorative
+
+Reported: "it's impossible to tell the draw with the placeholder." Correct, and the
+reason matters — a flat opaque labelled square is orientation-blind **and** it hides
+the pawn underneath, so `drawData` offsets and scale cannot be assessed from it at all.
+
+Worn directional textures are now translucent, with a red crosshair on the exact
+centre (a wrong offset shows as the crosshair sitting off the pawn), a white arrow in
+the facing direction, and the label moved clear of the crosshair.
+
+That immediately paid for itself: the first screenshot with it showed the label and
+the facing letter **mirrored** with the arrow reversed, confirming RimWorld
+horizontally mirrors the `_east` texture for west — which is why only three facings
+are generated, and now that is observed rather than assumed.
+
+---
+
 ## Open questions
 
 Carried in `docs/DESIGN.md` §8.
