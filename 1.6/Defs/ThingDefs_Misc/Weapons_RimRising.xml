@@ -151,9 +151,6 @@
     <weaponTags>
       <li>SpacerGun</li>
     </weaponTags>
-    <tradeTags>
-      <li>WeaponRanged</li>
-    </tradeTags>
     <weaponClasses>
       <li>RangedLight</li>
     </weaponClasses>
