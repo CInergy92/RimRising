@@ -11,10 +11,10 @@ Game target: **RimWorld 1.6.4871 rev590**. packageId: `cinergy92.rimrising`.
 | # | Milestone | Status |
 |---|---|---|
 | 0 | Discovery | **Done.** `docs/DISCOVERY.md` |
-| 1 | Skeleton | **Loaded in game. Texture bug fixed; awaiting re-verification** |
-| 2 | The Color system | **Built, validated, published; awaiting in-game verification** |
-| 3 | Factions and pawn kinds | Not started |
-| 4 | Tech and equipment | Not started |
+| 1 | Skeleton | **Done** |
+| 2 | The Color system | **Built and published; U1 parked as flavour** |
+| 3 | Factions and pawn kinds | **Verified: planet generates, log clean** |
+| 4 | Tech and equipment | **Built, validated, published; awaiting in-game verification** |
 | 5 | Ideology and hierarchy | Not started |
 | 6 | Scenarios and world | Not started |
 | 7 | Vanilla suppression | Not started |
@@ -449,6 +449,76 @@ Planet generates. `Get-ModLoadErrors`: **0 error blocks in the log, 0 attributab
 
 Still unconfirmed by eye: that RimRising factions actually appear on the world map, and that a raid
 arrives with the right Colors.
+
+---
+
+## Milestone 4 — tech and equipment
+
+The vertical slice from the build order: one melee weapon, one ranged, one armor set, one implant,
+behind a custom research tab. 61 defs total, validating clean.
+
+### The Artificer tab
+
+Named for the Orange sub-tier that actually builds the Society's weapons and armor — Bladeweavers,
+the Artificers who make razors, are a specialisation within it. Four projects:
+
+| Project | Cost | Prerequisites | Unlocks |
+|---|---|---|---|
+| polyenne weaving | 3000 | Fabrication | razor |
+| pulse physics | 3500 | Fabrication, ChargedShot | pulseFist |
+| pulse armor | 5000 | pulse physics, PoweredArmor | pulse armor |
+| neural interface | 4000 | Bionics | synaptic lattice |
+
+### The slice
+
+- **Razor** — polyenne, Ultra tech, armor penetration **0.95** against the monosword's 0.90, because
+  canonically it opens pulseArmor. Four tools including a `lash` for the whip state: longer reach,
+  wider arc, less concentrated force.
+- **pulseFist** — gauntlet-mounted energy weapon, canonically "the most widely used ranged weapon in
+  combat between Golds". Range **19.9** against the charge rifle's 27.9: brutal close, useless far.
+  Uses `Flame` damage.
+- **Pulse armor** — recoil plating plus servo harness plus shield generator. Unlike vanilla power
+  armor it gives **positive** MoveSpeed and MeleeDamageFactor, because the suit is described as
+  enhancing strength and speed rather than merely protecting. That is its signature.
+- **Synaptic lattice** — brain implant. The best-attested implant in the setting: Blues fly by it
+  via the Synaptic Drift and their scalp digiTats, and Greens wear the same lattice for the networks.
+  It is why Blue carries `Hair_BaldOnly` and Green `Hair_ShortOnly`.
+
+Implant triad kept in one file per the vanilla convention already recorded in CLAUDE.md.
+
+### No new DLC dependency
+
+Everything parents to **Core** abstracts — `BaseMeleeWeapon`, `BaseHumanMakeableGun`, `BaseBullet`,
+`ArmorMachineableBase`, `BodyPartProstheticBase`, `SurgeryInstallImplantBase` — not to Royalty's
+`MeleeWeaponUltratech`. Royalty arrives at M5 for the Gold rank ladder, and the razor becomes a
+persona weapon then, which is what its fiction wants: ancestral razors are named and inherited.
+
+### Caste restriction is deliberately absent
+
+A razor is forbidden to every Color but Gold, on pain of death. That is a **social rule, not a
+property of the object**, so nothing in the ThingDef enforces it. It belongs in M5 as a precept
+reacting to a HistoryEvent. Right now a Red can pick one up — the Society's objection is the whole
+point, and the Society does not exist yet.
+
+### U6 closed
+
+Texture dimensions measured across ~140 textures in installed mods rather than assumed:
+**weapons 128x128** (117 samples; a few mods ship 256, but 128 is the convention) and
+**apparel 256x256** (24 samples). The placeholder generator's size table was wrong — it had weapons
+at 256 — and is now corrected with per-path rules.
+
+### Validator bug — duplicate check was type-blind
+
+`Test-ModDefs` rejected the synaptic lattice, reporting `RR_SynapticLattice` as a duplicate defName.
+It was wrong. **defNames are unique per def type, not globally** — vanilla relies on this, and
+`Joywire` is simultaneously a HediffDef and a ThingDef in the same file. Every implant triad is
+written this way, so a type-blind check rejects correct XML.
+
+The check now keys on type plus defName. Verified both ways: a HediffDef and ThingDef sharing a name
+passes, two ThingDefs sharing a name still fails.
+
+The vanilla-collision check remains type-blind, which is over-strict rather than wrong, and harmless
+while every def we own carries the `RR_` prefix.
 
 ---
 

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Implants.
+
+  Following the vanilla convention recorded in CLAUDE.md: the HediffDef, the item
+  ThingDef and the install RecipeDef all live in ONE file, the way
+  Core/Defs/HediffDefs/BodyParts/Hediffs_BodyParts_Prosthetic.xml keeps Joywire's
+  three defs together. Do not scatter these across ThingDefs_* / RecipeDefs/.
+
+  Structure mirrored from that Joywire triad; statOffsets on the hediff stage
+  mirrored from Royalty's Neurocalculator.
+
+  Parents are Core abstracts - BodyPartProstheticBase, SurgeryInstallImplantBase -
+  so no Royalty dependency is taken at Milestone 4.
+
+  THE SYNAPTIC LATTICE is the best-attested implant in the setting. Blues fly by
+  it, using the Synaptic Drift and the digiTats inked onto their shaved scalps;
+  Greens wear the same lattice to work the networks, "the way Blues do with
+  starships". Both castes shave for it, which is why Blue carries Hair_BaldOnly
+  and Green Hair_ShortOnly.
+-->
+<Defs>
+
+  <HediffDef ParentName="ImplantHediffBase">
+    <defName>RR_SynapticLattice</defName>
+    <label>synaptic lattice</label>
+    <labelNoun>a synaptic lattice</labelNoun>
+    <description>An installed synaptic lattice. Contacts grown through the scalp into the cortex, letting the carrier address a machine the way they would address a limb. The tattooed traces on the skull are only the surface of it.\n\nCarriers report that going without, afterwards, feels like being underwater.</description>
+    <descriptionHyperlinks><ThingDef>RR_SynapticLattice</ThingDef></descriptionHyperlinks>
+    <spawnThingOnRemoved>RR_SynapticLattice</spawnThingOnRemoved>
+    <stages>
+      <li>
+        <statOffsets>
+          <ResearchSpeed>0.25</ResearchSpeed>
+          <WorkSpeedGlobal>0.10</WorkSpeedGlobal>
+        </statOffsets>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <ThingDef ParentName="BodyPartProstheticBase">
+    <defName>RR_SynapticLattice</defName>
+    <label>synaptic lattice</label>
+    <description>A mesh of neural contacts meant to be grown into the scalp and cortex, giving its carrier direct command of machinery. Standard issue to Blues, who fly with it, and to Greens, who work the networks with it.\n\nInstallation is not reversible in any way the carrier would enjoy.</description>
+    <descriptionHyperlinks><RecipeDef>RR_InstallSynapticLattice</RecipeDef></descriptionHyperlinks>
+    <graphicData>
+      <texPath>Things/Item/Health/RR_SynapticLattice</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <statBases>
+      <MarketValue>1400</MarketValue>
+      <Mass>0.5</Mass>
+      <WorkToMake>22000</WorkToMake>
+    </statBases>
+    <recipeMaker>
+      <researchPrerequisite>RR_NeuralInterface</researchPrerequisite>
+      <skillRequirements>
+        <Crafting>8</Crafting>
+      </skillRequirements>
+      <recipeUsers Inherit="False">
+        <li>FabricationBench</li>
+      </recipeUsers>
+      <displayPriority>240</displayPriority>
+    </recipeMaker>
+    <costList>
+      <Plasteel>20</Plasteel>
+      <ComponentSpacer>2</ComponentSpacer>
+      <Gold>5</Gold>
+    </costList>
+    <thingSetMakerTags>
+      <li>RewardStandardLowFreq</li>
+    </thingSetMakerTags>
+    <techHediffsTags>
+      <li>Advanced</li>
+    </techHediffsTags>
+  </ThingDef>
+
+  <RecipeDef ParentName="SurgeryInstallImplantBase">
+    <defName>RR_InstallSynapticLattice</defName>
+    <label>install synaptic lattice</label>
+    <description>Install a synaptic lattice.</description>
+    <descriptionHyperlinks>
+      <ThingDef>RR_SynapticLattice</ThingDef>
+      <HediffDef>RR_SynapticLattice</HediffDef>
+    </descriptionHyperlinks>
+    <jobString>Installing synaptic lattice.</jobString>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>RR_SynapticLattice</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>RR_SynapticLattice</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <appliedOnFixedBodyParts>
+      <li>Brain</li>
+    </appliedOnFixedBodyParts>
+    <addsHediff>RR_SynapticLattice</addsHediff>
+  </RecipeDef>
+
+</Defs>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Apparel.
+
+  Mirrored from Core/Defs/ThingDefs_Misc/Apparel_Various.xml - specifically
+  ApparelArmorPowerBase, the abstract behind marine armor. Parented to Core's
+  ArmorMachineableBase so no Royalty dependency is taken.
+
+  PulseArmor is recoilArmor plus a shield generator plus servo assistance: it
+  protects, and it also makes the wearer stronger and faster. That last part is
+  the reason the Society is careful about who wears one, and it is why this suit
+  gives positive movement and melee offsets where vanilla power armor gives a
+  movement penalty.
+
+  The cost is power. Canonically the suit runs on helium-3 and has a short battery
+  life, which is represented here as heavy mass and a large equip delay rather
+  than a fuel system - a real charge mechanic needs C# and belongs later, if at all.
+-->
+<Defs>
+
+  <ThingDef ParentName="ArmorMachineableBase">
+    <defName>RR_Apparel_PulseArmor</defName>
+    <label>pulse armor</label>
+    <description>Layered recoil plating over a servo harness, with a shield generator riding the spine. It stops what the plates can stop and shrugs off most of what they cannot, and underneath all that it is quietly multiplying the person inside - a suited Gold moves faster and hits harder than an unsuited one, which is the entire point of the design.\n\nIt is enormously expensive, drinks helium-3, and will overheat if the shield takes sustained punishment. None of that has ever discouraged anybody who was allowed to own one.</description>
+    <techLevel>Spacer</techLevel>
+    <recipeMaker>
+      <unfinishedThingDef>UnfinishedTechArmor</unfinishedThingDef>
+      <researchPrerequisite>RR_PulseArmor</researchPrerequisite>
+      <skillRequirements>
+        <Crafting>9</Crafting>
+      </skillRequirements>
+      <recipeUsers Inherit="False">
+        <li>FabricationBench</li>
+      </recipeUsers>
+      <displayPriority>230</displayPriority>
+    </recipeMaker>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/RR_PulseArmor/RR_PulseArmor</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <generateCommonality>0.5</generateCommonality>
+    <statBases>
+      <WorkToMake>78000</WorkToMake>
+      <MaxHitPoints>400</MaxHitPoints>
+      <Mass>16</Mass>
+      <Flammability>0.3</Flammability>
+      <ArmorRating_Sharp>1.24</ArmorRating_Sharp>
+      <ArmorRating_Blunt>0.58</ArmorRating_Blunt>
+      <ArmorRating_Heat>0.68</ArmorRating_Heat>
+      <Insulation_Cold>74</Insulation_Cold>
+      <Insulation_Heat>14</Insulation_Heat>
+      <EquipDelay>18</EquipDelay>
+    </statBases>
+    <equippedStatOffsets>
+      <!--
+        Servo assistance. Vanilla power armor slows the wearer; pulse armor is
+        explicitly described as enhancing strength and speed, so it does the
+        opposite. This is the suit's signature and the reason it costs what it does.
+      -->
+      <MoveSpeed>0.15</MoveSpeed>
+      <MeleeDamageFactor>0.15</MeleeDamageFactor>
+      <CarryingCapacity>35</CarryingCapacity>
+      <SlaveSuppressionOffset MayRequire="Ludeon.RimWorld.Ideology">-0.3</SlaveSuppressionOffset>
+      <VacuumResistance MayRequire="Ludeon.RimWorld.Odyssey">0.5</VacuumResistance>
+    </equippedStatOffsets>
+    <thingCategories>
+      <li>ApparelArmor</li>
+    </thingCategories>
+    <tradeTags>
+      <li>HiTechArmor</li>
+      <li>Armor</li>
+    </tradeTags>
+    <costList>
+      <ComponentSpacer>6</ComponentSpacer>
+      <Plasteel>140</Plasteel>
+      <Uranium>30</Uranium>
+      <Gold>15</Gold>
+    </costList>
+    <apparel>
+      <bodyPartGroups>
+        <li>Torso</li>
+        <li>Neck</li>
+        <li>Shoulders</li>
+        <li>Arms</li>
+        <li>Legs</li>
+      </bodyPartGroups>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/RR_PulseArmor/RR_PulseArmor</wornGraphicPath>
+      <layers>
+        <li>Middle</li>
+        <li>Shell</li>
+      </layers>
+      <tags>
+        <li>SpacerMilitary</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+    </apparel>
+  </ThingDef>
+
+</Defs>

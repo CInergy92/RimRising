@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The Artificer research tab.
+
+  Named for the Orange sub-tier that actually builds the Society's weapons and
+  armor. Bladeweavers - the Artificers who make razors - are a specialisation
+  within it, which is why the razor sits on this tab rather than in Main.
+
+  ResearchTabDef structure mirrored from Core/Defs/ResearchProjectDefs/ResearchTabs.xml
+  and Anomaly/Defs/ResearchTabDefs/ResearchTabs.xml. Project structure mirrored
+  from the ChargedShot project.
+
+  Every vanilla defName referenced here was verified present before writing:
+  Fabrication, PoweredArmor, ChargedShot, Bionics, HiTechResearchBench,
+  MultiAnalyzer.
+
+  researchViewX/Y lay the tree out left to right. Polyenne fiber and pulse
+  physics are the two roots; everything else descends from them.
+-->
+<Defs>
+
+  <ResearchTabDef>
+    <defName>RR_Artificer</defName>
+    <label>artificer</label>
+    <generalTitle>Artificer projects</generalTitle>
+    <generalDescription>The trades the Society keeps behind its own doors. Polyenne weaving, pulse containment, and the armor that makes a single person a siege engine.\n\nEvery one of these was worked out by Oranges, and none of them are credited to any.</generalDescription>
+  </ResearchTabDef>
+
+  <!-- ================================ roots ================================ -->
+
+  <ResearchProjectDef>
+    <defName>RR_PolyenneWeaving</defName>
+    <label>polyenne weaving</label>
+    <description>Draw polyenne into a fiber that holds an edge harder than diamond and remembers two shapes - rigid, and not. The weave is the whole difficulty; the metallurgy is centuries old.\n\nUnlocks the razor.</description>
+    <tab>RR_Artificer</tab>
+    <baseCost>3000</baseCost>
+    <techLevel>Spacer</techLevel>
+    <prerequisites>
+      <li>Fabrication</li>
+    </prerequisites>
+    <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+    <researchViewX>1.00</researchViewX>
+    <researchViewY>0.50</researchViewY>
+  </ResearchProjectDef>
+
+  <ResearchProjectDef>
+    <defName>RR_PulsePhysics</defName>
+    <label>pulse physics</label>
+    <description>Confine a charge long enough to throw it. Pulse energy is trivial to generate and miserable to contain, and the entire discipline is the containment.\n\nUnlocks the pulseFist.</description>
+    <tab>RR_Artificer</tab>
+    <baseCost>3500</baseCost>
+    <techLevel>Spacer</techLevel>
+    <prerequisites>
+      <li>Fabrication</li>
+      <li>ChargedShot</li>
+    </prerequisites>
+    <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+    <researchViewX>1.00</researchViewX>
+    <researchViewY>2.00</researchViewY>
+  </ResearchProjectDef>
+
+  <!-- =============================== branches ============================== -->
+
+  <ResearchProjectDef>
+    <defName>RR_PulseArmor</defName>
+    <label>pulse armor</label>
+    <description>Recoil plating, servo assistance, and a shield generator carried on the back. The suit multiplies the wearer rather than merely protecting them, which is why the Society is careful about who is allowed inside one.\n\nIt drinks power. That has never been considered a flaw by anyone who could afford it.</description>
+    <tab>RR_Artificer</tab>
+    <baseCost>5000</baseCost>
+    <techLevel>Spacer</techLevel>
+    <prerequisites>
+      <li>RR_PulsePhysics</li>
+      <li>PoweredArmor</li>
+    </prerequisites>
+    <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+    <requiredResearchFacilities>
+      <li>MultiAnalyzer</li>
+    </requiredResearchFacilities>
+    <researchViewX>3.00</researchViewX>
+    <researchViewY>2.00</researchViewY>
+  </ResearchProjectDef>
+
+  <ResearchProjectDef>
+    <defName>RR_NeuralInterface</defName>
+    <label>neural interface</label>
+    <description>The lattice a Blue wears to fly and a Green wears to work. It is grown into the scalp rather than fitted, and the tattooed contacts on a shaved head are the visible half of a much deeper installation.\n\nUnlocks the synaptic lattice implant.</description>
+    <tab>RR_Artificer</tab>
+    <baseCost>4000</baseCost>
+    <techLevel>Spacer</techLevel>
+    <prerequisites>
+      <li>Bionics</li>
+    </prerequisites>
+    <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+    <requiredResearchFacilities>
+      <li>MultiAnalyzer</li>
+    </requiredResearchFacilities>
+    <researchViewX>3.00</researchViewX>
+    <researchViewY>3.50</researchViewY>
+  </ResearchProjectDef>
+
+</Defs>

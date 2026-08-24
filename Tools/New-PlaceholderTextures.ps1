@@ -55,15 +55,23 @@ $texturesRoot = Join-Path $ModRoot 'Textures'
 # ------------------------------------------------------------- size resolution
 
 # Ordered longest-prefix-first so more specific rules win.
+# Measured across ~140 textures in installed mods, not assumed:
+#   weapons  128x128 (117 samples; a few mods ship 256, 128 is the convention)
+#   apparel  256x256 (24 samples)
+#   items    128x128
+#   gene     128x128, xenotype 64x64
 $script:SizeRules = @(
-    @{ Prefix = 'UI/Icons/Xenotypes'; Size = 64  }
-    @{ Prefix = 'UI/Icons/Genes';     Size = 128 }
-    @{ Prefix = 'Things/Weapons';     Size = 256 }
-    @{ Prefix = 'Things/Item';        Size = 128 }
-    @{ Prefix = 'Things/Pawn';        Size = 256 }
-    @{ Prefix = 'Things/Apparel';     Size = 256 }
-    @{ Prefix = 'Things/Building';    Size = 128 }
-    @{ Prefix = 'UI';                 Size = 128 }
+    @{ Prefix = 'UI/Icons/Xenotypes';                Size = 64  }
+    @{ Prefix = 'UI/Icons/Genes';                    Size = 128 }
+    @{ Prefix = 'Things/Pawn/Humanlike/Apparel';     Size = 256 }
+    @{ Prefix = 'Things/Item/Equipment/WeaponMelee'; Size = 128 }
+    @{ Prefix = 'Things/Item/Equipment/WeaponRanged';Size = 128 }
+    @{ Prefix = 'Things/Weapons';                    Size = 128 }
+    @{ Prefix = 'Things/Item';                       Size = 128 }
+    @{ Prefix = 'Things/Pawn';                       Size = 256 }
+    @{ Prefix = 'Things/Apparel';                    Size = 256 }
+    @{ Prefix = 'Things/Building';                   Size = 128 }
+    @{ Prefix = 'UI';                                Size = 128 }
 )
 $script:DefaultSize = 128
 

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Weapons.
+
+  Melee mirrored from Royalty/Defs/ThingDefs_Misc/Weapons/MeleeUltratech.xml
+  (MonoSword); ranged and projectile from Core/.../RangedSpacer.xml
+  (Gun_ChargeRifle, Bullet_ChargeRifle).
+
+  Deliberately parented to CORE abstracts - BaseMeleeWeapon, BaseHumanMakeableGun,
+  BaseBullet - not to Royalty's MeleeWeaponUltratech, so Milestone 4 adds no new
+  DLC dependency. Royalty arrives at Milestone 5 for the Gold rank ladder; the
+  razor becomes a persona weapon then, which is what its fiction actually wants.
+
+  CASTE RESTRICTION IS NOT IMPLEMENTED HERE. A razor is forbidden to every Color
+  but Gold, on pain of death, and that is a social rule rather than a property of
+  the object. It belongs in Milestone 5 as a precept reacting to a HistoryEvent.
+  Nothing in this file stops a Red picking one up - the Society's objection is
+  the point, and the Society is not built yet.
+-->
+<Defs>
+
+  <!-- ================================ razor ================================ -->
+
+  <ThingDef ParentName="BaseMeleeWeapon">
+    <defName>RR_Weapon_Razor</defName>
+    <label>razor</label>
+    <description>A meter of polyenne fiber that holds two states: rigid, where it is harder than diamond and will open pulseArmor like a coat, and slack, where it becomes a whip twice its own length and behaves like nothing else on a battlefield. The toggle is a stud under the thumb.\n\nBuilt by Orange Bladeweavers, resistant to EMP, and good for centuries with maintenance. Among Golds it is less a weapon than a proof of standing, and the law is unambiguous about who may touch one.</description>
+    <techLevel>Ultra</techLevel>
+    <equippedAngleOffset>-65</equippedAngleOffset>
+    <graphicData>
+      <texPath>Things/Item/Equipment/WeaponMelee/RR_Razor</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <statBases>
+      <WorkToMake>52000</WorkToMake>
+      <MarketValue>2600</MarketValue>
+      <Mass>1.4</Mass>
+    </statBases>
+    <recipeMaker>
+      <researchPrerequisite>RR_PolyenneWeaving</researchPrerequisite>
+      <skillRequirements>
+        <Crafting>9</Crafting>
+      </skillRequirements>
+      <recipeUsers Inherit="False">
+        <li>FabricationBench</li>
+      </recipeUsers>
+      <displayPriority>210</displayPriority>
+    </recipeMaker>
+    <costList>
+      <Plasteel>60</Plasteel>
+      <ComponentSpacer>3</ComponentSpacer>
+      <Gold>10</Gold>
+    </costList>
+    <comps>
+      <li>
+        <compClass>CompQuality</compClass>
+      </li>
+      <li Class="CompProperties_Biocodable"/>
+    </comps>
+    <smeltable>false</smeltable>
+    <burnableByRecipe>false</burnableByRecipe>
+    <thingCategories>
+      <li>WeaponsMelee</li>
+    </thingCategories>
+    <weaponTags>
+      <li>UltratechMelee</li>
+    </weaponTags>
+    <tradeTags>
+      <li>WeaponMelee</li>
+    </tradeTags>
+    <weaponClasses>
+      <li>Melee</li>
+      <li>Ultratech</li>
+      <li>MeleePiercer</li>
+    </weaponClasses>
+    <tools>
+      <li>
+        <label>hilt</label>
+        <capacities>
+          <li>Blunt</li>
+        </capacities>
+        <power>10</power>
+        <cooldownTime>1.5</cooldownTime>
+      </li>
+      <li>
+        <label>point</label>
+        <capacities>
+          <li>Stab</li>
+        </capacities>
+        <power>26</power>
+        <cooldownTime>1.9</cooldownTime>
+        <!--
+          Canonically a razor pierces both recoilArmor and pulseArmor. Vanilla's
+          monosword sits at 0.9; the razor edges past it, which is the whole
+          reason a Gold is frightening in a corridor.
+        -->
+        <armorPenetration>0.95</armorPenetration>
+      </li>
+      <li>
+        <label>edge</label>
+        <capacities>
+          <li>Cut</li>
+        </capacities>
+        <power>27</power>
+        <cooldownTime>1.9</cooldownTime>
+        <armorPenetration>0.95</armorPenetration>
+      </li>
+      <li>
+        <!-- The whip state: longer reach, wider arc, less concentrated force. -->
+        <label>lash</label>
+        <capacities>
+          <li>Cut</li>
+        </capacities>
+        <power>20</power>
+        <cooldownTime>1.4</cooldownTime>
+        <armorPenetration>0.6</armorPenetration>
+      </li>
+    </tools>
+  </ThingDef>
+
+  <!-- ============================== pulseFist ============================== -->
+
+  <ThingDef ParentName="BaseHumanMakeableGun">
+    <defName>RR_Weapon_PulseFist</defName>
+    <label>pulseFist</label>
+    <description>A gauntlet that throws superheated pulse energy hard enough to melt snow off stone and put a hole through the person standing behind the person you aimed at. It is the ordinary sidearm of Golds fighting other Golds, which tells you most of what you need to know about how Golds fight.\n\nSustained fire will cook the emitter and collapse the housing. Every user has been told this and most have done it anyway.</description>
+    <techLevel>Spacer</techLevel>
+    <graphicData>
+      <texPath>Things/Item/Equipment/WeaponRanged/RR_PulseFist</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <statBases>
+      <WorkToMake>42000</WorkToMake>
+      <MarketValue>1900</MarketValue>
+      <Mass>2.8</Mass>
+      <AccuracyTouch>0.80</AccuracyTouch>
+      <AccuracyShort>0.72</AccuracyShort>
+      <AccuracyMedium>0.55</AccuracyMedium>
+      <AccuracyLong>0.35</AccuracyLong>
+      <RangedWeapon_Cooldown>1.60</RangedWeapon_Cooldown>
+    </statBases>
+    <recipeMaker>
+      <researchPrerequisite>RR_PulsePhysics</researchPrerequisite>
+      <skillRequirements>
+        <Crafting>8</Crafting>
+      </skillRequirements>
+      <recipeUsers Inherit="False">
+        <li>FabricationBench</li>
+      </recipeUsers>
+      <displayPriority>220</displayPriority>
+    </recipeMaker>
+    <costList>
+      <Plasteel>45</Plasteel>
+      <ComponentSpacer>3</ComponentSpacer>
+      <Uranium>5</Uranium>
+    </costList>
+    <weaponTags>
+      <li>SpacerGun</li>
+    </weaponTags>
+    <tradeTags>
+      <li>WeaponRanged</li>
+    </tradeTags>
+    <weaponClasses>
+      <li>RangedLight</li>
+    </weaponClasses>
+    <verbs>
+      <li>
+        <verbClass>Verb_Shoot</verbClass>
+        <hasStandardCommand>true</hasStandardCommand>
+        <defaultProjectile>RR_Bullet_PulseFist</defaultProjectile>
+        <warmupTime>0.9</warmupTime>
+        <!-- Gauntlet-mounted: brutal up close, useless at distance. -->
+        <range>19.9</range>
+        <ticksBetweenBurstShots>9</ticksBetweenBurstShots>
+        <burstShotCount>3</burstShotCount>
+        <soundCast>Shot_ChargeRifle</soundCast>
+        <soundCastTail>GunTail_Medium</soundCastTail>
+        <muzzleFlashScale>12</muzzleFlashScale>
+      </li>
+    </verbs>
+    <tools>
+      <li>
+        <label>gauntlet</label>
+        <capacities>
+          <li>Blunt</li>
+        </capacities>
+        <power>11</power>
+        <cooldownTime>1.8</cooldownTime>
+      </li>
+    </tools>
+  </ThingDef>
+
+  <ThingDef ParentName="BaseBullet">
+    <defName>RR_Bullet_PulseFist</defName>
+    <label>pulse blast</label>
+    <graphicData>
+      <texPath>Things/Projectile/Charge_Small</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <projectile>
+      <damageDef>Flame</damageDef>
+      <damageAmountBase>18</damageAmountBase>
+      <armorPenetrationBase>0.45</armorPenetrationBase>
+      <speed>62</speed>
+    </projectile>
+  </ThingDef>
+
+</Defs>

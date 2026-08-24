@@ -549,11 +549,17 @@ foreach ($file in $xmlFiles) {
             if ($dnNode -and $dnNode.InnerText) {
                 $dn = $dnNode.InnerText.Trim()
 
-                if ($seenDefNames.ContainsKey($dn)) {
+                # defNames are unique PER DEF TYPE, not globally. Vanilla relies on
+                # this: Joywire is simultaneously a HediffDef, a ThingDef and part
+                # of a RecipeDef triad, all sharing one name. An implant is always
+                # written this way, so a type-blind duplicate check rejects correct
+                # XML - which it did, on our own synaptic lattice.
+                $dupKey = "{0}|{1}" -f $node.Name, $dn
+                if ($seenDefNames.ContainsKey($dupKey)) {
                     Add-Problem -Severity ERROR -Check 'DuplicateDefName' -File $rel `
-                        -Message ("defName '{0}' already defined in {1}" -f $dn, $seenDefNames[$dn])
+                        -Message ("{0} '{1}' already defined in {2}" -f $node.Name, $dn, $seenDefNames[$dupKey])
                 } else {
-                    $seenDefNames[$dn] = $rel
+                    $seenDefNames[$dupKey] = $rel
                 }
 
                 if ($vanilla.DefNames.Contains($dn)) {
