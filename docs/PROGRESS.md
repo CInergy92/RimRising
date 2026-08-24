@@ -793,6 +793,68 @@ are generated, and now that is observed rather than assumed.
 
 ---
 
+## The Drachenjaeger — verified, and the four faults it took to get there
+
+Built on Vehicle Framework, gated on it, and confirmed in game: it spawns, renders,
+the health tab lists its twelve components, and both turrets fire cleanly under
+Combat Extended.
+
+It took four rounds, and every fault shared one property: **the defs were valid and
+the load log was clean.** None of them could have been caught by reading XML.
+
+| # | Fault | How it presented | Found by |
+|---|---|---|---|
+| 1 | Body texture was one file; `Vehicles.Graphic_Vehicle` wants `_north`/`_east`/`_south` | — | listing a shipped VVE vehicle's textures |
+| 2 | `VehicleBuildDef` had no `thingToSpawn` | empty architect slot, 100 NREs/sec | the OnGUI stack trace |
+| 3 | No `<components>`, so total health was 0 | health tab threw on open | the error names it directly |
+| 4 | Turret projectiles were vanilla `BaseBullet` | InvalidCastException on every shot | the full CE stack in `Player.log` |
+
+Fault 2 is the sharpest lesson. `VehicleDef.buildDef` and `VehicleBuildDef.thingToSpawn`
+are a **mutual pair**, and I had written only the forward half — because I read VVE's
+blueprint file as far as line 35 when the field sits at line 40. Truncating a
+reference file and treating the fragment as the whole pattern is its own failure mode.
+
+Fault 4 corrects an assumption from the round before. The `CETurretDataDefModExtension`
+was necessary but **not sufficient**: `CE_Utility.LaunchProjectileCE` casts the
+projectile to its own CE type, so a vanilla-descended bullet throws no matter what
+ammo set the extension names. The turrets now point at CE's own projectiles, which
+also puts the ballistics entirely in CE's hands — the right answer regardless, since
+a vanilla armour number reinterpreted in CE units is meaningless.
+
+### Persisted state does not retroactively update
+
+Worth stating once, because it came up twice in one session and looked like a failed
+fix both times:
+
+- The seven `Faction leader is null` lines came from **loading an old save**. Factions
+  are generated at worldgen and persisted; `fixedLeaderKinds` applies when a leader is
+  generated. New worlds are clean, that world never will be.
+- `Total health is 0` came from a Drachenjaeger **spawned before components existed**.
+  A `VehiclePawn` serializes its own component list.
+
+In both cases the def was already correct. When a fix appears not to have taken, check
+whether the thing being looked at was created before it.
+
+### Combat Extended ammo sets are not all equally real
+
+`AmmoSet_40mmRocket` is the obvious fit for a warhead rack and works on this machine.
+It is defined in CE's `ModPatches/Rimsenal Enhanced Vanilla/` folder, so it exists only
+for players who also run Rimsenal. Only ammo sets from CE's own `Defs/` tree are safe
+to name. `AmmoSetFromModPatch` now warns about this.
+
+### Checks added this session
+
+All negative-tested. `MissingTextureDirectional`, `FactionNoLeader`, `VehiclePairBroken`,
+`UnknownAmmoSet`, `AmmoSetFromModPatch`, `UnknownPawnKindTag`, `AbilityUntargetable`,
+`XenotypeMissingAppearanceGene`, plus gated-mod texture and defName indexing.
+
+**Two of them passed while inspecting nothing before being fixed** — one because
+`LocalName` on `<Vehicles.VehicleDef>` is the whole dotted string, one because the
+collector sat inside a branch that patch files never enter. A negative test that
+produces no output is a failing check, not a passing one.
+
+---
+
 ## Open questions
 
 Carried in `docs/DESIGN.md` §8.

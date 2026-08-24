@@ -397,6 +397,56 @@ examples. There is no `XenotypeDef.cs`, no `GeneDef.cs`. Field verification come
 or from decompiling `RimWorldWin64_Data\Managed\Assembly-CSharp.dll`. No decompiler is installed;
 `dotnet tool install -g ilspycmd` if one becomes necessary.
 
+### Heredocs eat backslashes in this environment
+
+Writing PowerShell through a bash heredoc silently strips backslashes, even a quoted
+`<<'PY'` one. `Replace('/', '\')` arrives as `Replace('/', '')`, which throws at
+runtime rather than failing at parse time. It happened three times in one session; one
+instance wrote three PNGs to `Textures/ThingsVehiclesRR_Drachenjager*.png` and reported
+success.
+
+**Use the file-writing tool for anything containing a backslash**, or build the
+separator explicitly: `[char]92`, `[string][char]92`.
+
+### Vehicle Framework needs a triad, and the halves must point at each other
+
+Same shape as the implant triad, and just as unforgiving:
+
+| Def | Names |
+|---|---|
+| `Vehicles.VehicleDef` | `buildDef`, plus `components` and turret keys |
+| `Vehicles.VehicleTurretDef` | one per weapon, matched by the VehicleDef's `turretIds` |
+| `Vehicles.VehicleBuildDef` | **`thingToSpawn`, pointing back at the VehicleDef** |
+
+Omitting `thingToSpawn` loads with zero errors and produces an **empty architect slot**
+plus a NullReferenceException every frame the tab is open, because
+`VehicleGui.GizmoOnGUIWithMaterial` dereferences it immediately. Nothing in the load log
+names the def; only the OnGUI stack trace does.
+
+`<components>` is also mandatory: a vehicle's total health is their **sum**, so with none
+declared the health tab throws on open. Parent from the framework's `BaseVehiclePawn`,
+not from Vanilla Vehicles Expanded's `VehiclePawn_Armored` — VVE's chain adds its own
+comps and would make VVE a second requirement.
+
+### Under Combat Extended, vehicle turrets need CE projectiles AND a CE extension
+
+`VehicleTurret` forks its fire path on whether CE is loaded. With CE it calls
+`CE_Utility.LaunchProjectileCE`, which needs both:
+
+1. a `Vehicles.CETurretDataDefModExtension` supplying `ammoSet`, and
+2. a **CE-native projectile** — CE casts it to its own type, so a vanilla
+   `BaseBullet` descendant throws `InvalidCastException` on every shot.
+
+Only name ammo sets from CE's own `Defs/` tree. CE defines hundreds more under
+`ModPatches/<Some Mod>/` which exist only for players running that third mod.
+
+### Persisted state does not retroactively update
+
+A def fix does not repair things already created from the old def. Faction leaders are
+fixed at worldgen; a `VehiclePawn` serializes its own component list. Both looked like
+failed fixes and were not. **When a fix appears not to have taken, check whether the
+thing being examined predates it.**
+
 ### PowerShell traps hit while writing the tooling
 
 1. **`New-Object Type(a, b, $x - 1)` parses the parens as an array literal**, so the arithmetic
