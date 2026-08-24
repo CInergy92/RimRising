@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Two starts at opposite ends of the hierarchy.
+
+  Structure mirrored from Biotech/Defs/Scenarios/Scenarios.xml, whose Sanguophage
+  start is the vanilla example of forcing specific xenotypes into the starting
+  party via ScenPart_ConfigPage_ConfigureStartingPawns_Xenotypes.
+
+  THE POINT IS THE ASYMMETRY. These are not two difficulty settings. One begins
+  with a razor, pulse armor, research already done and a Gold to command; the
+  other begins underground with three Reds, no weapons, and a lamp. Playing both
+  should teach the hierarchy faster than any description of it.
+
+  Neither start assumes an ideoligion - the player picks that at world creation,
+  and picking RR_ColorEquality as a Gold, or RR_ColorHierarchy as a Red, is a
+  perfectly coherent thing to do and produces the most interesting games.
+-->
+<Defs>
+
+  <!-- ============================ the highColor start ===================== -->
+
+  <ScenarioDef ParentName="ScenarioBase">
+    <defName>RR_Scenario_Household</defName>
+    <label>A Gold's Household</label>
+    <description>A minor house, a long way from Luna, on a rock nobody important has visited in a generation.\n\nYou have a Gold to hold the seal, an Orange to keep the machines running, a Gray who has been told to obey, and Reds who were not consulted. You have equipment the rest of this world has never seen and standing that means nothing at this distance.\n\nEverything the Society says about who you all are travelled out here with you. Whether it survives contact with the work is a separate question.</description>
+    <scenario>
+      <summary>A Gold, a Gray, an Orange and two Reds, with Society equipment and standing.</summary>
+      <parts>
+
+        <li Class="ScenPart_GameStartDialog">
+          <def>GameStartDialog</def>
+          <text>The seal on the shuttle door is your family's, and out here that is worth exactly as much as the people who came with you agree it is.\n\nThey have been raised their whole lives to agree.</text>
+          <closeSound>GameStartSting</closeSound>
+        </li>
+
+        <li Class="ScenPart_ConfigPage_ConfigureStartingPawns_Xenotypes">
+          <def>ConfigurePawnsXenotypes</def>
+          <pawnChoiceCount>8</pawnChoiceCount>
+          <customSummary>Start with one Gold, one Gray, one Orange and two Reds.</customSummary>
+          <xenotypeCounts>
+            <li>
+              <xenotype>RR_Gold</xenotype>
+              <count>1</count>
+              <description>Gold</description>
+              <requiredAtStart>true</requiredAtStart>
+              <allowedDevelopmentalStages>Adult</allowedDevelopmentalStages>
+            </li>
+            <li>
+              <xenotype>RR_Gray</xenotype>
+              <count>1</count>
+              <allowedDevelopmentalStages>Adult</allowedDevelopmentalStages>
+            </li>
+            <li>
+              <xenotype>RR_Orange</xenotype>
+              <count>1</count>
+              <allowedDevelopmentalStages>Adult</allowedDevelopmentalStages>
+            </li>
+            <li>
+              <xenotype>RR_Red</xenotype>
+              <count>2</count>
+              <allowedDevelopmentalStages>Adult</allowedDevelopmentalStages>
+            </li>
+          </xenotypeCounts>
+        </li>
+
+        <li Class="ScenPart_PlayerPawnsArriveMethod">
+          <def>PlayerPawnsArriveMethod</def>
+          <visible>false</visible>
+          <method>DropPods</method>
+        </li>
+
+        <!-- A house arrives already knowing how to make its own things. -->
+        <li Class="ScenPart_StartingResearch">
+          <def>StartingResearch</def>
+          <project>RR_PolyenneWeaving</project>
+        </li>
+        <li Class="ScenPart_StartingResearch">
+          <def>StartingResearch</def>
+          <project>RR_PulsePhysics</project>
+        </li>
+
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>RR_Weapon_Razor</thingDef>
+          <count>1</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>RR_Weapon_PulseFist</thingDef>
+          <count>1</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Gun_ChargeRifle</thingDef>
+          <count>1</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Silver</thingDef>
+          <count>1200</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>MedicineIndustrial</thingDef>
+          <count>30</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Plasteel</thingDef>
+          <count>150</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>ComponentSpacer</thingDef>
+          <count>6</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>ComponentIndustrial</thingDef>
+          <count>40</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Steel</thingDef>
+          <count>500</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>MealSurvivalPack</thingDef>
+          <count>40</count>
+        </li>
+
+      </parts>
+    </scenario>
+  </ScenarioDef>
+
+  <!-- ============================ the lowColor start ====================== -->
+
+  <ScenarioDef ParentName="ScenarioBase">
+    <defName>RR_Scenario_Breakout</defName>
+    <label>Up From the Mine</label>
+    <description>The shaft floods, the clan is written off, and the census never recorded your first name anyway.\n\nSo you came up. Not out of courage - out of the entirely ordinary wish to not drown. Now there is sky, which none of you have seen, and a horizon, which none of you have a word for, and nobody at all is coming to tell you what to do next.\n\nYou have a drill, a lamp, and hands that know one job. Everything else has to be worked out from scratch, by people the Society spent eight hundred years making sure could not.</description>
+    <scenario>
+      <summary>Three Reds up from a flooded shaft. No weapons, no education, no plan.</summary>
+      <parts>
+
+        <li Class="ScenPart_GameStartDialog">
+          <def>GameStartDialog</def>
+          <text>Nobody is looking for you. That is the good news, and it is also all of the news.\n\nThe surface is cold and far too large, and the only skill any of you has is digging. It will have to be enough for a while.</text>
+          <closeSound>GameStartSting</closeSound>
+        </li>
+
+        <li Class="ScenPart_ConfigPage_ConfigureStartingPawns_Xenotypes">
+          <def>ConfigurePawnsXenotypes</def>
+          <pawnChoiceCount>10</pawnChoiceCount>
+          <customSummary>Start with three Reds.</customSummary>
+          <xenotypeCounts>
+            <li>
+              <xenotype>RR_Red</xenotype>
+              <count>3</count>
+              <description>Red</description>
+              <requiredAtStart>true</requiredAtStart>
+              <allowedDevelopmentalStages>Adult</allowedDevelopmentalStages>
+            </li>
+          </xenotypeCounts>
+        </li>
+
+        <!-- Walked up out of the ground, rather than dropped from orbit. -->
+        <li Class="ScenPart_PlayerPawnsArriveMethod">
+          <def>PlayerPawnsArriveMethod</def>
+          <visible>false</visible>
+          <method>Standing</method>
+        </li>
+
+        <li Class="ScenPart_NoPossessions">
+          <def>NoPossessions</def>
+        </li>
+
+        <!-- What you can carry out of a flooding shaft, and no more. -->
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>MealSimple</thingDef>
+          <count>12</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>MedicineHerbal</thingDef>
+          <count>6</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Steel</thingDef>
+          <count>120</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>WoodLog</thingDef>
+          <count>150</count>
+        </li>
+        <li Class="ScenPart_ScatterThingsNearPlayerStart">
+          <def>ScatterThingsNearPlayerStart</def>
+          <thingDef>Steel</thingDef>
+          <count>60</count>
+        </li>
+
+      </parts>
+    </scenario>
+  </ScenarioDef>
+
+</Defs>
