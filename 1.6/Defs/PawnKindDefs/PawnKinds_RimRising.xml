@@ -30,6 +30,13 @@
   <PawnKindDef Name="RR_ColorPawnBase" Abstract="True">
     <race>Human</race>
     <maxGenerationAge>65</maxGenerationAge>
+    <!--
+      Required on every humanlike pawn kind; omitting either is a load-time config
+      error. Set on the shared base so all kinds inherit, with elite kinds
+      overriding upward. Ranges mirrored from vanilla usage.
+    -->
+    <initialResistanceRange>10~17</initialResistanceRange>
+    <initialWillRange>1~3</initialWillRange>
     <useFactionXenotypes>false</useFactionXenotypes>
   </PawnKindDef>
 
@@ -148,6 +155,8 @@
   <PawnKindDef ParentName="RR_SocietyFighterBase">
     <defName>RR_Society_Gold_Praetor</defName>
     <label>praetor</label>
+    <initialResistanceRange>30~45</initialResistanceRange>
+    <initialWillRange>3~5</initialWillRange>
     <combatPower>240</combatPower>
     <apparelColor>(232,194,74)</apparelColor>
     <apparelMoney>3000~5200</apparelMoney>
@@ -191,6 +200,8 @@
   <PawnKindDef ParentName="RR_SocietyFighterBase">
     <defName>RR_Society_OlympicKnight</defName>
     <label>olympic knight</label>
+    <initialResistanceRange>38~58</initialResistanceRange>
+    <initialWillRange>4~6</initialWillRange>
     <combatPower>340</combatPower>
     <apparelColor>(244,208,96)</apparelColor>
     <apparelMoney>4500~7000</apparelMoney>

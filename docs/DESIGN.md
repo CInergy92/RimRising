@@ -322,25 +322,26 @@ their own — which is why the knight pawn kind appears in both factions.
 Named knighthoods, each held by one person at a time: **Morning, Rage, Protean, Storm, Wind,
 Hearth, Truth, Joy, Death, Cloud, Fear, Love**, plus the **Shadow Knight** standing apart.
 
-### The decision: Royalty titles or Ideology roles?
+### DECIDED — the split
 
-These are titles, not a pawn type, and RimWorld has two systems that could carry them. **This is a
-real fork and it is yours.**
+Ruled by the user:
 
-| | Royalty `RoyalTitleDef` | Ideology role precepts |
-|---|---|---|
-| Fit | Purpose-built for titles. Granted by a faction, ranked, inheritable. | Built for ideoligious roles, not ranks. |
-| Gives | Honor economy, permits, apparel and bedroom requirements, title progression | An ability or two, apparel requirements, thoughts |
-| Count | Many titles, freely defined | **Hard cap of a few roles per ideoligion** |
-| Cost | Adds **Royalty** as a dependency | Ideology is already a dependency |
-| Also covers | The Gold rank ladder — Peerless Scarred / Graduate / Shamed — cleanly | Would compete for the same scarce role slots |
+- **Knighthoods → Ideology roles.** There can be only one holder of each knight title, and Ideology
+  roles are singular by construction — a role is held by one pawn at a time. That is the mechanic
+  the fiction is asking for, and it comes free with a dependency we already have.
+- **Gold rank ladder → Royalty titles.** Peerless Scarred, Graduate and Shamed are ranks with
+  progression, and `RoyalTitleDef` is built for exactly that. **Royalty therefore becomes a
+  dependency** when Milestone 5 begins.
 
-**My recommendation: take the Royalty dependency and use `RoyalTitleDef`.** You own Royalty, the
-dependency surface is already deliberately large, and it is the only system that can carry both the
-thirteen knighthoods *and* the Gold rank ladder without fighting Ideology for slots. Ideology roles
-should then be spent on what only they can do — the caste hierarchy itself (§4).
+The split is the right shape: Ideology enforces *uniqueness* (one Rage Knight), Royalty enforces
+*progression* (Shamed → Graduate → Peerless Scarred).
 
-Nothing has been built either way yet. The knight exists for now as an elite pawn kind
+**Consequence to watch:** Ideology caps roles per ideoligion, and thirteen knighthoods will not fit
+alongside the caste roles in a single ideoligion. Likely resolution is that knighthoods belong to
+the Society's and the Dominion's own ideoligions rather than to the player's — which is also
+canonical, since the order serves the Compact. To be confirmed against the role cap at M5.
+
+Nothing is built either way yet. The knight exists for now as an elite pawn kind
 (`RR_Society_OlympicKnight`, combatPower 340 — one is worth more than a whole Society squad).
 
 ---

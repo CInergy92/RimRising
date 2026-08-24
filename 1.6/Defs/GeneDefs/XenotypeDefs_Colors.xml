@@ -81,7 +81,7 @@
         ZERO metabolism, so it buys Gold a signature ability without worsening
         the hunger problem, and its archite cost deepens the carving gate.
       -->
-      <li>EBSG_ArchiteWoundHealing</li>
+      <li MayRequireAnyOf="MoreBiotechStyleGenes.Mod,MoreWoundHealingGenes.Mod">EBSG_ArchiteWoundHealing</li>
       <!--
         The dial that makes Gold playable. Capacity_Boost_Tier_3 is +15 metabolism
         for +15 complexity, a straight 1:1 trade. Gold pays in complexity - which

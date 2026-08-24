@@ -77,6 +77,16 @@ This mod is a work in progress.</description>
       <displayName>Lifespan Expectancy Genes</displayName>
       <steamWorkshopUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=3364691662</steamWorkshopUrl>
     </li>
+    <!--
+      EBSG's own LoadFolders gates 1.6/Mods/EBSGFull behind IfModActive="EBSG.Framework",
+      and EBSG_FertilityShortening lives in there. Without the framework active the
+      gene does not exist and Red fails to resolve it at load.
+    -->
+    <li>
+      <packageId>EBSG.Framework</packageId>
+      <displayName>EBSG Framework</displayName>
+      <steamWorkshopUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=3112549163</steamWorkshopUrl>
+    </li>
   </modDependencies>
 
   <loadAfter>
@@ -94,6 +104,7 @@ This mod is a work in progress.</description>
     <li>EBSG.AiO</li>
     <li>sarg.alphagenes</li>
     <li>EBSG.Archite</li>
+    <li>EBSG.Framework</li>
     <li>Petre27.BiotechCapacitorGenes</li>
     <li>BobnikTheIII.LifespanExpectancyGenes</li>
     <!--

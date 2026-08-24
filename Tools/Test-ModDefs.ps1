@@ -275,33 +275,110 @@ function Test-TransitiveDependencies {
     return , $missing
 }
 
+# Folders inside a dependency that its own LoadFolders.xml gates behind an
+# IfModActive we do not satisfy. Defs in there DO NOT LOAD, and indexing them
+# produced a false green: EBSG_FertilityShortening lives in 1.6/Mods/EBSGFull,
+# gated on EBSG.Framework, and resolved fine in the validator while failing in
+# the game.
+function Get-GatedFolders {
+    param([string] $ModPath, [string[]] $ActivePackageIds)
+
+    $gated = @()
+    $lf = Get-ChildItem -Path $ModPath -Filter 'LoadFolders.xml' -ErrorAction SilentlyContinue | Select-Object -First 1
+    if (-not $lf) { return , $gated }
+
+    $doc = New-Object System.Xml.XmlDocument
+    try { $doc.Load($lf.FullName) } catch { return , $gated }
+
+    foreach ($li in $doc.SelectNodes('//li')) {
+        $folder = $li.InnerText
+        if ([string]::IsNullOrWhiteSpace($folder)) { continue }
+        $folder = $folder.Trim().Trim('/')
+        if ($folder -eq '' -or $folder -eq '/') { continue }
+
+        $ifActive = $li.Attributes['IfModActive']
+        if (-not $ifActive) { continue }
+
+        # Satisfied if EVERY required id is one we declare (comma-separated list).
+        $required = @($ifActive.Value -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+        $satisfied = $true
+        foreach ($r in $required) {
+            if ($r -match '^(?i)ludeon\.rimworld') { continue }   # DLC, assume present
+            if ($ActivePackageIds -notcontains $r.ToLowerInvariant()) { $satisfied = $false; break }
+        }
+        if (-not $satisfied) { $gated += ($folder -replace '/', '\') }
+    }
+    return , $gated
+}
+
 function Build-DependencyGeneIndex {
     param([string[]] $PackageIds, [hashtable] $ModPaths)
 
     $genes = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     $missing = @()
+    $skippedGated = 0
+    $skippedMayRequire = 0
+
+    $active = @($PackageIds | ForEach-Object { $_.ToLowerInvariant() })
 
     foreach ($id in $PackageIds) {
         $key = $id.ToLowerInvariant()
         if (-not $ModPaths.ContainsKey($key)) { $missing += $id; continue }
 
         $modPath = $ModPaths[$key]
+        $gatedFolders = Get-GatedFolders -ModPath $modPath -ActivePackageIds $active
+
         $files = Get-ChildItem -Path $modPath -Filter *.xml -Recurse -File -ErrorAction SilentlyContinue |
                  Where-Object { $_.FullName -match '\\Defs\\' }
 
         foreach ($f in $files) {
+            $rel = $f.FullName.Substring($modPath.Length).TrimStart('\')
+
+            $inGated = $false
+            foreach ($g in $gatedFolders) {
+                if ($rel.StartsWith($g + '\', [StringComparison]::OrdinalIgnoreCase)) { $inGated = $true; break }
+            }
+            if ($inGated) { $skippedGated++; continue }
+
             $doc = New-Object System.Xml.XmlDocument
             try { $doc.Load($f.FullName) } catch { continue }
             if (-not $doc.DocumentElement) { continue }
+
             foreach ($node in $doc.DocumentElement.ChildNodes) {
                 if ($node.Name -ne 'GeneDef') { continue }
+
+                # A def carrying MayRequire / MayRequireAnyOf only exists when those
+                # mods are active. EBSG_ArchiteWoundHealing is gated this way.
+                $skip = $false
+                foreach ($attrName in @('MayRequire', 'MayRequireAnyOf')) {
+                    $attr = $node.Attributes[$attrName]
+                    if (-not $attr) { continue }
+                    $ids = @($attr.Value -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+                    $ids = @($ids | Where-Object { $_ -notmatch '^(?i)ludeon\.rimworld' })
+                    if ($ids.Count -eq 0) { continue }
+
+                    if ($attrName -eq 'MayRequireAnyOf') {
+                        $ok = $false
+                        foreach ($i in $ids) { if ($active -contains $i.ToLowerInvariant()) { $ok = $true; break } }
+                        if (-not $ok) { $skip = $true }
+                    } else {
+                        foreach ($i in $ids) { if ($active -notcontains $i.ToLowerInvariant()) { $skip = $true; break } }
+                    }
+                }
+                if ($skip) { $skippedMayRequire++; continue }
+
                 $dn = $node.SelectSingleNode('defName')
                 if ($dn -and $dn.InnerText) { [void]$genes.Add($dn.InnerText.Trim()) }
             }
         }
     }
 
-    return [pscustomobject]@{ Genes = $genes; Missing = $missing }
+    return [pscustomobject]@{
+        Genes              = $genes
+        Missing            = $missing
+        SkippedGated       = $skippedGated
+        SkippedMayRequire  = $skippedMayRequire
+    }
 }
 
 # ------------------------------------------------------------ texture lookup
@@ -404,7 +481,7 @@ if ($declaredDeps.Count -gt 0) {
     $modPaths = Get-InstalledModPaths -GameInstall $GameInstall
     $depIndex = Build-DependencyGeneIndex -PackageIds $declaredDeps -ModPaths $modPaths
     $depGenes = $depIndex.Genes
-    Write-Host ("  deps     : {0} declared, {1} gene(s) indexed" -f $declaredDeps.Count, $depGenes.Count) -ForegroundColor DarkGray
+    Write-Host ("  deps     : {0} declared, {1} gene(s) indexed ({2} file(s) skipped as LoadFolders-gated, {3} gene(s) skipped as MayRequire-gated)" -f $declaredDeps.Count, $depGenes.Count, $depIndex.SkippedGated, $depIndex.SkippedMayRequire) -ForegroundColor DarkGray
     foreach ($m in $depIndex.Missing) {
         Add-Problem -Severity WARN -Check 'DependencyNotInstalled' -File 'About/About.xml' `
             -Message ("declared dependency '{0}' is not installed, so its defs cannot be verified." -f $m)
@@ -496,10 +573,20 @@ foreach ($file in $xmlFiles) {
                 foreach ($g in $node.SelectNodes('genes/li')) {
                     $gName = $g.InnerText
                     if ([string]::IsNullOrWhiteSpace($gName)) { continue }
+
+                    # Our own reference may carry MayRequire, mirroring the gate on
+                    # the gene it points at. Such a reference is allowed to dangle:
+                    # the game drops it when the gate is unsatisfied.
+                    $gated = $false
+                    foreach ($attrName in @('MayRequire', 'MayRequireAnyOf')) {
+                        if ($g.Attributes[$attrName]) { $gated = $true }
+                    }
+
                     $geneRefs.Add([pscustomobject]@{
-                        Gene  = $gName.Trim()
-                        File  = $rel
-                        Owner = $owner
+                        Gene   = $gName.Trim()
+                        File   = $rel
+                        Owner  = $owner
+                        Gated  = $gated
                     })
                 }
             }
@@ -588,6 +675,14 @@ foreach ($ref in $geneRefs) {
     if ($underscore -gt 0) {
         $prefix = $ref.Gene.Substring(0, $underscore)
         if ($vanilla.GeneTemplates.Contains($prefix)) { continue }
+    }
+
+    if ($ref.Gated) {
+        # Explicitly gated by the author. The game drops the reference cleanly when
+        # the gate is unsatisfied, so this is a note rather than a fault.
+        Add-Problem -Severity WARN -Check 'GatedGeneUnavailable' -File $ref.File `
+            -Message ("xenotype '{0}' references gene '{1}', which is MayRequire-gated and not available in the current dependency set. It will be skipped at load." -f $ref.Owner, $ref.Gene)
+        continue
     }
 
     Add-Problem -Severity ERROR -Check 'MissingGene' -File $ref.File `

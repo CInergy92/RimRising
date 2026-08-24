@@ -367,10 +367,46 @@ hostile to every faction rather than only to the player.
 XML once those memes exist. That is also the version that matters, since the player is the only
 party whose relations the game simulates with any weight.
 
+### First load of M3 — 56 errors, all fixed
+
+The first in-game load of Milestone 3 produced 56 errors in four classes. All are fixed.
+
+| Error | Cause | Fix |
+|---|---|---|
+| `has pawnGroupMakers but missing maxPawnCostPerTotalPointsCurve` (x5) | Required on any humanlike faction with group makers | Curve added to all five, shape from `Faction_Empire.xml` |
+| `is humanlikeFaction but has no backstory categories` (x5) | `backstoryFilters` is required, not optional | Added per faction; categories verified present in `Core/Defs/BackstoryDefs` |
+| `initial resistance range is undefined` / `initial will range is undefined` (x40) | Required on every humanlike pawn kind | Added to the shared base so all inherit; Praetor and Olympic Knight override upward |
+| `Could not resolve cross-reference to GeneDef EBSG_ArchiteWoundHealing` / `EBSG_FertilityShortening` | **Validator false green — see below** | One gated, one dependency added |
+
+The C# worked on the first try:
+`[RimRising] Xenogerm metabolism floor widened from -5 to -10. Max unchanged at 5.`
+
+### The fourth false green — two gating mechanisms the validator ignored
+
+Both failing genes exist on disk. Neither loads, for different reasons, and the validator indexed
+both because it read the filesystem rather than the load rules.
+
+1. **`EBSG_FertilityShortening`** lives in `1.6/Mods/EBSGFull/`, which EBSG's own `LoadFolders.xml`
+   gates behind `IfModActive="EBSG.Framework"`. The framework was installed but not active, so the
+   folder never loaded.
+   **Fix:** `EBSG.Framework` added as a dependency. **It must be enabled in the mod list.**
+2. **`EBSG_ArchiteWoundHealing`** carries
+   `MayRequireAnyOf="MoreBiotechStyleGenes.Mod,MoreWoundHealingGenes.Mod"` on the def itself.
+   Neither mod is installed, so the def never exists.
+   **Fix:** the same gate is now mirrored on our `<li>`, so the reference drops out cleanly instead
+   of erroring. Gold loses 6 complexity and 2 archite when those mods are absent — cpx 43, arc 2,
+   metabolism unchanged. Installing either mod restores it.
+
+`Test-ModDefs.ps1` now honours both mechanisms when indexing dependencies: it parses each
+dependency's `LoadFolders.xml` and skips folders whose `IfModActive` we do not satisfy, and skips
+defs whose `MayRequire` / `MayRequireAnyOf` is unsatisfied. On the current profile that removes
+**100 gated files and 160 gated genes** from the index. A reference of ours that is itself
+`MayRequire`-gated now reports as a warning rather than an error, since the game drops it cleanly.
+
 ### Not yet verified in game
 
 Factions generating on the world map, and a raid arriving with the right Colors, is the M3 success
-criterion and has not been checked.
+criterion and has not been checked. Re-run after enabling `EBSG.Framework`.
 
 ---
 
