@@ -43,6 +43,41 @@
       <operations>
 
         <!--
+          FIRST, SWAP THE PROJECTILES. The mod extension below is necessary but on
+          its own it is not sufficient, which cost a round trip to find out.
+
+          CE_Utility.LaunchProjectileCE casts the projectile to its own CE type.
+          Our RR_Bullet_* defs descend from vanilla BaseBullet, so the cast throws
+
+              InvalidCastException: Specified cast is not valid
+
+          inside CE's launcher, one per shot, no matter what ammo set the
+          extension names. Pointing the turrets at CE's own projectiles for the
+          matching ammo set fixes it and has the side benefit that the ballistics,
+          penetration and armour maths are then entirely CE's rather than a
+          vanilla number reinterpreted in CE units - which, per the note in
+          LoadFolders.xml, would be meaningless anyway.
+
+          The vanilla-side RR_Bullet_* defs stay exactly as they are. Without CE
+          the framework spawns them directly and they work.
+        -->
+        <li Class="PatchOperationReplace">
+          <success>Always</success>
+          <xpath>Defs/Vehicles.VehicleTurretDef[defName="RR_Drachenjager_ParticleCannon"]/projectile</xpath>
+          <value>
+            <projectile>Bullet_20x105mmCharged_AP</projectile>
+          </value>
+        </li>
+
+        <li Class="PatchOperationReplace">
+          <success>Always</success>
+          <xpath>Defs/Vehicles.VehicleTurretDef[defName="RR_Drachenjager_WarheadRack"]/projectile</xpath>
+          <value>
+            <projectile>Bullet_120mmCannonShell_HE</projectile>
+          </value>
+        </li>
+
+        <!--
           Particle battery: a charged-shot autocannon in CE terms. 20x105mmCharged
           is CE's own charged autocannon set, so the ballistics and armour maths
           come from CE rather than from numbers invented here.
