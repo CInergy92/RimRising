@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The two merchant powers.
+
+  Structure mirrored from Factions_RimRising.xml, which was itself mirrored from
+  Core's OutlanderCivil and Royalty's Faction_Empire.
+
+  THESE EXIST FOR A MECHANICAL REASON, not only for flavour. With vanilla's
+  outlander towns suppressed in Milestone 7, a colony that has angered the Society
+  could otherwise be left with no viable trade partner at all - the Ascomanni raid
+  rather than trade, and the obsidian tribes only sell neolithic goods.
+
+  Two merchants rather than one, because they are opposites and between them they
+  cover every colony a player can run:
+
+    Julii sells to anyone, and cares about nothing except the price.
+    Sun likes you specifically for having thrown off the castes.
+
+  So whatever ideoligion the player picks, somebody will still deal with them.
+-->
+<Defs>
+
+  <!-- ========================== Julii Industries ========================== -->
+  <!--
+    THE ALL-COMERS TRADE PARTNER.
+
+    In the source, House Julii is known for backing whoever is currently paying
+    best and dropping an alliance the moment it stops being profitable. That is
+    exactly the disposition a guaranteed trade partner needs, so the fiction and
+    the mechanical requirement happen to want the same faction.
+
+    Hence: no naturalEnemy, no requiredMemes, and no siege or attack staging.
+    You do not have to like them and they do not have to like you.
+  -->
+
+  <FactionDef ParentName="FactionBase">
+    <defName>RR_JuliiIndustries</defName>
+    <label>Julii Industries</label>
+    <description>A Gold house that got rich carrying other people's cargo and never saw a reason to do anything else. Julii holds the shipping lanes, the belt rocks those lanes run past, and the contracts that make using either one expensive - and it has spent centuries making sure there is no second option.\n\nThey are not loyal and have never pretended to be. Julii backs whoever is winning, for exactly as long as winning pays, and the family's own histories record this as good business rather than as a failing. The practical upshot for a colony is pleasant enough: they will sell to anyone. Including you. Including whoever is currently trying to kill you.</description>
+    <pawnSingular>Julii factor</pawnSingular>
+    <pawnsPlural>Julii factors</pawnsPlural>
+    <categoryTag>RR_Merchant</categoryTag>
+    <listOrderPriority>52</listOrderPriority>
+    <settlementGenerationWeight>0.6</settlementGenerationWeight>
+    <maxConfigurableAtWorldCreation>2</maxConfigurableAtWorldCreation>
+    <canSiege>false</canSiege>
+    <canStageAttacks>false</canStageAttacks>
+    <leaderTitle>primus</leaderTitle>
+    <techLevel>Spacer</techLevel>
+    <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>
+    <factionIconPath>World/WorldObjects/Expanding/Town</factionIconPath>
+    <factionNameMaker>NamerFactionOutlander</factionNameMaker>
+    <settlementNameMaker>NamerSettlementOutlander</settlementNameMaker>
+    <!-- Scarlet on black, after the house standard. -->
+    <colorSpectrum>
+      <li>(0.55, 0.10, 0.10)</li>
+      <li>(0.85, 0.25, 0.20)</li>
+    </colorSpectrum>
+    <!--
+      Gold-run, so in the fiction they keep the hierarchy - but it is deliberately
+      NOT a requiredMeme. Binding them to it would hand them the hierarchy goodwill
+      situations and make them loathe an egalitarian colony, which would undo the
+      entire reason this faction exists.
+    -->
+    <structureMemeWeights>
+      <Structure_Ideological MayRequire="Ludeon.RimWorld.Ideology">4</Structure_Ideological>
+      <Structure_Archist MayRequire="Ludeon.RimWorld.Ideology">3</Structure_Archist>
+    </structureMemeWeights>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Red>0.20</RR_Red>
+        <RR_Brown>0.14</RR_Brown>
+        <RR_Gray>0.13</RR_Gray>
+        <RR_Silver>0.12</RR_Silver>
+        <RR_Copper>0.10</RR_Copper>
+        <RR_Blue>0.09</RR_Blue>
+        <RR_Orange>0.07</RR_Orange>
+        <RR_Pink>0.05</RR_Pink>
+        <RR_Yellow>0.03</RR_Yellow>
+        <RR_White>0.02</RR_White>
+        <RR_Gold>0.02</RR_Gold>
+      </xenotypeChances>
+    </xenotypeSet>
+    <maxPawnCostPerTotalPointsCurve>
+      <points>
+        <li>(70, 60)</li>
+        <li>(300, 150)</li>
+        <li>(1000, 400)</li>
+        <li>(2000, 800)</li>
+        <li>(2001, 10000)</li>
+      </points>
+    </maxPawnCostPerTotalPointsCurve>
+    <backstoryFilters>
+      <li>
+        <categories>
+          <li>Offworld</li>
+          <li>Outlander</li>
+        </categories>
+      </li>
+    </backstoryFilters>
+    <pawnGroupMakers>
+      <li>
+        <kindDef>Combat</kindDef>
+        <commonality>100</commonality>
+        <options>
+          <RR_Julii_Enforcer>10</RR_Julii_Enforcer>
+          <RR_Society_Legionary>3</RR_Society_Legionary>
+        </options>
+      </li>
+      <li>
+        <kindDef>Trader</kindDef>
+        <traders>
+          <RR_Julii_Trademaster>1</RR_Julii_Trademaster>
+        </traders>
+        <carriers>
+          <Muffalo>6</Muffalo>
+          <Dromedary>5</Dromedary>
+          <Horse>3</Horse>
+        </carriers>
+        <guards>
+          <RR_Julii_Enforcer>10</RR_Julii_Enforcer>
+        </guards>
+      </li>
+      <li>
+        <kindDef>Peaceful</kindDef>
+        <options>
+          <RR_Julii_Trademaster>3</RR_Julii_Trademaster>
+          <RR_Society_Copper_Official>5</RR_Society_Copper_Official>
+          <RR_Society_Brown_Servant>6</RR_Society_Brown_Servant>
+          <RR_Julii_Enforcer>4</RR_Julii_Enforcer>
+        </options>
+      </li>
+      <li>
+        <kindDef>Settlement</kindDef>
+        <options>
+          <RR_Julii_Enforcer>10</RR_Julii_Enforcer>
+          <RR_Society_Copper_Official>3</RR_Society_Copper_Official>
+        </options>
+      </li>
+    </pawnGroupMakers>
+    <!--
+      The full industrial trade suite, plus the pirate merchant. House Julii deals
+      in people in the source material; RimWorld already models that through
+      Ideology, so it is expressible rather than something that had to be invented,
+      and a colony whose ideoligion forbids it simply declines the trade.
+    -->
+    <caravanTraderKinds>
+      <li>Caravan_Outlander_BulkGoods</li>
+      <li>Caravan_Outlander_CombatSupplier</li>
+      <li>Caravan_Outlander_Exotic</li>
+      <li>Caravan_Outlander_PirateMerchant</li>
+    </caravanTraderKinds>
+    <visitorTraderKinds>
+      <li>Visitor_Outlander_Standard</li>
+    </visitorTraderKinds>
+    <baseTraderKinds>
+      <li>Base_Outlander_Standard</li>
+    </baseTraderKinds>
+  </FactionDef>
+
+  <!-- =========================== Sun Industries =========================== -->
+  <!--
+    The deliberate opposite number, and the reason there are two merchants.
+
+    Sun is Silver-founded rather than Gold-inherited: the largest concern in the
+    system, built by a member of a Color the hierarchy files under "servant". In
+    the source its founder quietly finances the resistance while remaining
+    outwardly a model of compliance - which is why this faction leans egalitarian
+    where Julii leans nowhere at all.
+  -->
+
+  <FactionDef ParentName="FactionBase">
+    <defName>RR_SunIndustries</defName>
+    <label>Sun Industries</label>
+    <description>The largest concern in the system, assembled from nothing by a Silver - which by the Society's own account of what Silvers are for should not have been possible. It holds helium processing, telecoms, electronics, arms and a great many quieter things, and it holds the debts of a surprising number of Golds who would rather that were not widely known.\n\nOfficially Sun is a model of compliance and pays its respects on schedule. What it does with the rest of the money is not officially anything. Colonies that have thrown off the castes tend to find Sun unusually willing to deal, on unusually good terms, for reasons its brokers are always careful not to give.</description>
+    <pawnSingular>Sun broker</pawnSingular>
+    <pawnsPlural>Sun brokers</pawnsPlural>
+    <categoryTag>RR_Merchant</categoryTag>
+    <listOrderPriority>53</listOrderPriority>
+    <settlementGenerationWeight>0.6</settlementGenerationWeight>
+    <maxConfigurableAtWorldCreation>2</maxConfigurableAtWorldCreation>
+    <canSiege>false</canSiege>
+    <canStageAttacks>false</canStageAttacks>
+    <leaderTitle>chief executive</leaderTitle>
+    <techLevel>Spacer</techLevel>
+    <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>
+    <factionIconPath>World/WorldObjects/Expanding/Town</factionIconPath>
+    <factionNameMaker>NamerFactionOutlander</factionNameMaker>
+    <settlementNameMaker>NamerSettlementOutlander</settlementNameMaker>
+    <!-- Quicksilver, and the corporate white it hides behind. -->
+    <colorSpectrum>
+      <li>(0.58, 0.60, 0.64)</li>
+      <li>(0.92, 0.93, 0.96)</li>
+    </colorSpectrum>
+    <structureMemeWeights>
+      <Structure_Ideological MayRequire="Ludeon.RimWorld.Ideology">5</Structure_Ideological>
+      <Structure_Archist MayRequire="Ludeon.RimWorld.Ideology">2</Structure_Archist>
+    </structureMemeWeights>
+    <requiredMemes>
+      <li>RR_ColorEquality</li>
+    </requiredMemes>
+    <!--
+      Silver-heavy by construction, and no Golds at all. Sun does not employ the
+      caste that owns everything else; that is the whole point of it.
+    -->
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Silver>0.20</RR_Silver>
+        <RR_Copper>0.16</RR_Copper>
+        <RR_Orange>0.14</RR_Orange>
+        <RR_Green>0.12</RR_Green>
+        <RR_Gray>0.11</RR_Gray>
+        <RR_Blue>0.09</RR_Blue>
+        <RR_Red>0.08</RR_Red>
+        <RR_Violet>0.04</RR_Violet>
+        <RR_Yellow>0.04</RR_Yellow>
+        <RR_White>0.02</RR_White>
+      </xenotypeChances>
+    </xenotypeSet>
+    <maxPawnCostPerTotalPointsCurve>
+      <points>
+        <li>(70, 60)</li>
+        <li>(300, 150)</li>
+        <li>(1000, 400)</li>
+        <li>(2000, 800)</li>
+        <li>(2001, 10000)</li>
+      </points>
+    </maxPawnCostPerTotalPointsCurve>
+    <backstoryFilters>
+      <li>
+        <categories>
+          <li>Offworld</li>
+          <li>Outlander</li>
+        </categories>
+      </li>
+    </backstoryFilters>
+    <pawnGroupMakers>
+      <li>
+        <kindDef>Combat</kindDef>
+        <commonality>100</commonality>
+        <options>
+          <RR_Sun_Security>10</RR_Sun_Security>
+          <RR_Sun_Green_Engineer>2</RR_Sun_Green_Engineer>
+        </options>
+      </li>
+      <li>
+        <kindDef>Trader</kindDef>
+        <traders>
+          <RR_Sun_Broker>1</RR_Sun_Broker>
+        </traders>
+        <carriers>
+          <Muffalo>6</Muffalo>
+          <Dromedary>5</Dromedary>
+          <Horse>3</Horse>
+        </carriers>
+        <guards>
+          <RR_Sun_Security>10</RR_Sun_Security>
+        </guards>
+      </li>
+      <li>
+        <kindDef>Peaceful</kindDef>
+        <options>
+          <RR_Sun_Broker>3</RR_Sun_Broker>
+          <RR_Sun_Green_Engineer>6</RR_Sun_Green_Engineer>
+          <RR_Society_Copper_Official>4</RR_Society_Copper_Official>
+          <RR_Sun_Security>4</RR_Sun_Security>
+        </options>
+      </li>
+      <li>
+        <kindDef>Settlement</kindDef>
+        <options>
+          <RR_Sun_Security>10</RR_Sun_Security>
+          <RR_Sun_Green_Engineer>3</RR_Sun_Green_Engineer>
+        </options>
+      </li>
+    </pawnGroupMakers>
+    <!--
+      No pirate merchant, in pointed contrast to Julii. Exotics instead: Sun sells
+      technology, and it is the one merchant on the map that will happily arm you.
+    -->
+    <caravanTraderKinds>
+      <li>Caravan_Outlander_BulkGoods</li>
+      <li>Caravan_Outlander_CombatSupplier</li>
+      <li>Caravan_Outlander_Exotic</li>
+    </caravanTraderKinds>
+    <visitorTraderKinds>
+      <li>Visitor_Outlander_Standard</li>
+    </visitorTraderKinds>
+    <baseTraderKinds>
+      <li>Base_Outlander_Standard</li>
+    </baseTraderKinds>
+  </FactionDef>
+
+</Defs>

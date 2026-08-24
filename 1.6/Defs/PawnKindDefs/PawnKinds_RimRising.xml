@@ -211,7 +211,7 @@
     <apparelTags>
       <li>SpacerMilitary</li>
       <li>IndustrialMilitaryAdvanced</li>
-      <li>Armor</li>
+      <li>IndustrialMilitaryBasic</li>
     </apparelTags>
     <weaponTags>
       <li>UltratechMelee</li>
@@ -241,9 +241,9 @@
     <apparelMoney>1200~2400</apparelMoney>
     <weaponMoney>250~600</weaponMoney>
     <apparelTags>
-      <li>Clothing</li>
+      <li>IndustrialBasic</li>
       <li>IndustrialAdvanced</li>
-      <li>Spacefarer</li>
+      <li>SpacerMilitary</li>
     </apparelTags>
     <weaponTags>
       <li>Revolver</li>
@@ -269,7 +269,7 @@
     <apparelMoney>900~1900</apparelMoney>
     <weaponMoney>200~500</weaponMoney>
     <apparelTags>
-      <li>Clothing</li>
+      <li>IndustrialBasic</li>
       <li>IndustrialAdvanced</li>
     </apparelTags>
     <weaponTags>
@@ -294,7 +294,7 @@
     <apparelColor>(230,212,79)</apparelColor>
     <apparelMoney>800~1700</apparelMoney>
     <apparelTags>
-      <li>Clothing</li>
+      <li>IndustrialBasic</li>
       <li>IndustrialAdvanced</li>
     </apparelTags>
     <skills>
@@ -316,8 +316,7 @@
     <apparelColor>(156,119,82)</apparelColor>
     <apparelMoney>250~700</apparelMoney>
     <apparelTags>
-      <li>BasicClothing</li>
-      <li>Worker</li>
+      <li>IndustrialBasic</li>
     </apparelTags>
     <skills>
       <li><skill>Cooking</skill><range>7~13</range></li>
@@ -338,8 +337,7 @@
     <apparelColor>(168,72,72)</apparelColor>
     <apparelMoney>200~650</apparelMoney>
     <apparelTags>
-      <li>BasicClothing</li>
-      <li>Worker</li>
+      <li>IndustrialBasic</li>
     </apparelTags>
     <skills>
       <li><skill>Mining</skill><range>9~16</range></li>
@@ -362,7 +360,6 @@
     <apparelTags>
       <li>IndustrialBasic</li>
       <li>IndustrialMilitaryBasic</li>
-      <li>Worker</li>
     </apparelTags>
     <apparelDisallowTags>
       <li>Royal</li>
@@ -379,7 +376,7 @@
     <weaponTags>
       <li>SimpleGun</li>
       <li>IndustrialGunAdvanced</li>
-      <li>Grenades</li>
+      <li>GrenadeDestructive</li>
     </weaponTags>
     <skills>
       <li><skill>Shooting</skill><range>3~9</range></li>
@@ -402,7 +399,7 @@
     <weaponMoney>600~1500</weaponMoney>
     <weaponTags>
       <li>IndustrialGunAdvanced</li>
-      <li>Grenades</li>
+      <li>GrenadeDestructive</li>
       <li>GrenadeEMP</li>
     </weaponTags>
     <skills>
@@ -553,7 +550,6 @@
     <itemQuality>Normal</itemQuality>
     <apparelAllowHeadgearChance>0.6</apparelAllowHeadgearChance>
     <apparelTags>
-      <li>Armor</li>
       <li>IndustrialMilitaryBasic</li>
       <li>Tribal</li>
     </apparelTags>
@@ -599,6 +595,154 @@
     <xenotypeSet>
       <xenotypeChances>
         <RR_Obsidian_Ascomanni>1</RR_Obsidian_Ascomanni>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <!-- ======================= the two merchant powers ======================= -->
+  <!--
+    Structure mirrored from RR_Society_Silver_Factor above. Both houses are run by
+    Silvers because in the setting Silver is the Color engineered for finance and
+    logistics - which makes a merchant faction the one place a Silver is not
+    somebody else's clerk.
+  -->
+
+  <PawnKindDef ParentName="RR_ColorPawnBase">
+    <defName>RR_Julii_Trademaster</defName>
+    <label>trademaster</label>
+    <defaultFactionDef>RR_JuliiIndustries</defaultFactionDef>
+    <combatPower>38</combatPower>
+    <trader>true</trader>
+    <apparelColor>(180,40,40)</apparelColor>
+    <apparelMoney>1800~3400</apparelMoney>
+    <weaponMoney>400~900</weaponMoney>
+    <apparelTags>
+      <li>IndustrialBasic</li>
+      <li>IndustrialAdvanced</li>
+      <li>SpacerMilitary</li>
+    </apparelTags>
+    <weaponTags>
+      <li>Revolver</li>
+      <li>Autopistol</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Social</skill><range>12~19</range></li>
+      <li><skill>Intellectual</skill><range>8~15</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Silver>1</RR_Silver>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <PawnKindDef ParentName="RR_ColorPawnBase">
+    <defName>RR_Julii_Enforcer</defName>
+    <label>house enforcer</label>
+    <defaultFactionDef>RR_JuliiIndustries</defaultFactionDef>
+    <combatPower>62</combatPower>
+    <apparelColor>(120,30,30)</apparelColor>
+    <apparelMoney>1100~2300</apparelMoney>
+    <weaponMoney>700~1500</weaponMoney>
+    <apparelTags>
+      <li>IndustrialBasic</li>
+      <li>IndustrialAdvanced</li>
+      <li>SpacerMilitary</li>
+    </apparelTags>
+    <weaponTags>
+      <li>SimpleGun</li>
+      <li>IndustrialGunAdvanced</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Shooting</skill><range>7~13</range></li>
+      <li><skill>Melee</skill><range>6~11</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Gray>1</RR_Gray>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <PawnKindDef ParentName="RR_ColorPawnBase">
+    <defName>RR_Sun_Broker</defName>
+    <label>broker</label>
+    <defaultFactionDef>RR_SunIndustries</defaultFactionDef>
+    <combatPower>36</combatPower>
+    <trader>true</trader>
+    <apparelColor>(214,214,220)</apparelColor>
+    <apparelMoney>1600~3200</apparelMoney>
+    <weaponMoney>300~800</weaponMoney>
+    <apparelTags>
+      <li>IndustrialBasic</li>
+      <li>IndustrialAdvanced</li>
+      <li>SpacerMilitary</li>
+    </apparelTags>
+    <weaponTags>
+      <li>Revolver</li>
+      <li>Autopistol</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Social</skill><range>11~18</range></li>
+      <li><skill>Intellectual</skill><range>10~17</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Silver>1</RR_Silver>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <PawnKindDef ParentName="RR_ColorPawnBase">
+    <defName>RR_Sun_Security</defName>
+    <label>corporate security</label>
+    <defaultFactionDef>RR_SunIndustries</defaultFactionDef>
+    <combatPower>58</combatPower>
+    <apparelColor>(90,110,140)</apparelColor>
+    <apparelMoney>1200~2400</apparelMoney>
+    <weaponMoney>800~1600</weaponMoney>
+    <apparelTags>
+      <li>IndustrialBasic</li>
+      <li>IndustrialAdvanced</li>
+      <li>SpacerMilitary</li>
+    </apparelTags>
+    <weaponTags>
+      <li>SimpleGun</li>
+      <li>IndustrialGunAdvanced</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Shooting</skill><range>7~13</range></li>
+      <li><skill>Melee</skill><range>5~10</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Gray>1</RR_Gray>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <PawnKindDef ParentName="RR_ColorPawnBase">
+    <defName>RR_Sun_Green_Engineer</defName>
+    <label>systems engineer</label>
+    <defaultFactionDef>RR_SunIndustries</defaultFactionDef>
+    <combatPower>34</combatPower>
+    <apparelColor>(70,150,90)</apparelColor>
+    <apparelMoney>900~1900</apparelMoney>
+    <weaponMoney>200~500</weaponMoney>
+    <apparelTags>
+      <li>IndustrialBasic</li>
+      <li>IndustrialAdvanced</li>
+    </apparelTags>
+    <weaponTags>
+      <li>Autopistol</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Intellectual</skill><range>11~18</range></li>
+      <li><skill>Crafting</skill><range>8~14</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Green>1</RR_Green>
       </xenotypeChances>
     </xenotypeSet>
   </PawnKindDef>

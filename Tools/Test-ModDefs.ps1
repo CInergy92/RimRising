@@ -36,6 +36,12 @@ param(
     [switch] $RefreshVanillaCache
 )
 
+# PowerShell's XML adapter shadows XmlElement.Name with the element's Name=
+# ATTRIBUTE whenever one is present, so $node.Name on <ThingDef Name="Gun_Revolver">
+# returns "Gun_Revolver", not "ThingDef". Every type test in this file therefore
+# uses .LocalName. Using .Name silently skips every def carrying Name=, which in
+# vanilla is 838 of them - the checks pass and inspect nothing.
+
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
@@ -93,6 +99,10 @@ function Build-VanillaIndex {
     # a random hair colour - which for a mod whose whole premise is that hair
     # reads the caste is a silent failure, not a cosmetic one.
     $hairColorGenes = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    # Tags a PawnKindDef can ask for. A kind requesting a tag no THING carries
+    # spawns the pawn with no weapon or no clothes and logs absolutely nothing.
+    $weaponTags  = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    $apparelTags = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 
     # Abstract (Name=) defs and the list-valued fields they declare, so a child can
     # be checked for re-declaring something it already inherits. RimWorld APPENDS
@@ -118,11 +128,24 @@ function Build-VanillaIndex {
             if ($dn -and $dn.InnerText) {
                 $name = $dn.InnerText.Trim()
                 [void]$defNames.Add($name)
-                if ($node.Name -eq 'GeneDef')         {
+                if ($node.LocalName -eq 'GeneDef')         {
                     [void]$geneDefs.Add($name)
                     if ($node.SelectSingleNode('hairColorOverride')) { [void]$hairColorGenes.Add($name) }
                 }
-                if ($node.Name -eq 'GeneTemplateDef') { [void]$geneTemplates.Add($name) }
+                if ($node.LocalName -eq 'GeneTemplateDef') { [void]$geneTemplates.Add($name) }
+            }
+
+            # Tag vocabularies, taken from the things that CARRY the tags
+            # (ThingDef/weaponTags and ThingDef/apparel/tags), never from the
+            # PawnKindDefs that request them - otherwise a typo would validate
+            # itself.
+            if ($node.LocalName -eq 'ThingDef') {
+                foreach ($li in $node.SelectNodes('weaponTags/li')) {
+                    if ($li.InnerText) { [void]$weaponTags.Add($li.InnerText.Trim()) }
+                }
+                foreach ($li in $node.SelectNodes('apparel/tags/li')) {
+                    if ($li.InnerText) { [void]$apparelTags.Add($li.InnerText.Trim()) }
+                }
             }
 
             $na = $node.Attributes['Name']
@@ -156,7 +179,7 @@ function Build-VanillaIndex {
             # uses is certainly real - and a non-RR_ path that appears NOWHERE in
             # vanilla is almost certainly a typo or an invention.
             foreach ($tex in $node.SelectNodes('.//*')) {
-                if (-not (Test-IsTexturePathNode $tex.Name)) { continue }
+                if (-not (Test-IsTexturePathNode $tex.LocalName)) { continue }
                 if ($tex.ChildNodes.Count -ne 1) { continue }
                 if ([string]::IsNullOrWhiteSpace($tex.InnerText)) { continue }
                 [void]$vanillaTexPaths.Add(($tex.InnerText.Trim() -replace '\\', '/').TrimStart('/'))
@@ -171,6 +194,8 @@ function Build-VanillaIndex {
         GeneTemplates = @($geneTemplates)
         TexPaths      = @($vanillaTexPaths)
         HairColorGenes= @($hairColorGenes)
+        WeaponTags    = @($weaponTags)
+        ApparelTags   = @($apparelTags)
         Abstracts     = $abstracts
     }
 }
@@ -190,7 +215,7 @@ function Get-VanillaIndex {
 
     # Bumped whenever the cached shape changes, so an old cache is rebuilt rather
     # than read with missing fields.
-    $cacheSchema = 5
+    $cacheSchema = 6
 
     if (-not $Refresh -and (Test-Path $cacheFile)) {
         try {
@@ -204,6 +229,8 @@ function Get-VanillaIndex {
                     GeneTemplates = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.GeneTemplates, [StringComparer]::Ordinal)
                     TexPaths      = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.TexPaths, [StringComparer]::OrdinalIgnoreCase)
                     HairColorGenes= [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.HairColorGenes, [StringComparer]::Ordinal)
+                    WeaponTags    = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.WeaponTags, [StringComparer]::Ordinal)
+                    ApparelTags   = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.ApparelTags, [StringComparer]::Ordinal)
                     Abstracts     = $cached.Abstracts
                     Version       = $version
                 }
@@ -227,6 +254,8 @@ function Get-VanillaIndex {
         GeneTemplates = $idx.GeneTemplates
         TexPaths      = $idx.TexPaths
         HairColorGenes= $idx.HairColorGenes
+        WeaponTags    = $idx.WeaponTags
+        ApparelTags   = $idx.ApparelTags
         Abstracts     = $idx.Abstracts
     } | ConvertTo-Json -Depth 8 -Compress | Set-Content -Path $cacheFile -Encoding UTF8
 
@@ -239,6 +268,8 @@ function Get-VanillaIndex {
         GeneTemplates = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.GeneTemplates, [StringComparer]::Ordinal)
         TexPaths      = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.TexPaths, [StringComparer]::OrdinalIgnoreCase)
         HairColorGenes= [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.HairColorGenes, [StringComparer]::Ordinal)
+        WeaponTags    = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.WeaponTags, [StringComparer]::Ordinal)
+        ApparelTags   = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.ApparelTags, [StringComparer]::Ordinal)
         Abstracts     = $idx.Abstracts
         Version       = $version
     }
@@ -402,7 +433,7 @@ function Build-DependencyGeneIndex {
             if (-not $doc.DocumentElement) { continue }
 
             foreach ($node in $doc.DocumentElement.ChildNodes) {
-                if ($node.Name -ne 'GeneDef') { continue }
+                if ($node.LocalName -ne 'GeneDef') { continue }
 
                 # A def carrying MayRequire / MayRequireAnyOf only exists when those
                 # mods are active. EBSG_ArchiteWoundHealing is gated this way.
@@ -581,6 +612,13 @@ $geneRefs = [System.Collections.Generic.List[object]]::new()
 # our own Name= abstracts, and deferred inherited-list checks
 $modAbstracts = @{}
 $listRefs = [System.Collections.Generic.List[object]]::new()
+
+# Tags our OWN ThingDefs carry, and every tag our PawnKindDefs ask for. Resolved
+# after the scan, because a kind may legitimately request a tag declared by a
+# thing defined later in the same run.
+$modWeaponTags  = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+$modApparelTags = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+$tagRefs = [System.Collections.Generic.List[object]]::new()
 # patch xpaths aimed at our own defs, resolved once every def is known
 $patchRefs = [System.Collections.Generic.List[object]]::new()
 
@@ -600,7 +638,7 @@ foreach ($file in $xmlFiles) {
         continue
     }
 
-    $isPatch = $doc.DocumentElement.Name -eq 'Patch'
+    $isPatch = $doc.DocumentElement.LocalName -eq 'Patch'
 
     foreach ($node in $doc.DocumentElement.ChildNodes) {
         if ($node.NodeType -ne [System.Xml.XmlNodeType]::Element) { continue }
@@ -616,10 +654,10 @@ foreach ($file in $xmlFiles) {
                 # of a RecipeDef triad, all sharing one name. An implant is always
                 # written this way, so a type-blind duplicate check rejects correct
                 # XML - which it did, on our own synaptic lattice.
-                $dupKey = "{0}|{1}" -f $node.Name, $dn
+                $dupKey = "{0}|{1}" -f $node.LocalName, $dn
                 if ($seenDefNames.ContainsKey($dupKey)) {
                     Add-Problem -Severity ERROR -Check 'DuplicateDefName' -File $rel `
-                        -Message ("{0} '{1}' already defined in {2}" -f $node.Name, $dn, $seenDefNames[$dupKey])
+                        -Message ("{0} '{1}' already defined in {2}" -f $node.LocalName, $dn, $seenDefNames[$dupKey])
                 } else {
                     $seenDefNames[$dupKey] = $rel
                 }
@@ -637,7 +675,7 @@ foreach ($file in $xmlFiles) {
             # passes a null path to ContentFinder and throws while DRAWING the world
             # map. It presents to the player as "the planet will not generate", with
             # nothing in the startup log to explain it.
-            if ($node.Name -eq 'FactionDef') {
+            if ($node.LocalName -eq 'FactionDef') {
                 $isAbstract = $node.Attributes['Abstract']
                 $hidden = $node.SelectSingleNode('hidden')
                 $isHidden = $hidden -and $hidden.InnerText.Trim() -eq 'true'
@@ -662,7 +700,7 @@ foreach ($file in $xmlFiles) {
             # Detected structurally: our role defs inherit preceptClass from a
             # vanilla abstract, so the reliable signal is a ParentName chain
             # reaching a known role base.
-            if ($node.Name -eq 'PreceptDef' -and $dnNode) {
+            if ($node.LocalName -eq 'PreceptDef' -and $dnNode) {
                 $parentAttr2 = $node.Attributes['ParentName']
                 if ($parentAttr2) {
                     $roleBases = @('PreceptRoleSingleBase', 'PreceptRoleMultiBase')
@@ -698,7 +736,7 @@ foreach ($file in $xmlFiles) {
             # they have no hairColorOverride) gets a random hair colour. Both load
             # with zero errors and are only visible by looking at a pawn's face,
             # which is exactly the kind of silent failure this script exists for.
-            if ($node.Name -eq 'XenotypeDef' -and $dnNode) {
+            if ($node.LocalName -eq 'XenotypeDef' -and $dnNode) {
                 $xt = $dnNode.InnerText.Trim()
                 $genesNode = $node.SelectSingleNode('genes')
                 if ($genesNode) {
@@ -719,7 +757,30 @@ foreach ($file in $xmlFiles) {
                 }
             }
 
-            if ($node.Name -eq 'PawnKindDef') {
+            if ($node.LocalName -eq 'ThingDef') {
+                foreach ($li in $node.SelectNodes('weaponTags/li')) {
+                    if ($li.InnerText) { [void]$modWeaponTags.Add($li.InnerText.Trim()) }
+                }
+                foreach ($li in $node.SelectNodes('apparel/tags/li')) {
+                    if ($li.InnerText) { [void]$modApparelTags.Add($li.InnerText.Trim()) }
+                }
+            }
+
+            if ($node.LocalName -eq 'PawnKindDef' -and $dnNode) {
+                $kindName = $dnNode.InnerText.Trim()
+                foreach ($li in $node.SelectNodes('weaponTags/li')) {
+                    if ($li.InnerText) {
+                        $tagRefs.Add([pscustomobject]@{ File=$rel; Def=$kindName; Kind='weaponTags'; Tag=$li.InnerText.Trim() })
+                    }
+                }
+                foreach ($li in $node.SelectNodes('apparelTags/li')) {
+                    if ($li.InnerText) {
+                        $tagRefs.Add([pscustomobject]@{ File=$rel; Def=$kindName; Kind='apparelTags'; Tag=$li.InnerText.Trim() })
+                    }
+                }
+            }
+
+            if ($node.LocalName -eq 'PawnKindDef') {
                 $owner = if ($dnNode) { $dnNode.InnerText.Trim() } else { '<abstract>' }
                 # weaponMoney with no weaponTags is a load-time config error.
                 # Abstract bases may legitimately split the pair across the chain,
@@ -731,12 +792,12 @@ foreach ($file in $xmlFiles) {
             }
 
             # --- record our own GeneDefs ------------------------------------
-            if ($node.Name -eq 'GeneDef' -and $dnNode -and $dnNode.InnerText) {
+            if ($node.LocalName -eq 'GeneDef' -and $dnNode -and $dnNode.InnerText) {
                 [void]$modGeneDefs.Add($dnNode.InnerText.Trim())
             }
 
             # --- check 6: queue <genes><li> refs from XenotypeDefs ----------
-            if ($node.Name -eq 'XenotypeDef') {
+            if ($node.LocalName -eq 'XenotypeDef') {
                 $owner = if ($dnNode) { $dnNode.InnerText.Trim() } else { '<unnamed>' }
                 foreach ($g in $node.SelectNodes('genes/li')) {
                     $gName = $g.InnerText
@@ -842,7 +903,7 @@ foreach ($file in $xmlFiles) {
 
         # --- check 4: texture paths -----------------------------------------
         foreach ($texNode in $node.SelectNodes('.//*')) {
-            if (-not (Test-IsTexturePathNode $texNode.Name)) { continue }
+            if (-not (Test-IsTexturePathNode $texNode.LocalName)) { continue }
             if ($texNode.ChildNodes.Count -ne 1) { continue }
             $texPath = $texNode.InnerText
             if ([string]::IsNullOrWhiteSpace($texPath)) { continue }
@@ -861,10 +922,10 @@ foreach ($file in $xmlFiles) {
             if ($leaf -like 'RR_*') {
                 if ($isCollection) {
                     Add-Problem -Severity ERROR -Check 'MissingTextureCollection' -File $rel `
-                        -Message ("<{0}> '{1}' uses {2}, which needs a FOLDER of images at that path (<leaf>_a, _b, _c), not a single file. Run New-PlaceholderTextures.ps1." -f $texNode.Name, $texPath, $graphicClass)
+                        -Message ("<{0}> '{1}' uses {2}, which needs a FOLDER of images at that path (<leaf>_a, _b, _c), not a single file. Run New-PlaceholderTextures.ps1." -f $texNode.LocalName, $texPath, $graphicClass)
                 } else {
                     Add-Problem -Severity ERROR -Check 'MissingTexture' -File $rel `
-                        -Message ("<{0}> '{1}' has no file under Textures/. Run New-PlaceholderTextures.ps1." -f $texNode.Name, $texPath)
+                        -Message ("<{0}> '{1}' has no file under Textures/. Run New-PlaceholderTextures.ps1." -f $texNode.LocalName, $texPath)
                 }
             } elseif ($vanilla.TexPaths.Contains($texPath)) {
                 # Vanilla references this exact path itself, so it is real even
@@ -874,7 +935,7 @@ foreach ($file in $xmlFiles) {
                 # typo or an invented path - "World/WorldObjects/Expanding/Settlement"
                 # looks plausible and does not exist.
                 Add-Problem -Severity ERROR -Check 'UnknownTexturePath' -File $rel `
-                    -Message ("<{0}> '{1}' is not under Textures/ and is referenced nowhere in vanilla. Check for a typo, or add the file." -f $texNode.Name, $texPath)
+                    -Message ("<{0}> '{1}' is not under Textures/ and is referenced nowhere in vanilla. Check for a typo, or add the file." -f $texNode.LocalName, $texPath)
             }
         }
     }
@@ -961,6 +1022,26 @@ foreach ($ref in $listRefs) {
             }
         }
     }
+}
+
+# --- pawn kind tag resolution -------------------------------------------------
+#
+# A PawnKindDef asks for gear by TAG. If no ThingDef anywhere carries that tag,
+# the pawn simply spawns without a weapon, or without clothes, and the game logs
+# NOTHING AT ALL - the request is a filter, and an empty filter is not an error.
+#
+# This was found the hard way: four tags on new merchant pawn kinds had to be
+# hand-verified against vanilla because nothing else could have caught a typo.
+# The vocabulary is indexed from the things that CARRY the tags, never from the
+# kinds that request them, so a typo cannot validate itself.
+foreach ($ref in $tagRefs) {
+    $known = if ($ref.Kind -eq 'weaponTags') { $vanilla.WeaponTags } else { $vanilla.ApparelTags }
+    $mine  = if ($ref.Kind -eq 'weaponTags') { $modWeaponTags }      else { $modApparelTags }
+    if ($known.Contains($ref.Tag)) { continue }
+    if ($mine.Contains($ref.Tag))  { continue }
+
+    Add-Problem -Severity ERROR -Check 'UnknownPawnKindTag' -File $ref.File `
+        -Message ("PawnKindDef '{0}' asks for <{1}> '{2}', which no ThingDef carries. The pawn will spawn without that gear and nothing will be logged." -f $ref.Def, $ref.Kind, $ref.Tag)
 }
 
 # --- check 6 resolution: XenotypeDef gene references -------------------------

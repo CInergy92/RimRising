@@ -646,6 +646,81 @@ only for the Ascomanni.
 
 ---
 
+## The two merchant powers — and the validator bug they uncovered
+
+### Julii Industries and Sun Industries
+
+Added because M7 created a mechanical hole: with vanilla's outlander towns suppressed, a colony that
+has angered the Society could be left with no viable trade partner at all. The Ascomanni raid rather
+than trade, and the obsidian tribes sell only neolithic goods.
+
+Two merchants rather than one, because they are opposites and between them they cover every colony a
+player can run:
+
+| | Julii Industries | Sun Industries |
+|---|---|---|
+| Run by | Gold house, inherited | Silver, self-made |
+| Disposition | no `requiredMemes` at all | `RR_ColorEquality` |
+| Trade | full industrial suite **plus** the pirate merchant | industrial plus exotics, **no** pirate merchant |
+| Golds employed | a few | none, by construction |
+
+Julii sells to anyone and cares only about the price — the source's own account of the house is that
+it backs whoever is currently paying and drops an alliance the moment it stops being profitable,
+which is exactly the disposition a guaranteed trade partner needs. It is deliberately given **no**
+required meme: binding it to the hierarchy would hand it the hierarchy goodwill situations and make
+it loathe an egalitarian colony, undoing the entire reason it exists.
+
+Sun leans egalitarian, so an equality colony always has a friendly merchant even when Julii's prices
+are bad. Between them, no ideoligion leaves the player without trade.
+
+### `$node.Name` in PowerShell is not the element name
+
+**The most consequential bug found in this project so far, and it had been live since Milestone 1.**
+
+PowerShell's XML adapter exposes attributes as properties, and an attribute called `Name` **shadows**
+`XmlElement.Name`. So for `<ThingDef Name="Gun_Revolver">`, `$node.Name` returns `Gun_Revolver`, not
+`ThingDef`:
+
+```
+node.Name       = Gun_Revolver
+node.LocalName  = ThingDef
+node.get_Name() = ThingDef
+```
+
+Every type test in `Test-ModDefs.ps1` was written as `$node.Name -eq 'ThingDef'`, so **every def
+carrying a `Name=` attribute was silently skipped by every check** — 838 of them in vanilla alone.
+The checks did not fail; they inspected less than they claimed to and reported PASSED.
+
+Fixed by switching all type tests to `.LocalName`, with a comment at the top of the file so it does
+not come back. This is the same lesson as the collection-graphics false green: *a check that looks
+like it ran is not a check that ran.*
+
+### Seventh false green — pawn kind gear tags
+
+A `PawnKindDef` requests gear by TAG. `PawnApparelGenerator` (decompiled) matches
+`kindDef.apparelTags` against `ThingDef.apparel.tags` and rejects anything that matches none. If no
+thing carries the tag at all, the pawn simply spawns **without a weapon or without clothes, and
+nothing is logged** — an empty filter is not an error.
+
+Six invented tags were in use across 18 pawn kinds, most of them shipped milestones ago:
+
+| Invented | Actually is | Replaced with |
+|---|---|---|
+| `Clothing` | a `tradeTag` | `IndustrialBasic` |
+| `Grenades` | a `thingCategory` | `GrenadeDestructive` |
+| `Spacefarer` | nothing | `SpacerMilitary` |
+| `BasicClothing`, `Worker` | nothing | `IndustrialBasic` |
+| `Armor` | nothing | `IndustrialMilitaryBasic` |
+
+Closed with `UnknownPawnKindTag`. The vocabulary is indexed from the things that **carry** the tags,
+never from the kinds that request them, so a typo cannot validate itself. Negative-tested.
+
+Note this check only became possible *after* the `.LocalName` fix — with `$node.Name`, the
+`ThingDef` branch that builds the vocabulary never ran for any weapon defined with `Name=`, and the
+check produced confident false positives instead.
+
+---
+
 ## Open questions
 
 Carried in `docs/DESIGN.md` §8.
