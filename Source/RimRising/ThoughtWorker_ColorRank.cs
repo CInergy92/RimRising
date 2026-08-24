@@ -74,7 +74,11 @@ namespace RimRising
 
             float? mine  = RankOf(p);
             float? theirs = RankOf(otherPawn);
-            if (!mine.HasValue || !theirs.HasValue) { return ThoughtState.Inactive; }
+            if (!mine.HasValue || !theirs.HasValue)
+            {
+                LadderDiagnostic.ReportCall(p, otherPawn, "INACTIVE - one or both pawns have no Color rank");
+                return ThoughtState.Inactive;
+            }
 
             // Positive gap means the other pawn sits BELOW the observer, because
             // displayPriority counts downward from Gold.
@@ -102,6 +106,7 @@ namespace RimRising
             if (stage > last) { stage = last; }
             if (stage < 0)    { stage = 0; }
 
+            LadderDiagnostic.ReportCall(p, otherPawn, "stage " + stage);
             return ThoughtState.ActiveAtStage(stage);
         }
 
