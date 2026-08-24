@@ -48,7 +48,13 @@
       <li>(0.85, 0.72, 0.28)</li>
       <li>(1.0, 0.92, 0.62)</li>
     </colorSpectrum>
-    <xenotypeSet>
+    <!--
+      Drives the goodwill situations in Defs/Goodwill: a colony sharing this meme
+      is embraced, one holding the opposite is loathed.
+    -->
+    <requiredMemes>
+      <li>RR_ColorHierarchy</li>
+    </requiredMemes>    <xenotypeSet>
       <!--
         Demographics, not power ranking. Reds are the overwhelming bulk; Golds are
         a rounding error who nonetheless run the place.
@@ -170,7 +176,13 @@
       <li>(0.62, 0.55, 0.30)</li>
       <li>(0.90, 0.84, 0.55)</li>
     </colorSpectrum>
-    <xenotypeSet>
+    <!--
+      Drives the goodwill situations in Defs/Goodwill: a colony sharing this meme
+      is embraced, one holding the opposite is loathed.
+    -->
+    <requiredMemes>
+      <li>RR_ColorHierarchy</li>
+    </requiredMemes>    <xenotypeSet>
       <xenotypeChances>
         <RR_Red>0.22</RR_Red>
         <RR_Red_Ultraheavy>0.14</RR_Red_Ultraheavy>
@@ -279,7 +291,13 @@
       <li>(0.70, 0.16, 0.16)</li>
       <li>(0.95, 0.45, 0.40)</li>
     </colorSpectrum>
-    <xenotypeSet>
+    <!--
+      Drives the goodwill situations in Defs/Goodwill: a colony sharing this meme
+      is embraced, one holding the opposite is loathed.
+    -->
+    <requiredMemes>
+      <li>RR_ColorEquality</li>
+    </requiredMemes>    <xenotypeSet>
       <xenotypeChances>
         <RR_Red>0.44</RR_Red>
         <RR_Red_Ultraheavy>0.07</RR_Red_Ultraheavy>
@@ -385,7 +403,13 @@
       <li>(0.28, 0.27, 0.33)</li>
       <li>(0.62, 0.60, 0.70)</li>
     </colorSpectrum>
-    <xenotypeSet>
+    <!--
+      Drives the goodwill situations in Defs/Goodwill: a colony sharing this meme
+      is embraced, one holding the opposite is loathed.
+    -->
+    <requiredMemes>
+      <li>RR_ColorHierarchy</li>
+    </requiredMemes>    <xenotypeSet>
       <xenotypeChances>
         <RR_Obsidian>0.88</RR_Obsidian>
         <RR_Obsidian_Stained>0.12</RR_Obsidian_Stained>

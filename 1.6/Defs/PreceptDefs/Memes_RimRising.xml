@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The two ways of looking at the Colors.
+
+  Structure mirrored from Ideology/Defs/MemeDefs/Memes_GenderSupremacy.xml, which
+  is vanilla's working implementation of "one group is innately superior, with
+  mechanical consequences". The Color hierarchy is the same shape, so it uses the
+  same machinery: a MemeGroupDef, an abstract base carrying the exclusion tag, and
+  two mutually exclusive concrete memes.
+
+  These are opposed by construction. An ideoligion cannot hold both, which is what
+  makes the Society and the resistance legible as opposites rather than as two
+  flavours of the same thing.
+
+  WHAT CARRIES THE HIERARCHY MECHANICALLY
+
+  Not these memes on their own. Biotech already ships the machinery in
+  Biotech/Defs/PreceptDefs/Precepts_Xenotype.xml: the PreferredXenotype precept
+  (preceptClass Precept_Xenotype) gives +10 opinion toward a preferred xenotype,
+  -30 toward a disliked one, a colony-makeup mood effect, and a SelfDislikedXenotype
+  thought for a pawn who IS the disliked kind. That last one is the caste system
+  landing on the person living inside it, and vanilla wrote it for us.
+
+  It is a TWO-TIER mechanic though - preferred versus everything else, capped at
+  three preferred xenotypes. A graded fifteen-rung hierarchy where highColors
+  outrank midColors outrank lowColors would need a custom ThoughtWorker in C#.
+  See docs/PROGRESS.md.
+-->
+<Defs>
+
+  <MemeGroupDef>
+    <defName>RR_ColorOrder</defName>
+    <drawOffset>(0.65, 0.23)</drawOffset>
+    <maxRows>1</maxRows>
+    <renderOrder>2100</renderOrder>
+  </MemeGroupDef>
+
+  <MemeDef Name="RR_ColorOrderBase" Abstract="True">
+    <groupDef>RR_ColorOrder</groupDef>
+    <exclusionTags>
+      <li>RR_ColorOrder</li>
+    </exclusionTags>
+  </MemeDef>
+
+  <!-- ============================ the Society ============================= -->
+
+  <MemeDef ParentName="RR_ColorOrderBase">
+    <defName>RR_ColorHierarchy</defName>
+    <label>Color hierarchy</label>
+    <description>The Colors are not a policy. They are a fact of biology, arrived at by better minds than ours, and a person's worth is settled at conception. Golds rule because Golds are built to rule. Reds dig because Reds are built to dig. To resent the arrangement is to resent arithmetic.</description>
+    <iconPath>UI/Memes/RR_ColorHierarchy</iconPath>
+    <impact>3</impact>
+    <renderOrder>90</renderOrder>
+    <!--
+      Razors and pulse weapons are the tools of the ruling caste, and carrying one
+      is a statement about where you stand. Neolithic weapons are what the tribes
+      were left with after the revolt failed, and picking one up says the same
+      thing in reverse.
+    -->
+    <preferredWeaponClasses>
+      <noble>Ultratech</noble>
+      <despised>Neolithic</despised>
+    </preferredWeaponClasses>
+    <generalRules>
+      <rulesStrings>
+        <li>memeAdjective->hierarchical</li>
+        <li>memeAdjective->ordered</li>
+        <li>memeAdjective->aureate</li>
+        <li>memeHyphenPrefix->auri</li>
+        <li>memeHyphenPrefix->chroma</li>
+        <li>memeConcept->the hierarchy</li>
+        <li>memeConcept->the Colors</li>
+        <li>memeConcept->the pyramid</li>
+        <li>memeLeaderNoun->sovereign</li>
+        <li>memeLeaderNoun->archgovernor</li>
+        <li>memeMoralist->quality controller</li>
+      </rulesStrings>
+    </generalRules>
+    <descriptionMaker>
+      <rules>
+        <rulesStrings>
+          <li>creation(tag=meme_RR_ColorHierarchy)       ->[deity0_name] set each kind of person to the task they were shaped for, and called the arrangement good.</li>
+          <li>episode(uses=1,tag=meme_RR_ColorHierarchy) ->[deity0_name] said: a hand is not lesser than an eye for being a hand, and neither may take the other's place.</li>
+          <li>setup(tag=meme_RR_ColorHierarchy)          ->[founderName] held that a society of equals is a society of no one doing anything well, and set about sorting people into what they were for.</li>
+          <li>archistFact(tag=meme_RR_ColorHierarchy)    ->The great machines sorted humanity once, correctly, and it is not our place to re-sort it.</li>
+        </rulesStrings>
+      </rules>
+    </descriptionMaker>
+  </MemeDef>
+
+  <!-- =========================== the resistance =========================== -->
+
+  <MemeDef ParentName="RR_ColorOrderBase">
+    <defName>RR_ColorEquality</defName>
+    <label>Color equality</label>
+    <description>Somebody decided which of us would be strong and which of us would be short-lived, and then called the result nature. It was not nature. It was a decision, made by people, for their own convenience, and a decision can be unmade.\n\nWhat a person was built for is not what a person is for.</description>
+    <iconPath>UI/Memes/RR_ColorEquality</iconPath>
+    <impact>3</impact>
+    <renderOrder>91</renderOrder>
+    <generalRules>
+      <rulesStrings>
+        <li>memeAdjective->levelling</li>
+        <li>memeAdjective->unsorted</li>
+        <li>memeHyphenPrefix->free</li>
+        <li>memeHyphenPrefix->iso</li>
+        <li>memeConcept->the rising</li>
+        <li>memeConcept->the unmaking</li>
+        <li>memeConcept->the reap</li>
+        <li>memeLeaderNoun->voice</li>
+        <li>memeLeaderNoun->reaper</li>
+        <li>memeMoralist->levelspeaker</li>
+      </rulesStrings>
+    </generalRules>
+    <descriptionMaker>
+      <rules>
+        <rulesStrings>
+          <li>creation(tag=meme_RR_ColorEquality)       ->[deity0_name] made one kind of person, and everything that came after was done by hands, in workshops, for money.</li>
+          <li>episode(uses=1,tag=meme_RR_ColorEquality) ->[deity0_name] asked who had given them the right to decide, and no one present could answer.</li>
+          <li>setup(tag=meme_RR_ColorEquality)          ->[founderName] came up out of the mines, saw what the sorting had cost, and decided it would be undone or they would die trying.</li>
+          <li>archistFact(tag=meme_RR_ColorEquality)    ->Even the great machines never presumed to rank a person by their making.</li>
+        </rulesStrings>
+      </rules>
+    </descriptionMaker>
+  </MemeDef>
+
+</Defs>

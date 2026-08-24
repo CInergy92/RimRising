@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  How the powers feel about a colony, based on what that colony believes.
+
+  This is the version of "the Society hates the resistance" that RimWorld can
+  actually express. Decompiling GoodwillSituationWorker showed every method takes
+  only `Faction other`, and the concrete workers resolve the second party as
+  Faction.OfPlayer - so a mod cannot set how two NPC factions feel about each
+  other. What it CAN set is how a faction feels about the player, which is the
+  only relationship the game simulates with any weight anyway.
+
+  Structure mirrored from Ideology/Defs/Goodwill/GoodwillSituations_MemeCompatibility.xml,
+  which uses GoodwillSituationWorker_MemeCompatibility with <meme> and <otherMeme>.
+  The worker checks the pairing in both directions, so one def covers both
+  "we believe X and they believe Y" and the reverse.
+
+  The Society and the Rim Dominion both require RR_ColorHierarchy; the Sons of
+  Ares require RR_ColorEquality. So a colony that adopts the hierarchy is embraced
+  by the Society and loathed by the resistance, and a colony that rejects it gets
+  the reverse - without a line of C#.
+
+  Magnitudes are set against vanilla's meme-compatibility range, which runs
+  roughly +10 for agreement and -10 to -20 for the sharper disagreements. These
+  sit at the harsh end because the hierarchy is the entire quarrel.
+-->
+<Defs>
+
+  <!-- ============================== agreement ============================= -->
+
+  <GoodwillSituationDef>
+    <defName>RR_ColorHierarchy_Agreement</defName>
+    <label>Color hierarchy agreement</label>
+    <workerClass>GoodwillSituationWorker_MemeCompatibility</workerClass>
+    <meme>RR_ColorHierarchy</meme>
+    <otherMeme>RR_ColorHierarchy</otherMeme>
+    <naturalGoodwillOffset>20</naturalGoodwillOffset>
+  </GoodwillSituationDef>
+
+  <GoodwillSituationDef>
+    <defName>RR_ColorEquality_Agreement</defName>
+    <label>Color equality agreement</label>
+    <workerClass>GoodwillSituationWorker_MemeCompatibility</workerClass>
+    <meme>RR_ColorEquality</meme>
+    <otherMeme>RR_ColorEquality</otherMeme>
+    <naturalGoodwillOffset>20</naturalGoodwillOffset>
+  </GoodwillSituationDef>
+
+  <!-- ============================ disagreement ============================ -->
+
+  <GoodwillSituationDef>
+    <defName>RR_ColorOrder_Disagreement</defName>
+    <label>Color hierarchy disagreement</label>
+    <workerClass>GoodwillSituationWorker_MemeCompatibility</workerClass>
+    <meme>RR_ColorHierarchy</meme>
+    <otherMeme>RR_ColorEquality</otherMeme>
+    <naturalGoodwillOffset>-40</naturalGoodwillOffset>
+  </GoodwillSituationDef>
+
+  <!--
+    Rejecting the hierarchy while the other party holds it is not a disagreement
+    about policy, it is a denial that they are people. Slavery disapproval is the
+    nearest vanilla analogue and it runs to -20; this runs further.
+  -->
+  <GoodwillSituationDef>
+    <defName>RR_ColorHierarchy_VersusEgalitarian</defName>
+    <label>rejects the Colors</label>
+    <workerClass>GoodwillSituationWorker_MemeCompatibility</workerClass>
+    <meme>RR_ColorEquality</meme>
+    <otherMeme>RR_ColorHierarchy</otherMeme>
+    <naturalGoodwillOffset>-40</naturalGoodwillOffset>
+  </GoodwillSituationDef>
+
+</Defs>
