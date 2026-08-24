@@ -125,7 +125,16 @@ function New-PlaceholderPng {
         [string] $OutFile,
         [int]    $Size,
         [string] $Label,
-        [System.Drawing.Color] $Color
+        [System.Drawing.Color] $Color,
+        # 'north' / 'east' / 'south' / '' - set for a WORN, directional texture.
+        #
+        # WHY THIS EXISTS. A flat opaque labelled square is orientation-blind AND
+        # it hides the pawn underneath, so drawData offsets and scale cannot be
+        # judged from it at all - which is exactly the report that prompted this.
+        # A directional placeholder is drawn translucent, with an arrow showing
+        # which way it thinks it is facing and a crosshair on its exact centre,
+        # so a bad offset is visible as the crosshair sitting off the pawn.
+        [string] $Facing = ''
     )
 
     $dir = Split-Path -Parent $OutFile
@@ -138,7 +147,11 @@ function New-PlaceholderPng {
             $gfx.SmoothingMode     = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
             $gfx.TextRenderingHint = [System.Drawing.Text.TextRenderingHint]::AntiAlias
 
-            $brush = New-Object System.Drawing.SolidBrush($Color)
+            # Directional placeholders are translucent so the pawn shows through.
+            $fillColor = if ($Facing) {
+                [System.Drawing.Color]::FromArgb(105, $Color.R, $Color.G, $Color.B)
+            } else { $Color }
+            $brush = New-Object System.Drawing.SolidBrush($fillColor)
             try { $gfx.FillRectangle($brush, 0, 0, $Size, $Size) } finally { $brush.Dispose() }
 
             # Border, so the sprite's extent is obvious against any background.
@@ -149,6 +162,37 @@ function New-PlaceholderPng {
                 $gfx.DrawRectangle($pen, $half, $half, $Size - ($half * 2) - 1, $Size - ($half * 2) - 1)
             } finally { $pen.Dispose() }
 
+            if ($Facing) {
+                $mid = [int]($Size / 2)
+                $arm = [int]($Size / 6)
+
+                # Origin crosshair. If the sprite is offset wrongly this will not
+                # sit over the pawn, which is the whole point of drawing it.
+                $cross = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(235, 255, 40, 40), [Math]::Max(2, [int]($Size / 64)))
+                try {
+                    $gfx.DrawLine($cross, $mid - $arm, $mid, $mid + $arm, $mid)
+                    $gfx.DrawLine($cross, $mid, $mid - $arm, $mid, $mid + $arm)
+                    $r = [int]($Size / 16)
+                    $gfx.DrawEllipse($cross, $mid - $r, $mid - $r, $r * 2, $r * 2)
+                } finally { $cross.Dispose() }
+
+                # Facing arrow. South points down the screen, north up, east right.
+                $ax = 0; $ay = 0
+                switch ($Facing) {
+                    'north' { $ay = -1 }
+                    'south' { $ay =  1 }
+                    'east'  { $ax =  1 }
+                    'west'  { $ax = -1 }
+                }
+                $len = [int]($Size / 3)
+                $tipX = $mid + ($ax * $len); $tipY = $mid + ($ay * $len)
+                $apen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(235, 255, 255, 255), [Math]::Max(3, [int]($Size / 40)))
+                try {
+                    $apen.EndCap = [System.Drawing.Drawing2D.LineCap]::ArrowAnchor
+                    $gfx.DrawLine($apen, $mid, $mid, $tipX, $tipY)
+                } finally { $apen.Dispose() }
+            }
+
             # Label, wrapped and centered. Small icons get a shortened label.
             $text = if ($Size -le 64 -and $Label.Length -gt 10) { $Label.Substring(0, 10) } else { $Label }
             $fontSize = [Math]::Max(6, [int]($Size / 12))
@@ -156,7 +200,14 @@ function New-PlaceholderPng {
             try {
                 $fmt = New-Object System.Drawing.StringFormat
                 $fmt.Alignment     = [System.Drawing.StringAlignment]::Center
-                $fmt.LineAlignment = [System.Drawing.StringAlignment]::Center
+                # On a directional placeholder the label moves to the top so it
+                # does not sit on the centre crosshair, which is the one mark that
+                # has to stay readable.
+                $fmt.LineAlignment = if ($Facing) {
+                    [System.Drawing.StringAlignment]::Near
+                } else {
+                    [System.Drawing.StringAlignment]::Center
+                }
                 # Compute first: New-Object Type(a, b, c) parses the parens as an
                 # array literal, so inline arithmetic binds to the wrong operand.
                 $pad = [int]($Size / 10)
@@ -316,19 +367,19 @@ foreach ($texPath in ($owned | Sort-Object)) {
         $base = Join-Path $texturesRoot ($texPath -replace '/', '\')
 
         # Always a bare base file - that is the inventory icon.
-        $variants = @( @{ Suffix = ''; Tag = 'icon' } )
+        $variants = @( @{ Suffix = ''; Tag = 'icon'; Facing = '' } )
 
         if ($referenced[$texPath].Body) {
             # Body apparel: one texture per body type per facing. Baby is omitted;
             # nothing here is sized for an infant.
             foreach ($bt in @('Male', 'Female', 'Thin', 'Fat', 'Hulk', 'Child')) {
                 foreach ($d in @('south', 'north', 'east')) {
-                    $variants += @{ Suffix = "_${bt}_${d}"; Tag = "$bt`n$($d.Substring(0,1).ToUpper())" }
+                    $variants += @{ Suffix = "_${bt}_${d}"; Tag = "$bt`n$($d.Substring(0,1).ToUpper())"; Facing = $d }
                 }
             }
         } else {
             foreach ($d in @('south', 'north', 'east')) {
-                $variants += @{ Suffix = "_$d"; Tag = $d.Substring(0, 1).ToUpper() }
+                $variants += @{ Suffix = "_$d"; Tag = $d.Substring(0, 1).ToUpper(); Facing = $d }
             }
         }
 
@@ -337,7 +388,7 @@ foreach ($texPath in ($owned | Sort-Object)) {
             $outFile = "{0}{1}.png" -f $base, $v.Suffix
             if ((Test-Path $outFile) -and -not $Force) { $skipped++; continue }
             if (-not $PSCmdlet.ShouldProcess($outFile, "write ${size}x${size} placeholder")) { continue }
-            New-PlaceholderPng -OutFile $outFile -Size $size -Label ("{0}`n{1}" -f $label, $v.Tag) -Color $color
+            New-PlaceholderPng -OutFile $outFile -Size $size -Label ("{0}`n{1}" -f $label, $v.Tag) -Color $color -Facing $v.Facing
             $created++
         }
         Write-Host ("  + {0}  ({1}x{1}, {2}, {3} files)" -f $texPath, $size, $kind, $variants.Count) -ForegroundColor Green

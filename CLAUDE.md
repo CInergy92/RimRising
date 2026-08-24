@@ -326,6 +326,25 @@ real Red sigil.
 Sub-tiers inherit the parent glyph plus a modifier, so lineage is readable at a glance across a
 21-xenotype list.
 
+### Directional placeholders are translucent on purpose
+
+A flat opaque labelled square is useless for judging a worn sprite: it is
+orientation-blind AND it hides the pawn underneath, so `drawData` offsets and
+scale cannot be assessed at all. This was reported from the starShell -
+"impossible to tell the draw with the placeholder", which was exactly right.
+
+`New-PlaceholderTextures.ps1` therefore draws any WORN, directional texture
+(`_north` / `_east` / `_south`, with or without a body-type segment) as:
+
+- a **translucent** fill, so the pawn shows through
+- a red **crosshair on the exact centre** - if the offset is wrong, the crosshair
+  visibly sits off the pawn, which is the whole diagnostic
+- a white **arrow** in the facing direction, so a swapped facing is obvious
+- the facing letter, and the label moved to the top clear of the crosshair
+
+Non-directional placeholders (items, weapons, UI icons) stay opaque; there is
+nothing behind them to align to.
+
 ### Reference for the real art pass
 
 Ludeon's own texture guide: https://rimworldwiki.com/wiki/Modding_Tutorials/Textures
