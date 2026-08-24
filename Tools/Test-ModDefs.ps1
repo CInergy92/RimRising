@@ -88,6 +88,11 @@ function Build-VanillaIndex {
     $geneDefs  = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     $geneTemplates = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     $vanillaTexPaths = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+    # Hair genes that actually set a colour. Hair_ShortOnly / Hair_BaldOnly are
+    # STYLE genes and set none, so a caste carrying only one of those still rolls
+    # a random hair colour - which for a mod whose whole premise is that hair
+    # reads the caste is a silent failure, not a cosmetic one.
+    $hairColorGenes = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 
     # Abstract (Name=) defs and the list-valued fields they declare, so a child can
     # be checked for re-declaring something it already inherits. RimWorld APPENDS
@@ -113,7 +118,10 @@ function Build-VanillaIndex {
             if ($dn -and $dn.InnerText) {
                 $name = $dn.InnerText.Trim()
                 [void]$defNames.Add($name)
-                if ($node.Name -eq 'GeneDef')         { [void]$geneDefs.Add($name) }
+                if ($node.Name -eq 'GeneDef')         {
+                    [void]$geneDefs.Add($name)
+                    if ($node.SelectSingleNode('hairColorOverride')) { [void]$hairColorGenes.Add($name) }
+                }
                 if ($node.Name -eq 'GeneTemplateDef') { [void]$geneTemplates.Add($name) }
             }
 
@@ -162,6 +170,7 @@ function Build-VanillaIndex {
         GeneDefs      = @($geneDefs)
         GeneTemplates = @($geneTemplates)
         TexPaths      = @($vanillaTexPaths)
+        HairColorGenes= @($hairColorGenes)
         Abstracts     = $abstracts
     }
 }
@@ -181,7 +190,7 @@ function Get-VanillaIndex {
 
     # Bumped whenever the cached shape changes, so an old cache is rebuilt rather
     # than read with missing fields.
-    $cacheSchema = 4
+    $cacheSchema = 5
 
     if (-not $Refresh -and (Test-Path $cacheFile)) {
         try {
@@ -194,6 +203,7 @@ function Get-VanillaIndex {
                     GeneDefs      = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.GeneDefs, [StringComparer]::Ordinal)
                     GeneTemplates = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.GeneTemplates, [StringComparer]::Ordinal)
                     TexPaths      = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.TexPaths, [StringComparer]::OrdinalIgnoreCase)
+                    HairColorGenes= [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.HairColorGenes, [StringComparer]::Ordinal)
                     Abstracts     = $cached.Abstracts
                     Version       = $version
                 }
@@ -216,6 +226,7 @@ function Get-VanillaIndex {
         GeneDefs      = $idx.GeneDefs
         GeneTemplates = $idx.GeneTemplates
         TexPaths      = $idx.TexPaths
+        HairColorGenes= $idx.HairColorGenes
         Abstracts     = $idx.Abstracts
     } | ConvertTo-Json -Depth 8 -Compress | Set-Content -Path $cacheFile -Encoding UTF8
 
@@ -227,6 +238,7 @@ function Get-VanillaIndex {
         GeneDefs      = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.GeneDefs, [StringComparer]::Ordinal)
         GeneTemplates = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.GeneTemplates, [StringComparer]::Ordinal)
         TexPaths      = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.TexPaths, [StringComparer]::OrdinalIgnoreCase)
+        HairColorGenes= [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.HairColorGenes, [StringComparer]::Ordinal)
         Abstracts     = $idx.Abstracts
         Version       = $version
     }
@@ -675,6 +687,34 @@ foreach ($file in $xmlFiles) {
                             Add-Problem -Severity ERROR -Check 'RoleMissingNameMaker' -File $rel `
                                 -Message ("role precept '{0}' has no <nameMaker>. Precept_Role.GenerateNameRaw throws without one, taking ideoligion generation and worldgen with it." -f $dnNode.InnerText.Trim())
                         }
+                    }
+                }
+            }
+
+            # Every Color must state its own hair colour and eye colour. This is
+            # not cosmetic polish: with Facial Animation installed, a xenotype
+            # carrying no eye gene gets a RANDOMLY GENERATED eyeball colour, and
+            # one carrying only a hair STYLE gene (Hair_ShortOnly, Hair_BaldOnly -
+            # they have no hairColorOverride) gets a random hair colour. Both load
+            # with zero errors and are only visible by looking at a pawn's face,
+            # which is exactly the kind of silent failure this script exists for.
+            if ($node.Name -eq 'XenotypeDef' -and $dnNode) {
+                $xt = $dnNode.InnerText.Trim()
+                $genesNode = $node.SelectSingleNode('genes')
+                if ($genesNode) {
+                    $hairColor = 0; $eyeGene = 0
+                    foreach ($li in $genesNode.SelectNodes('li')) {
+                        $g = $li.InnerText.Trim()
+                        if ($vanilla.HairColorGenes.Contains($g)) { $hairColor++ }
+                        if ($g -like 'Eyes_*') { $eyeGene++ }
+                    }
+                    if ($hairColor -eq 0) {
+                        Add-Problem -Severity ERROR -Check 'XenotypeMissingAppearanceGene' -File $rel `
+                            -Message ("XenotypeDef '{0}' has no hair COLOUR gene (one carrying hairColorOverride). Hair_ShortOnly and Hair_BaldOnly are style genes and set no colour, so this caste rolls random hair." -f $xt)
+                    }
+                    if ($eyeGene -eq 0) {
+                        Add-Problem -Severity ERROR -Check 'XenotypeMissingAppearanceGene' -File $rel `
+                            -Message ("XenotypeDef '{0}' has no Eyes_* gene. Facial Animation assigns a random eyeball colour when no gene claims one." -f $xt)
                     }
                 }
             }

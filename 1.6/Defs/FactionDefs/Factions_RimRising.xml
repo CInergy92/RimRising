@@ -52,6 +52,16 @@
     </royalTitleTags>
     <royalTitleInheritanceWorkerClass>RoyalTitleInheritanceWorker</royalTitleInheritanceWorkerClass>    <techLevel>Spacer</techLevel>
     <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>
+    <!-- The Society takes the good ground first and always has. Temperate tiles, and it concedes the extremes to everyone else. -->
+    <minSettlementTemperatureChanceCurve>
+      <points>
+        <li>(-40, 0.03)</li>
+        <li>(-12, 0.35)</li>
+        <li>(2, 1)</li>
+        <li>(16, 1)</li>
+        <li>(28, 0.25)</li>
+      </points>
+    </minSettlementTemperatureChanceCurve>
     <factionIconPath>World/WorldObjects/Expanding/Town</factionIconPath>
     <factionNameMaker>NamerFactionOutlander</factionNameMaker>
     <settlementNameMaker>NamerSettlementOutlander</settlementNameMaker>
@@ -108,7 +118,8 @@
         <li>(2000, 800)</li>
         <li>(2001, 10000)</li>
       </points>
-    </maxPawnCostPerTotalPointsCurve>    <backstoryFilters>
+    </maxPawnCostPerTotalPointsCurve>
+    <backstoryFilters>
       <li>
         <categories>
           <li>Offworld</li>
@@ -198,6 +209,16 @@
     </royalTitleTags>
     <royalTitleInheritanceWorkerClass>RoyalTitleInheritanceWorker</royalTitleInheritanceWorkerClass>    <techLevel>Spacer</techLevel>
     <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>
+    <!-- The Rim holds the cold moons. Cool and harsh, but short of polar. -->
+    <minSettlementTemperatureChanceCurve>
+      <points>
+        <li>(-60, 0.2)</li>
+        <li>(-25, 1)</li>
+        <li>(-2, 1)</li>
+        <li>(12, 0.25)</li>
+        <li>(25, 0.05)</li>
+      </points>
+    </minSettlementTemperatureChanceCurve>
     <factionIconPath>World/WorldObjects/Expanding/Town</factionIconPath>
     <factionNameMaker>NamerFactionOutlander</factionNameMaker>
     <settlementNameMaker>NamerSettlementOutlander</settlementNameMaker>
@@ -250,7 +271,8 @@
         <li>(2000, 800)</li>
         <li>(2001, 10000)</li>
       </points>
-    </maxPawnCostPerTotalPointsCurve>    <backstoryFilters>
+    </maxPawnCostPerTotalPointsCurve>
+    <backstoryFilters>
       <li>
         <categories>
           <li>Offworld</li>
@@ -369,7 +391,8 @@
         <li>(2000, 800)</li>
         <li>(2001, 10000)</li>
       </points>
-    </maxPawnCostPerTotalPointsCurve>    <backstoryFilters>
+    </maxPawnCostPerTotalPointsCurve>
+    <backstoryFilters>
       <li>
         <categories>
           <li>Outlander</li>
@@ -439,6 +462,15 @@
     <leaderTitle>queen</leaderTitle>
     <techLevel>Neolithic</techLevel>
     <settlementTexturePath>World/WorldObjects/TribalSettlement</settlementTexturePath>
+    <!-- Exiled to the ice and left there. The tribes read wrong anywhere temperate. -->
+    <minSettlementTemperatureChanceCurve>
+      <points>
+        <li>(-80, 1)</li>
+        <li>(-20, 1)</li>
+        <li>(0, 0.08)</li>
+        <li>(12, 0.003)</li>
+      </points>
+    </minSettlementTemperatureChanceCurve>
     <factionIconPath>World/WorldObjects/Expanding/VillageSavage</factionIconPath>
     <factionNameMaker>NamerFactionTribal</factionNameMaker>
     <settlementNameMaker>NamerSettlementTribal</settlementNameMaker>
@@ -478,7 +510,8 @@
         <li>(2000, 800)</li>
         <li>(2001, 10000)</li>
       </points>
-    </maxPawnCostPerTotalPointsCurve>    <backstoryFilters>
+    </maxPawnCostPerTotalPointsCurve>
+    <backstoryFilters>
       <li>
         <categories>
           <li>Tribal</li>
@@ -538,6 +571,15 @@
     <leaderTitle>warlord</leaderTitle>
     <techLevel>Industrial</techLevel>
     <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>
+    <!-- Ascomanni raid out of the dark and settle where nobody follows. Coldest tiles by a wide margin. -->
+    <minSettlementTemperatureChanceCurve>
+      <points>
+        <li>(-80, 1)</li>
+        <li>(-25, 1)</li>
+        <li>(-5, 0.05)</li>
+        <li>(10, 0.002)</li>
+      </points>
+    </minSettlementTemperatureChanceCurve>
     <factionIconPath>World/WorldObjects/Expanding/PirateOutpost</factionIconPath>
     <factionNameMaker>NamerFactionPirate</factionNameMaker>
     <settlementNameMaker>NamerSettlementPirate</settlementNameMaker>
@@ -570,7 +612,8 @@
         <li>(2000, 800)</li>
         <li>(2001, 10000)</li>
       </points>
-    </maxPawnCostPerTotalPointsCurve>    <backstoryFilters>
+    </maxPawnCostPerTotalPointsCurve>
+    <backstoryFilters>
       <li>
         <categories>
           <li>Pirate</li>

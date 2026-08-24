@@ -228,6 +228,7 @@
     <factionlessGenerationWeight>2</factionlessGenerationWeight>
     <genes>
       <li>Hair_BaldOnly</li>
+      <li>Hair_LightBlue</li>
       <li>Eyes_Blue</li>
       <li>Body_Thin</li>
       <li>AptitudeRemarkable_Intellectual</li>
@@ -277,6 +278,7 @@
     <factionlessGenerationWeight>2</factionlessGenerationWeight>
     <genes>
       <li>Hair_ShortOnly</li>
+      <li>Hair_LightGreen</li>
       <li>Eyes_Green</li>
       <li>Body_Thin</li>
       <li>AptitudeRemarkable_Intellectual</li>
@@ -345,6 +347,7 @@
     <factionlessGenerationWeight>10</factionlessGenerationWeight>
     <genes>
       <li>Hair_Gray</li>
+      <li>Eyes_Gray</li>
       <li>Body_Standard</li>
       <li>AptitudeRemarkable_Shooting</li>
       <li>AptitudeStrong_Melee</li>
@@ -505,6 +508,7 @@
     <factionlessGenerationWeight>0.4</factionlessGenerationWeight>
     <genes>
       <li>Hair_ShortOnly</li>
+      <li>Hair_LightGreen</li>
       <li>Eyes_Green</li>
       <li>Body_Standard</li>
       <li>Robust</li>

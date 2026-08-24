@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Two engineered landscapes.
+
+  Structure mirrored from Core/Defs/BiomeDefs/Biomes_WarmArid.xml (AridShrubland).
+  Placement is decided by the workerClass, not by anything in this file - see
+  Source/RimRising/BiomeWorkers.cs, which explains why a custom biome cannot reuse
+  a vanilla worker.
+
+  DELIBERATELY NOT POLAR. The obsidian tribes live on ice, but vanilla already has
+  IceSheet and Tundra and they do the job well. A duplicate would add a name and
+  nothing else. Instead the tribes are steered onto cold tiles by a settlement
+  temperature curve on their FactionDef, which costs nothing and works with any
+  cold biome, vanilla or modded.
+
+  These two exist because vanilla has no equivalent: farmland that was planned
+  rather than grown, and mining country whose entire value is underneath it.
+-->
+<Defs>
+
+  <!-- =========================== terraformed steppe ======================= -->
+
+  <BiomeDef>
+    <defName>RR_TerraformedSteppe</defName>
+    <label>terraformed steppe</label>
+    <description>Grassland laid down to a plan, on ground that had none of its own. The soil was trucked in, the watershed was drawn on a map before it was dug, and the whole expanse produces exactly what it was specified to produce.\n\nIt is fertile and it is quiet. Very little lives here that was not put here, and what was put here was chosen for yield rather than for company.</description>
+    <workerClass>RimRising.BiomeWorker_RR_TerraformedSteppe</workerClass>
+    <texture>World/Biomes/RR_TerraformedSteppe</texture>
+    <allowFarmingCamps>true</allowFarmingCamps>
+    <!-- Engineered for yield, so plants are dense and wildlife is not. -->
+    <animalDensity>1.1</animalDensity>
+    <plantDensity>0.42</plantDensity>
+    <settlementSelectionWeight>1.3</settlementSelectionWeight>
+    <movementDifficulty>1</movementDifficulty>
+    <lakeBeachTerrain>Sand</lakeBeachTerrain>
+    <riverbankTerrain>Riverbank</riverbankTerrain>
+    <riverbankSizeRange>6~8</riverbankSizeRange>
+    <forageability>0.6</forageability>
+    <foragedFood>RawBerries</foragedFood>
+    <wildPlantRegrowDays>18</wildPlantRegrowDays>
+    <maxFishPopulation>520</maxFishPopulation>
+    <soundsAmbient>
+      <li>Ambient_NightInsects_Standard</li>
+    </soundsAmbient>
+    <diseaseMtbDays>70</diseaseMtbDays>
+    <diseases>
+      <li><diseaseInc>Disease_Flu</diseaseInc><commonality>100</commonality></li>
+      <li><diseaseInc>Disease_Plague</diseaseInc><commonality>100</commonality></li>
+      <li><diseaseInc>Disease_GutWorms</diseaseInc><commonality>60</commonality></li>
+      <li><diseaseInc>Disease_MuscleParasites</diseaseInc><commonality>60</commonality></li>
+      <li><diseaseInc>Disease_FibrousMechanites</diseaseInc><commonality>30</commonality></li>
+      <li><diseaseInc>Disease_SensoryMechanites</diseaseInc><commonality>30</commonality></li>
+      <li><diseaseInc>Disease_AnimalFlu</diseaseInc><commonality>100</commonality></li>
+      <li><diseaseInc>Disease_AnimalPlague</diseaseInc><commonality>100</commonality></li>
+    </diseases>
+    <terrainsByFertility>
+      <li><terrain>Soil</terrain><min>-999</min><max>0.55</max></li>
+      <li><terrain>SoilRich</terrain><min>0.55</min><max>999</max></li>
+    </terrainsByFertility>
+    <baseWeatherCommonalities>
+      <Clear>16</Clear>
+      <Fog>2</Fog>
+      <Rain>4</Rain>
+      <DryThunderstorm>1</DryThunderstorm>
+      <RainyThunderstorm>1</RainyThunderstorm>
+      <FoggyRain>1</FoggyRain>
+    </baseWeatherCommonalities>
+    <wildPlants>
+      <Plant_Grass>9.0</Plant_Grass>
+      <Plant_GrayGrass MayRequire="Ludeon.RimWorld.Biotech">2</Plant_GrayGrass>
+      <Plant_Dandelion>1.4</Plant_Dandelion>
+      <Plant_Berry>0.5</Plant_Berry>
+      <Plant_Bush>0.4</Plant_Bush>
+      <Plant_TreePoplar>0.25</Plant_TreePoplar>
+      <Plant_Reeds MayRequire="Ludeon.RimWorld.Odyssey">1</Plant_Reeds>
+    </wildPlants>
+    <wildAnimals>
+      <!-- Stock, not fauna. Almost everything here was introduced on purpose. -->
+      <Cow>0.5</Cow>
+      <Chicken>0.5</Chicken>
+      <Sheep>0.4</Sheep>
+      <Goat>0.4</Goat>
+      <Horse>0.3</Horse>
+      <Donkey>0.2</Donkey>
+      <Hare>0.9</Hare>
+      <Rat>0.8</Rat>
+      <Deer>0.3</Deer>
+      <Fox_Red>0.15</Fox_Red>
+      <Sparrow MayRequire="Ludeon.RimWorld.Odyssey">0.5</Sparrow>
+      <Quail MayRequire="Ludeon.RimWorld.Odyssey">0.4</Quail>
+    </wildAnimals>
+  </BiomeDef>
+
+  <!-- ============================ helium barrens ========================== -->
+
+  <BiomeDef>
+    <defName>RR_HeliumBarrens</defName>
+    <label>helium barrens</label>
+    <description>Broken country over a seam, which is the only reason anyone has ever come here. The surface offers nothing at all: dust, hard light, and heat that arrives without weather to carry it.\n\nEverything that matters is below, and so is almost everyone. The head of a shaft is a door in the ground with a lift behind it, and the people who work it are not, as a rule, ever brought back up.</description>
+    <workerClass>RimRising.BiomeWorker_RR_HeliumBarrens</workerClass>
+    <texture>World/Biomes/RR_HeliumBarrens</texture>
+    <allowFarmingCamps>false</allowFarmingCamps>
+    <animalDensity>0.5</animalDensity>
+    <plantDensity>0.06</plantDensity>
+    <settlementSelectionWeight>0.7</settlementSelectionWeight>
+    <movementDifficulty>1.5</movementDifficulty>
+    <lakeBeachTerrain>Sand</lakeBeachTerrain>
+    <riverbankTerrain>Riverbank</riverbankTerrain>
+    <riverbankSizeRange>4~6</riverbankSizeRange>
+    <forageability>0.15</forageability>
+    <foragedFood>RawAgave</foragedFood>
+    <wildPlantRegrowDays>45</wildPlantRegrowDays>
+    <maxFishPopulation>120</maxFishPopulation>
+    <settleWarning>Nothing on the surface here is worth anything. Arable land is almost absent and the water table is deep and foul.</settleWarning>
+    <soundsAmbient>
+      <li>Ambient_NightInsects_Standard</li>
+    </soundsAmbient>
+    <diseaseMtbDays>60</diseaseMtbDays>
+    <diseases>
+      <li><diseaseInc>Disease_Flu</diseaseInc><commonality>100</commonality></li>
+      <li><diseaseInc>Disease_Plague</diseaseInc><commonality>100</commonality></li>
+      <li><diseaseInc>Disease_GutWorms</diseaseInc><commonality>40</commonality></li>
+      <li><diseaseInc>Disease_MuscleParasites</diseaseInc><commonality>40</commonality></li>
+      <li><diseaseInc>Disease_FibrousMechanites</diseaseInc><commonality>30</commonality></li>
+      <li><diseaseInc>Disease_SensoryMechanites</diseaseInc><commonality>30</commonality></li>
+      <li><diseaseInc>Disease_AnimalFlu</diseaseInc><commonality>100</commonality></li>
+      <li><diseaseInc>Disease_AnimalPlague</diseaseInc><commonality>100</commonality></li>
+    </diseases>
+    <terrainsByFertility>
+      <li><terrain>Gravel</terrain><min>-999</min><max>0.60</max></li>
+      <li><terrain>Sand</terrain><min>0.60</min><max>0.80</max></li>
+      <li><terrain>Soil</terrain><min>0.80</min><max>999</max></li>
+    </terrainsByFertility>
+    <baseWeatherCommonalities>
+      <Clear>22</Clear>
+      <Fog>1</Fog>
+      <Rain>1</Rain>
+      <DryThunderstorm>2</DryThunderstorm>
+    </baseWeatherCommonalities>
+    <wildPlants>
+      <Plant_Grass>1.2</Plant_Grass>
+      <Plant_PincushionCactus>0.5</Plant_PincushionCactus>
+      <Plant_Agave>0.3</Plant_Agave>
+      <Plant_Bush>0.2</Plant_Bush>
+      <Plant_PebbleCactus MayRequire="Ludeon.RimWorld.Biotech">0.6</Plant_PebbleCactus>
+    </wildPlants>
+    <wildAnimals>
+      <Rat>1.4</Rat>
+      <Boomrat>0.8</Boomrat>
+      <Hare>0.5</Hare>
+      <Iguana>0.5</Iguana>
+      <Dromedary>0.4</Dromedary>
+      <Cougar>0.2</Cougar>
+      <Fox_Fennec>0.2</Fox_Fennec>
+      <Megasloth>0.1</Megasloth>
+      <Vulture MayRequire="Ludeon.RimWorld.Odyssey">0.5</Vulture>
+      <MonitorLizard MayRequire="Ludeon.RimWorld.Odyssey">0.3</MonitorLizard>
+    </wildAnimals>
+  </BiomeDef>
+
+</Defs>
