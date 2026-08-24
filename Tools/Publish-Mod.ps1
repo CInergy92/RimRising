@@ -121,6 +121,36 @@ if (-not $PSCmdlet.ShouldProcess($destination, 'mirror mod files')) {
     if (-not $WhatIfPreference) { return }
 }
 
+# A running RimWorld holds the mod assembly in a memory-mapped section, so
+# robocopy cannot replace it and fails with ERROR 1224 after three retries. Every
+# XML file copies fine, which is the trap: the publish looks mostly successful
+# while the game keeps running the OLD code. Detect it up front and say so.
+$assembly = Join-Path $ModRoot '1.6\Assemblies\RimRising.dll'
+if ((Test-Path $assembly) -and -not $WhatIfPreference) {
+    $running = @(Get-Process -Name 'RimWorldWin64' -ErrorAction SilentlyContinue)
+    if ($running.Count -gt 0) {
+        $deployed = Join-Path $destination '1.6\Assemblies\RimRising.dll'
+        $stale = $true
+        if (Test-Path $deployed) {
+            $stale = (Get-Item $assembly).Length -ne (Get-Item $deployed).Length -or
+                     (Get-Item $assembly).LastWriteTime -gt (Get-Item $deployed).LastWriteTime
+        }
+
+        if ($stale) {
+            Write-Host ''
+            Write-Host '  RimWorld is running, and the assembly has changed.' -ForegroundColor Red
+            Write-Host '  A running game memory-maps the DLL, so it cannot be replaced. The XML would' -ForegroundColor DarkYellow
+            Write-Host '  publish while the game kept running the OLD code - a confusing half-update.' -ForegroundColor DarkYellow
+            Write-Host ''
+            Write-Host '  Close RimWorld and re-run.' -ForegroundColor Yellow
+            Write-Host ''
+            exit 1
+        }
+
+        Write-Host '  RimWorld is running, but the assembly is unchanged - XML-only publish.' -ForegroundColor DarkGray
+    }
+}
+
 Write-Host '  mirroring...' -ForegroundColor DarkGray
 $output = & robocopy @robocopyArgs 2>&1
 $code = $LASTEXITCODE

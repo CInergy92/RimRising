@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Translation keys used from C#. A key referenced by Translate() that has no entry
+  renders as the raw key in the UI, which looks broken and is easy to miss.
+-->
+<LanguageData>
+
+  <!-- Shown when a pawn whose ideoligion reserves razors to Gold tries to equip one. -->
+  <RR_CannotBearRazor>{PAWN_nameDef} is not of Gold, and {PAWN_possessive} ideoligion forbids any lesser Color to bear a razor.</RR_CannotBearRazor>
+
+</LanguageData>

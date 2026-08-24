@@ -70,4 +70,43 @@
     <naturalGoodwillOffset>-40</naturalGoodwillOffset>
   </GoodwillSituationDef>
 
+  <!-- ========================= the tribes' position ======================= -->
+
+  <!--
+    Gold worship and the Society's doctrine are not the same belief, but they
+    point the same way, and the Society engineered the tribes' religion precisely
+    so they would. Warm rather than identical.
+  -->
+  <GoodwillSituationDef>
+    <defName>RR_GoldWorship_WithHierarchy</defName>
+    <label>reveres the sky gods</label>
+    <workerClass>GoodwillSituationWorker_MemeCompatibility</workerClass>
+    <meme>RR_GoldWorship</meme>
+    <otherMeme>RR_ColorHierarchy</otherMeme>
+    <naturalGoodwillOffset>15</naturalGoodwillOffset>
+  </GoodwillSituationDef>
+
+  <GoodwillSituationDef>
+    <defName>RR_GoldWorship_Agreement</defName>
+    <label>sky god agreement</label>
+    <workerClass>GoodwillSituationWorker_MemeCompatibility</workerClass>
+    <meme>RR_GoldWorship</meme>
+    <otherMeme>RR_GoldWorship</otherMeme>
+    <naturalGoodwillOffset>20</naturalGoodwillOffset>
+  </GoodwillSituationDef>
+
+  <!--
+    A colony saying the gods are neither gods nor owed anything is not a rival
+    faith to the tribes, it is blasphemy - and one the shamans were paid to make
+    unthinkable.
+  -->
+  <GoodwillSituationDef>
+    <defName>RR_GoldWorship_VersusEgalitarian</defName>
+    <label>denies the sky gods</label>
+    <workerClass>GoodwillSituationWorker_MemeCompatibility</workerClass>
+    <meme>RR_GoldWorship</meme>
+    <otherMeme>RR_ColorEquality</otherMeme>
+    <naturalGoodwillOffset>-35</naturalGoodwillOffset>
+  </GoodwillSituationDef>
+
 </Defs>

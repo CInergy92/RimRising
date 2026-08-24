@@ -88,6 +88,55 @@
     </descriptionMaker>
   </MemeDef>
 
+  <!-- ========================== the obsidian tribes ======================= -->
+
+  <!--
+    Distinct from RR_ColorHierarchy on purpose, and the distinction matters
+    mechanically as well as in the fiction.
+
+    The Society's hierarchy is an administrative doctrine: a Compact, a Board of
+    Quality Control, courts, and an order of knights to enforce it. What was done
+    to the Obsidians after the Dark Revolt was not that. They were moved to the
+    poles, stripped of every tool worth the name, and taught by bribed shamans
+    that the Colors above them are literally divine. They obey gods, not statutes.
+
+    Giving the tribes RR_ColorHierarchy handed them Olympic Knights, because the
+    knighthoods are gated on that meme. They are a Gold order serving the Compact,
+    and the tribes have no Compact and no Golds. This meme keeps the tribes
+    subordinate to Gold without making them administrators of a system they were
+    deliberately cut out of.
+  -->
+  <MemeDef ParentName="RR_ColorOrderBase">
+    <defName>RR_GoldWorship</defName>
+    <label>the sky gods</label>
+    <description>The gold ones come down out of the sky, and what they take they were owed, and what they leave is mercy. This has been true since before the ice, and the shamans have the stories to prove it.\n\nNobody now living remembers being told it for the first time.</description>
+    <iconPath>UI/Memes/RR_GoldWorship</iconPath>
+    <impact>3</impact>
+    <renderOrder>92</renderOrder>
+    <generalRules>
+      <rulesStrings>
+        <li>memeAdjective->godbound</li>
+        <li>memeAdjective->skyward</li>
+        <li>memeHyphenPrefix->sky</li>
+        <li>memeHyphenPrefix->god</li>
+        <li>memeConcept->the sky gods</li>
+        <li>memeConcept->the descent</li>
+        <li>memeLeaderNoun->queen</li>
+        <li>memeLeaderNoun->jarl</li>
+        <li>memeMoralist->shaman</li>
+      </rulesStrings>
+    </generalRules>
+    <descriptionMaker>
+      <rules>
+        <rulesStrings>
+          <li>creation(tag=meme_RR_GoldWorship)       ->[deity0_name] came down burning out of the black, and the ice has belonged to them ever since.</li>
+          <li>episode(uses=1,tag=meme_RR_GoldWorship) ->[deity0_name] walked among the tents once, and those who touched them were never seen again, which is how we know it was true.</li>
+          <li>setup(tag=meme_RR_GoldWorship)          ->[founderName] was the first shaman to hear the sky speak, and carried down the terms.</li>
+        </rulesStrings>
+      </rules>
+    </descriptionMaker>
+  </MemeDef>
+
   <!-- =========================== the resistance =========================== -->
 
   <MemeDef ParentName="RR_ColorOrderBase">

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Who may carry a razor.
+
+  Canonically a razor is forbidden to every Color but Gold, and merely touching
+  one is punishable by death. Vanilla cannot express that: Precept_Weapon gates by
+  weapon CLASS, not by who is holding it, and there is no history event raised for
+  equipping a weapon at all. So the enforcement lives in
+  Source/RimRising/HarmonyPatches.cs, and this file is the belief it enforces.
+
+  IT IS A LAW, NOT A LAW OF PHYSICS. The restriction only binds pawns whose
+  ideoligion actually holds the precept. A raider, a resistance fighter, or a
+  colony that never adopted the hierarchy can pick up a razor freely - and the
+  Society's fury about that is the entire point. The Rising began, in part, with
+  lowColors being handed razors precisely because of what it meant.
+
+  Issue structure mirrored from Ideology/Defs/PreceptDefs/Precepts_Weapons.xml.
+-->
+<Defs>
+
+  <IssueDef>
+    <defName>RR_RazorBearing</defName>
+    <label>razor bearing</label>
+    <iconPath>UI/Issues/RR_RazorBearing</iconPath>
+  </IssueDef>
+
+  <!--
+    Raised when someone the hierarchy considers unfit takes up a razor anyway.
+    Fired from the Harmony patch, since vanilla raises nothing on equip.
+  -->
+  <HistoryEventDef>
+    <defName>RR_LowColorBoreRazor</defName>
+    <label>a lesser Color bore a razor</label>
+  </HistoryEventDef>
+
+  <!-- =============================== the Society ========================== -->
+
+  <PreceptDef>
+    <defName>RR_RazorBearing_GoldOnly</defName>
+    <issue>RR_RazorBearing</issue>
+    <label>Gold alone</label>
+    <description>The razor is the proof of the right to rule, and it is not a thing to be held by hands that were made for other work. A lesser Color who takes one up has not committed theft. They have committed a claim.</description>
+    <impact>High</impact>
+    <displayOrderInIssue>10</displayOrderInIssue>
+    <associatedMemes>
+      <li>RR_ColorHierarchy</li>
+    </associatedMemes>
+    <conflictingMemes>
+      <li>RR_ColorEquality</li>
+    </conflictingMemes>
+    <comps>
+      <li Class="PreceptComp_UnwillingToDo">
+        <eventDef>RR_LowColorBoreRazor</eventDef>
+        <description>Bear a razor while not of Gold</description>
+      </li>
+      <li Class="PreceptComp_KnowsMemoryThought">
+        <eventDef>RR_LowColorBoreRazor</eventDef>
+        <thought>RR_KnowLowColorBoreRazor</thought>
+        <description>Someone unworthy bore a razor</description>
+      </li>
+    </comps>
+  </PreceptDef>
+
+  <!-- ============================= the resistance ========================= -->
+
+  <PreceptDef>
+    <defName>RR_RazorBearing_Anyone</defName>
+    <issue>RR_RazorBearing</issue>
+    <label>any hand</label>
+    <description>They told us for eight hundred years that the blade knows whose hand it is in. It does not. It is a meter of wire and a switch, and it cuts for anyone.\n\nSo let it be seen being carried.</description>
+    <impact>Medium</impact>
+    <displayOrderInIssue>20</displayOrderInIssue>
+    <associatedMemes>
+      <li>RR_ColorEquality</li>
+    </associatedMemes>
+    <conflictingMemes>
+      <li>RR_ColorHierarchy</li>
+    </conflictingMemes>
+    <comps>
+      <li Class="PreceptComp_KnowsMemoryThought">
+        <eventDef>RR_LowColorBoreRazor</eventDef>
+        <thought>RR_KnowLowColorBoreRazor_Approved</thought>
+        <description>One of ours bore a razor</description>
+      </li>
+    </comps>
+  </PreceptDef>
+
+  <!-- ================================ thoughts ============================ -->
+
+  <ThoughtDef>
+    <defName>RR_KnowLowColorBoreRazor</defName>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>12</durationDays>
+    <stackLimit>5</stackLimit>
+    <stages>
+      <li>
+        <label>a lesser Color bore a razor</label>
+        <description>Someone who had no right to it carried a razor. It is not the blade that offends. It is what carrying it says.</description>
+        <baseMoodEffect>-8</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>RR_KnowLowColorBoreRazor_Approved</defName>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>12</durationDays>
+    <stackLimit>5</stackLimit>
+    <stages>
+      <li>
+        <label>one of ours bore a razor</label>
+        <description>One of us carried a razor openly, where it could be seen. Eight centuries of being told that was impossible, and it turns out it only ever required doing it.</description>
+        <baseMoodEffect>6</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+</Defs>

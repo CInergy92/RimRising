@@ -23,7 +23,13 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <RimWorldManaged>D:\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed</RimWorldManaged>
+    <SteamLibrary>D:\SteamLibrary\steamapps</SteamLibrary>
+    <RimWorldManaged>$(SteamLibrary)\common\RimWorld\RimWorldWin64_Data\Managed</RimWorldManaged>
+    <!--
+      Harmony ships with the Harmony mod rather than with the game. "Current" is
+      the folder Harmony keeps its live build in.
+    -->
+    <HarmonyManaged>$(SteamLibrary)\workshop\content\294100\2009463077\Current\Assemblies</HarmonyManaged>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,6 +43,14 @@
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>$(RimWorldManaged)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!--
+      Private=false matters here: the game already loads Harmony, and shipping a
+      second copy inside the mod would be actively harmful.
+    -->
+    <Reference Include="0Harmony">
+      <HintPath>$(HarmonyManaged)\0Harmony.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>

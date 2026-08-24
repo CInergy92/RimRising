@@ -61,6 +61,8 @@
     <burnableByRecipe>false</burnableByRecipe>
     <weaponTags>
       <li>UltratechMelee</li>
+      <!-- Keyed on by the caste restriction in Source/RimRising/HarmonyPatches.cs. -->
+      <li>RR_CasteRestricted</li>
     </weaponTags>
     <!-- Melee comes from BaseMeleeWeapon; only the additions are declared here. -->
     <weaponClasses>

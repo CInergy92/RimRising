@@ -436,7 +436,7 @@
       <Structure_TheistEmbodied MayRequire="Ludeon.RimWorld.Ideology">8</Structure_TheistEmbodied>
       <Structure_Animist MayRequire="Ludeon.RimWorld.Ideology">2</Structure_Animist>
     </structureMemeWeights>    <requiredMemes>
-      <li>RR_ColorHierarchy</li>
+      <li>RR_GoldWorship</li>
     </requiredMemes>    <xenotypeSet>
       <xenotypeChances>
         <RR_Obsidian>0.88</RR_Obsidian>
