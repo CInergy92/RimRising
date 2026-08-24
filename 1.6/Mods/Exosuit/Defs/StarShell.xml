@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The starShell, built on the Exosuit Framework.
+
+  ONLY LOADED WHEN THE FRAMEWORK IS ACTIVE. This whole folder sits behind
+  IfModActive="Aoba.Exosuit.Framework" in LoadFolders.xml, so the framework is an
+  optional integration and never a dependency.
+
+  WHY THE FRAMEWORK RATHER THAN PLAIN APPAREL
+
+  I initially assumed a starShell was over-armour worn on top of pulse armor and
+  could be done with a custom ApparelLayerDef and no dependency at all. That was
+  wrong. In the source a starShell is a four-metre, three-tonne powered suit with
+  modular weapon mounts, shoulder thrusters and heavy fuel consumption - a walking
+  tank a pawn climbs into, not a coat. Faking that as one static armour piece would
+  have produced something that shared only the name.
+
+  STRUCTURE, verified against the framework's own abstracts and against the Dead
+  Man's Switch autocannon pack, the one installed mod that builds real modules on
+  it. Every module is a PAIR of ThingDefs pointing at each other:
+
+    ModuleItem<Slot>    the craftable item, carrying <EquipedThingDef>
+    ModuleApparel<Slot> the worn form,      carrying <ItemDef>
+
+  Both list <occupiedSlots>. Weapon modules add Exosuit.CompProperties_ModuleWeapon.
+  The framework's abstracts already handle the render-node plumbing, the layers,
+  the body-skip flags and the no-gender extension, so a concrete module only needs
+  its label, art, stats, cost and comp.
+
+  ART IS PLACEHOLDER AND THE OFFSETS ARE UNTUNED. The <drawData> offsets in the
+  reference mod are hand-tuned per facing to a degree that cannot be derived from
+  disk - they only look right or wrong on screen. The values here are a starting
+  point and will need one in-game pass.
+-->
+<Defs>
+
+  <!-- ============================== research ============================== -->
+
+  <ResearchProjectDef>
+    <defName>RR_StarShellFrame</defName>
+    <label>starShell frame</label>
+    <description>A powered frame four metres tall that a soldier wears rather than drives. Shoulder thrusters, gravBoots, a carapace rated against everything short of a railgun, and an appetite for fuel that makes every hour of use an accounting decision.\n\nThe Society launches them from orbit in numbers, which is where the term Iron Rain comes from. What arrives is not infantry.\n\nUnlocks the starShell module set.</description>
+    <tab>RR_Artificer</tab>
+    <baseCost>7000</baseCost>
+    <techLevel>Spacer</techLevel>
+    <prerequisites>
+      <li>RR_PulseArmor</li>
+      <li>WG_HeavyExoskeleton</li>
+    </prerequisites>
+    <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+    <requiredResearchFacilities>
+      <li>MultiAnalyzer</li>
+    </requiredResearchFacilities>
+    <researchViewX>5.00</researchViewX>
+    <researchViewY>2.00</researchViewY>
+  </ResearchProjectDef>
+
+  <!-- ========================= the pulse cannon ============================ -->
+  <!--
+    Suit-scale, and deliberately not equippable by a pawn on foot: the arm module
+    grants it, and mass alone puts it out of reach otherwise. "Common armaments
+    include PulseCannons and missile launchers" - so this is the canonical one.
+  -->
+
+  <ThingDef ParentName="BaseHumanMakeableGun">
+    <defName>RR_Weapon_PulseCannon</defName>
+    <label>pulse cannon</label>
+    <description>The shoulder-braced version of a weapon a pawn on foot could not lift, let alone fire. It throws a compression wave heavy enough to fold a wall, and the suit exists partly to absorb what firing it does to the person inside.</description>
+    <techLevel>Spacer</techLevel>
+    <graphicData>
+      <texPath>Things/Weapons/RR_PulseCannon</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>1.6</drawSize>
+    </graphicData>
+    <soundInteract>Interact_ChargeRifle</soundInteract>
+    <statBases>
+      <WorkToMake>52000</WorkToMake>
+      <Mass>28</Mass>
+      <AccuracyTouch>0.72</AccuracyTouch>
+      <AccuracyShort>0.80</AccuracyShort>
+      <AccuracyMedium>0.72</AccuracyMedium>
+      <AccuracyLong>0.55</AccuracyLong>
+      <RangedWeapon_Cooldown>2.4</RangedWeapon_Cooldown>
+    </statBases>
+    <equippedAngleOffset>-40</equippedAngleOffset>
+    <costList>
+      <RR_Ionsteel>30</RR_Ionsteel>
+      <Plasteel>80</Plasteel>
+      <ComponentSpacer>8</ComponentSpacer>
+    </costList>
+    <recipeMaker>
+      <researchPrerequisite>RR_StarShellFrame</researchPrerequisite>
+      <recipeUsers Inherit="false">
+        <li>FabricationBench</li>
+      </recipeUsers>
+      <skillRequirements>
+        <Crafting>10</Crafting>
+      </skillRequirements>
+    </recipeMaker>
+    <weaponTags Inherit="false">
+      <li>RR_StarShellWeapon</li>
+    </weaponTags>
+    <tradeTags Inherit="false">
+      <li>Clothing</li>
+    </tradeTags>
+    <verbs>
+      <li>
+        <verbClass>Verb_Shoot</verbClass>
+        <hasStandardCommand>true</hasStandardCommand>
+        <defaultProjectile>RR_Bullet_PulseCannon</defaultProjectile>
+        <warmupTime>1.6</warmupTime>
+        <range>28.9</range>
+        <soundCast>Shot_ChargeBlasterHeavy</soundCast>
+        <soundCastTail>GunTail_Heavy</soundCastTail>
+        <muzzleFlashScale>14</muzzleFlashScale>
+      </li>
+    </verbs>
+  </ThingDef>
+
+  <ThingDef ParentName="BaseBullet">
+    <defName>RR_Bullet_PulseCannon</defName>
+    <label>pulse wave</label>
+    <graphicData>
+      <texPath>Things/Projectile/RR_PulseWave</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>1.2</drawSize>
+    </graphicData>
+    <projectile>
+      <damageDef>Flame</damageDef>
+      <damageAmountBase>34</damageAmountBase>
+      <armorPenetrationBase>0.55</armorPenetrationBase>
+      <stoppingPower>3</stoppingPower>
+      <speed>78</speed>
+    </projectile>
+  </ThingDef>
+
+  <!-- =============================== the core ============================== -->
+  <!--
+    The frame itself. Everything else bolts onto this, and the framework's Core
+    slot already declares which slots a core supports, so no disabledSlots here.
+  -->
+
+  <ThingDef ParentName="ModuleItemCore">
+    <defName>RR_Module_StarShellCore</defName>
+    <label>starShell frame</label>
+    <description>Three tonnes of carapace, actuator and battery, shaped like something between a man and a crustacean. Without power it is a statue with a person trapped inside, which is a documented way to die in one.</description>
+    <statBases>
+      <MaxHitPoints>420</MaxHitPoints>
+      <Mass>240</Mass>
+    </statBases>
+    <costList>
+      <RR_Ionsteel>90</RR_Ionsteel>
+      <Plasteel>350</Plasteel>
+      <ComponentSpacer>20</ComponentSpacer>
+      <Uranium>40</Uranium>
+    </costList>
+    <recipeMaker>
+      <researchPrerequisites>
+        <li>RR_StarShellFrame</li>
+      </researchPrerequisites>
+      <workAmount>180000</workAmount>
+    </recipeMaker>
+    <smeltProducts>
+      <Plasteel>120</Plasteel>
+      <RR_Ionsteel>30</RR_Ionsteel>
+    </smeltProducts>
+    <comps>
+      <li Class="Exosuit.CompProperties_ExosuitModule">
+        <EquipedThingDef>RR_Apparel_StarShellCore</EquipedThingDef>
+        <occupiedSlots>
+          <li>Core</li>
+        </occupiedSlots>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="ModuleApparelCore">
+    <defName>RR_Apparel_StarShellCore</defName>
+    <label>starShell frame</label>
+    <description>Three tonnes of carapace, actuator and battery, worn rather than driven.</description>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/RR_StarShell/RR_StarShellCore</texPath>
+    </graphicData>
+    <statBases>
+      <MaxHitPoints>420</MaxHitPoints>
+      <Mass>240</Mass>
+      <!-- Rated against most things short of a railgun or a razor. -->
+      <ArmorRating_Sharp>1.30</ArmorRating_Sharp>
+      <ArmorRating_Blunt>0.85</ArmorRating_Blunt>
+      <ArmorRating_Heat>0.90</ArmorRating_Heat>
+      <Insulation_Cold>40</Insulation_Cold>
+      <Insulation_Heat>20</Insulation_Heat>
+    </statBases>
+    <equippedStatOffsets>
+      <!-- Servo-driven, so not slow - but it is three tonnes and it turns badly. -->
+      <MoveSpeed>0.20</MoveSpeed>
+      <CarryingCapacity>150</CarryingCapacity>
+      <ToxicResistance>1.0</ToxicResistance>
+      <ShootingAccuracyPawn>2</ShootingAccuracyPawn>
+      <WorkSpeedGlobal>-0.55</WorkSpeedGlobal>
+      <SocialImpact>-0.40</SocialImpact>
+    </equippedStatOffsets>
+    <apparel>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/RR_StarShell/RR_StarShellCore</wornGraphicPath>
+      <drawData>
+        <scale>2.0</scale>
+        <defaultData>
+          <offset>(0,0,0.35)</offset>
+        </defaultData>
+      </drawData>
+      <tags>
+        <li>RR_StarShell</li>
+      </tags>
+    </apparel>
+    <comps>
+      <li Class="Exosuit.CompProperties_ExosuitModule">
+        <ItemDef>RR_Module_StarShellCore</ItemDef>
+        <occupiedSlots>
+          <li>Core</li>
+        </occupiedSlots>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <!-- ============================ the sensor head ========================== -->
+
+  <ThingDef ParentName="ModuleItemHead">
+    <defName>RR_Module_StarShellHead</defName>
+    <label>starShell sensor hood</label>
+    <description>A sealed sensor cluster where a head would be, carrying the targeting laser that calls down fire from whatever is still in orbit. The suit's occupant sees rather better than a person does and is not, strictly, looking at anything.</description>
+    <statBases>
+      <MaxHitPoints>140</MaxHitPoints>
+      <Mass>40</Mass>
+    </statBases>
+    <costList>
+      <RR_Ionsteel>20</RR_Ionsteel>
+      <Plasteel>60</Plasteel>
+      <ComponentSpacer>8</ComponentSpacer>
+    </costList>
+    <recipeMaker>
+      <researchPrerequisites>
+        <li>RR_StarShellFrame</li>
+      </researchPrerequisites>
+      <workAmount>60000</workAmount>
+    </recipeMaker>
+    <comps>
+      <li Class="Exosuit.CompProperties_ExosuitModule">
+        <EquipedThingDef>RR_Apparel_StarShellHead</EquipedThingDef>
+        <occupiedSlots>
+          <li>Head</li>
+        </occupiedSlots>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="ModuleApparelHead">
+    <defName>RR_Apparel_StarShellHead</defName>
+    <label>starShell sensor hood</label>
+    <description>A sealed sensor cluster carrying an orbital targeting laser.</description>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/RR_StarShell/RR_StarShellHead</texPath>
+    </graphicData>
+    <statBases>
+      <MaxHitPoints>140</MaxHitPoints>
+      <Mass>40</Mass>
+      <ArmorRating_Sharp>1.10</ArmorRating_Sharp>
+      <ArmorRating_Blunt>0.70</ArmorRating_Blunt>
+      <ArmorRating_Heat>0.80</ArmorRating_Heat>
+    </statBases>
+    <equippedStatOffsets>
+      <ShootingAccuracyPawn>4</ShootingAccuracyPawn>
+      <AimingDelayFactor>-0.25</AimingDelayFactor>
+    </equippedStatOffsets>
+    <apparel>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/RR_StarShell/RR_StarShellHead</wornGraphicPath>
+      <drawData>
+        <scale>1.6</scale>
+      </drawData>
+      <tags>
+        <li>RR_StarShell</li>
+      </tags>
+    </apparel>
+    <comps>
+      <li Class="Exosuit.CompProperties_ExosuitModule">
+        <ItemDef>RR_Module_StarShellHead</ItemDef>
+        <occupiedSlots>
+          <li>Head</li>
+        </occupiedSlots>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <!-- ========================== the cannon arm ============================= -->
+  <!--
+    A weapon module. Exosuit.CompProperties_ModuleWeapon on the APPAREL half is
+    what actually hands the suit its gun - taken from the Dead Man's Switch
+    autocannon module, which is the only real worked example available.
+  -->
+
+  <ThingDef ParentName="ModuleItemArmRight">
+    <defName>RR_Module_StarShellCannonArm</defName>
+    <label>starShell cannon arm</label>
+    <description>A pulse cannon on an arm built to absorb its recoil, which is most of what the arm is for.</description>
+    <descriptionHyperlinks>
+      <ThingDef>RR_Weapon_PulseCannon</ThingDef>
+    </descriptionHyperlinks>
+    <statBases>
+      <MaxHitPoints>160</MaxHitPoints>
+      <Mass>70</Mass>
+    </statBases>
+    <costList>
+      <RR_Ionsteel>30</RR_Ionsteel>
+      <Plasteel>90</Plasteel>
+      <ComponentSpacer>10</ComponentSpacer>
+    </costList>
+    <recipeMaker>
+      <researchPrerequisites>
+        <li>RR_StarShellFrame</li>
+      </researchPrerequisites>
+      <workAmount>90000</workAmount>
+    </recipeMaker>
+    <comps>
+      <li Class="Exosuit.CompProperties_ExosuitModule">
+        <EquipedThingDef>RR_Apparel_StarShellCannonArm</EquipedThingDef>
+        <occupiedSlots>
+          <li>ArmRight</li>
+        </occupiedSlots>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="ModuleApparelArmRight">
+    <defName>RR_Apparel_StarShellCannonArm</defName>
+    <label>starShell cannon arm</label>
+    <description>A pulse cannon on an arm built to absorb its recoil.</description>
+    <descriptionHyperlinks>
+      <ThingDef>RR_Weapon_PulseCannon</ThingDef>
+    </descriptionHyperlinks>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/RR_StarShell/RR_StarShellArm</texPath>
+    </graphicData>
+    <statBases>
+      <MaxHitPoints>160</MaxHitPoints>
+      <Mass>70</Mass>
+      <ArmorRating_Sharp>1.10</ArmorRating_Sharp>
+      <ArmorRating_Blunt>0.70</ArmorRating_Blunt>
+    </statBases>
+    <apparel>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/RR_StarShell/RR_StarShellArm</wornGraphicPath>
+      <drawData>
+        <scale>1.5</scale>
+        <dataSouth>
+          <offset>(-0.85,0,0.10)</offset>
+          <layer>10</layer>
+        </dataSouth>
+        <dataNorth>
+          <offset>(0.75,0,0.0)</offset>
+          <layer>72</layer>
+        </dataNorth>
+        <dataWest>
+          <offset>(-0.40,0,0.5)</offset>
+        </dataWest>
+        <dataEast>
+          <offset>(-0.05,0,-0.2)</offset>
+          <layer>20</layer>
+        </dataEast>
+      </drawData>
+      <tags>
+        <li>RR_StarShell</li>
+      </tags>
+    </apparel>
+    <comps>
+      <li Class="Exosuit.CompProperties_ExosuitModule">
+        <ItemDef>RR_Module_StarShellCannonArm</ItemDef>
+        <occupiedSlots>
+          <li>ArmRight</li>
+        </occupiedSlots>
+      </li>
+      <li Class="Exosuit.CompProperties_ModuleWeapon">
+        <weapon>RR_Weapon_PulseCannon</weapon>
+      </li>
+    </comps>
+  </ThingDef>
+
+</Defs>

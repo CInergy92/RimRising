@@ -98,4 +98,27 @@
     <researchViewY>3.50</researchViewY>
   </ResearchProjectDef>
 
+  <ResearchProjectDef>
+    <defName>RR_OpticalCamouflage</defName>
+    <label>optical camouflage</label>
+    <description>Polyenne woven with a refractive lattice, driven hard enough to bend what falls on it. The cloth does not turn the wearer invisible so much as make looking at them exhausting, and the eye gives up before the mind notices it has.
+
+It cannot be run continuously. The lattice sheds heat it cannot lose fast enough, so the field comes in bursts with a long wait between them.
+
+Unlocks the ghostCloak.</description>
+    <tab>RR_Artificer</tab>
+    <baseCost>4500</baseCost>
+    <techLevel>Spacer</techLevel>
+    <prerequisites>
+      <li>RR_PolyenneWeaving</li>
+      <li>RR_PulsePhysics</li>
+    </prerequisites>
+    <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+    <requiredResearchFacilities>
+      <li>MultiAnalyzer</li>
+    </requiredResearchFacilities>
+    <researchViewX>3.00</researchViewX>
+    <researchViewY>0.50</researchViewY>
+  </ResearchProjectDef>
+
 </Defs>

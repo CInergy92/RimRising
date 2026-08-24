@@ -399,6 +399,60 @@ function Get-GatedFolders {
     return , $gated
 }
 
+# Abstracts belonging to mods we integrate with OPTIONALLY - the ones named by
+# IfModActive in our own LoadFolders.xml.
+#
+# Defs inside a gated folder legitimately parent from that mod's abstract bases
+# (the starShell's modules descend from the Exosuit Framework's ModuleApparelCore
+# and friends). Those abstracts are not in vanilla and not in our modDependencies,
+# so without this the ParentName check reports every one of them as missing - and
+# the obvious "fix" would have been to weaken the check, which would have cost us
+# the real typo detection it exists for.
+#
+# Scoped per folder: an abstract from an optional mod only satisfies a def that
+# actually lives in the folder gated on that mod.
+function Get-OptionalIntegrationAbstracts {
+    param([string] $ModRoot, [hashtable] $ModPaths)
+
+    $result = @{}   # gated folder (backslashes, lowercase) -> HashSet of Name= values
+
+    $lfPath = Join-Path $ModRoot 'LoadFolders.xml'
+    if (-not (Test-Path $lfPath)) { return $result }
+
+    $doc = New-Object System.Xml.XmlDocument
+    try { $doc.Load($lfPath) } catch { return $result }
+
+    foreach ($li in $doc.SelectNodes('//li')) {
+        $attr = $li.Attributes['IfModActive']
+        if (-not $attr -or -not $attr.Value) { continue }
+        if ([string]::IsNullOrWhiteSpace($li.InnerText)) { continue }
+
+        $folder = $li.InnerText.Trim().Replace('/', '\').Trim('\').ToLowerInvariant()
+        $names  = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+
+        foreach ($id in ($attr.Value -split ',')) {
+            $key = $id.Trim().ToLowerInvariant()
+            if (-not $key) { continue }
+            if (-not $ModPaths.ContainsKey($key)) { continue }   # not installed; cannot check
+
+            $files = Get-ChildItem -Path $ModPaths[$key] -Filter *.xml -Recurse -File -ErrorAction SilentlyContinue |
+                     Where-Object { $_.FullName -match '\\Defs\\' }
+            foreach ($f in $files) {
+                $d = New-Object System.Xml.XmlDocument
+                try { $d.Load($f.FullName) } catch { continue }
+                if (-not $d.DocumentElement) { continue }
+                foreach ($node in $d.DocumentElement.ChildNodes) {
+                    if ($node.NodeType -ne [System.Xml.XmlNodeType]::Element) { continue }
+                    $na = $node.Attributes['Name']
+                    if ($na -and $na.Value) { [void]$names.Add($na.Value.Trim()) }
+                }
+            }
+        }
+        if ($names.Count -gt 0) { $result[$folder] = $names }
+    }
+    return , $result
+}
+
 function Build-DependencyGeneIndex {
     param([string[]] $PackageIds, [hashtable] $ModPaths)
 
@@ -570,6 +624,13 @@ if ($declaredDeps.Count -gt 0) {
     $depIndex = Build-DependencyGeneIndex -PackageIds $declaredDeps -ModPaths $modPaths
     $depGenes = $depIndex.Genes
     Write-Host ("  deps     : {0} declared, {1} gene(s) indexed ({2} file(s) skipped as LoadFolders-gated, {3} gene(s) skipped as MayRequire-gated)" -f $declaredDeps.Count, $depGenes.Count, $depIndex.SkippedGated, $depIndex.SkippedMayRequire) -ForegroundColor DarkGray
+
+$optionalAbstracts = Get-OptionalIntegrationAbstracts -ModRoot $ModRoot -ModPaths $modPaths
+if ($optionalAbstracts.Keys.Count -gt 0) {
+    foreach ($k in $optionalAbstracts.Keys) {
+        Write-Host ("  optional : {0} -> {1} abstract(s) from the mod it is gated on" -f $k, $optionalAbstracts[$k].Count) -ForegroundColor DarkGray
+    }
+}
     foreach ($m in $depIndex.Missing) {
         Add-Problem -Severity WARN -Check 'DependencyNotInstalled' -File 'About/About.xml' `
             -Message ("declared dependency '{0}' is not installed, so its defs cannot be verified." -f $m)
@@ -945,8 +1006,20 @@ foreach ($file in $xmlFiles) {
 foreach ($ref in $parentRefs) {
     if ($modNameAttrs.Contains($ref.Parent)) { continue }
     if ($vanilla.NameAttrs.Contains($ref.Parent)) { continue }
+
+    # A def living in a LoadFolders-gated folder may parent from an abstract
+    # belonging to the mod that folder is gated on. Scoped to that folder, so an
+    # abstract from an optional mod cannot accidentally satisfy a def elsewhere.
+    $refFile = $ref.File.Replace('/', '\').ToLowerInvariant()
+    $viaOptional = $false
+    foreach ($folder in $optionalAbstracts.Keys) {
+        if (-not $refFile.StartsWith($folder + '\')) { continue }
+        if ($optionalAbstracts[$folder].Contains($ref.Parent)) { $viaOptional = $true; break }
+    }
+    if ($viaOptional) { continue }
+
     Add-Problem -Severity ERROR -Check 'MissingParent' -File $ref.File `
-        -Message ("def '{0}' has ParentName='{1}' which matches no Name= def in this mod or vanilla." -f $ref.Def, $ref.Parent)
+        -Message ("def '{0}' has ParentName='{1}' which matches no Name= def in this mod, in vanilla, or in a mod our LoadFolders gates on." -f $ref.Def, $ref.Parent)
 }
 
 # --- check 9 resolution: patch targets ---------------------------------------

@@ -29,5 +29,18 @@
       Hence patches rather than shared values.
     -->
     <li IfModActive="CETeam.CombatExtended">1.6/Mods/CombatExtended</li>
+    <!--
+      starShell support. OPTIONAL AND NEVER REQUIRED - the Exosuit Framework is
+      not a modDependency, and nothing outside this folder refers to it, so
+      without the framework the folder is never loaded and nothing is missing
+      except the starShell itself.
+
+      The framework earns its place here rather than being avoided: a starShell in
+      the source is a four-metre powered suit with modular weapon mounts, flight
+      and heavy fuel use, which is exactly the shape the framework models. Faking
+      it as ordinary apparel would have meant one static armour piece pretending to
+      be a walking tank.
+    -->
+    <li IfModActive="Aoba.Exosuit.Framework">1.6/Mods/Exosuit</li>
   </v1.6>
 </loadFolders>

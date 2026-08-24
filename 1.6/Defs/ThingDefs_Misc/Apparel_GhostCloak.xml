@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The ghostCloak, and the two defs that make it work.
+
+  COLOCATED ON PURPOSE. Vanilla keeps an implant's ThingDef, HediffDef and
+  RecipeDef in one file (Hediffs_BodyParts_Bionic.xml defines InstallBionicArm at
+  line 169 of the same file as the hediff it installs), and the same reasoning
+  applies here: the apparel, the ability it grants and the hediff that ability
+  applies are one unit, and splitting them across three folders would mean three
+  files to keep in step.
+
+  HOW IT WORKS, AND WHAT WAS VERIFIED
+
+  - ApparelProperties.abilities is a List<AbilityDef> on the CORE class, not a
+    DLC field - verified by decompiling RimWorld.ApparelProperties. Odyssey's
+    mechlord suit is the only vanilla def that uses it, but the field is
+    unconditional, so this needs no DLC and no new dependency.
+  - HediffCompProperties_Invisibility is what actually hides the pawn. Structure
+    taken from Core's PsychicInvisibility hediff.
+  - Cloak shape - Shell layer, shellRenderedBehindHead, the Cape tag, and the
+    Torso/Neck/Shoulders/Arms/Legs groups - mirrored from Core's Apparel_Cape.
+
+  DELIBERATELY NOT PSYCHIC. The vanilla Invisibility ability is a level 5 psycast
+  whose duration scales on PsychicSensitivity. A Howler is not a psycaster, so
+  this is a plain AbilityDef on a cooldown, in the idiom of Odyssey's
+  CallDropPods: a bare AbilityDef with cooldownTicksRange and Verb_CastAbility.
+
+  COOLDOWN RATHER THAN CHARGES. CompProperties_ApparelReloadable would need an
+  ammo item to reload from, which would mean inventing a consumable whose only
+  purpose is feeding one cloak. A cooldown expresses the same limit - you get it
+  occasionally, not continuously - without a new resource to balance.
+
+  LAYER INTERACTIONS, which are the point of the kit:
+    scarabSkin  OnSkin + Middle          -> stacks with the cloak
+    demonHelm   Overhead                 -> stacks with the cloak
+    pulse armor Middle + Shell + Overhead -> CONFLICTS on Shell, by design.
+  So the stealth kit and the power armour are alternatives, not a stack. That is
+  the choice the equipment is meant to pose.
+-->
+<Defs>
+
+  <!-- ============================== the hediff ============================= -->
+
+  <HediffDef>
+    <defName>RR_Hediff_GhostCloakActive</defName>
+    <label>refracted</label>
+    <hediffClass>HediffWithComps</hediffClass>
+    <description>The cloak's lattice is drawing power and bending the light that falls on it. Nobody nearby can hold their attention on this person, however hard they try.</description>
+    <isBad>false</isBad>
+    <comps>
+      <!-- Structure taken from Core's PsychicInvisibility. -->
+      <li Class="HediffCompProperties_Invisibility">
+        <visibleToPlayer>true</visibleToPlayer>
+      </li>
+      <li Class="HediffCompProperties_Disappears">
+        <showRemainingTime>True</showRemainingTime>
+      </li>
+      <li Class="HediffCompProperties_DisappearsOnDeath"/>
+    </comps>
+  </HediffDef>
+
+  <!-- ============================= the ability ============================= -->
+
+  <AbilityDef>
+    <defName>RR_Ability_GhostCloak</defName>
+    <label>refract</label>
+    <description>Drive the cloak's lattice hard enough to bend light around the wearer. Lasts under half a minute, and the cloth needs a long while to shed the heat afterwards.</description>
+    <iconPath>UI/Abilities/RR_GhostCloak</iconPath>
+    <cooldownTicksRange>15000</cooldownTicksRange> <!-- 6 hours -->
+    <displayOrder>300</displayOrder>
+    <casterMustBeCapableOfViolence>false</casterMustBeCapableOfViolence>
+    <statBases>
+      <Ability_Duration>25</Ability_Duration>
+    </statBases>
+    <verbProperties>
+      <verbClass>Verb_CastAbility</verbClass>
+      <range>-1</range>
+      <warmupTime>0.5</warmupTime>
+      <onlyManualCast>True</onlyManualCast>
+      <targetParams>
+        <!-- Self only. A cloak cannot be thrown over somebody across the room. -->
+        <canTargetSelf>True</canTargetSelf>
+        <canTargetPawns>False</canTargetPawns>
+        <canTargetBuildings>False</canTargetBuildings>
+        <canTargetLocations>False</canTargetLocations>
+      </targetParams>
+    </verbProperties>
+    <comps>
+      <li Class="CompProperties_AbilityGiveHediff">
+        <compClass>CompAbilityEffect_GiveHediff</compClass>
+        <hediffDef>RR_Hediff_GhostCloakActive</hediffDef>
+        <onlyApplyToSelf>true</onlyApplyToSelf>
+        <!-- psychic is deliberately omitted: this is cloth and power, not a psycast. -->
+      </li>
+    </comps>
+  </AbilityDef>
+
+  <!-- ============================== the cloak ============================== -->
+
+  <ThingDef ParentName="ApparelMakeableBase">
+    <defName>RR_Apparel_GhostCloak</defName>
+    <label>ghostCloak</label>
+    <description>A Howler's cloak, and the reason the Society's sentries are trained to watch for movement rather than for people. Woven polyenne over a refractive lattice, it is unremarkable cloth until it is switched on, at which point looking directly at the wearer becomes a thing the eye declines to do.\n\nThe field cannot be held. It runs for a few seconds, then the lattice has to dump what it has absorbed, and for a long time afterwards the cloak is only a cloak. Everything a Howler is famous for happens inside that short window.</description>
+    <techLevel>Spacer</techLevel>
+    <thingCategories>
+      <li>Apparel</li>
+    </thingCategories>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/RR_GhostCloak/RR_GhostCloak</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>1.05</drawSize>
+    </graphicData>
+    <recipeMaker>
+      <researchPrerequisite>RR_OpticalCamouflage</researchPrerequisite>
+      <recipeUsers>
+        <li>FabricationBench</li>
+      </recipeUsers>
+      <skillRequirements>
+        <Crafting>9</Crafting>
+      </skillRequirements>
+      <displayPriority>240</displayPriority>
+    </recipeMaker>
+    <costList>
+      <RR_Ionsteel>15</RR_Ionsteel>
+      <Plasteel>30</Plasteel>
+      <ComponentSpacer>3</ComponentSpacer>
+      <Synthread>60</Synthread>
+    </costList>
+    <statBases>
+      <MaxHitPoints>140</MaxHitPoints>
+      <WorkToMake>34000</WorkToMake>
+      <Mass>2.4</Mass>
+      <EquipDelay>3</EquipDelay>
+      <!-- Almost no protection. It buys you not being seen, and nothing else. -->
+      <ArmorRating_Sharp>0.10</ArmorRating_Sharp>
+      <ArmorRating_Blunt>0.06</ArmorRating_Blunt>
+      <Insulation_Cold>6</Insulation_Cold>
+    </statBases>
+    <equippedStatOffsets>
+      <!-- A Howler moves. The cloak is cut for it. -->
+      <MoveSpeed>0.15</MoveSpeed>
+    </equippedStatOffsets>
+    <apparel>
+      <bodyPartGroups>
+        <li>Torso</li>
+        <li>Neck</li>
+        <li>Shoulders</li>
+        <li>Arms</li>
+        <li>Legs</li>
+      </bodyPartGroups>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/RR_GhostCloak/RR_GhostCloak</wornGraphicPath>
+      <shellRenderedBehindHead>true</shellRenderedBehindHead>
+      <canBeDesiredForIdeo>false</canBeDesiredForIdeo>
+      <canBeGeneratedToSatisfyWarmth>false</canBeGeneratedToSatisfyWarmth>
+      <layers>
+        <li>Shell</li>
+      </layers>
+      <tags>
+        <li>Cape</li>
+        <li>SpacerMilitary</li>
+      </tags>
+      <abilities>
+        <li>RR_Ability_GhostCloak</li>
+      </abilities>
+    </apparel>
+  </ThingDef>
+
+</Defs>

@@ -326,6 +326,13 @@ real Red sigil.
 Sub-tiers inherit the parent glyph plus a modifier, so lineage is readable at a glance across a
 21-xenotype list.
 
+### Reference for the real art pass
+
+Ludeon's own texture guide: https://rimworldwiki.com/wiki/Modding_Tutorials/Textures
+Read it before replacing any placeholder with real artwork - the placeholders here
+are correctly *sized* and correctly *named*, which is all the tooling can verify.
+Everything about masks, alpha, and how a graphic is actually authored is in there.
+
 ### Measured dimensions
 
 Taken from installed reference mods, not from memory:
