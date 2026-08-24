@@ -8,11 +8,9 @@
 
   Conditional folders are added here ONLY once the folder actually exists.
   Listing a path that is not on disk has not been verified as safe, so we do
-  not speculate. Planned additions, each gated by IfModActive:
+  not speculate. Still planned, each to be added when its folder is created:
 
     1.6/Mods/RimJobWorld      IfModActive="rim.job.world"
-    1.6/Mods/CombatExtended   IfModActive="ceteam.combatextended"
-    1.6/Mods/Royalty          IfModActive="Ludeon.RimWorld.Royalty"
     1.6/Mods/Anomaly          IfModActive="Ludeon.RimWorld.Anomaly"
     1.6/Mods/Odyssey          IfModActive="Ludeon.RimWorld.Odyssey"
 -->
@@ -20,5 +18,16 @@
   <v1.6>
     <li>/</li>
     <li>1.6</li>
+    <!--
+      Combat Extended support. OPTIONAL AND NEVER REQUIRED - CE is not a
+      modDependency, and everything in this folder is patches over defs that
+      already work on their own. Without CE the folder is never loaded and the
+      mod runs on its vanilla stats.
+
+      CE rescales both armor and armor penetration into different units, so the
+      vanilla numbers are not merely unbalanced under CE, they are meaningless.
+      Hence patches rather than shared values.
+    -->
+    <li IfModActive="CETeam.CombatExtended">1.6/Mods/CombatExtended</li>
   </v1.6>
 </loadFolders>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Combat Extended compatibility - apparel.
+
+  Optional; this folder only loads when CE is active.
+
+  CE rescales armor completely. Vanilla ArmorRating_Sharp is a 0..1 damage
+  reduction fraction, where marine armor sits at 1.06. CE reads the same stat as
+  millimetres of steel equivalent and gives marine armor 20. Leaving our 1.24 in
+  place under CE would mean pulse armor stopped roughly nothing.
+
+  Scaled against CE's own figures for marine armor - Sharp 20, Blunt 45, Bulk 100,
+  WornBulk 15, Mass 50 - with each piece placed relative to that.
+
+  Bulk is CE's encumbrance system and has no vanilla equivalent, so every piece
+  needs it or it weighs nothing to carry.
+-->
+<Patch>
+
+  <!-- ============================= pulse armor ============================ -->
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_PulseArmor"]/statBases/ArmorRating_Sharp</xpath>
+    <value>
+      <ArmorRating_Sharp>24</ArmorRating_Sharp>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_PulseArmor"]/statBases/ArmorRating_Blunt</xpath>
+    <value>
+      <ArmorRating_Blunt>52</ArmorRating_Blunt>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_PulseArmor"]/statBases/Mass</xpath>
+    <value>
+      <Mass>55</Mass>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_PulseArmor"]/statBases</xpath>
+    <value>
+      <Bulk>110</Bulk>
+      <WornBulk>16</WornBulk>
+    </value>
+  </Operation>
+
+  <!--
+    The servo assistance, in CE terms. Vanilla expresses it as MoveSpeed and
+    MeleeDamageFactor, which are kept; CE adds load-bearing on top, and CE's own
+    power armor patch does the same. The suit carrying its wearer is the point of
+    it, so under CE it should carry their gear too.
+  -->
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_PulseArmor"]/equippedStatOffsets</xpath>
+    <value>
+      <CarryWeight>85</CarryWeight>
+      <CarryBulk>12</CarryBulk>
+    </value>
+  </Operation>
+
+  <!-- ============================== demonHelm ============================= -->
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_DemonHelm"]/statBases/ArmorRating_Sharp</xpath>
+    <value>
+      <ArmorRating_Sharp>22</ArmorRating_Sharp>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_DemonHelm"]/statBases/ArmorRating_Blunt</xpath>
+    <value>
+      <ArmorRating_Blunt>40</ArmorRating_Blunt>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_DemonHelm"]/statBases/Mass</xpath>
+    <value>
+      <Mass>3.5</Mass>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_DemonHelm"]/statBases</xpath>
+    <value>
+      <Bulk>8</Bulk>
+      <WornBulk>2</WornBulk>
+    </value>
+  </Operation>
+
+  <!-- ============================== scarabSkin ============================ -->
+
+  <!--
+    Deliberately poor armor under CE. Canonically scarabSkin is only slightly
+    tougher than duroArmor and will not stop a razor, and CE's armor model makes
+    that distinction meaningful in a way vanilla's fraction cannot: at Sharp 8 it
+    turns small arms and is opened by anything serious.
+
+    Very low bulk is the actual selling point. Under CE, encumbrance governs how
+    fast a pawn moves and aims, so a near-weightless suit is a genuine tactical
+    choice rather than just a weaker option.
+  -->
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_ScarabSkin"]/statBases/ArmorRating_Sharp</xpath>
+    <value>
+      <ArmorRating_Sharp>8</ArmorRating_Sharp>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_ScarabSkin"]/statBases/ArmorRating_Blunt</xpath>
+    <value>
+      <ArmorRating_Blunt>14</ArmorRating_Blunt>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_ScarabSkin"]/statBases/Mass</xpath>
+    <value>
+      <Mass>4</Mass>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_ScarabSkin"]/statBases</xpath>
+    <value>
+      <Bulk>10</Bulk>
+      <WornBulk>3</WornBulk>
+    </value>
+  </Operation>
+
+</Patch>

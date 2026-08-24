@@ -569,6 +569,8 @@ $geneRefs = [System.Collections.Generic.List[object]]::new()
 # our own Name= abstracts, and deferred inherited-list checks
 $modAbstracts = @{}
 $listRefs = [System.Collections.Generic.List[object]]::new()
+# patch xpaths aimed at our own defs, resolved once every def is known
+$patchRefs = [System.Collections.Generic.List[object]]::new()
 
 foreach ($file in $xmlFiles) {
     $rel = Get-RelativePath $file.FullName
@@ -765,6 +767,39 @@ foreach ($file in $xmlFiles) {
             }
         }
 
+        # --- check 9: patch xpaths targeting our own defs --------------------
+        #
+        # A PatchOperation whose xpath matches nothing does NOTHING, silently -
+        # there is no error, the def simply never gets patched. That is fine for a
+        # cross-mod patch guarded by PatchOperationFindMod, but a patch of ours
+        # aimed at one of OUR defs that no longer exists is always a bug, and the
+        # usual cause is a rename.
+        #
+        # Only RR_ targets are checked. A patch aimed at a vanilla or third-party
+        # def is legitimately outside what we can verify.
+        if ($isPatch) {
+            foreach ($xp in $node.SelectNodes('.//xpath')) {
+                if ([string]::IsNullOrWhiteSpace($xp.InnerText)) { continue }
+                foreach ($m in [regex]::Matches($xp.InnerText, 'defName\s*=\s*"(RR_[A-Za-z0-9_]+)"')) {
+                    $patchRefs.Add([pscustomobject]@{
+                        Target = $m.Groups[1].Value
+                        File   = $rel
+                    })
+                }
+            }
+            # CE's PatchOperationMakeGunCECompatible names its target directly
+            # rather than through an xpath.
+            foreach ($dnDirect in $node.SelectNodes('.//defName')) {
+                $v = $dnDirect.InnerText
+                if ($v -and $v.Trim().StartsWith('RR_')) {
+                    $patchRefs.Add([pscustomobject]@{
+                        Target = $v.Trim()
+                        File   = $rel
+                    })
+                }
+            }
+        }
+
         # --- check 4: texture paths -----------------------------------------
         foreach ($texNode in $node.SelectNodes('.//*')) {
             if (-not (Test-IsTexturePathNode $texNode.Name)) { continue }
@@ -811,6 +846,21 @@ foreach ($ref in $parentRefs) {
     if ($vanilla.NameAttrs.Contains($ref.Parent)) { continue }
     Add-Problem -Severity ERROR -Check 'MissingParent' -File $ref.File `
         -Message ("def '{0}' has ParentName='{1}' which matches no Name= def in this mod or vanilla." -f $ref.Def, $ref.Parent)
+}
+
+# --- check 9 resolution: patch targets ---------------------------------------
+#
+# seenDefNames is keyed "DefType|defName", so the comparison is on the tail.
+foreach ($ref in $patchRefs) {
+    $found = $false
+    foreach ($k in $seenDefNames.Keys) {
+        $bar = $k.IndexOf('|')
+        if ($bar -ge 0 -and $k.Substring($bar + 1) -eq $ref.Target) { $found = $true; break }
+    }
+    if (-not $found) {
+        Add-Problem -Severity ERROR -Check 'PatchTargetMissing' -File $ref.File `
+            -Message ("patch targets '{0}', which this mod does not define. A patch whose xpath matches nothing fails SILENTLY - the usual cause is a rename." -f $ref.Target)
+    }
 }
 
 # --- check 8: list values already supplied by an ancestor --------------------

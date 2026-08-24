@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Combat Extended compatibility - weapons.
+
+  OPTIONAL, NEVER REQUIRED. This whole folder is loaded only when CE is active,
+  via IfModActive="CETeam.CombatExtended" in LoadFolders.xml. Without CE the mod
+  runs on its vanilla stats and none of this exists.
+
+  CE changes the units. Vanilla armor penetration is a 0..1 fraction; CE's
+  armorPenetrationSharp is in millimetres of steel equivalent, so vanilla 0.95
+  becomes a number in the twenties rather than something near one. Copying the
+  vanilla figure across would produce a razor that bounces off a shirt.
+
+  Values are set against CE's own patches for comparable weapons, not invented:
+  CE gives the bladelink monosword edge power 38 / APSharp 21.78 and point
+  power 16 / APSharp 30.24. The razor sits above that, because it is canonically
+  the thing that opens pulseArmor.
+-->
+<Patch>
+
+  <!-- ================================ razor ================================ -->
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Weapon_Razor"]/tools</xpath>
+    <value>
+      <tools>
+        <li Class="CombatExtended.ToolCE">
+          <label>hilt</label>
+          <capacities>
+            <li>Blunt</li>
+          </capacities>
+          <power>4</power>
+          <cooldownTime>1.30</cooldownTime>
+          <chanceFactor>0.1</chanceFactor>
+          <armorPenetrationBlunt>0.85</armorPenetrationBlunt>
+          <linkedBodyPartsGroup>Handle</linkedBodyPartsGroup>
+        </li>
+        <li Class="CombatExtended.ToolCE">
+          <label>edge</label>
+          <capacities>
+            <li>Cut</li>
+          </capacities>
+          <power>40</power>
+          <cooldownTime>0.70</cooldownTime>
+          <armorPenetrationBlunt>3.80</armorPenetrationBlunt>
+          <armorPenetrationSharp>26.50</armorPenetrationSharp>
+          <linkedBodyPartsGroup>Edge</linkedBodyPartsGroup>
+        </li>
+        <li Class="CombatExtended.ToolCE">
+          <label>point</label>
+          <capacities>
+            <li>Stab</li>
+          </capacities>
+          <power>18</power>
+          <cooldownTime>0.82</cooldownTime>
+          <armorPenetrationBlunt>1.30</armorPenetrationBlunt>
+          <armorPenetrationSharp>34.00</armorPenetrationSharp>
+        </li>
+        <li Class="CombatExtended.ToolCE">
+          <!--
+            Whip state. Faster and wider than the blade, and markedly worse at
+            getting through plate - which is the trade the toggle exists for.
+          -->
+          <label>lash</label>
+          <capacities>
+            <li>Cut</li>
+          </capacities>
+          <power>28</power>
+          <cooldownTime>0.55</cooldownTime>
+          <armorPenetrationBlunt>1.10</armorPenetrationBlunt>
+          <armorPenetrationSharp>9.50</armorPenetrationSharp>
+          <linkedBodyPartsGroup>Edge</linkedBodyPartsGroup>
+        </li>
+      </tools>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/ThingDef[defName="RR_Weapon_Razor"]/statBases</xpath>
+    <value>
+      <Bulk>3.5</Bulk>
+      <MeleeCounterParryBonus>0.55</MeleeCounterParryBonus>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/ThingDef[defName="RR_Weapon_Razor"]</xpath>
+    <value>
+      <equippedStatOffsets>
+        <MeleeCritChance>1.15</MeleeCritChance>
+        <MeleeParryChance>0.55</MeleeParryChance>
+        <MeleeDodgeChance>0.40</MeleeDodgeChance>
+      </equippedStatOffsets>
+    </value>
+  </Operation>
+
+  <!-- ============================== pulseFist ============================== -->
+
+  <!--
+    CE ships a purpose-built operation for converting a gun, which handles the
+    ammo user, fire modes and verb swap in one go rather than a dozen xpath edits.
+
+    Reuses AmmoSet_6x24mmCharged: the pulseFist throws contained energy, and CE's
+    charged ammo is the closest existing analogue. Giving it a bespoke ammo set
+    would mean shipping ammo defs, recipes and trader stock for a single weapon.
+
+    Range 28 against CE's charge rifle at 55. The gauntlet is a close-quarters
+    weapon and CE's longer engagement distances make that distinction sharper than
+    vanilla can.
+  -->
+  <Operation Class="CombatExtended.PatchOperationMakeGunCECompatible">
+    <defName>RR_Weapon_PulseFist</defName>
+    <statBases>
+      <Mass>2.8</Mass>
+      <RangedWeapon_Cooldown>0.32</RangedWeapon_Cooldown>
+      <SightsEfficiency>0.65</SightsEfficiency>
+      <ShotSpread>0.13</ShotSpread>
+      <SwayFactor>0.90</SwayFactor>
+      <Bulk>4.50</Bulk>
+      <WorkToMake>42000</WorkToMake>
+    </statBases>
+    <costList>
+      <Plasteel>45</Plasteel>
+      <ComponentSpacer>3</ComponentSpacer>
+      <Uranium>5</Uranium>
+    </costList>
+    <Properties>
+      <recoilAmount>1.10</recoilAmount>
+      <verbClass>CombatExtended.Verb_ShootCE</verbClass>
+      <hasStandardCommand>true</hasStandardCommand>
+      <defaultProjectile>Bullet_6x24mmCharged</defaultProjectile>
+      <warmupTime>0.7</warmupTime>
+      <range>28</range>
+      <ticksBetweenBurstShots>4</ticksBetweenBurstShots>
+      <burstShotCount>5</burstShotCount>
+      <soundCast>Shot_ChargeRifle</soundCast>
+      <soundCastTail>GunTail_Medium</soundCastTail>
+      <muzzleFlashScale>12</muzzleFlashScale>
+    </Properties>
+    <AmmoUser>
+      <magazineSize>20</magazineSize>
+      <reloadTime>3</reloadTime>
+      <ammoSet>AmmoSet_6x24mmCharged</ammoSet>
+    </AmmoUser>
+    <FireModes>
+      <aimedBurstShotCount>3</aimedBurstShotCount>
+      <aiUseBurstMode>TRUE</aiUseBurstMode>
+      <aiAimMode>AimedShot</aiAimMode>
+    </FireModes>
+    <weaponTags>
+      <li>CE_AI_AR</li>
+      <li>AdvancedGun</li>
+    </weaponTags>
+    <researchPrerequisite>RR_PulsePhysics</researchPrerequisite>
+  </Operation>
+
+</Patch>
