@@ -346,6 +346,45 @@ Nothing is built either way yet. The knight exists for now as an elite pawn kind
 
 ---
 
+## 4.2 Loadouts — two kits, deliberately incompatible
+
+The equipment splits into a siege kit and a stealth kit, and the apparel layers enforce it.
+
+| | Siege | Stealth |
+|---|---|---|
+| Body | **pulse armor** — sealed, helmet built in, Middle + Shell + Overhead | **scarabSkin** — tightly fitted, OnSkin + Middle |
+| Head | integrated | **demonHelm** — Overhead |
+| Over | **starShell** for orbital descent | **ghostCloak** — Shell |
+| Worn by | Golds in open battle | the Howlers and other elite units |
+
+Because pulse armor claims Middle, Shell *and* Overhead by itself, it cannot be combined with a
+demonHelm or a ghostCloak. That is correct rather than a limitation — it is a sealed suit, and the
+choice between the two kits should be a real one.
+
+scarabSkin deliberately sits on OnSkin + Middle so Shell stays free for a cloak and Overhead for the
+helm. All three stealth pieces must coexist.
+
+### Built
+
+pulse armor, demonHelm, scarabSkin.
+
+### Not built, and why
+
+- **ghostCloak** — a portable invisibility field, good for short bursts, with a tailbone battery
+  that overheats. Vanilla has the mechanism: `HediffCompProperties_Invisibility`, used by
+  `PsychicInvisibility` in **Core**, not Anomaly. Doing it properly means apparel granting a
+  reloadable ability that applies a timed hediff, following the jump-pack pattern in
+  `Odyssey/Defs/ThingDefs_Misc/Apparel_Packs.xml`. That is a real piece of work and faking it with
+  unrelated stats would be worse than not shipping it.
+- **starShell** — four metres, three tons, flies on built-in gravBoots, launched from SpitTubes,
+  modular armament, and immobile without power. That is not apparel; it is a mech. The right base is
+  the **Exosuit Framework** (`Aoba.Exosuit.Framework`, workshop 3352894993), which is installed.
+  Same framework would carry the **Drachenjäger**.
+
+Both are scoped as their own pass rather than bolted onto Milestone 4.
+
+---
+
 ## 5. Factions — Milestone 3 sketch
 
 `Royalty/Defs/FactionDefs/Faction_Empire.xml` is the reference for a stratified faction whose

@@ -119,12 +119,93 @@
   </ThingDef>
 
   <!--
+    scarabSkin - the other half of the stealth kit.
+
+    Deliberately layered OnSkin + Middle rather than Shell, for two reasons:
+    canonically it is tightly fitted, and it leaves Shell free for a ghostCloak
+    and Overhead free for the demonHelm. The full Howler loadout is
+    scarabSkin + ghostCloak + demonHelm, and all three have to coexist.
+
+    Contrast with pulse armor, which is the siege kit: sealed, helmeted, heavy,
+    and occupies Middle + Shell + Overhead by itself.
+
+    Canon: absorbs light and renders pitch black, emits no thermal signature,
+    allows rapid movement, is slightly tougher than duroArmor, and carries no
+    battery - which is what makes it immune to EMP.
+  -->
+  <ThingDef ParentName="ArmorMachineableBase">
+    <defName>RR_Apparel_ScarabSkin</defName>
+    <label>scarabSkin</label>
+    <description>A skin rather than a suit: fitted close enough to move in, woven from a lattice that drinks light instead of reflecting it, so a wearer standing still in poor cover is very nearly not there. It gives off no heat signature and holds no charge, which means nothing to burn out and nothing for an EMP to find.\n\nIt will turn a blade and shrug off a light round, and it will do nothing whatsoever about a razor. Worn by people whose plan does not involve being shot at.</description>
+    <techLevel>Spacer</techLevel>
+    <recipeMaker>
+      <researchPrerequisite>RR_PolyenneWeaving</researchPrerequisite>
+      <skillRequirements>
+        <Crafting>7</Crafting>
+      </skillRequirements>
+      <recipeUsers Inherit="False">
+        <li>FabricationBench</li>
+      </recipeUsers>
+      <displayPriority>232</displayPriority>
+    </recipeMaker>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/RR_ScarabSkin/RR_ScarabSkin</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <generateCommonality>0.6</generateCommonality>
+    <statBases>
+      <WorkToMake>34000</WorkToMake>
+      <MaxHitPoints>180</MaxHitPoints>
+      <Mass>3</Mass>
+      <Flammability>0.2</Flammability>
+      <ArmorRating_Sharp>0.62</ArmorRating_Sharp>
+      <ArmorRating_Blunt>0.24</ArmorRating_Blunt>
+      <ArmorRating_Heat>0.40</ArmorRating_Heat>
+      <Insulation_Cold>18</Insulation_Cold>
+      <Insulation_Heat>6</Insulation_Heat>
+      <EquipDelay>6</EquipDelay>
+    </statBases>
+    <equippedStatOffsets>
+      <!-- "Enables rapid movement" - the whole point of wearing a skin. -->
+      <MoveSpeed>0.25</MoveSpeed>
+    </equippedStatOffsets>
+    <tradeTags>
+      <li>HiTechArmor</li>
+    </tradeTags>
+    <costList>
+      <ComponentSpacer>2</ComponentSpacer>
+      <Plasteel>60</Plasteel>
+      <Hyperweave>20</Hyperweave>
+    </costList>
+    <apparel>
+      <bodyPartGroups>
+        <li>Torso</li>
+        <li>Neck</li>
+        <li>Shoulders</li>
+        <li>Arms</li>
+        <li>Legs</li>
+      </bodyPartGroups>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/RR_ScarabSkin/RR_ScarabSkin</wornGraphicPath>
+      <layers>
+        <li>OnSkin</li>
+        <li>Middle</li>
+      </layers>
+      <tags>
+        <li>SpacerMilitary</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+    </apparel>
+  </ThingDef>
+
+  <!--
     demonHelm.
 
     NOT the pulseArmor's helmet - that suit is sealed and carries its own. The
     demonHelm is the separate piece, worn canonically with scarabSkin: the stealth
-    kit rather than the siege kit. ScarabSkin itself is not built yet; this helm
-    stands alone in the meantime and pairs with anything that leaves the head free.
+    kit rather than the siege kit. The full Howler loadout is scarabSkin + ghostCloak + demonHelm; the
+    cloak is not built yet (see docs/PROGRESS.md).
 
     Canonically it lets the wearer see across most spectrums, mask their voice,
     amplify sound, track coordinates, read maps and talk silently. That sensor
