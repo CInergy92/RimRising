@@ -114,6 +114,17 @@ $errorPatterns = @(
 )
 $errorRegex = ($errorPatterns -join '|')
 
+# Benign engine chatter that matches an error pattern but is not an error.
+# Unity emits the fallback-handler line constantly while probing for native
+# libraries; it means nothing and appears in every log.
+$ignorePatterns = @(
+    'Fallback handler could not load library'
+    'Unloading \d+ [Uu]nused'
+    'Loading lib'
+    'Refreshing native plugins'
+)
+$ignoreRegex = ($ignorePatterns -join '|')
+
 # Patterns that attribute a block to this mod.
 $minePatterns = @(
     [regex]::Escape($PackageId)
@@ -127,12 +138,26 @@ $errorBlocks = [System.Collections.Generic.List[object]]::new()
 
 for ($i = 0; $i -lt $lines.Count; $i++) {
     if ($lines[$i] -notmatch $errorRegex) { continue }
+    if ($lines[$i] -match $ignoreRegex)   { continue }
 
     $end = [Math]::Min($lines.Count - 1, $i + $Context)
     $text = $lines[$i..$end]
 
-    # Attribute on the matching line plus its context, not on the whole file.
-    $isMine = (($text -join "`n") -match $mineRegex)
+    # Attribute on the MATCHING LINE ONLY. Attributing on the context window too
+    # made any unrelated line that happened to sit near our own startup message
+    # read as ours - a false positive is worse than no tool, because it teaches
+    # you to ignore "not clean".
+    #
+    # A stack trace belonging to us can still name us further down, so the trace
+    # lines are searched, but plain neighbouring log chatter is not: only lines
+    # that look like part of an error report count.
+    $isMine = ($lines[$i] -match $mineRegex)
+    if (-not $isMine) {
+        for ($j = $i + 1; $j -le $end; $j++) {
+            if ($lines[$j] -notmatch '^\s+|^\s*at |Verse\.|RimWorld\.') { break }
+            if ($lines[$j] -match $mineRegex) { $isMine = $true; break }
+        }
+    }
 
     $errorBlocks.Add([pscustomobject]@{
         Line   = $i + 1
@@ -145,6 +170,23 @@ $errorBlocks = @($errorBlocks)
 $mineBlocks  = @($errorBlocks | Where-Object { $_.IsMine })
 
 Write-Host ("  {0} error block(s) in log, {1} attributable to this mod" -f $errorBlocks.Count, $mineBlocks.Count) -ForegroundColor DarkGray
+
+# A mod can wreck something whose failure is reported entirely in vanilla terms.
+# Our missing settlementTexturePath threw once per settlement inside the world
+# draw layer: ~10,000 errors, not one of which named RimRising. Attribution said
+# "3 errors" and the world map was black.
+#
+# So: when the log is full of errors and almost none are attributed to us, say so
+# loudly rather than reporting a comfortable small number.
+$unattributed = $errorBlocks.Count - $mineBlocks.Count
+if ($unattributed -ge 50) {
+    Write-Host ''
+    Write-Host ("  NOTE: {0} error(s) in this log are NOT attributed to this mod." -f $unattributed) -ForegroundColor Yellow
+    Write-Host '  Attribution is a heuristic. A fault of ours can surface entirely in vanilla' -ForegroundColor DarkYellow
+    Write-Host '  terms - a missing texture path on our faction throws inside vanilla world' -ForegroundColor DarkYellow
+    Write-Host '  rendering, naming only vanilla settlements. Re-run with -All before trusting' -ForegroundColor DarkYellow
+    Write-Host '  a small attributed count on a noisy log.' -ForegroundColor DarkYellow
+}
 Write-Host ''
 
 # Comma operator: an if-expression returning an empty array unrolls to $null.

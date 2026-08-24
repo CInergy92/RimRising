@@ -403,10 +403,52 @@ defs whose `MayRequire` / `MayRequireAnyOf` is unsatisfied. On the current profi
 **100 gated files and 160 gated genes** from the index. A reference of ours that is itself
 `MayRequire`-gated now reports as a warning rather than an error, since the game drops it cleanly.
 
-### Not yet verified in game
+### Second load — the planet would not generate
 
-Factions generating on the world map, and a raid arriving with the right Colors, is the M3 success
-criterion and has not been checked. Re-run after enabling `EBSG.Framework`.
+Not a worldgen failure. The world generated and then threw while being **drawn**:
+
+```
+Could not execute post-long-event action. ArgumentNullException: Parameter name: key
+  at Verse.ContentFinder`1[T].Get (System.String itemPath, ...)
+  at RimWorld.Planet.Settlement.get_Material ()
+  at RimWorld.Planet.WorldDrawLayer_WorldObjects+<Regenerate>d__7.MoveNext ()
+```
+
+`Settlement.Material` reads the faction's `settlementTexturePath`. None of our factions set one, so
+a null path went to `ContentFinder` and threw — **once per settlement on the map**, roughly ten
+thousand times, taking the whole draw layer down with it. All five factions now set it;
+`DefaultSettlement` and `TribalSettlement` are the only two values vanilla uses.
+
+Also fixed: `weaponMoney` with no `weaponTags` on the three civilian kinds.
+
+New validator checks, both negative-tested:
+
+- **`FactionMissingField`** — requires `settlementTexturePath`, `maxPawnCostPerTotalPointsCurve` and
+  `backstoryFilters` on every concrete non-hidden faction.
+- **`PawnKindWeaponMoney`** — catches `weaponMoney` declared without `weaponTags`.
+
+These close a category the validator was blind to. Every earlier check asked "is this name real?";
+none asked "is this required field present?" An absent field is invisible to a reference check.
+
+### Get-ModLoadErrors was crying wolf, and hiding the real thing
+
+Two opposite faults, both now fixed:
+
+1. **False positive.** Attribution matched against the whole context window, so any unrelated line
+   sitting near our own startup message read as ours. Attribution is now on the matching line only,
+   walking into following lines solely while they look like a stack trace. A benign-noise ignore
+   list also drops Unity's constant `Fallback handler could not load library` chatter.
+2. **False negative, and this is the one that mattered.** The settlement crash was *entirely our
+   fault* and named only vanilla settlements — 10,002 error blocks, 3 attributed to us. The tool
+   reported a comfortable "3 errors" while the world map was black. It now warns loudly whenever a
+   large number of errors go unattributed, pointing at `-All`.
+
+### M3 verified
+
+Planet generates. `Get-ModLoadErrors`: **0 error blocks in the log, 0 attributable to this mod.**
+
+Still unconfirmed by eye: that RimRising factions actually appear on the world map, and that a raid
+arrives with the right Colors.
 
 ---
 
