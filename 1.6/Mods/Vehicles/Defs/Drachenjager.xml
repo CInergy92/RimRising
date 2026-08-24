@@ -340,6 +340,25 @@
       <Uranium>150</Uranium>
       <Steel>1200</Steel>
     </costList>
+    <soundImpactDefault>BulletImpact_Metal</soundImpactDefault>
+    <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
+    <!--
+      THE BACK-REFERENCE, and leaving it out is what made the architect slot blank.
+
+      VehicleDef.buildDef points here; this must point back. VehicleGui's
+      GizmoOnGUIWithMaterial opens with
+
+          VehicleDef thingToSpawn = buildDef.thingToSpawn;
+
+      and dereferences thingToSpawn.graphicData immediately after, so a missing
+      link throws a NullReferenceException on EVERY FRAME the Vehicles tab is
+      open - about a hundred a second - while the def itself loads perfectly
+      cleanly and shows up as an empty square.
+
+      Nothing in the load log names this def. The only thing that identifies it is
+      the OnGUI stack trace.
+    -->
+    <thingToSpawn>RR_Drachenjager</thingToSpawn>
   </Vehicles.VehicleBuildDef>
 
 </Defs>

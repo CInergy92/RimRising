@@ -764,6 +764,11 @@ foreach ($pf in (Get-ChildItem -Path (Join-Path $ModRoot '1.6') -Filter *.xml -R
 $modWeaponTags  = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 $modApparelTags = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 $tagRefs = [System.Collections.Generic.List[object]]::new()
+
+# Vehicle Framework's VehicleDef <-> VehicleBuildDef pair. They must point at each
+# other and neither direction is optional.
+$vehicleDefs   = @{}   # defName -> buildDef it names
+$vehicleBuilds = @{}   # defName -> thingToSpawn it names
 # patch xpaths aimed at our own defs, resolved once every def is known
 $patchRefs = [System.Collections.Generic.List[object]]::new()
 
@@ -937,6 +942,26 @@ foreach ($file in $xmlFiles) {
             #   1. self-only but targetRequired is not false
             #   2. canTargetSelf true alongside canTargetPawns false - self IS a
             #      pawn, so this excludes the only legal target. Always a bug.
+            # Vehicle Framework pairs a VehicleDef with a VehicleBuildDef, each
+            # naming the other. Collected here and resolved after the scan.
+            # The element is <Vehicles.VehicleDef>. A dot is not a namespace
+            # separator in XML, so LocalName is the whole dotted string - an
+            # equality test against 'VehicleDef' silently matches nothing.
+            if ($dnNode -and $node.LocalName -match '(^|\.)VehicleDef$') {
+                $bd = $node.SelectSingleNode('buildDef')
+                $vehicleDefs[$dnNode.InnerText.Trim()] = @{
+                    Build = if ($bd) { $bd.InnerText.Trim() } else { $null }
+                    File  = $rel
+                }
+            }
+            if ($dnNode -and $node.LocalName -match '(^|\.)VehicleBuildDef$') {
+                $ts = $node.SelectSingleNode('thingToSpawn')
+                $vehicleBuilds[$dnNode.InnerText.Trim()] = @{
+                    Spawn = if ($ts) { $ts.InnerText.Trim() } else { $null }
+                    File  = $rel
+                }
+            }
+
             if ($node.LocalName -eq 'AbilityDef' -and $dnNode) {
                 $abName = $dnNode.InnerText.Trim()
                 $tp = $node.SelectSingleNode('verbProperties/targetParams')
@@ -1243,6 +1268,53 @@ foreach ($ref in $listRefs) {
                 Add-Problem -Severity ERROR -Check 'DuplicateInheritedListValue' -File $ref.File `
                     -Message ("'{0}' re-declares <{1}> value '{2}', which it already inherits from '{3}'. List fields append on inherit - remove it, or mark the list Inherit=False." -f $ref.Def, $field, $val, $ref.Parent)
             }
+        }
+    }
+}
+
+# --- vehicle def/build pair resolution ----------------------------------------
+#
+# VehicleDef.buildDef and VehicleBuildDef.thingToSpawn are a mutual pair. Missing
+# either half loads WITHOUT A SINGLE ERROR and produces an empty square in the
+# architect menu, because Vehicles.Rendering.VehicleGui.GizmoOnGUIWithMaterial
+# opens with
+#
+#     VehicleDef thingToSpawn = buildDef.thingToSpawn;
+#
+# and dereferences thingToSpawn.graphicData on the next line - so the gizmo throws
+# a NullReferenceException on every frame the tab is open, roughly a hundred a
+# second, and nothing in the load log names the def responsible. The only thing
+# that identifies it is the OnGUI stack trace.
+foreach ($vName in $vehicleDefs.Keys) {
+    $v = $vehicleDefs[$vName]
+    if (-not $v.Build) {
+        Add-Problem -Severity ERROR -Check 'VehiclePairBroken' -File $v.File `
+            -Message ("VehicleDef '{0}' has no <buildDef>, so it can never be built." -f $vName)
+        continue
+    }
+    if (-not $vehicleBuilds.ContainsKey($v.Build)) {
+        Add-Problem -Severity ERROR -Check 'VehiclePairBroken' -File $v.File `
+            -Message ("VehicleDef '{0}' names buildDef '{1}', which is not a VehicleBuildDef in this mod." -f $vName, $v.Build)
+        continue
+    }
+    $back = $vehicleBuilds[$v.Build].Spawn
+    if (-not $back) {
+        Add-Problem -Severity ERROR -Check 'VehiclePairBroken' -File $vehicleBuilds[$v.Build].File `
+            -Message ("VehicleBuildDef '{0}' has no <thingToSpawn>. The architect gizmo dereferences it immediately and will throw on every frame while showing an empty square." -f $v.Build)
+    } elseif ($back -ne $vName) {
+        Add-Problem -Severity ERROR -Check 'VehiclePairBroken' -File $vehicleBuilds[$v.Build].File `
+            -Message ("VehicleBuildDef '{0}' has thingToSpawn '{1}' but is named as the buildDef of '{2}'. The pair must point at each other." -f $v.Build, $back, $vName)
+    }
+}
+
+foreach ($bName in $vehicleBuilds.Keys) {
+    if (-not $vehicleBuilds[$bName].Spawn) {
+        # Already reported above if some VehicleDef points here; this catches an
+        # orphan blueprint that nothing references.
+        $referencedBy = @($vehicleDefs.Keys | Where-Object { $vehicleDefs[$_].Build -eq $bName })
+        if ($referencedBy.Count -eq 0) {
+            Add-Problem -Severity ERROR -Check 'VehiclePairBroken' -File $vehicleBuilds[$bName].File `
+                -Message ("VehicleBuildDef '{0}' has no <thingToSpawn> and no VehicleDef names it as a buildDef." -f $bName)
         }
     }
 }
