@@ -42,5 +42,16 @@
       be a walking tank.
     -->
     <li IfModActive="Aoba.Exosuit.Framework">1.6/Mods/Exosuit</li>
+    <!--
+      Drachenjager support. OPTIONAL AND NEVER REQUIRED, same arrangement as the
+      Exosuit folder above.
+
+      A Drachenjager is forty metres tall, filed under Vehicles on the reference
+      wiki, and has a cockpit hunched between its shoulders instead of a head -
+      pilots bolt into it the way a Blue syncs with a ship. That is a piloted
+      vehicle, not worn apparel, so the Exosuit Framework is the wrong tool for it
+      no matter how hard it is bent. This one belongs to Vehicle Framework.
+    -->
+    <li IfModActive="SmashPhil.VehicleFramework">1.6/Mods/Vehicles</li>
   </v1.6>
 </loadFolders>

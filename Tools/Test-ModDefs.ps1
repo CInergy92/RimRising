@@ -399,22 +399,23 @@ function Get-GatedFolders {
     return , $gated
 }
 
-# Abstracts belonging to mods we integrate with OPTIONALLY - the ones named by
+# Content belonging to mods we integrate with OPTIONALLY - the ones named by
 # IfModActive in our own LoadFolders.xml.
 #
-# Defs inside a gated folder legitimately parent from that mod's abstract bases
-# (the starShell's modules descend from the Exosuit Framework's ModuleApparelCore
-# and friends). Those abstracts are not in vanilla and not in our modDependencies,
-# so without this the ParentName check reports every one of them as missing - and
-# the obvious "fix" would have been to weaken the check, which would have cost us
-# the real typo detection it exists for.
+# Defs inside a gated folder legitimately reference that mod's abstract bases and
+# its textures. The starShell's modules descend from the Exosuit Framework's
+# ModuleApparelCore; the Drachenjaeger's turrets point at Vehicle Framework's
+# UI/Gizmos/FireRate_Single. Neither is ours and neither is vanilla's, so without
+# this the ParentName and texture checks report every one of them as missing - and
+# the tempting "fix" would be to weaken those checks, which would cost the real
+# typo detection they exist for.
 #
-# Scoped per folder: an abstract from an optional mod only satisfies a def that
+# Scoped per folder: content from an optional mod only satisfies a def that
 # actually lives in the folder gated on that mod.
 function Get-OptionalIntegrationAbstracts {
     param([string] $ModRoot, [hashtable] $ModPaths)
 
-    $result = @{}   # gated folder (backslashes, lowercase) -> HashSet of Name= values
+    $result = @{}   # gated folder (backslashes, lowercase) -> @{ Abstracts; TexFiles }
 
     $lfPath = Join-Path $ModRoot 'LoadFolders.xml'
     if (-not (Test-Path $lfPath)) { return $result }
@@ -429,13 +430,16 @@ function Get-OptionalIntegrationAbstracts {
 
         $folder = $li.InnerText.Trim().Replace('/', '\').Trim('\').ToLowerInvariant()
         $names  = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+        $texes  = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 
         foreach ($id in ($attr.Value -split ',')) {
             $key = $id.Trim().ToLowerInvariant()
             if (-not $key) { continue }
             if (-not $ModPaths.ContainsKey($key)) { continue }   # not installed; cannot check
 
-            $files = Get-ChildItem -Path $ModPaths[$key] -Filter *.xml -Recurse -File -ErrorAction SilentlyContinue |
+            $modPath = $ModPaths[$key]
+
+            $files = Get-ChildItem -Path $modPath -Filter *.xml -Recurse -File -ErrorAction SilentlyContinue |
                      Where-Object { $_.FullName -match '\\Defs\\' }
             foreach ($f in $files) {
                 $d = New-Object System.Xml.XmlDocument
@@ -447,10 +451,45 @@ function Get-OptionalIntegrationAbstracts {
                     if ($na -and $na.Value) { [void]$names.Add($na.Value.Trim()) }
                 }
             }
+
+            # Texture paths the gated mod ships, relative to its Textures/ root and
+            # without the extension - the same form a def writes them in. Both .png
+            # and .dds count; RimWorld accepts either.
+            $art = Get-ChildItem -Path $modPath -Recurse -File -Include *.png, *.dds -ErrorAction SilentlyContinue
+            foreach ($tf in $art) {
+                $full = $tf.FullName.Replace('\', '/')
+                $marker = '/Textures/'
+                $idx = $full.LastIndexOf($marker)
+                if ($idx -lt 0) { continue }
+                $rel = $full.Substring($idx + $marker.Length)
+                $dot = $rel.LastIndexOf('.')
+                if ($dot -gt 0) { $rel = $rel.Substring(0, $dot) }
+                [void]$texes.Add($rel)
+            }
         }
-        if ($names.Count -gt 0) { $result[$folder] = $names }
+
+        if ($names.Count -gt 0 -or $texes.Count -gt 0) {
+            $result[$folder] = @{ Abstracts = $names; TexFiles = $texes }
+        }
     }
-    return , $result
+    return $result
+}
+
+# A def inside a LoadFolders-gated folder may point at a texture shipped by the
+# mod that folder is gated on. Scoped to the folder for the same reason the
+# ParentName check is: content from an optional mod must not silently excuse a
+# typo in a def that has nothing to do with it.
+function Test-TextureFromGatedMod {
+    param([string] $RelFile, [string] $TexPath, [hashtable] $Optional)
+
+    $sep  = [char]92   # backslash, spelled this way so no escaping layer can eat it
+    $file = $RelFile.Replace('/', $sep).ToLowerInvariant()
+    $tex  = $TexPath.Replace($sep, '/').Trim('/')
+    foreach ($folder in $Optional.Keys) {
+        if (-not $file.StartsWith($folder + $sep)) { continue }
+        if ($Optional[$folder].TexFiles.Contains($tex)) { return $true }
+    }
+    return $false
 }
 
 function Build-DependencyGeneIndex {
@@ -628,7 +667,7 @@ if ($declaredDeps.Count -gt 0) {
 $optionalAbstracts = Get-OptionalIntegrationAbstracts -ModRoot $ModRoot -ModPaths $modPaths
 if ($optionalAbstracts.Keys.Count -gt 0) {
     foreach ($k in $optionalAbstracts.Keys) {
-        Write-Host ("  optional : {0} -> {1} abstract(s) from the mod it is gated on" -f $k, $optionalAbstracts[$k].Count) -ForegroundColor DarkGray
+        Write-Host ("  optional : {0} -> {1} abstract(s), {2} texture(s) from the mod it is gated on" -f $k, $optionalAbstracts[$k].Abstracts.Count, $optionalAbstracts[$k].TexFiles.Count) -ForegroundColor DarkGray
     }
 }
     foreach ($m in $depIndex.Missing) {
@@ -1032,6 +1071,10 @@ foreach ($file in $xmlFiles) {
             } elseif ($vanilla.TexPaths.Contains($texPath)) {
                 # Vanilla references this exact path itself, so it is real even
                 # though it lives in an asset bundle we cannot inspect. Silent.
+            } elseif (Test-TextureFromGatedMod -RelFile $rel -TexPath $texPath -Optional $optionalAbstracts) {
+                # Shipped by the mod this folder is gated on - Vehicle Framework
+                # owns UI/Gizmos/FireRate_Single, for instance. Scoped to the
+                # folder, so it cannot excuse a bad path anywhere else.
             } else {
                 # Not ours, and vanilla never references it either. Almost always a
                 # typo or an invented path - "World/WorldObjects/Expanding/Settlement"
@@ -1055,7 +1098,7 @@ foreach ($ref in $parentRefs) {
     $viaOptional = $false
     foreach ($folder in $optionalAbstracts.Keys) {
         if (-not $refFile.StartsWith($folder + '\')) { continue }
-        if ($optionalAbstracts[$folder].Contains($ref.Parent)) { $viaOptional = $true; break }
+        if ($optionalAbstracts[$folder].Abstracts.Contains($ref.Parent)) { $viaOptional = $true; break }
     }
     if ($viaOptional) { continue }
 
