@@ -438,14 +438,22 @@ Points worth taking from them, or deliberately not:
 
 ## 8. Open questions for the user
 
-None block Milestone 1.
+### Resolved in play
 
-1. **Roster: 14 or your original 10?** §2.1. My recommendation is 14.
-2. **Prefixes for the five Colors with none established** — invent, or leave prefix-less? §2.4.
-3. **Pink's framing.** Mechanically: a social-functionary caste with no adult content in the base
-   mod and RJW-specific content confined to the gated folder, or something more pointed. Option one
-   is what I would build absent direction, since it keeps the base mod shippable.
-4. **May the player reject the hierarchy?** §4.
-5. **Should Gold carry a real engineered flaw**, or pay only in complexity? The reference gives Gold
-   no meaningful physical weakness, which argues for complexity-only — but that makes Gold strictly
-   better in play, which may not be what you want from a game.
+1. **Roster: 14 or the original 10?** — **14**, and it grew: Bronzie plus six sub-strains, 21
+   xenotypes in all.
+2. **May the player reject the hierarchy?** — **Yes.** `RR_ColorEquality` is a first-class meme, and
+   both scenarios state that playing against your birth Color's expected ideoligion is the more
+   interesting game rather than a mistake.
+3. **Should Gold carry a real engineered flaw?** — **No physical weakness.** The direction given was
+   that Gold is flawed only in being few and slow to reproduce. Implemented as `RR_Fertility_Reduced`
+   plus a complexity cost of 49, with no capability penalty.
+
+### Still open
+
+4. **Prefixes for the five Colors with none established.** Invent them, or leave those Colors
+   prefix-less? Purely a setting call. Leaving them absent is self-consistent — not every caste needs
+   a naming particle — but it does read as incomplete beside the ones that have one.
+5. **Pink's framing.** What is currently built is option one: a social-functionary caste, no adult
+   content in the base mod, anything explicit confined to a gated compat folder that does not yet
+   exist. That keeps the base mod shippable to anyone. Confirm, or make it more pointed.
