@@ -61,6 +61,7 @@
   <PreceptDef ParentName="RR_OlympicKnightBase">
     <defName>RR_Knight_Morning</defName>
     <label>Morning Knight</label>
+    <nameMaker>RR_NamerKnight_Morning</nameMaker>
     <description>First of the order in precedence and the one the rest are measured against. The Morning Knight is expected to be seen, to be brilliant, and to make the Compact look like something worth dying for.</description>
     <displayOrderInImpact>1</displayOrderInImpact>
     <roleEffects>
@@ -78,6 +79,7 @@
   <PreceptDef ParentName="RR_OlympicKnightBase">
     <defName>RR_Knight_Rage</defName>
     <label>Rage Knight</label>
+    <nameMaker>RR_NamerKnight_Rage</nameMaker>
     <description>The order's blade. Where the Compact needs someone opened up in front of witnesses, the Rage Knight is who arrives to do it, and the post has never once been held by someone reluctant.</description>
     <displayOrderInImpact>2</displayOrderInImpact>
     <roleEffects>
@@ -95,6 +97,7 @@
   <PreceptDef ParentName="RR_OlympicKnightBase">
     <defName>RR_Knight_Fear</defName>
     <label>Fear Knight</label>
+    <nameMaker>RR_NamerKnight_Fear</nameMaker>
     <description>The one sent where the Society would rather not be seen going. The Fear Knight's work is quiet, thorough, and almost never entered into any record that survives.</description>
     <displayOrderInImpact>3</displayOrderInImpact>
     <roleEffects>
@@ -112,6 +115,7 @@
   <PreceptDef ParentName="RR_OlympicKnightBase">
     <defName>RR_Knight_Death</defName>
     <label>Death Knight</label>
+    <nameMaker>RR_NamerKnight_Death</nameMaker>
     <description>An executioner with a title and a cloak. The distinction the order draws between the Death Knight and an assassin is procedural, and the order considers procedure to be the entire difference.</description>
     <displayOrderInImpact>4</displayOrderInImpact>
     <roleEffects>
@@ -129,6 +133,7 @@
   <PreceptDef ParentName="RR_OlympicKnightBase">
     <defName>RR_Knight_Storm</defName>
     <label>Storm Knight</label>
+    <nameMaker>RR_NamerKnight_Storm</nameMaker>
     <description>Given the fleets and the open sky. A Storm Knight is expected to arrive suddenly, in force, and to have already worked out what happens afterwards.</description>
     <displayOrderInImpact>5</displayOrderInImpact>
     <roleEffects>
@@ -146,6 +151,7 @@
   <PreceptDef ParentName="RR_OlympicKnightBase">
     <defName>RR_Knight_Wind</defName>
     <label>Wind Knight</label>
+    <nameMaker>RR_NamerKnight_Wind</nameMaker>
     <description>Fast, mobile, and rarely where they were last reported. The Wind Knight carries word and settlement between houses that would otherwise only exchange fire.</description>
     <displayOrderInImpact>6</displayOrderInImpact>
     <roleEffects>
@@ -163,6 +169,7 @@
   <PreceptDef ParentName="RR_OlympicKnightBase">
     <defName>RR_Knight_Protean</defName>
     <label>Protean Knight</label>
+    <nameMaker>RR_NamerKnight_Protean</nameMaker>
     <description>The generalist of the order, and quietly the one the others send for when a problem refuses to be any single kind of problem.</description>
     <displayOrderInImpact>7</displayOrderInImpact>
     <roleEffects>
@@ -180,6 +187,7 @@
   <PreceptDef ParentName="RR_OlympicKnightBase">
     <defName>RR_Knight_Truth</defName>
     <label>Truth Knight</label>
+    <nameMaker>RR_NamerKnight_Truth</nameMaker>
     <description>Holds the Compact's inquiries. A Truth Knight is empowered to ask questions that would end anyone else's career for asking them, and is not obliged to explain why.</description>
     <displayOrderInImpact>8</displayOrderInImpact>
     <roleEffects>
@@ -197,6 +205,7 @@
   <PreceptDef ParentName="RR_OlympicKnightBase">
     <defName>RR_Knight_Hearth</defName>
     <label>Hearth Knight</label>
+    <nameMaker>RR_NamerKnight_Hearth</nameMaker>
     <description>Keeps the houses. Where the order's other posts are about ending things, the Hearth Knight is responsible for what remains standing afterwards, which is thought by some to be the harder assignment.</description>
     <displayOrderInImpact>9</displayOrderInImpact>
     <roleEffects>
@@ -214,6 +223,7 @@
   <PreceptDef ParentName="RR_OlympicKnightBase">
     <defName>RR_Knight_Cloud</defName>
     <label>Cloud Knight</label>
+    <nameMaker>RR_NamerKnight_Cloud</nameMaker>
     <description>Given the high orbits and the long watches. The Cloud Knight sees a battle before anyone in it does, and is expected to say something useful about it in time.</description>
     <displayOrderInImpact>10</displayOrderInImpact>
     <roleEffects>
@@ -231,6 +241,7 @@
   <PreceptDef ParentName="RR_OlympicKnightBase">
     <defName>RR_Knight_Joy</defName>
     <label>Joy Knight</label>
+    <nameMaker>RR_NamerKnight_Joy</nameMaker>
     <description>The order's face at triumphs, weddings and funerals. It is a soft post held by people who are not, and the appointment is usually a warning to somebody.</description>
     <displayOrderInImpact>11</displayOrderInImpact>
     <roleEffects>
@@ -248,6 +259,7 @@
   <PreceptDef ParentName="RR_OlympicKnightBase">
     <defName>RR_Knight_Love</defName>
     <label>Love Knight</label>
+    <nameMaker>RR_NamerKnight_Love</nameMaker>
     <description>Guards the Sovereign's person, and the post is inherited about as often as it is earned. Whatever the name suggests, the duty is standing between one specific body and everything that wants to reach it.</description>
     <displayOrderInImpact>12</displayOrderInImpact>
     <roleEffects>
@@ -270,6 +282,7 @@
   <PreceptDef ParentName="RR_OlympicKnightBase">
     <defName>RR_Knight_Shadow</defName>
     <label>Shadow Knight</label>
+    <nameMaker>RR_NamerKnight_Shadow</nameMaker>
     <description>A post the order does not list and does not discuss. Whether it is currently held is not a question anyone entitled to an answer has thought it wise to ask.</description>
     <displayOrderInImpact>13</displayOrderInImpact>
     <roleEffects>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Name makers for the knighthoods.
+
+  Precept_Role.GenerateNameRaw() runs the nameMaker through GrammarResolver
+  unconditionally. A role precept with no nameMaker therefore throws a
+  NullReferenceException the moment an ideoligion containing it is generated -
+  which took out Dialog_ChooseMemes, Page_ConfigureIdeo and WorldGenStep at once,
+  for 2831 errors, none of which named this mod. Every vanilla role has one.
+
+  Unlike vanilla roles, whose names are generated from meme vocabulary, a
+  knighthood has one fixed canonical title. So each rule pack resolves to exactly
+  one string - the title itself - rather than composing from [memeAdjective] and
+  friends. Structure mirrored from Ideology/Defs/RulePackDefs/RulePacks_Ideo_Role.xml.
+-->
+<Defs>
+
+  <RulePackDef>
+    <defName>RR_NamerKnight_Morning</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_roleName->Morning Knight</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_NamerKnight_Rage</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_roleName->Rage Knight</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_NamerKnight_Fear</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_roleName->Fear Knight</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_NamerKnight_Death</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_roleName->Death Knight</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_NamerKnight_Storm</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_roleName->Storm Knight</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_NamerKnight_Wind</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_roleName->Wind Knight</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_NamerKnight_Protean</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_roleName->Protean Knight</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_NamerKnight_Truth</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_roleName->Truth Knight</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_NamerKnight_Hearth</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_roleName->Hearth Knight</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_NamerKnight_Cloud</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_roleName->Cloud Knight</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_NamerKnight_Joy</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_roleName->Joy Knight</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_NamerKnight_Love</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_roleName->Love Knight</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_NamerKnight_Shadow</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_roleName->Shadow Knight</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+</Defs>

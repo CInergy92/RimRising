@@ -639,6 +639,44 @@ foreach ($file in $xmlFiles) {
                 }
             }
 
+            # A role precept with no nameMaker throws inside
+            # Precept_Role.GenerateNameRaw the moment an ideoligion containing it
+            # is generated - GrammarResolver is called unconditionally. That took
+            # out Dialog_ChooseMemes, Page_ConfigureIdeo and WorldGenStep together,
+            # for 2831 errors, none of which named this mod.
+            #
+            # Detected structurally: our role defs inherit preceptClass from a
+            # vanilla abstract, so the reliable signal is a ParentName chain
+            # reaching a known role base.
+            if ($node.Name -eq 'PreceptDef' -and $dnNode) {
+                $parentAttr2 = $node.Attributes['ParentName']
+                if ($parentAttr2) {
+                    $roleBases = @('PreceptRoleSingleBase', 'PreceptRoleMultiBase')
+                    $chain = @()
+                    $cur2 = $parentAttr2.Value.Trim()
+                    $guard2 = 0
+                    while ($cur2 -and $guard2 -lt 10) {
+                        $guard2++
+                        $chain += $cur2
+                        if ($modAbstracts.ContainsKey($cur2)) { $cur2 = $modAbstracts[$cur2].Parent }
+                        else { break }
+                    }
+                    $isRole = @($chain | Where-Object { $roleBases -contains $_ }).Count -gt 0
+
+                    if ($isRole -and -not $node.SelectSingleNode('nameMaker')) {
+                        # Might be inherited from one of our own abstracts.
+                        $inheritedNamer = $false
+                        foreach ($anc in $chain) {
+                            if ($modAbstracts.ContainsKey($anc) -and $modAbstracts[$anc].HasNameMaker) { $inheritedNamer = $true; break }
+                        }
+                        if (-not $inheritedNamer) {
+                            Add-Problem -Severity ERROR -Check 'RoleMissingNameMaker' -File $rel `
+                                -Message ("role precept '{0}' has no <nameMaker>. Precept_Role.GenerateNameRaw throws without one, taking ideoligion generation and worldgen with it." -f $dnNode.InnerText.Trim())
+                        }
+                    }
+                }
+            }
+
             if ($node.Name -eq 'PawnKindDef') {
                 $owner = if ($dnNode) { $dnNode.InnerText.Trim() } else { '<abstract>' }
                 # weaponMoney with no weaponTags is a load-time config error.
@@ -701,8 +739,9 @@ foreach ($file in $xmlFiles) {
             if ($nameAttr -and $nameAttr.Value) {
                 [void]$modNameAttrs.Add($nameAttr.Value.Trim())
                 $modAbstracts[$nameAttr.Value.Trim()] = @{
-                    Parent = if ($parentAttrEarly) { $parentAttrEarly.Value.Trim() } else { $null }
-                    Lists  = $ownLists
+                    Parent       = if ($parentAttrEarly) { $parentAttrEarly.Value.Trim() } else { $null }
+                    Lists        = $ownLists
+                    HasNameMaker = [bool]$node.SelectSingleNode('nameMaker')
                 }
             }
 
