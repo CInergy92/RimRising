@@ -233,11 +233,22 @@ foreach ($file in $xmlFiles) {
         }
         $isCollection = Test-IsCollectionGraphicClass -GraphicClass $graphicClass
 
-        # If any reference wants a collection, the path must be a folder.
+        # Apparel drawn ON a pawn needs per-facing textures: <path>_north, _south
+        # and _east, plus a bare <path> for the inventory icon. A single flat file
+        # is not enough and the game throws a missing-texture error the moment the
+        # apparel is equipped rather than at load, so nothing catches it until a
+        # pawn puts it on.
+        #
+        # Verified against installed mods: AirwireHeadset ships _east, _north,
+        # _south and a base file in one folder.
+        $isWorn = ($node.Name -eq 'wornGraphicPath') -or
+                  ($key -like 'Things/Pawn/Humanlike/Apparel/*')
+
         if ($referenced.ContainsKey($key)) {
-            $referenced[$key] = $referenced[$key] -or $isCollection
+            $referenced[$key].Collection = $referenced[$key].Collection -or $isCollection
+            $referenced[$key].Worn       = $referenced[$key].Worn -or $isWorn
         } else {
-            $referenced[$key] = $isCollection
+            $referenced[$key] = @{ Collection = $isCollection; Worn = $isWorn }
         }
     }
 }
@@ -274,7 +285,7 @@ foreach ($texPath in ($owned | Sort-Object)) {
     $label = $leaf -replace '^RR_', ''
     $color = Get-PathColor -TexPath $texPath
 
-    if ($referenced[$texPath]) {
+    if ($referenced[$texPath].Collection) {
         # Collection graphic: the path is a folder, and RimWorld loads every image
         # inside it. Three variants matches the vanilla stack-size convention.
         $folder = Join-Path $texturesRoot ($texPath -replace '/', '\')
@@ -284,6 +295,27 @@ foreach ($texPath in ($owned | Sort-Object)) {
             if (-not $PSCmdlet.ShouldProcess($outFile, "write ${size}x${size} placeholder")) { continue }
             New-PlaceholderPng -OutFile $outFile -Size $size -Label ("{0}`n{1}" -f $label, $variant) -Color $color
             Write-Host ("  + {0}/{1}_{2}.png  ({3}x{3}, collection)" -f $texPath, $leaf, $variant, $size) -ForegroundColor Green
+            $created++
+        }
+        continue
+    }
+
+    if ($referenced[$texPath].Worn) {
+        # Worn apparel: one texture per facing, plus a bare base file for the
+        # inventory icon. Facing is labelled so a mis-rotated sprite is obvious.
+        $base = Join-Path $texturesRoot ($texPath -replace '/', '\')
+        $variants = @(
+            @{ Suffix = '';       Tag = 'icon' }
+            @{ Suffix = '_south'; Tag = 'S' }
+            @{ Suffix = '_north'; Tag = 'N' }
+            @{ Suffix = '_east';  Tag = 'E' }
+        )
+        foreach ($v in $variants) {
+            $outFile = "{0}{1}.png" -f $base, $v.Suffix
+            if ((Test-Path $outFile) -and -not $Force) { $skipped++; continue }
+            if (-not $PSCmdlet.ShouldProcess($outFile, "write ${size}x${size} placeholder")) { continue }
+            New-PlaceholderPng -OutFile $outFile -Size $size -Label ("{0}`n{1}" -f $label, $v.Tag) -Color $color
+            Write-Host ("  + {0}{1}.png  ({2}x{2}, worn)" -f $texPath, $v.Suffix, $size) -ForegroundColor Green
             $created++
         }
         continue

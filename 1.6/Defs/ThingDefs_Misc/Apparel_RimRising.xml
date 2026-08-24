@@ -60,6 +60,14 @@
       <MoveSpeed>0.15</MoveSpeed>
       <MeleeDamageFactor>0.15</MeleeDamageFactor>
       <CarryingCapacity>35</CarryingCapacity>
+      <!--
+        The integrated helm's targeting system. Synched to a pulseFist it marks
+        the seams in an opponent's armor and calls the shots. Royalty's gunlink -
+        the nearest vanilla equivalent - gives ShootingAccuracyPawn +3; a full
+        suit does rather more.
+      -->
+      <ShootingAccuracyPawn>6</ShootingAccuracyPawn>
+      <AimingDelayFactor>-0.20</AimingDelayFactor>
       <SlaveSuppressionOffset MayRequire="Ludeon.RimWorld.Ideology">-0.3</SlaveSuppressionOffset>
       <VacuumResistance MayRequire="Ludeon.RimWorld.Odyssey">0.5</VacuumResistance>
     </equippedStatOffsets>
@@ -74,17 +82,26 @@
       <Gold>15</Gold>
     </costList>
     <apparel>
+      <!--
+        THE HELMET IS BUILT IN. PulseArmor is a sealed suit in the books, not a
+        cuirass you pair with headgear - so it covers FullHead and occupies the
+        Overhead layer itself rather than shipping a separate helmet piece. That
+        also means it cannot be worn with a demonHelm, which is correct: the
+        demonHelm goes with scarabSkin.
+      -->
       <bodyPartGroups>
         <li>Torso</li>
         <li>Neck</li>
         <li>Shoulders</li>
         <li>Arms</li>
         <li>Legs</li>
+        <li>FullHead</li>
       </bodyPartGroups>
       <wornGraphicPath>Things/Pawn/Humanlike/Apparel/RR_PulseArmor/RR_PulseArmor</wornGraphicPath>
       <layers>
         <li>Middle</li>
         <li>Shell</li>
+        <li>Overhead</li>
       </layers>
       <tags>
         <li>SpacerMilitary</li>
@@ -92,7 +109,106 @@
       <defaultOutfitTags>
         <li>Soldier</li>
       </defaultOutfitTags>
+      <useDeflectMetalEffect>true</useDeflectMetalEffect>
+      <forceEyesVisibleForRotations>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+      </forceEyesVisibleForRotations>
     </apparel>
+  </ThingDef>
+
+  <!--
+    demonHelm.
+
+    NOT the pulseArmor's helmet - that suit is sealed and carries its own. The
+    demonHelm is the separate piece, worn canonically with scarabSkin: the stealth
+    kit rather than the siege kit. ScarabSkin itself is not built yet; this helm
+    stands alone in the meantime and pairs with anything that leaves the head free.
+
+    Canonically it lets the wearer see across most spectrums, mask their voice,
+    amplify sound, track coordinates, read maps and talk silently. That sensor
+    package is why it is an accuracy item rather than just a hat.
+
+    Gated on the neural interface rather than on pulse armor, since it is a
+    sensory and comms system, not pulse tech.
+
+    Parented to Core's ArmorHelmetMakeableBase, which supplies thingCategories
+    ArmorHeadgear and apparel/parentTagDef ApparelHead - neither is re-declared
+    here, since list fields append on inherit.
+  -->
+  <ThingDef ParentName="ArmorHelmetMakeableBase">
+    <defName>RR_Apparel_DemonHelm</defName>
+    <label>demonHelm</label>
+    <description>A pupil-black helm shaped, not quite subtly, like a screaming face. Inside it the world arrives pre-annotated: spectrums a human eye cannot hold, range and bearing on everything moving, maps, and the quiet voices of everyone else wearing one. It takes the wearer's voice away and hands back something colder.\n\nIt is light, unpowered where it can be, and meant to be worn with a skin rather than a suit - the equipment of people whose work depends on not being seen coming.</description>
+    <techLevel>Spacer</techLevel>
+    <recipeMaker>
+      <unfinishedThingDef>UnfinishedTechArmor</unfinishedThingDef>
+      <researchPrerequisite>RR_NeuralInterface</researchPrerequisite>
+      <skillRequirements>
+        <Crafting>8</Crafting>
+      </skillRequirements>
+      <recipeUsers Inherit="False">
+        <li>FabricationBench</li>
+      </recipeUsers>
+      <displayPriority>231</displayPriority>
+    </recipeMaker>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/RR_DemonHelm/RR_DemonHelm</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <uiIconScale>1.25</uiIconScale>
+    <generateCommonality>0.5</generateCommonality>
+    <statBases>
+      <WorkToMake>26000</WorkToMake>
+      <MaxHitPoints>170</MaxHitPoints>
+      <Mass>1.8</Mass>
+      <Flammability>0.3</Flammability>
+      <ArmorRating_Sharp>1.18</ArmorRating_Sharp>
+      <ArmorRating_Blunt>0.52</ArmorRating_Blunt>
+      <ArmorRating_Heat>0.62</ArmorRating_Heat>
+      <Insulation_Cold>6</Insulation_Cold>
+      <Insulation_Heat>3</Insulation_Heat>
+      <EquipDelay>5</EquipDelay>
+    </statBases>
+    <equippedStatOffsets>
+      <!--
+        The reason to wear it: multi-spectrum sight and live target tracking.
+        Slightly under the pulse armor's integrated helm, which has a whole suit
+        and a synched pulseFist behind it, and well over Royalty's gunlink at +3.
+      -->
+      <ShootingAccuracyPawn>5</ShootingAccuracyPawn>
+      <AimingDelayFactor>-0.15</AimingDelayFactor>
+      <SlaveSuppressionOffset MayRequire="Ludeon.RimWorld.Ideology">-0.1</SlaveSuppressionOffset>
+      <VacuumResistance MayRequire="Ludeon.RimWorld.Odyssey">0.4</VacuumResistance>
+    </equippedStatOffsets>
+    <tradeTags>
+      <li>HiTechArmor</li>
+    </tradeTags>
+    <costList>
+      <ComponentSpacer>2</ComponentSpacer>
+      <Plasteel>50</Plasteel>
+      <Gold>5</Gold>
+    </costList>
+    <apparel>
+      <bodyPartGroups>
+        <li>FullHead</li>
+      </bodyPartGroups>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/RR_DemonHelm/RR_DemonHelm</wornGraphicPath>
+      <layers>
+        <li>Overhead</li>
+      </layers>
+      <tags>
+        <li>SpacerMilitary</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+      <useDeflectMetalEffect>true</useDeflectMetalEffect>
+    </apparel>
+    <comps>
+      <li Class="CompProperties_Biocodable"/>
+    </comps>
   </ThingDef>
 
 </Defs>
