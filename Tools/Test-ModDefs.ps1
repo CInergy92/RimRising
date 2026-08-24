@@ -591,6 +591,24 @@ function Test-IsCollectionGraphicClass {
     return $GraphicClass -match 'StackCount|Random|Collection'
 }
 
+# Graphic classes that resolve texPath as a DIRECTIONAL SET rather than one file,
+# loading <leaf>_north / _east / _south beside it.
+#
+# Same lesson as the collection classes, learned the same way. A single file was
+# written for the Drachenjaeger's body, the file-exists check passed, and in game
+# the vehicle did not appear in the architect menu at all while the UI thread
+# threw a NullReferenceException on every frame. Nothing named the texture.
+#
+# Vehicles.Graphic_Vehicle is Vehicle Framework's own multi-directional class -
+# confirmed by listing an installed VVE vehicle's textures, which ship _north,
+# _east and _south for the body and a single file for the turret.
+function Test-IsMultiGraphicClass {
+    param([string] $GraphicClass)
+    if ([string]::IsNullOrWhiteSpace($GraphicClass)) { return $false }
+    if ($GraphicClass -match 'Graphic_Turret') { return $false }   # single file
+    return $GraphicClass -match 'Graphic_Multi|Graphic_Vehicle'
+}
+
 # For a texPath node, find the graphicClass declared alongside it.
 function Get-SiblingGraphicClass {
     param([System.Xml.XmlNode] $TexNode)
@@ -623,9 +641,25 @@ function Test-TextureResolves {
     param(
         [string] $TexPath,
         [System.Collections.Generic.HashSet[string]] $Available,
-        [switch] $AsCollection
+        [switch] $AsCollection,
+        [switch] $AsMulti
     )
     $p = $TexPath.Trim().TrimStart('/')
+
+    if ($AsMulti) {
+        # A directional class needs the three facings present. West is not
+        # required: RimWorld mirrors the east texture horizontally for it, which
+        # this project confirmed by observation - a placeholder rendered with its
+        # label and facing arrow reversed on a west-facing pawn.
+        #
+        # Note the plain branch below accepts a bare file OR any one directional
+        # variant, which is right for a single graphic and wrong here. That
+        # leniency is exactly what let a one-file vehicle body pass.
+        foreach ($suffix in @('_north', '_east', '_south')) {
+            if (-not $Available.Contains($p + $suffix)) { return $false }
+        }
+        return $true
+    }
 
     if ($AsCollection) {
         # Must be a folder holding at least one image, i.e. at least one known
@@ -713,6 +747,17 @@ $geneRefs = [System.Collections.Generic.List[object]]::new()
 $modAbstracts = @{}
 $listRefs = [System.Collections.Generic.List[object]]::new()
 
+# Set if any PawnKindDef we ship declares factionLeader true. Computed up front
+# because the FactionDef check needs it and def order in the scan is arbitrary.
+$script:AnyFactionLeaderKind = $false
+foreach ($pf in (Get-ChildItem -Path (Join-Path $ModRoot '1.6') -Filter *.xml -Recurse -File -ErrorAction SilentlyContinue)) {
+    $txt = Get-Content $pf.FullName -Raw -ErrorAction SilentlyContinue
+    if ($txt -and $txt -match '<factionLeader>\s*[Tt]rue\s*</factionLeader>') {
+        $script:AnyFactionLeaderKind = $true
+        break
+    }
+}
+
 # Tags our OWN ThingDefs carry, and every tag our PawnKindDefs ask for. Resolved
 # after the scan, because a kind may legitimately request a tag declared by a
 # thing defined later in the same run.
@@ -787,6 +832,23 @@ foreach ($file in $xmlFiles) {
                             Add-Problem -Severity ERROR -Check 'FactionMissingField' -File $rel `
                                 -Message ("FactionDef '{0}' has no <{1}>. Required for a settled humanlike faction; a missing settlementTexturePath crashes world map rendering." -f $owner, $required)
                         }
+                    }
+
+                    # A faction with pawnGroupMakers but no possible leader
+                    # generates with leader = null and the log fills with
+                    # "Faction leader for <name> is null". All seven of ours did.
+                    #
+                    # Faction.TryGenerateNewLeader (decompiled) considers only
+                    # fixedLeaderKinds, or options in the COMBAT group whose
+                    # PawnKindDef sets factionLeader true. The combat-group route
+                    # cannot be resolved from this file alone, so this only fires
+                    # when fixedLeaderKinds is absent AND no kind in the file
+                    # declares factionLeader - which is the case that actually bit.
+                    if ($node.SelectSingleNode('pawnGroupMakers') -and
+                        -not $node.SelectSingleNode('fixedLeaderKinds') -and
+                        -not $script:AnyFactionLeaderKind) {
+                        Add-Problem -Severity ERROR -Check 'FactionNoLeader' -File $rel `
+                            -Message ("FactionDef '{0}' has pawnGroupMakers but no <fixedLeaderKinds>, and no PawnKindDef in this mod sets <factionLeader>true</factionLeader>. It will generate with no leader." -f $owner)
                     }
                 }
             }
@@ -1052,8 +1114,9 @@ foreach ($file in $xmlFiles) {
 
             $graphicClass = Get-SiblingGraphicClass -TexNode $texNode
             $isCollection = Test-IsCollectionGraphicClass -GraphicClass $graphicClass
+            $isMulti      = Test-IsMultiGraphicClass      -GraphicClass $graphicClass
 
-            if (Test-TextureResolves -TexPath $texPath -Available $modTextures -AsCollection:$isCollection) { continue }
+            if (Test-TextureResolves -TexPath $texPath -Available $modTextures -AsCollection:$isCollection -AsMulti:$isMulti) { continue }
 
             # A path we own must exist. A path we do not own is probably a
             # vanilla texture, and vanilla textures ship inside Unity asset
@@ -1064,6 +1127,9 @@ foreach ($file in $xmlFiles) {
                 if ($isCollection) {
                     Add-Problem -Severity ERROR -Check 'MissingTextureCollection' -File $rel `
                         -Message ("<{0}> '{1}' uses {2}, which needs a FOLDER of images at that path (<leaf>_a, _b, _c), not a single file. Run New-PlaceholderTextures.ps1." -f $texNode.LocalName, $texPath, $graphicClass)
+                } elseif ($isMulti) {
+                    Add-Problem -Severity ERROR -Check 'MissingTextureDirectional' -File $rel `
+                        -Message ("<{0}> '{1}' uses {2}, which needs _north, _east and _south files beside that path, not a single file. Run New-PlaceholderTextures.ps1." -f $texNode.LocalName, $texPath, $graphicClass)
                 } else {
                     Add-Problem -Severity ERROR -Check 'MissingTexture' -File $rel `
                         -Message ("<{0}> '{1}' has no file under Textures/. Run New-PlaceholderTextures.ps1." -f $texNode.LocalName, $texPath)

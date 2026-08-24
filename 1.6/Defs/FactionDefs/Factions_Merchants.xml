@@ -156,6 +156,19 @@
     <baseTraderKinds>
       <li>Base_Outlander_Standard</li>
     </baseTraderKinds>
+    <!--
+      Without this the faction generates with NO LEADER and the log fills with
+      "Faction leader for <name> is null" - all seven of ours did.
+
+      Faction.TryGenerateNewLeader (decompiled) draws only from pawnGroupMakers
+      whose kindDef is Combat, and only from options whose PawnKindDef sets
+      factionLeader true - or from this list. fixedLeaderKinds is the better
+      lever here because it does not force the leader to be a combat option:
+      a trademaster should lead Julii without having to be a raider first.
+    -->
+    <fixedLeaderKinds>
+      <li>RR_Julii_Trademaster</li>
+    </fixedLeaderKinds>
   </FactionDef>
 
   <!-- =========================== Sun Industries =========================== -->
@@ -289,6 +302,19 @@
     <baseTraderKinds>
       <li>Base_Outlander_Standard</li>
     </baseTraderKinds>
+    <!--
+      Without this the faction generates with NO LEADER and the log fills with
+      "Faction leader for <name> is null" - all seven of ours did.
+
+      Faction.TryGenerateNewLeader (decompiled) draws only from pawnGroupMakers
+      whose kindDef is Combat, and only from options whose PawnKindDef sets
+      factionLeader true - or from this list. fixedLeaderKinds is the better
+      lever here because it does not force the leader to be a combat option:
+      a trademaster should lead Julii without having to be a raider first.
+    -->
+    <fixedLeaderKinds>
+      <li>RR_Sun_Broker</li>
+    </fixedLeaderKinds>
   </FactionDef>
 
 </Defs>

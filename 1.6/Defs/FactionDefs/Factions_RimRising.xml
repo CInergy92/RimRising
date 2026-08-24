@@ -191,6 +191,19 @@
     <baseTraderKinds>
       <li>Base_Outlander_Standard</li>
     </baseTraderKinds>
+    <!--
+      Without this the faction generates with NO LEADER and the log fills with
+      "Faction leader for <name> is null" - all seven of ours did.
+
+      Faction.TryGenerateNewLeader (decompiled) draws only from pawnGroupMakers
+      whose kindDef is Combat, and only from options whose PawnKindDef sets
+      factionLeader true - or from this list. fixedLeaderKinds is the better
+      lever here because it does not force the leader to be a combat option:
+      a trademaster should lead Julii without having to be a raider first.
+    -->
+    <fixedLeaderKinds>
+      <li>RR_Society_Gold_Praetor</li>
+    </fixedLeaderKinds>
   </FactionDef>
 
   <!-- ============================ the Rim Dominion ========================= -->
@@ -347,6 +360,19 @@
     <baseTraderKinds>
       <li>Base_Outlander_Standard</li>
     </baseTraderKinds>
+    <!--
+      Without this the faction generates with NO LEADER and the log fills with
+      "Faction leader for <name> is null" - all seven of ours did.
+
+      Faction.TryGenerateNewLeader (decompiled) draws only from pawnGroupMakers
+      whose kindDef is Combat, and only from options whose PawnKindDef sets
+      factionLeader true - or from this list. fixedLeaderKinds is the better
+      lever here because it does not force the leader to be a combat option:
+      a trademaster should lead Julii without having to be a raider first.
+    -->
+    <fixedLeaderKinds>
+      <li>RR_Society_Gold_Praetor</li>
+    </fixedLeaderKinds>
   </FactionDef>
 
   <!-- ============================ the resistance =========================== -->
@@ -475,6 +501,19 @@
     <baseTraderKinds>
       <li>Base_Outlander_Standard</li>
     </baseTraderKinds>
+    <!--
+      Without this the faction generates with NO LEADER and the log fills with
+      "Faction leader for <name> is null" - all seven of ours did.
+
+      Faction.TryGenerateNewLeader (decompiled) draws only from pawnGroupMakers
+      whose kindDef is Combat, and only from options whose PawnKindDef sets
+      factionLeader true - or from this list. fixedLeaderKinds is the better
+      lever here because it does not force the leader to be a combat option:
+      a trademaster should lead Julii without having to be a raider first.
+    -->
+    <fixedLeaderKinds>
+      <li>RR_Ares_Gold_Turncoat</li>
+    </fixedLeaderKinds>
   </FactionDef>
 
   <!-- =========================== the Obsidian tribes ======================= -->
@@ -584,6 +623,19 @@
     <baseTraderKinds>
       <li>Base_Neolithic_Standard</li>
     </baseTraderKinds>
+    <!--
+      Without this the faction generates with NO LEADER and the log fills with
+      "Faction leader for <name> is null" - all seven of ours did.
+
+      Faction.TryGenerateNewLeader (decompiled) draws only from pawnGroupMakers
+      whose kindDef is Combat, and only from options whose PawnKindDef sets
+      factionLeader true - or from this list. fixedLeaderKinds is the better
+      lever here because it does not force the leader to be a combat option:
+      a trademaster should lead Julii without having to be a raider first.
+    -->
+    <fixedLeaderKinds>
+      <li>RR_Tribe_Obsidian_Stained</li>
+    </fixedLeaderKinds>
   </FactionDef>
 
   <!-- ============================== Ascomanni ============================= -->
@@ -688,6 +740,19 @@
     <baseTraderKinds>
       <li>Base_Outlander_Standard</li>
     </baseTraderKinds>
+    <!--
+      Without this the faction generates with NO LEADER and the log fills with
+      "Faction leader for <name> is null" - all seven of ours did.
+
+      Faction.TryGenerateNewLeader (decompiled) draws only from pawnGroupMakers
+      whose kindDef is Combat, and only from options whose PawnKindDef sets
+      factionLeader true - or from this list. fixedLeaderKinds is the better
+      lever here because it does not force the leader to be a combat option:
+      a trademaster should lead Julii without having to be a raider first.
+    -->
+    <fixedLeaderKinds>
+      <li>RR_Ascomanni_Warlord</li>
+    </fixedLeaderKinds>
   </FactionDef>
 
 </Defs>

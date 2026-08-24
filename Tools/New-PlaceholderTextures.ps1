@@ -134,7 +134,11 @@ function New-PlaceholderPng {
         # A directional placeholder is drawn translucent, with an arrow showing
         # which way it thinks it is facing and a crosshair on its exact centre,
         # so a bad offset is visible as the crosshair sitting off the pawn.
-        [string] $Facing = ''
+        [string] $Facing = '',
+        # Keep a directional placeholder solid. Worn apparel must be translucent
+        # so the pawn shows through and offsets can be judged; a vehicle body has
+        # nothing behind it, but still benefits from the facing arrow.
+        [switch] $Opaque
     )
 
     $dir = Split-Path -Parent $OutFile
@@ -148,7 +152,7 @@ function New-PlaceholderPng {
             $gfx.TextRenderingHint = [System.Drawing.Text.TextRenderingHint]::AntiAlias
 
             # Directional placeholders are translucent so the pawn shows through.
-            $fillColor = if ($Facing) {
+            $fillColor = if ($Facing -and -not $Opaque) {
                 [System.Drawing.Color]::FromArgb(105, $Color.R, $Color.G, $Color.B)
             } else { $Color }
             $brush = New-Object System.Drawing.SolidBrush($fillColor)
@@ -262,6 +266,17 @@ function Test-IsCollectionGraphicClass {
     return $GraphicClass -match 'StackCount|Random|Collection'
 }
 
+# Classes that resolve texPath as a DIRECTIONAL SET - <leaf>_north/_east/_south -
+# rather than as one file. Graphic_Multi is vanilla's; Vehicles.Graphic_Vehicle is
+# Vehicle Framework's, confirmed by listing an installed VVE vehicle's textures.
+# Graphic_Turret is explicitly NOT one: turrets ship a single file.
+function Test-IsMultiGraphicClass {
+    param([string] $GraphicClass)
+    if ([string]::IsNullOrWhiteSpace($GraphicClass)) { return $false }
+    if ($GraphicClass -match 'Graphic_Turret') { return $false }
+    return $GraphicClass -match 'Graphic_Multi|Graphic_Vehicle'
+}
+
 foreach ($file in $xmlFiles) {
     $doc = New-Object System.Xml.XmlDocument
     try { $doc.Load($file.FullName) } catch {
@@ -283,6 +298,7 @@ foreach ($file in $xmlFiles) {
             if ($gc) { $graphicClass = $gc.InnerText.Trim() }
         }
         $isCollection = Test-IsCollectionGraphicClass -GraphicClass $graphicClass
+        $isMulti      = Test-IsMultiGraphicClass      -GraphicClass $graphicClass
 
         # Apparel drawn ON a pawn needs per-facing textures, and the naming differs
         # by what the garment covers. Verified against installed mods:
@@ -310,8 +326,9 @@ foreach ($file in $xmlFiles) {
             $referenced[$key].Collection = $referenced[$key].Collection -or $isCollection
             $referenced[$key].Worn       = $referenced[$key].Worn -or $isWorn
             $referenced[$key].Body       = $referenced[$key].Body -or $isBody
+            $referenced[$key].Multi      = $referenced[$key].Multi -or $isMulti
         } else {
-            $referenced[$key] = @{ Collection = $isCollection; Worn = $isWorn; Body = $isBody }
+            $referenced[$key] = @{ Collection = $isCollection; Worn = $isWorn; Body = $isBody; Multi = $isMulti }
         }
     }
 }
@@ -359,6 +376,26 @@ foreach ($texPath in ($owned | Sort-Object)) {
             New-PlaceholderPng -OutFile $outFile -Size $size -Label ("{0}`n{1}" -f $label, $variant) -Color $color
             Write-Host ("  + {0}/{1}_{2}.png  ({3}x{3}, collection)" -f $texPath, $leaf, $variant, $size) -ForegroundColor Green
             $created++
+        }
+        continue
+    }
+
+    if ($referenced[$texPath].Multi -and -not $referenced[$texPath].Worn) {
+        $base = Join-Path $texturesRoot ($texPath -replace '/', [string][char]92)
+        $made = 0
+        foreach ($d in @('south', 'north', 'east')) {
+            $outFile = "{0}_{1}.png" -f $base, $d
+            if ((Test-Path $outFile) -and -not $Force) { $skipped++; continue }
+            if (-not $PSCmdlet.ShouldProcess($outFile, "write ${size}x${size} placeholder")) { continue }
+            $tag = $d.Substring(0, 1).ToUpper()
+            # Facing marks but opaque: unlike worn apparel there is no pawn
+            # underneath to see through, and a vehicle drawn facing the wrong way
+            # is still worth catching at a glance.
+            New-PlaceholderPng -OutFile $outFile -Size $size -Label ("{0}`n{1}" -f $label, $tag) -Color $color -Facing $d -Opaque
+            $created++; $made++
+        }
+        if ($made -gt 0) {
+            Write-Host ("  + {0}  ({1}x{1}, directional, {2} files)" -f $texPath, $size, $made) -ForegroundColor Green
         }
         continue
     }
