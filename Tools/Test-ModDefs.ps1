@@ -827,6 +827,47 @@ foreach ($file in $xmlFiles) {
                 }
             }
 
+            # An AbilityDef that can only ever target its own caster must say so, or
+            # clicking the gizmo drops the pawn into target-selection mode and waits
+            # for a click the targetParams can never accept. NOTHING IS LOGGED: an
+            # ability with no reachable target is not a load error, it is just inert.
+            #
+            # Two distinct faults, both hit for real by the first ghostCloak:
+            #   1. self-only but targetRequired is not false
+            #   2. canTargetSelf true alongside canTargetPawns false - self IS a
+            #      pawn, so this excludes the only legal target. Always a bug.
+            if ($node.LocalName -eq 'AbilityDef' -and $dnNode) {
+                $abName = $dnNode.InnerText.Trim()
+                $tp = $node.SelectSingleNode('verbProperties/targetParams')
+                if ($tp) {
+                    $selfNode = $tp.SelectSingleNode('canTargetSelf')
+                    $canSelf  = $selfNode -and $selfNode.InnerText.Trim() -match '^(?i)true$'
+
+                    $pawnsNode = $tp.SelectSingleNode('canTargetPawns')
+                    if ($canSelf -and $pawnsNode -and $pawnsNode.InnerText.Trim() -match '^(?i)false$') {
+                        Add-Problem -Severity ERROR -Check 'AbilityUntargetable' -File $rel `
+                            -Message ("AbilityDef '{0}' sets canTargetSelf true and canTargetPawns false. Self is a pawn, so this excludes the only legal target and the ability can never be cast." -f $abName)
+                    }
+
+                    # Self-only = self allowed and nothing else turned on.
+                    $othersOn = $false
+                    foreach ($c in $tp.ChildNodes) {
+                        if ($c.NodeType -ne [System.Xml.XmlNodeType]::Element) { continue }
+                        if ($c.LocalName -eq 'canTargetSelf') { continue }
+                        if ($c.LocalName -notlike 'canTarget*') { continue }
+                        if ($c.InnerText.Trim() -match '^(?i)true$') { $othersOn = $true; break }
+                    }
+
+                    if ($canSelf -and -not $othersOn) {
+                        $tr = $node.SelectSingleNode('targetRequired')
+                        if (-not $tr -or $tr.InnerText.Trim() -notmatch '^(?i)false$') {
+                            Add-Problem -Severity ERROR -Check 'AbilityUntargetable' -File $rel `
+                                -Message ("AbilityDef '{0}' can only target itself but does not set <targetRequired>false</targetRequired>. The gizmo will appear and do nothing when clicked." -f $abName)
+                        }
+                    }
+                }
+            }
+
             if ($node.LocalName -eq 'PawnKindDef' -and $dnNode) {
                 $kindName = $dnNode.InnerText.Trim()
                 foreach ($li in $node.SelectNodes('weaponTags/li')) {

@@ -68,28 +68,48 @@
     <iconPath>UI/Abilities/RR_GhostCloak</iconPath>
     <cooldownTicksRange>15000</cooldownTicksRange> <!-- 6 hours -->
     <displayOrder>300</displayOrder>
+    <hostile>false</hostile>
     <casterMustBeCapableOfViolence>false</casterMustBeCapableOfViolence>
+    <!--
+      SELF-CAST ABILITIES NEED THIS TRIO, and the first version of this def had
+      none of them, which is why the gizmo appeared and did nothing when clicked.
+
+        targetRequired false          - fire immediately instead of entering
+                                        target-selection mode
+        targetable     false          - the verb is not aimed at anything
+        nonInterruptingSelfCast true  - does not break what the pawn is doing
+
+      Worse, the first version also set canTargetPawns FALSE alongside
+      canTargetSelf true. Self IS a pawn, so that combination excluded the only
+      legal target and left the game waiting for a click it could never accept.
+      Nothing was logged, because an ability with no valid target is not an error.
+
+      Pattern taken verbatim from Anomaly's MetalbloodInjection, the closest
+      vanilla equivalent: a self-only buff granted by worn/installed equipment.
+    -->
+    <targetRequired>false</targetRequired>
+    <displayGizmoWhileUndrafted>true</displayGizmoWhileUndrafted>
+    <disableGizmoWhileUndrafted>false</disableGizmoWhileUndrafted>
     <statBases>
       <Ability_Duration>25</Ability_Duration>
     </statBases>
     <verbProperties>
       <verbClass>Verb_CastAbility</verbClass>
-      <range>-1</range>
       <warmupTime>0.5</warmupTime>
-      <onlyManualCast>True</onlyManualCast>
+      <drawAimPie>false</drawAimPie>
+      <requireLineOfSight>false</requireLineOfSight>
+      <nonInterruptingSelfCast>true</nonInterruptingSelfCast>
+      <targetable>false</targetable>
       <targetParams>
-        <!-- Self only. A cloak cannot be thrown over somebody across the room. -->
-        <canTargetSelf>True</canTargetSelf>
-        <canTargetPawns>False</canTargetPawns>
-        <canTargetBuildings>False</canTargetBuildings>
-        <canTargetLocations>False</canTargetLocations>
+        <canTargetSelf>true</canTargetSelf>
       </targetParams>
     </verbProperties>
     <comps>
       <li Class="CompProperties_AbilityGiveHediff">
         <compClass>CompAbilityEffect_GiveHediff</compClass>
         <hediffDef>RR_Hediff_GhostCloakActive</hediffDef>
-        <onlyApplyToSelf>true</onlyApplyToSelf>
+        <onlyApplyToSelf>True</onlyApplyToSelf>
+        <replaceExisting>true</replaceExisting>
         <!-- psychic is deliberately omitted: this is cloth and power, not a psycast. -->
       </li>
     </comps>
