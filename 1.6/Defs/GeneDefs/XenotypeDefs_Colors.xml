@@ -17,6 +17,12 @@
   bald because their DigiTats are tattooed on a shaved scalp, Violets leave the
   Grove chemically unstable, and Reds rarely see forty.
 
+  CASTE SETS HAIR AND EYES ONLY. Skin is inherited from ancestry, not assigned by
+  Color - the reference is explicit that Gold skin "is varied depending on a
+  combination of where in the solar system they were born and the ethnicity of
+  their ancestors", and the summary page speaks only of hair and eye color
+  matching caste. No Color carries a Skin_ gene. Do not add one.
+
   All Colors are inheritable: a child of two parents of a Color is that Color.
   Crossing Colors is done by carving - xenogerm implantation - which grants
   xenogenes and is therefore NOT inherited. See docs/DESIGN.md.
@@ -148,7 +154,6 @@
     <genes>
       <li>Hair_Gray</li>
       <li>Eyes_Silver</li>
-      <li>Skin_LightGray</li>
       <li>Body_Standard</li>
       <li>AptitudeRemarkable_Social</li>
       <li>AptitudeRemarkable_Intellectual</li>
@@ -173,7 +178,6 @@
     <genes>
       <li>Hair_SnowWhite</li>
       <li>Eyes_White</li>
-      <li>Skin_SheerWhite</li>
       <li>Body_Standard</li>
       <li>AptitudeRemarkable_Social</li>
       <li>AptitudeStrong_Intellectual</li>
@@ -199,7 +203,6 @@
     <genes>
       <li>Hair_ReddishBrown</li>
       <li>Eyes_LightBrown</li>
-      <li>Skin_Orange</li>
       <li>Body_Standard</li>
       <li>AptitudeRemarkable_Intellectual</li>
       <li>AptitudeRemarkable_Social</li>
@@ -226,7 +229,6 @@
     <genes>
       <li>Hair_BaldOnly</li>
       <li>Eyes_Blue</li>
-      <li>Skin_Blue</li>
       <li>Body_Thin</li>
       <li>AptitudeRemarkable_Intellectual</li>
       <li>AptitudeStrong_Shooting</li>
@@ -253,7 +255,6 @@
     <genes>
       <li>Hair_SandyBlonde</li>
       <li>Eyes_Yellow</li>
-      <li>Skin_PaleYellow</li>
       <li>Body_Thin</li>
       <li>AptitudeRemarkable_Medicine</li>
       <li>AptitudeStrong_Intellectual</li>
@@ -277,7 +278,6 @@
     <genes>
       <li>Hair_ShortOnly</li>
       <li>Eyes_Green</li>
-      <li>Skin_Green</li>
       <li>Body_Thin</li>
       <li>AptitudeRemarkable_Intellectual</li>
       <li>AptitudeStrong_Crafting</li>
@@ -301,7 +301,6 @@
     <genes>
       <li>Hair_LightPurple</li>
       <li>Eyes_Purple</li>
-      <li>Skin_Purple</li>
       <li>Body_Standard</li>
       <li>AptitudeRemarkable_Artistic</li>
       <li>AptitudeStrong_Social</li>
@@ -325,7 +324,6 @@
     <genes>
       <li>Hair_LightOrange</li>
       <li>Eyes_Orange</li>
-      <li>Skin_DeepYellow</li>
       <li>Body_Standard</li>
       <li>AptitudeRemarkable_Crafting</li>
       <li>AptitudeRemarkable_Construction</li>
@@ -347,7 +345,6 @@
     <factionlessGenerationWeight>10</factionlessGenerationWeight>
     <genes>
       <li>Hair_Gray</li>
-      <li>Skin_SlateGray</li>
       <li>Body_Standard</li>
       <li>AptitudeRemarkable_Shooting</li>
       <li>AptitudeStrong_Melee</li>
@@ -374,7 +371,6 @@
     <genes>
       <li>Hair_SnowWhite</li>
       <li>Eyes_DarkestGray</li>
-      <li>Skin_InkBlack</li>
       <li>Body_Hulk</li>
       <li>AG_LargerBodySize</li>
       <li>Jaw_Heavy</li>
@@ -404,7 +400,6 @@
     <genes>
       <li>Hair_Pink</li>
       <li>Eyes_Pink</li>
-      <li>Skin_PaleRed</li>
       <li>Body_Thin</li>
       <li>AG_SmallerBodySize</li>
       <li>AptitudeRemarkable_Social</li>
@@ -430,7 +425,6 @@
     <genes>
       <li>Hair_DarkBrown</li>
       <li>Eyes_Brown</li>
-      <li>Skin_Melanin6</li>
       <li>Body_Standard</li>
       <li>AptitudeStrong_Cooking</li>
       <li>AptitudeStrong_Plants</li>
@@ -455,7 +449,6 @@
     <genes>
       <li>Hair_BrightRed</li>
       <li>Eyes_Red</li>
-      <li>Skin_Melanin2</li>
       <li>Body_Thin</li>
       <li>AG_SmallerBodySize</li>
       <li>AptitudeRemarkable_Mining</li>
@@ -535,7 +528,6 @@
     <genes>
       <li>Hair_Gray</li>
       <li>Eyes_Gray</li>
-      <li>Skin_SlateGray</li>
       <li>Body_Standard</li>
       <li>EBSG_StrongVision</li>
       <li>EBSG_GreatSmell</li>
@@ -562,7 +554,6 @@
     <genes>
       <li>Hair_SnowWhite</li>
       <li>Eyes_DarkestGray</li>
-      <li>Skin_InkBlack</li>
       <li>Body_Hulk</li>
       <li>Jaw_Heavy</li>
       <li>AG_LargerBodySize</li>
@@ -593,7 +584,6 @@
     <genes>
       <li>Hair_SnowWhite</li>
       <li>Eyes_DarkestGray</li>
-      <li>Skin_InkBlack</li>
       <li>Body_Hulk</li>
       <li>AG_LargerBodySize</li>
       <li>DarkVision</li>
@@ -622,7 +612,6 @@
     <genes>
       <li>Hair_Pink</li>
       <li>Eyes_Pink</li>
-      <li>Skin_PaleRed</li>
       <li>Body_Thin</li>
       <li>AG_SmallerBodySize</li>
       <li>AptitudeRemarkable_Social</li>
@@ -649,7 +638,6 @@
     <genes>
       <li>Hair_BrightRed</li>
       <li>Eyes_Red</li>
-      <li>Skin_Melanin2</li>
       <li>Body_Hulk</li>
       <li>AG_LargerBodySize</li>
       <li>ToxicEnvironmentResistance_Total</li>

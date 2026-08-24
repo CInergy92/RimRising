@@ -52,7 +52,14 @@
       Drives the goodwill situations in Defs/Goodwill: a colony sharing this meme
       is embraced, one holding the opposite is loathed.
     -->
-    <requiredMemes>
+    <!--
+      Restricts ideoligion generation. Omitting this draws from the full default
+      spread, real-world origin memes included.
+    -->
+    <structureMemeWeights>
+      <Structure_Ideological MayRequire="Ludeon.RimWorld.Ideology">6</Structure_Ideological>
+      <Structure_Archist MayRequire="Ludeon.RimWorld.Ideology">2</Structure_Archist>
+    </structureMemeWeights>    <requiredMemes>
       <li>RR_ColorHierarchy</li>
     </requiredMemes>    <xenotypeSet>
       <!--
@@ -180,7 +187,15 @@
       Drives the goodwill situations in Defs/Goodwill: a colony sharing this meme
       is embraced, one holding the opposite is loathed.
     -->
-    <requiredMemes>
+    <!--
+      Restricts ideoligion generation. Omitting this draws from the full default
+      spread, real-world origin memes included.
+    -->
+    <structureMemeWeights>
+      <Structure_Ideological MayRequire="Ludeon.RimWorld.Ideology">5</Structure_Ideological>
+      <Structure_Archist MayRequire="Ludeon.RimWorld.Ideology">2</Structure_Archist>
+      <Structure_TheistEmbodied MayRequire="Ludeon.RimWorld.Ideology">1</Structure_TheistEmbodied>
+    </structureMemeWeights>    <requiredMemes>
       <li>RR_ColorHierarchy</li>
     </requiredMemes>    <xenotypeSet>
       <xenotypeChances>
@@ -295,7 +310,13 @@
       Drives the goodwill situations in Defs/Goodwill: a colony sharing this meme
       is embraced, one holding the opposite is loathed.
     -->
-    <requiredMemes>
+    <!--
+      Restricts ideoligion generation. Omitting this draws from the full default
+      spread, real-world origin memes included.
+    -->
+    <structureMemeWeights>
+      <Structure_Ideological MayRequire="Ludeon.RimWorld.Ideology">8</Structure_Ideological>
+    </structureMemeWeights>    <requiredMemes>
       <li>RR_ColorEquality</li>
     </requiredMemes>    <xenotypeSet>
       <xenotypeChances>
@@ -407,7 +428,14 @@
       Drives the goodwill situations in Defs/Goodwill: a colony sharing this meme
       is embraced, one holding the opposite is loathed.
     -->
-    <requiredMemes>
+    <!--
+      Restricts ideoligion generation. Omitting this draws from the full default
+      spread, real-world origin memes included.
+    -->
+    <structureMemeWeights>
+      <Structure_TheistEmbodied MayRequire="Ludeon.RimWorld.Ideology">8</Structure_TheistEmbodied>
+      <Structure_Animist MayRequire="Ludeon.RimWorld.Ideology">2</Structure_Animist>
+    </structureMemeWeights>    <requiredMemes>
       <li>RR_ColorHierarchy</li>
     </requiredMemes>    <xenotypeSet>
       <xenotypeChances>
@@ -495,7 +523,14 @@
       <li>(0.20, 0.18, 0.26)</li>
       <li>(0.50, 0.44, 0.62)</li>
     </colorSpectrum>
-    <xenotypeSet>
+    <!--
+      Restricts ideoligion generation. Omitting this draws from the full default
+      spread, real-world origin memes included.
+    -->
+    <structureMemeWeights>
+      <Structure_Animist MayRequire="Ludeon.RimWorld.Ideology">6</Structure_Animist>
+      <Structure_TheistEmbodied MayRequire="Ludeon.RimWorld.Ideology">2</Structure_TheistEmbodied>
+    </structureMemeWeights>    <xenotypeSet>
       <xenotypeChances>
         <RR_Obsidian_Ascomanni>1</RR_Obsidian_Ascomanni>
       </xenotypeChances>
