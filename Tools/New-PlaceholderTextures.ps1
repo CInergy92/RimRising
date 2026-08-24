@@ -233,22 +233,34 @@ foreach ($file in $xmlFiles) {
         }
         $isCollection = Test-IsCollectionGraphicClass -GraphicClass $graphicClass
 
-        # Apparel drawn ON a pawn needs per-facing textures: <path>_north, _south
-        # and _east, plus a bare <path> for the inventory icon. A single flat file
-        # is not enough and the game throws a missing-texture error the moment the
-        # apparel is equipped rather than at load, so nothing catches it until a
-        # pawn puts it on.
+        # Apparel drawn ON a pawn needs per-facing textures, and the naming differs
+        # by what the garment covers. Verified against installed mods:
         #
-        # Verified against installed mods: AirwireHeadset ships _east, _north,
-        # _south and a base file in one folder.
+        #   headgear      AirwireHeadset_east.png          <path>_<dir>
+        #   body apparel  BodyStrap_Fat_east.png           <path>_<BodyType>_<dir>
+        #
+        # A single flat file is not enough either way, and the game only throws
+        # when a pawn EQUIPS the item - not at load - so a clean startup log proves
+        # nothing here. Getting the headgear form right but not the body form is
+        # exactly how scarabSkin and pulse armor both failed.
         $isWorn = ($node.Name -eq 'wornGraphicPath') -or
                   ($key -like 'Things/Pawn/Humanlike/Apparel/*')
+
+        # Body apparel if it covers anything below the neck; head-only otherwise.
+        $isBody = $false
+        if ($isWorn -and $node.ParentNode) {
+            $torsoGroups = @('Torso', 'Legs', 'Arms', 'Shoulders', 'Neck', 'Waist')
+            foreach ($bp in $node.ParentNode.SelectNodes('bodyPartGroups/li')) {
+                if ($torsoGroups -contains $bp.InnerText.Trim()) { $isBody = $true; break }
+            }
+        }
 
         if ($referenced.ContainsKey($key)) {
             $referenced[$key].Collection = $referenced[$key].Collection -or $isCollection
             $referenced[$key].Worn       = $referenced[$key].Worn -or $isWorn
+            $referenced[$key].Body       = $referenced[$key].Body -or $isBody
         } else {
-            $referenced[$key] = @{ Collection = $isCollection; Worn = $isWorn }
+            $referenced[$key] = @{ Collection = $isCollection; Worn = $isWorn; Body = $isBody }
         }
     }
 }
@@ -301,23 +313,34 @@ foreach ($texPath in ($owned | Sort-Object)) {
     }
 
     if ($referenced[$texPath].Worn) {
-        # Worn apparel: one texture per facing, plus a bare base file for the
-        # inventory icon. Facing is labelled so a mis-rotated sprite is obvious.
         $base = Join-Path $texturesRoot ($texPath -replace '/', '\')
-        $variants = @(
-            @{ Suffix = '';       Tag = 'icon' }
-            @{ Suffix = '_south'; Tag = 'S' }
-            @{ Suffix = '_north'; Tag = 'N' }
-            @{ Suffix = '_east';  Tag = 'E' }
-        )
+
+        # Always a bare base file - that is the inventory icon.
+        $variants = @( @{ Suffix = ''; Tag = 'icon' } )
+
+        if ($referenced[$texPath].Body) {
+            # Body apparel: one texture per body type per facing. Baby is omitted;
+            # nothing here is sized for an infant.
+            foreach ($bt in @('Male', 'Female', 'Thin', 'Fat', 'Hulk', 'Child')) {
+                foreach ($d in @('south', 'north', 'east')) {
+                    $variants += @{ Suffix = "_${bt}_${d}"; Tag = "$bt`n$($d.Substring(0,1).ToUpper())" }
+                }
+            }
+        } else {
+            foreach ($d in @('south', 'north', 'east')) {
+                $variants += @{ Suffix = "_$d"; Tag = $d.Substring(0, 1).ToUpper() }
+            }
+        }
+
+        $kind = if ($referenced[$texPath].Body) { 'body' } else { 'headgear' }
         foreach ($v in $variants) {
             $outFile = "{0}{1}.png" -f $base, $v.Suffix
             if ((Test-Path $outFile) -and -not $Force) { $skipped++; continue }
             if (-not $PSCmdlet.ShouldProcess($outFile, "write ${size}x${size} placeholder")) { continue }
             New-PlaceholderPng -OutFile $outFile -Size $size -Label ("{0}`n{1}" -f $label, $v.Tag) -Color $color
-            Write-Host ("  + {0}{1}.png  ({2}x{2}, worn)" -f $texPath, $v.Suffix, $size) -ForegroundColor Green
             $created++
         }
+        Write-Host ("  + {0}  ({1}x{1}, {2}, {3} files)" -f $texPath, $size, $kind, $variants.Count) -ForegroundColor Green
         continue
     }
 
