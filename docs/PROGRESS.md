@@ -855,6 +855,78 @@ produces no output is a failing check, not a passing one.
 
 ---
 
+## The graded hierarchy ladder
+
+Vanilla's `PreferredXenotype` precept is a flat three-way switch - liked, disliked,
+neutral - and caps at three preferred xenotypes. With fifteen Colors it cannot say
+the thing the setting is actually about: the feeling is **graded and signed**. A
+Silver looks down on a Red and up at a Gold, and the size of both depends on the
+distance. So the stage is chosen in `Source/RimRising/ThoughtWorker_ColorRank.cs`.
+
+`ThoughtWorker_Precept_Social` is a plain abstract with one method, so no Harmony -
+the same as `RoleRequirement` and `BiomeWorker`. Def structure mirrored from
+Biotech's `Precepts_Bloodfeeders.xml`, the vanilla example of a precept installing a
+situational *social* thought.
+
+### The rank is not written down twice
+
+The worker reads `XenotypeDef.displayPriority` straight out of
+`XenotypeDefs_Colors.xml`, where the canonical order already lives - Gold 10 down to
+Red 140, sub-strains beside their parents. Ten points is one rung. Reorder the
+Colors there and the ladder follows; there is no second list to drift.
+
+### The asymmetry is the design
+
+| Relation | Opinion |
+|---|---|
+| far beneath | −20 |
+| well beneath | −12 |
+| beneath | −5 |
+| of my own Color | +8 |
+| above | +6 |
+| well above | +14 |
+| far above | +22 |
+
+Looking **down** is only mildly sour - a Gold barely notices a Red, and contempt is
+cheap. Looking **up** is strongly positive, because the hierarchy survives on the
+belief of the people at the bottom. The net effect in a mixed colony is that
+lowColors are content and highColors are faintly irritated: the Society working as
+intended, and the thing an egalitarian colony feels different from.
+
+`RR_ColorEquality` gets its own mirror precept rather than merely the absence of
+this one - believers are actively pleased by company from across the ladder, so the
+meme does something in daily play rather than only moving a faction goodwill number.
+
+### Symmetry had to be made structural, not tuned
+
+The first implementation was a list of signed edges walked with `>=`. It was wrong
+twice, and neither fault was visible by reading it:
+
+1. Adjacent Colors sit **exactly one rung apart**, so a 1.0 edge put
+   Silver-looking-at-Gold in the "of my own Color" bucket while
+   Gold-looking-at-Silver correctly read "beneath me".
+2. Nudging the edges off the integers fixed the base Colors and moved the identical
+   fault onto the **sub-strains**, which sit at half and fifth rungs - 18 pairs out
+   of 21 xenotypes still mismatched.
+
+The fix was to stop dodging boundary values: bucket the **absolute** distance, then
+apply the sign. `stage(a,b) + stage(b,a) == 6` is now an identity rather than
+something to re-check whenever a Color is added.
+
+Both faults were found by **simulating the table against the real
+displayPriority values** rather than by reading the code - a scripted check over all
+21 xenotypes, 420 ordered pairs. Worth repeating for anything where the correctness
+condition is a relation between data rather than a property of one def.
+
+### Pawns outside the hierarchy have no rung
+
+Baseliners, vanilla xenotypes and anything from another mod return no rank at all
+rather than being slotted in somewhere. The hierarchy has opinions about Colors; a
+person outside it has nothing to compare against, and giving them a default position
+would quietly rank every pawn in the game on a ladder they have never heard of.
+
+---
+
 ## Open questions
 
 Carried in `docs/DESIGN.md` §8.

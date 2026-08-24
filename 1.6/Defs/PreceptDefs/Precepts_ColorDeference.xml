@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The graded ladder: what a pawn feels about another pawn purely because of where
+  their two Colors sit.
+
+  WHY THIS IS NOT A PreferredXenotype PRECEPT
+
+  Vanilla's is a flat three-way switch - liked, disliked, neutral - capped at three
+  preferred xenotypes. With fifteen Colors that cannot express the thing the
+  setting is actually about, which is that the feeling is GRADED and SIGNED: a
+  Silver looks down on a Red and up at a Gold, and the size of both depends on the
+  distance between them. So the stage is chosen in
+  Source/RimRising/ThoughtWorker_ColorRank.cs and this file is the belief it reads.
+
+  THE RANK IS NOT DUPLICATED HERE. The worker reads XenotypeDef.displayPriority
+  straight out of XenotypeDefs_Colors.xml, where the canonical order already lives -
+  Gold 10 down to Red 140, with sub-strains beside their parents. Ten points is one
+  rung. Reorder the Colors there and the ladder follows; there is no second list to
+  keep in sync.
+
+  THE STAGES BELOW ARE POSITIONAL. The worker indexes them, so their order and
+  count must match StageUpperBound in that file.
+
+  Structure mirrored from Biotech/Defs/PreceptDefs/Precepts_Bloodfeeders.xml, the
+  vanilla example of a precept installing a situational SOCIAL thought.
+-->
+<Defs>
+
+  <IssueDef>
+    <defName>RR_ColorDeference</defName>
+    <label>deference between Colors</label>
+    <iconPath>UI/Issues/RR_ColorDeference</iconPath>
+  </IssueDef>
+
+  <!-- ====================== the hierarchy's own ladder ===================== -->
+  <!--
+    Note the asymmetry, which is deliberate and is the whole design.
+
+    Looking DOWN is mildly sour: a Gold does not hate a Red, a Gold barely notices
+    a Red, and contempt is cheap. Looking UP is strongly positive: the hierarchy
+    survives because the people at the bottom believe in it, and awe is what does
+    that work. The net effect in a mixed colony is that lowColors are content and
+    highColors are faintly irritated - which is exactly the Society functioning as
+    intended, and exactly what makes an egalitarian colony feel different.
+
+    Same-rung kinship is positive because a caste is also a community.
+  -->
+  <ThoughtDef>
+    <defName>RR_Thought_ColorRank</defName>
+    <thoughtClass>Thought_SituationalSocial</thoughtClass>
+    <workerClass>RimRising.ThoughtWorker_ColorRank</workerClass>
+    <validWhileDespawned>true</validWhileDespawned>
+    <stages>
+      <li>
+        <label>far beneath me</label>
+        <description>Whatever this one is for, it is not for talking to.</description>
+        <baseOpinionOffset>-20</baseOpinionOffset>
+      </li>
+      <li>
+        <label>well beneath me</label>
+        <description>Useful enough in its place. Its place is not here.</description>
+        <baseOpinionOffset>-12</baseOpinionOffset>
+      </li>
+      <li>
+        <label>beneath me</label>
+        <description>Close enough to my station to be irritating about it.</description>
+        <baseOpinionOffset>-5</baseOpinionOffset>
+      </li>
+      <li>
+        <label>of my own Color</label>
+        <description>Made for the same work, by the same hands, to the same specification. That counts for something.</description>
+        <baseOpinionOffset>8</baseOpinionOffset>
+      </li>
+      <li>
+        <label>above me</label>
+        <description>Owed courtesy, and getting it.</description>
+        <baseOpinionOffset>6</baseOpinionOffset>
+      </li>
+      <li>
+        <label>well above me</label>
+        <description>The sort of person decisions come down from.</description>
+        <baseOpinionOffset>14</baseOpinionOffset>
+      </li>
+      <li>
+        <label>far above me</label>
+        <description>It is a privilege to be in the room. Everyone has always said so.</description>
+        <baseOpinionOffset>22</baseOpinionOffset>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <PreceptDef>
+    <defName>RR_ColorDeference_Graded</defName>
+    <issue>RR_ColorDeference</issue>
+    <label>the ladder</label>
+    <description>Every Color has a station, and the distance between two stations is a real quantity that both parties can feel. Deference upward is not servility, it is accuracy. Contempt downward is not cruelty, it is also accuracy.</description>
+    <impact>High</impact>
+    <displayOrderInIssue>10</displayOrderInIssue>
+    <associatedMemes>
+      <li>RR_ColorHierarchy</li>
+      <li>RR_GoldWorship</li>
+    </associatedMemes>
+    <conflictingMemes>
+      <li>RR_ColorEquality</li>
+    </conflictingMemes>
+    <comps>
+      <li Class="PreceptComp_SituationalThought">
+        <thought>RR_Thought_ColorRank</thought>
+        <description>Another Color's station</description>
+      </li>
+    </comps>
+  </PreceptDef>
+
+  <!-- ========================== the other reading ========================== -->
+  <!--
+    Not merely the absence of the ladder. An egalitarian believer is actively
+    pleased by company from across it, so RR_ColorEquality has something to do in
+    daily play rather than only a goodwill number at the faction level.
+  -->
+  <ThoughtDef>
+    <defName>RR_Thought_ColorCrossing</defName>
+    <thoughtClass>Thought_SituationalSocial</thoughtClass>
+    <workerClass>RimRising.ThoughtWorker_ColorRank_Equality</workerClass>
+    <validWhileDespawned>true</validWhileDespawned>
+    <stages>
+      <li>
+        <label>a different Color</label>
+        <description>Someone the registries would have kept in another building entirely.</description>
+        <baseOpinionOffset>8</baseOpinionOffset>
+      </li>
+      <li>
+        <label>the whole ladder away</label>
+        <description>Two people who by every rule of the Society should never have met, let alone eaten at the same table.</description>
+        <baseOpinionOffset>18</baseOpinionOffset>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <PreceptDef>
+    <defName>RR_ColorDeference_None</defName>
+    <issue>RR_ColorDeference</issue>
+    <label>no ladder</label>
+    <description>The Colors were an engineering decision made by people who are dead, about work most of us no longer do. Whatever a person was built for, what they are is the person standing in front of you.</description>
+    <impact>High</impact>
+    <displayOrderInIssue>20</displayOrderInIssue>
+    <associatedMemes>
+      <li>RR_ColorEquality</li>
+    </associatedMemes>
+    <conflictingMemes>
+      <li>RR_ColorHierarchy</li>
+      <li>RR_GoldWorship</li>
+    </conflictingMemes>
+    <comps>
+      <li Class="PreceptComp_SituationalThought">
+        <thought>RR_Thought_ColorCrossing</thought>
+        <description>Company from across the Colors</description>
+      </li>
+    </comps>
+  </PreceptDef>
+
+</Defs>
