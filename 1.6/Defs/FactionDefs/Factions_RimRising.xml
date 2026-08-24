@@ -40,6 +40,7 @@
     <canStageAttacks>true</canStageAttacks>
     <leaderTitle>sovereign</leaderTitle>
     <techLevel>Spacer</techLevel>
+    <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>
     <factionIconPath>World/WorldObjects/Expanding/Town</factionIconPath>
     <factionNameMaker>NamerFactionOutlander</factionNameMaker>
     <settlementNameMaker>NamerSettlementOutlander</settlementNameMaker>
@@ -161,6 +162,7 @@
     <canStageAttacks>true</canStageAttacks>
     <leaderTitle>archgovernor</leaderTitle>
     <techLevel>Spacer</techLevel>
+    <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>
     <factionIconPath>World/WorldObjects/Expanding/Town</factionIconPath>
     <factionNameMaker>NamerFactionOutlander</factionNameMaker>
     <settlementNameMaker>NamerSettlementOutlander</settlementNameMaker>
@@ -269,6 +271,7 @@
     <canStageAttacks>true</canStageAttacks>
     <leaderTitle>ares</leaderTitle>
     <techLevel>Industrial</techLevel>
+    <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>
     <factionIconPath>World/WorldObjects/Expanding/VillageRough</factionIconPath>
     <factionNameMaker>NamerFactionOutlander</factionNameMaker>
     <settlementNameMaker>NamerSettlementOutlander</settlementNameMaker>
@@ -374,6 +377,7 @@
     <canStageAttacks>true</canStageAttacks>
     <leaderTitle>queen</leaderTitle>
     <techLevel>Neolithic</techLevel>
+    <settlementTexturePath>World/WorldObjects/TribalSettlement</settlementTexturePath>
     <factionIconPath>World/WorldObjects/Expanding/VillageSavage</factionIconPath>
     <factionNameMaker>NamerFactionTribal</factionNameMaker>
     <settlementNameMaker>NamerSettlementTribal</settlementNameMaker>
@@ -459,6 +463,7 @@
     </permanentEnemyToEveryoneExcept>
     <leaderTitle>warlord</leaderTitle>
     <techLevel>Industrial</techLevel>
+    <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>
     <factionIconPath>World/WorldObjects/Expanding/PirateOutpost</factionIconPath>
     <factionNameMaker>NamerFactionPirate</factionNameMaker>
     <settlementNameMaker>NamerSettlementPirate</settlementNameMaker>

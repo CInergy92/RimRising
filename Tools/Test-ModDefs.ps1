@@ -562,6 +562,40 @@ foreach ($file in $xmlFiles) {
                 }
             }
 
+            # --- check 7: def-type required fields --------------------------
+            #
+            # RimWorld reports most missing fields as config errors at load, but a
+            # missing settlementTexturePath is worse than that: Settlement.Material
+            # passes a null path to ContentFinder and throws while DRAWING the world
+            # map. It presents to the player as "the planet will not generate", with
+            # nothing in the startup log to explain it.
+            if ($node.Name -eq 'FactionDef') {
+                $isAbstract = $node.Attributes['Abstract']
+                $hidden = $node.SelectSingleNode('hidden')
+                $isHidden = $hidden -and $hidden.InnerText.Trim() -eq 'true'
+                $owner = if ($dnNode) { $dnNode.InnerText.Trim() } else { '<abstract>' }
+
+                if (-not $isAbstract -and -not $isHidden) {
+                    foreach ($required in @('settlementTexturePath', 'maxPawnCostPerTotalPointsCurve', 'backstoryFilters')) {
+                        if (-not $node.SelectSingleNode($required)) {
+                            Add-Problem -Severity ERROR -Check 'FactionMissingField' -File $rel `
+                                -Message ("FactionDef '{0}' has no <{1}>. Required for a settled humanlike faction; a missing settlementTexturePath crashes world map rendering." -f $owner, $required)
+                        }
+                    }
+                }
+            }
+
+            if ($node.Name -eq 'PawnKindDef') {
+                $owner = if ($dnNode) { $dnNode.InnerText.Trim() } else { '<abstract>' }
+                # weaponMoney with no weaponTags is a load-time config error.
+                # Abstract bases may legitimately split the pair across the chain,
+                # so only concrete defs declaring one without the other are flagged.
+                if ($dnNode -and $node.SelectSingleNode('weaponMoney') -and -not $node.SelectSingleNode('weaponTags')) {
+                    Add-Problem -Severity ERROR -Check 'PawnKindWeaponMoney' -File $rel `
+                        -Message ("PawnKindDef '{0}' sets weaponMoney but no weaponTags. Remove the money, or give it tags." -f $owner)
+                }
+            }
+
             # --- record our own GeneDefs ------------------------------------
             if ($node.Name -eq 'GeneDef' -and $dnNode -and $dnNode.InnerText) {
                 [void]$modGeneDefs.Add($dnNode.InnerText.Trim())
