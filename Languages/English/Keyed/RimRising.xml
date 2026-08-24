@@ -11,4 +11,13 @@
   <!-- Shown when a cross-Color pairing is checked for whether it could ever conceive. -->
   <RR_CannotConceiveAcrossColors>{PAWN1_nameDef} and {PAWN2_nameDef} are different Colors. The castes were engineered too far apart to interbreed; only a Carver could bridge it.</RR_CannotConceiveAcrossColors>
 
+  <!-- Mod settings page. -->
+  <RR_Setting_SuppressXenotypes>Suppress vanilla xenotypes</RR_Setting_SuppressXenotypes>
+  <RR_Setting_SuppressXenotypesTip>Stops hussars, genies, neanderthals, impids, wasters, yttakin, pigskins, dirtmoles and highmates being generated, in factions and among wanderers alike, so new pawns read as Colors or as baseliners. The xenotypes themselves are untouched: existing pawns keep theirs, and they can still be built in a gene assembler.</RR_Setting_SuppressXenotypesTip>
+
+  <RR_Setting_SuppressFactions>Suppress vanilla factions</RR_Setting_SuppressFactions>
+  <RR_Setting_SuppressFactionsTip>Removes the generic outlander, tribal and pirate factions from the default world, leaving the planet to the Society and its rivals. Hidden factions, the ancients and the Empire are left alone. Nothing is deleted, so you can still add any of them back by hand on the world creation page.</RR_Setting_SuppressFactionsTip>
+
+  <RR_Setting_SuppressNote>These affect world generation only. Changing them will not alter a world that already exists - start a new one to see the difference.</RR_Setting_SuppressNote>
+
 </LanguageData>

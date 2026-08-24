@@ -17,7 +17,7 @@ Game target: **RimWorld 1.6.4871 rev590**. packageId: `cinergy92.rimrising`.
 | 4 | Tech and equipment | **Verified in game.** Razor, pulse fist, pulse armor, scarabSkin, demonHelm |
 | 5 | Ideology and hierarchy | **Verified in game.** Memes, 13 knighthoods, razor lock, caste romance, Gold ladder |
 | 6 | Scenarios and world | **Verified in game.** Two starts, two biomes, faction placement |
-| 7 | Vanilla suppression | Not started — needs a scope decision from the user |
+| 7 | Vanilla suppression | **Built, validated, published; awaiting in-game verification** |
 
 ---
 
@@ -584,6 +584,65 @@ original faults; both fire.
 Also checked and cleared while investigating: Eye Genes 2 ships `Patch_FacialRemoveEyes.xml`, which strips
 its vanilla eye render nodes when Facial Animation is active. **All fifteen** eye genes RimRising uses are
 on that strip list, so none of them can double-draw over an FA head.
+
+---
+
+## Milestone 7 — vanilla suppression
+
+User's scope decision: suppress vanilla xenotypes **and** the generic factions, leave the Empire and
+the hidden factions alone, and put it behind a mod setting that defaults to on.
+
+### Nothing is deleted
+
+Every vanilla def still loads and still resolves. Only generation weights change, so a saved game,
+another mod, or a player who ticks a faction back on at world creation all still work. Removal breaks
+saves and is hostile to the rest of the load order; suppression costs nothing and reverses in place.
+
+### Why this could not be a patch file
+
+The obvious implementation is a `PatchOperation` writing zeroes. That cannot be toggled — XML patches
+run once at load, have no access to mod settings, and cannot be undone. Doing it in C# lets the
+checkbox mean something, because the shipped values are captured before anything is overwritten.
+
+`LoadedModManager.LoadAllActiveMods` (decompiled) runs `CreateModClasses()` **before** `LoadModXML()`,
+so the `Mod` constructor can read settings but no def exists yet. Def mutation therefore lives in a
+`[StaticConstructorOnStartup]`, and `WriteSettings` re-applies when the settings window closes.
+
+### factionlessGenerationWeight alone is a half-measure
+
+`PawnGenerator` reads `factionlessGenerationWeight` in exactly one place —
+`AdjustXenotypeForFactionlessPawn` — so it governs wanderers and refugees and **nothing else**. Pawns
+belonging to a faction get their xenotype from `XenotypesAvailableFor`, which reads the faction's or
+the kind's `xenotypeSet`.
+
+So suppression walks every `FactionDef` and `PawnKindDef` and zeroes the `chance` on any
+`XenotypeChance` naming a suppressed xenotype. `XenotypeChance` is a class with public mutable fields
+and `XenotypeSet` exposes an indexer, so no reflection is needed. Zeroing needs no compensating
+Baseliner entry either: `XenotypeSet.BaselinerChance` is derived as `1 - sum(rest)`, so the freed
+probability falls back on its own.
+
+### Prerequisite found and fixed first — the planet had no traders
+
+Our five factions descend from `FactionBase`, which declares **no** trader kinds. Vanilla puts
+`caravanTraderKinds` / `visitorTraderKinds` / `baseTraderKinds` on the concrete outlander and tribal
+factions, not on the base. Suppressing those factions would therefore have left a planet with no
+ground trade at all — no caravans, no visiting traders, nothing to trade with at a settlement — and
+nothing would have logged an error about it.
+
+Fixed before touching suppression: industrial trade for the Society and the Rim, combat and black
+market for the Sons of Ares, the neolithic set for the obsidian tribes, and pirate-merchant caravans
+only for the Ascomanni.
+
+### What is deliberately left alone
+
+| Kept | Why |
+|---|---|
+| `Mechanoid`, `Insect`, `Entities`, `HoraxCult`, `Sanguophages`, `Beggars`, `Pilgrims`, `Salvagers`, `OutlanderRefugee` | Hidden factions. No settlements; they drive events and quests. Suppressing them deletes content and gains nothing. |
+| `Ancients`, `AncientsHostile` | Ruins and cryptosleep caskets. Setting-neutral and load-bearing for ancient dangers. |
+| `Empire` | User's explicit call. Also owns Royalty's entire quest and title chain. |
+| `TradersGuild` | Odyssey's trade faction. Cutting it while the player is already short of trade partners is a worse game. |
+| `Baseliner` | The "no xenotype" default. Zeroing it leaves pawn generation with nothing to fall back on. |
+| `Sanguophage` | Already ships at weight 0 and is granted by mechanics rather than rolled. |
 
 ---
 

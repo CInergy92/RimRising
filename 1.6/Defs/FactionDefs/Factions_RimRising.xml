@@ -179,6 +179,18 @@
         </options>
       </li>
     </pawnGroupMakers>
+    <!-- The Society sells everything and is short of nothing. Full industrial trade, exotics included. -->
+    <caravanTraderKinds>
+      <li>Caravan_Outlander_BulkGoods</li>
+      <li>Caravan_Outlander_CombatSupplier</li>
+      <li>Caravan_Outlander_Exotic</li>
+    </caravanTraderKinds>
+    <visitorTraderKinds>
+      <li>Visitor_Outlander_Standard</li>
+    </visitorTraderKinds>
+    <baseTraderKinds>
+      <li>Base_Outlander_Standard</li>
+    </baseTraderKinds>
   </FactionDef>
 
   <!-- ============================ the Rim Dominion ========================= -->
@@ -323,6 +335,18 @@
         </options>
       </li>
     </pawnGroupMakers>
+    <!-- The Rim trades in what it mines and what it builds, and drives a harder bargain than Luna does. -->
+    <caravanTraderKinds>
+      <li>Caravan_Outlander_BulkGoods</li>
+      <li>Caravan_Outlander_CombatSupplier</li>
+      <li>Caravan_Outlander_Exotic</li>
+    </caravanTraderKinds>
+    <visitorTraderKinds>
+      <li>Visitor_Outlander_Standard</li>
+    </visitorTraderKinds>
+    <baseTraderKinds>
+      <li>Base_Outlander_Standard</li>
+    </baseTraderKinds>
   </FactionDef>
 
   <!-- ============================ the resistance =========================== -->
@@ -443,6 +467,14 @@
         </options>
       </li>
     </pawnGroupMakers>
+    <!-- A resistance buys guns and sells whatever it took off the last convoy. No polite visiting traders. -->
+    <caravanTraderKinds>
+      <li>Caravan_Outlander_CombatSupplier</li>
+      <li>Caravan_Outlander_PirateMerchant</li>
+    </caravanTraderKinds>
+    <baseTraderKinds>
+      <li>Base_Outlander_Standard</li>
+    </baseTraderKinds>
   </FactionDef>
 
   <!-- =========================== the Obsidian tribes ======================= -->
@@ -540,6 +572,18 @@
         </options>
       </li>
     </pawnGroupMakers>
+    <!-- Neolithic goods only. The tribes were kept pre-industrial on purpose and the trade reflects it. -->
+    <caravanTraderKinds>
+      <li>Caravan_Neolithic_BulkGoods</li>
+      <li>Caravan_Neolithic_WarMerchant</li>
+      <li>Caravan_Neolithic_ShamanMerchant</li>
+    </caravanTraderKinds>
+    <visitorTraderKinds>
+      <li>Visitor_Neolithic_Standard</li>
+    </visitorTraderKinds>
+    <baseTraderKinds>
+      <li>Base_Neolithic_Standard</li>
+    </baseTraderKinds>
   </FactionDef>
 
   <!-- ============================== Ascomanni ============================= -->
@@ -637,6 +681,13 @@
         </options>
       </li>
     </pawnGroupMakers>
+    <!-- They fence what they raid and nothing else. No visitors, and you go to them. -->
+    <caravanTraderKinds>
+      <li>Caravan_Outlander_PirateMerchant</li>
+    </caravanTraderKinds>
+    <baseTraderKinds>
+      <li>Base_Outlander_Standard</li>
+    </baseTraderKinds>
   </FactionDef>
 
 </Defs>
