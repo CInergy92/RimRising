@@ -431,6 +431,8 @@ function Get-OptionalIntegrationAbstracts {
         $folder = $li.InnerText.Trim().Replace('/', '\').Trim('\').ToLowerInvariant()
         $names  = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
         $texes  = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+        $coreDefs  = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+        $patchDefs = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 
         foreach ($id in ($attr.Value -split ',')) {
             $key = $id.Trim().ToLowerInvariant()
@@ -455,6 +457,24 @@ function Get-OptionalIntegrationAbstracts {
             # Texture paths the gated mod ships, relative to its Textures/ root and
             # without the extension - the same form a def writes them in. Both .png
             # and .dds count; RimWorld accepts either.
+            # defNames the gated mod supplies, split by whether they come from
+            # its own Defs tree or from a per-third-party-mod patch folder. CE
+            # ships hundreds of ammo sets under ModPatches/<Some Mod>/ which only
+            # exist for players who also run that mod - naming one is a silent
+            # break for everyone else.
+            foreach ($f2 in $files) {
+                $isPatchFolder = $f2.FullName -like ('*' + [char]92 + 'ModPatches' + [char]92 + '*') -or
+                                 $f2.FullName -like '*/ModPatches/*'
+                $d2 = New-Object System.Xml.XmlDocument
+                try { $d2.Load($f2.FullName) } catch { continue }
+                if (-not $d2.DocumentElement) { continue }
+                foreach ($dn2 in $d2.SelectNodes('//defName')) {
+                    if ([string]::IsNullOrWhiteSpace($dn2.InnerText)) { continue }
+                    $nm = $dn2.InnerText.Trim()
+                    if ($isPatchFolder) { [void]$patchDefs.Add($nm) } else { [void]$coreDefs.Add($nm) }
+                }
+            }
+
             $art = Get-ChildItem -Path $modPath -Recurse -File -Include *.png, *.dds -ErrorAction SilentlyContinue
             foreach ($tf in $art) {
                 $full = $tf.FullName.Replace('\', '/')
@@ -468,8 +488,8 @@ function Get-OptionalIntegrationAbstracts {
             }
         }
 
-        if ($names.Count -gt 0 -or $texes.Count -gt 0) {
-            $result[$folder] = @{ Abstracts = $names; TexFiles = $texes }
+        if ($names.Count -gt 0 -or $texes.Count -gt 0 -or $coreDefs.Count -gt 0) {
+            $result[$folder] = @{ Abstracts = $names; TexFiles = $texes; CoreDefs = $coreDefs; PatchDefs = $patchDefs }
         }
     }
     return $result
@@ -764,6 +784,7 @@ foreach ($pf in (Get-ChildItem -Path (Join-Path $ModRoot '1.6') -Filter *.xml -R
 $modWeaponTags  = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 $modApparelTags = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 $tagRefs = [System.Collections.Generic.List[object]]::new()
+$ammoSetRefs = [System.Collections.Generic.List[object]]::new()
 
 # Vehicle Framework's VehicleDef <-> VehicleBuildDef pair. They must point at each
 # other and neither direction is optional.
@@ -792,6 +813,16 @@ foreach ($file in $xmlFiles) {
 
     foreach ($node in $doc.DocumentElement.ChildNodes) {
         if ($node.NodeType -ne [System.Xml.XmlNodeType]::Element) { continue }
+
+        # <ammoSet> for a Combat Extended turret extension. Collected OUTSIDE the
+        # non-patch branch below, because ours arrives through a
+        # PatchOperationAddModExtension and would otherwise never be seen - which
+        # is exactly how the first version of this check passed while inspecting
+        # nothing.
+        foreach ($asNode in $node.SelectNodes('.//ammoSet')) {
+            if ([string]::IsNullOrWhiteSpace($asNode.InnerText)) { continue }
+            $ammoSetRefs.Add([pscustomobject]@{ File = $rel; Name = $asNode.InnerText.Trim() })
+        }
 
         if (-not $isPatch) {
             # --- check 2 + 3: defName duplicates and vanilla collisions ------
@@ -1269,6 +1300,40 @@ foreach ($ref in $listRefs) {
                     -Message ("'{0}' re-declares <{1}> value '{2}', which it already inherits from '{3}'. List fields append on inherit - remove it, or mark the list Inherit=False." -f $ref.Def, $field, $val, $ref.Parent)
             }
         }
+    }
+}
+
+# --- ammoSet resolution -------------------------------------------------------
+#
+# An <ammoSet> naming something that does not exist makes the CE turret extension
+# resolve to nothing, and the turret throws InvalidCastException on every shot -
+# with no load error, because the patch applied fine and the def is well formed.
+#
+# The subtler trap, hit for real: Combat Extended defines hundreds of ammo sets
+# under ModPatches/<Some Mod>/, which only exist for players who ALSO run that
+# mod. AmmoSet_40mmRocket is one of them. Naming it works on this machine and
+# silently breaks for everyone else, so those only warn rather than pass.
+#
+# Not scoped per folder like the abstracts and textures are: an ammoSet is a
+# Combat Extended concept wherever the patch happens to live, and our vehicle CE
+# patch deliberately sits in the Vehicles folder so it needs BOTH mods.
+$allCoreDefs  = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+$allPatchDefs = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+foreach ($k in $optionalAbstracts.Keys) {
+    foreach ($d in $optionalAbstracts[$k].CoreDefs)  { [void]$allCoreDefs.Add($d) }
+    foreach ($d in $optionalAbstracts[$k].PatchDefs) { [void]$allPatchDefs.Add($d) }
+}
+
+if ($allCoreDefs.Count -gt 0) {
+    foreach ($ref in $ammoSetRefs) {
+        if ($allCoreDefs.Contains($ref.Name)) { continue }
+        if ($allPatchDefs.Contains($ref.Name)) {
+            Add-Problem -Severity WARN -Check 'AmmoSetFromModPatch' -File $ref.File `
+                -Message ("<ammoSet> '{0}' exists only inside a ModPatches folder, so it is present only for players who also run that third mod. Pick one from the mod's own Defs tree." -f $ref.Name)
+            continue
+        }
+        Add-Problem -Severity ERROR -Check 'UnknownAmmoSet' -File $ref.File `
+            -Message ("<ammoSet> '{0}' matches no def in any mod our LoadFolders gates on. The turret extension will resolve to nothing and throw on every shot." -f $ref.Name)
     }
 }
 

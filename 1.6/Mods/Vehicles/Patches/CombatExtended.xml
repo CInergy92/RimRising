@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Combat Extended support for the Drachenjaeger's turrets.
+
+  This file lives in the VEHICLES folder, which is gated on Vehicle Framework, and
+  is itself guarded by PatchOperationFindMod on Combat Extended. So it applies only
+  when BOTH are active, and does nothing otherwise. It is NOT in
+  1.6/Mods/CombatExtended, because that folder is gated on CE alone and these
+  xpaths would then target defs that do not exist.
+
+  WHY IT IS NEEDED
+
+  Decompiling Vehicles.VehicleTurret shows the fire path forks:
+
+      if (LaunchProjectileCE == null)
+          val3 = (Projectile)GenSpawn.Spawn(projectileDef, ...);   // vanilla
+      ...
+      LaunchProjectileCE(projectileDef, loadedAmmo, modExtension?._ammoSet, ...)
+
+  With CE loaded the framework takes the CE branch and hands it the ammo set from
+  a CETurretDataDefModExtension. With no such extension the projectile is a plain
+  vanilla bullet being pushed through CE's launcher, which throws
+
+      InvalidCastException: Specified cast is not valid
+
+  every time the turret fires - reported in game as "Exception thrown while
+  shooting turret ... Removing from queue to resolve issue temporarily."
+
+  Nothing catches this at load: the defs are all valid, and the fault only appears
+  the first time somebody pulls the trigger.
+
+  PATTERN taken verbatim from Combat Extended's own vehicle patches, which use
+  PatchOperationAddModExtension for exactly this - see its ModPatches folder,
+  Alpha Vehicles / Age of Sail / Alpha_FrigateShip_Turret.xml.
+-->
+<Patch>
+
+  <Operation Class="PatchOperationFindMod">
+    <mods>
+      <li>Combat Extended</li>
+    </mods>
+    <match Class="PatchOperationSequence">
+      <operations>
+
+        <!--
+          Particle battery: a charged-shot autocannon in CE terms. 20x105mmCharged
+          is CE's own charged autocannon set, so the ballistics and armour maths
+          come from CE rather than from numbers invented here.
+        -->
+        <li Class="PatchOperationAddModExtension">
+          <success>Always</success>
+          <xpath>Defs/Vehicles.VehicleTurretDef[defName="RR_Drachenjager_ParticleCannon"]</xpath>
+          <value>
+            <li Class="Vehicles.CETurretDataDefModExtension">
+              <ammoSet>AmmoSet_20x105mmCharged</ammoSet>
+              <!-- It stands forty metres. The muzzle is a long way up. -->
+              <shotHeight>6.5</shotHeight>
+              <speed>140</speed>
+              <sway>0.55</sway>
+              <spread>0.09</spread>
+            </li>
+          </value>
+        </li>
+
+        <li Class="PatchOperationAddModExtension">
+          <success>Always</success>
+          <xpath>Defs/Vehicles.VehicleTurretDef[defName="RR_Drachenjager_WarheadRack"]</xpath>
+          <value>
+            <li Class="Vehicles.CETurretDataDefModExtension">
+              <!--
+                AmmoSet_120mmCannonShell, deliberately, and NOT AmmoSet_40mmRocket
+                which reads like the better thematic fit. That one is defined in
+                CE's ModPatches/Rimsenal Enhanced Vanilla folder, so it only exists
+                for players who also run Rimsenal - this patch would resolve to
+                nothing for everyone else and fail exactly the way it does now.
+                Only ammo sets from CE's own Defs/ tree are safe to name.
+              -->
+              <ammoSet>AmmoSet_120mmCannonShell</ammoSet>
+              <shotHeight>7.0</shotHeight>
+              <speed>55</speed>
+              <sway>1.20</sway>
+              <spread>0.30</spread>
+            </li>
+          </value>
+        </li>
+
+      </operations>
+    </match>
+  </Operation>
+
+</Patch>

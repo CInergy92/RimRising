@@ -282,6 +282,137 @@
         </li>
       </roles>
     </properties>
+    <!--
+      COMPONENTS ARE NOT OPTIONAL. A vehicle's total health is the SUM of these,
+      so with none declared the total is zero and the health tab throws
+      "Total health of VehicleDef RR_Drachenjager is less than or equal to 0"
+      the moment it is opened. Nothing warns at load.
+
+      Vocabulary taken from VVE, which uses depth External/Internal, hitbox sides
+      Front/Back/Left/Right/Body, and MoveSpeed as the mobility category. The
+      Bunsen carries seventeen; this carries twelve, because a walking mech has
+      fewer distinct systems than a tracked vehicle and legs matter more.
+    -->
+    <components>
+      <li>
+        <key>Cockpit</key>
+        <label>cockpit</label>
+        <health>340</health>
+        <depth>Internal</depth>
+        <hitbox><side>Body</side></hitbox>
+      </li>
+      <li>
+        <key>Reactor</key>
+        <label>reactor</label>
+        <health>300</health>
+        <priorityStatEfficiency>true</priorityStatEfficiency>
+        <depth>Internal</depth>
+        <hitbox><side>Body</side></hitbox>
+        <categories>
+          <li>MoveSpeed</li>
+        </categories>
+        <reactors>
+          <li Class="Vehicles.Reactor_Explosive">
+            <indicator>VF_Explosive</indicator>
+            <chance>0.35</chance>
+            <maxHealth>0.2</maxHealth>
+            <radius>8</radius>
+            <damageDef>Bomb</damageDef>
+          </li>
+        </reactors>
+      </li>
+      <li>
+        <key>LeftLeg</key>
+        <label>left leg</label>
+        <health>520</health>
+        <depth>External</depth>
+        <hitbox><side>Left</side></hitbox>
+        <categories>
+          <li>MoveSpeed</li>
+        </categories>
+      </li>
+      <li>
+        <key>RightLeg</key>
+        <label>right leg</label>
+        <health>520</health>
+        <depth>External</depth>
+        <hitbox><side>Right</side></hitbox>
+        <categories>
+          <li>MoveSpeed</li>
+        </categories>
+      </li>
+      <li>
+        <key>Gyro</key>
+        <label>gyroscope</label>
+        <health>180</health>
+        <depth>Internal</depth>
+        <hitbox><side>Body</side></hitbox>
+        <categories>
+          <li>MoveSpeed</li>
+        </categories>
+      </li>
+      <li>
+        <key>SensorMast</key>
+        <label>sensor mast</label>
+        <health>150</health>
+        <depth>External</depth>
+        <hitbox><side>Front</side></hitbox>
+      </li>
+      <li>
+        <key>LeftArms</key>
+        <label>left arm cluster</label>
+        <health>360</health>
+        <depth>External</depth>
+        <hitbox><side>Left</side></hitbox>
+      </li>
+      <li>
+        <key>RightArms</key>
+        <label>right arm cluster</label>
+        <health>360</health>
+        <depth>External</depth>
+        <hitbox><side>Right</side></hitbox>
+      </li>
+      <li>
+        <key>WarheadRack</key>
+        <label>warhead rack</label>
+        <health>200</health>
+        <depth>External</depth>
+        <hitbox><side>Back</side></hitbox>
+        <reactors>
+          <li Class="Vehicles.Reactor_Explosive">
+            <indicator>VF_Explosive</indicator>
+            <chance>0.5</chance>
+            <maxHealth>0.25</maxHealth>
+            <radius>6</radius>
+            <damageDef>Bomb</damageDef>
+          </li>
+        </reactors>
+      </li>
+      <li>
+        <key>FrontPlating</key>
+        <label>front plating</label>
+        <health>460</health>
+        <depth>External</depth>
+        <hitbox><side>Front</side></hitbox>
+      </li>
+      <li>
+        <key>RearPlating</key>
+        <label>rear plating</label>
+        <health>380</health>
+        <depth>External</depth>
+        <hitbox><side>Back</side></hitbox>
+      </li>
+      <li>
+        <key>Frame</key>
+        <label>load frame</label>
+        <health>430</health>
+        <depth>Internal</depth>
+        <hitbox><side>Body</side></hitbox>
+        <categories>
+          <li>MoveSpeed</li>
+        </categories>
+      </li>
+    </components>
     <comps>
       <li Class="Vehicles.CompProperties_VehicleTurrets">
         <turrets>
