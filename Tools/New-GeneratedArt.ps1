@@ -44,6 +44,9 @@ param(
     [string]   $Only,
     [int]      $Variants = 4,
     [string[]] $Install,
+    # Rebuild the contact sheets from candidates already on disk, generating
+    # nothing. Useful after changing how the sheets are captioned or laid out.
+    [switch]   $SheetsOnly,
     [string]   $Server = 'http://127.0.0.1:8188',
     [double]   $ControlStrength = 1.0
 )
@@ -132,8 +135,10 @@ if ($Install) {
 }
 
 # --------------------------------------------------------------- generation mode
-Write-Host 'Rendering flat silhouette masters at 4x...' -ForegroundColor Cyan
-& (Join-Path $PSScriptRoot 'New-ItemIcons.ps1') -ModRoot $ModRoot -OutRoot $silRoot -Scale 4 -Flat | Out-Null
+if (-not $SheetsOnly) {
+    Write-Host 'Rendering flat silhouette masters at 4x...' -ForegroundColor Cyan
+    & (Join-Path $PSScriptRoot 'New-ItemIcons.ps1') -ModRoot $ModRoot -OutRoot $silRoot -Scale 4 -Flat | Out-Null
+}
 
 if (-not (Test-Path $reviewDir)) { $null = New-Item -ItemType Directory -Path $reviewDir -Force }
 
@@ -147,6 +152,11 @@ foreach ($item in $items) {
     Write-Host ("=== {0}" -f $leaf) -ForegroundColor Cyan
 
     $seed = if ($item.PSObject.Properties['Seed']) { [int]$item.Seed } else { 0 }
+    if ($SheetsOnly) {
+        $n = @(Get-ChildItem -Path (Join-Path $reviewDir ("{0}_*.png" -f $leaf)) -File -ErrorAction SilentlyContinue).Count
+        if ($n -eq 0) { Write-Warning "No candidates on disk for $leaf; skipping."; continue }
+    }
+    else {
     $raw = & (Join-Path $PSScriptRoot 'Invoke-ComfyPrompt.ps1') `
                 -Pipeline zcontrol -Server $Server `
                 -InitImage $sil -ControlStrength $ControlStrength `
@@ -161,9 +171,12 @@ foreach ($item in $items) {
         & (Join-Path $PSScriptRoot 'Convert-GeneratedSprite.ps1') `
             -Path $file -OutFile $out -Size $item.Size | Out-Null
     }
+    }
 
-    # Current sprite first, so the sheet is a before/after. It is cell 1; the
-    # candidates are 2..n+1, and -Install numbering is the CANDIDATE number.
+    # Current sprite first, so the sheet is a before/after. Cells are CAPTIONED
+    # rather than numbered by position: the 'before' cell reads "now" and the
+    # candidates read 1..n, so the caption on a cell is exactly what -Install
+    # expects. Numbering by position would make cell N mean candidate N-1.
     $cmp = Join-Path $reviewDir ("_cmp_" + $leaf)
     if (Test-Path $cmp) { Remove-Item $cmp -Recurse -Force }
     $null = New-Item -ItemType Directory -Path $cmp -Force
@@ -172,9 +185,10 @@ foreach ($item in $items) {
     for ($i = 1; $i -le $n; $i++) {
         Copy-Item (Join-Path $reviewDir ("{0}_{1}.png" -f $leaf, $i)) (Join-Path $cmp ("{0}_cand.png" -f $i))
     }
+    $labels = @('now') + (1..$n | ForEach-Object { "$_" })
     $sheet = Join-Path $reviewDir ("sheet_{0}.png" -f $leaf)
     & (Join-Path $PSScriptRoot 'New-ContactSheet.ps1') -Path (Join-Path $cmp '*.png') `
-        -Columns ($n + 1) -Cell $item.Size -OutFile $sheet | Out-Null
+        -Columns ($n + 1) -Cell $item.Size -Labels $labels -OutFile $sheet | Out-Null
     $sheets += $sheet
     Write-Host ("  sheet      : {0}" -f $sheet) -ForegroundColor Green
 }

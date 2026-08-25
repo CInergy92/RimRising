@@ -19,7 +19,12 @@ param(
     [Parameter(Mandatory)] [string[]] $Path,
     [string] $OutFile,
     [int]    $Cell    = 384,
-    [int]    $Columns = 0
+    [int]    $Columns = 0,
+    # Explicit cell captions, in file order. Without this the cells are numbered
+    # 1..n, which silently misleads whenever cell 1 is a 'before' image rather than
+    # a candidate - the caption must match whatever number the caller will be typed
+    # back in, not the cell's position.
+    [string[]] $Labels
 )
 
 Set-StrictMode -Version Latest
@@ -67,8 +72,9 @@ for ($i = 0; $i -lt $files.Count; $i++) {
     } finally { $img.Dispose() }
 
     $g.DrawRectangle($grid, $cx, $cy, $Cell - 1, $Cell - 1)
-    $label = ($i + 1).ToString()
-    $g.FillRectangle($black, $cx + 4, $cy + 4, 34, 32)
+    $label = if ($Labels -and $i -lt $Labels.Count) { $Labels[$i] } else { ($i + 1).ToString() }
+    $lw = [int]$g.MeasureString($label, $font).Width
+    $g.FillRectangle($black, $cx + 4, $cy + 4, ($lw + 12), 32)
     $g.DrawString($label, $font, $white, ($cx + 9), ($cy + 6))
 }
 
