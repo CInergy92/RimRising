@@ -963,6 +963,50 @@ instead of as flavour text.
 
 ---
 
+## A storyteller — the Board of Quality Control
+
+The BQC is a real branch of the Society's government in the reference: it keeps the
+census, sets reproductive bans, regulates the Carvers, monitors the Institute, and
+sterilises the Pinks. It also, explicitly, **manages mortality rates** — cultivating
+conditions that produce a desirable death rate for each Color, on the stated belief
+that civilisation weakens natural selection.
+
+That is already a storyteller's philosophy, which is why it earns a def rather than
+being flavour text.
+
+### The hook is one field, not a difficulty multiplier
+
+RimWorld's adaptive system eases off after a death — Cassandra grants about **30 days**
+of reduced pressure per colonist lost, so a disaster buys recovery time. The Board
+grants **10**, and does not scale it up for larger colonies.
+
+That is the lore expressed as a number. To the Board a death is not a setback; it is
+the figure moving in the correct direction, and relenting is the one thing the
+institution would never do.
+
+Secondary tuning: threat cycles run 6 days on against 3 off (Cassandra runs 4.6
+against 6.0), the start grace period is 10 days rather than 30, and friendly raids
+drop from 15 a year to 9.
+
+**Trade is deliberately untouched.** Strangling the economy would make this
+unplayable rather than hard, and the merchant houses deal with everyone regardless of
+what the Board thinks — which is the entire point of Julii Industries.
+
+### Another tooling blind spot, same shape as the rest
+
+`StorytellerDef.portraitLarge` and `portraitTiny` were invisible to **both** tools.
+The suffix list recognised `texPath`, `iconPath` and `graphicPath` and nothing else,
+so no placeholder was generated and no error was raised — a storyteller with no
+portrait simply shows as a blank slot on the selection page.
+
+Both tools now recognise `portrait`. Negative-tested by deleting the file, which now
+errors instead of passing silently.
+
+This is the same lesson the collection graphics and the directional textures both
+taught: **a texture check only covers the node names it happens to know about.**
+
+---
+
 ## Open questions
 
 Carried in `docs/DESIGN.md` §8.

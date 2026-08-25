@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The Board of Quality Control.
+
+  The BQC is a real branch of the Society's government in the reference: it keeps the
+  census, sets reproductive bans, regulates the Carvers, and monitors the Institute.
+  It also, explicitly, manages MORTALITY RATES - cultivating conditions that produce
+  a desirable death rate for each Color, on the stated belief that civilisation
+  weakens natural selection.
+
+  That is already a storyteller's philosophy, which is why this def exists. It is not
+  a reskin of Cassandra with bigger numbers; the distinctive part is one field.
+
+  THE HOOK: IT DOES NOT LET UP WHEN YOU LOSE PEOPLE.
+
+  RimWorld's adaptive system normally eases off after a death - Cassandra gives about
+  thirty days of reduced pressure per colonist lost, so a disaster buys recovery time.
+  The Board gives a third of that, because to the Board a death is not a setback. It
+  is the system working. Attrition is the policy, and easing off would be the one
+  thing the BQC would never do.
+
+  Everything else is deliberately kept close to Cassandra so the game still functions:
+  traders arrive, quests appear, diseases happen. A storyteller that breaks the
+  economy is not hard, it is broken.
+
+  Structure mirrored from Core/Defs/Storyteller/Storytellers.xml, inheriting
+  BaseStoryteller so all the adaptive curves not overridden here stay vanilla.
+
+  PORTRAIT ART IS PLACEHOLDER, like the rest of the mod's textures.
+-->
+<Defs>
+
+  <StorytellerDef ParentName="BaseStoryteller">
+    <defName>RR_BoardOfQualityControl</defName>
+    <label>the Board of Quality Control</label>
+    <description>The Board keeps the census, and the census is not a list of who is alive. It is a target, and being above it is a condition the Board exists to correct.\n\nIt does not hate you. It has never heard of you. It has a figure for how many people in your situation ought to be breathing by winter, and it is a patient and well-resourced institution.\n\nPressure arrives steadily and does not stop when you are hurt. Losing people buys you very little relief, because to the Board a death is not a disaster - it is the number moving in the correct direction.</description>
+    <portraitLarge>UI/HeroArt/Storytellers/RR_BoardOfQualityControl</portraitLarge>
+    <portraitTiny>UI/HeroArt/Storytellers/RR_BoardOfQualityControlTiny</portraitTiny>
+    <listOrder>60</listOrder>
+
+    <!--
+      THE ONE THAT MATTERS. Vanilla's base gives 30 days of eased pressure per
+      colonist lost, scaling down only at very high population. The Board gives 10,
+      and does not care how big the colony is.
+
+      This is the lore expressed as a number: a desirable mortality rate is the
+      Board's stated goal, so a death is not a reason to relent.
+    -->
+    <adaptDaysLossFromColonistLostByPostPopulation>
+      <points>
+        <li>( 0, 10)</li>
+        <li>(11, 10)</li>
+        <li>(20,  8)</li>
+      </points>
+    </adaptDaysLossFromColonistLostByPostPopulation>
+
+    <!-- A wounded colonist buys almost nothing either. -->
+    <adaptDaysLossFromColonistViolentlyDownedByPopulation>
+      <points>
+        <li>(1, 3)</li>
+        <li>(2, 2)</li>
+        <li>(5, 1)</li>
+      </points>
+    </adaptDaysLossFromColonistViolentlyDownedByPopulation>
+
+    <!-- Ten days of grace instead of thirty. The census is already current. -->
+    <adaptDaysGameStartGraceDays>10</adaptDaysGameStartGraceDays>
+
+    <!-- Reaches full pressure sooner, and keeps climbing past where Cassandra stops. -->
+    <pointsFactorFromDaysPassed>
+      <points>
+        <li>( 8, 0.75)</li>
+        <li>(30, 1.00)</li>
+        <li>(90, 1.15)</li>
+      </points>
+    </pointsFactorFromDaysPassed>
+
+    <comps>
+      <li Class="StorytellerCompProperties_ClassicIntro"/>
+
+      <!--
+        Threats. Cassandra runs 4.6 days on against 6.0 off; the Board runs 6.0 on
+        against 3.0. The breathing room is the thing being removed, not the ceiling -
+        individual raids are not larger, they are simply more often.
+      -->
+      <li Class="StorytellerCompProperties_OnOffCycle">
+        <category>ThreatBig</category>
+        <minDaysPassed>8.0</minDaysPassed>
+        <onDays>6.0</onDays>
+        <offDays>3.0</offDays>
+        <minSpacingDays>1.6</minSpacingDays>
+        <numIncidentsRange>1~2</numIncidentsRange>
+        <forceRaidEnemyBeforeDaysPassed>14</forceRaidEnemyBeforeDaysPassed>
+        <disallowedTargetTags>
+          <li>Map_RaidBeacon</li>
+        </disallowedTargetTags>
+      </li>
+      <li Class="StorytellerCompProperties_ThreatsGenerator">
+        <allowedTargetTags>
+          <li>Map_RaidBeacon</li>
+        </allowedTargetTags>
+        <parms>
+          <allowedThreats>Raids</allowedThreats>
+          <onDays>1.0</onDays>
+          <offDays>0.5</offDays>
+          <minSpacingDays>0.04</minSpacingDays>
+          <numIncidentsRange>1~2</numIncidentsRange>
+          <minThreatPoints>500</minThreatPoints>
+        </parms>
+      </li>
+      <li Class="StorytellerCompProperties_OnOffCycle">
+        <category>ThreatSmall</category>
+        <minDaysPassed>8.0</minDaysPassed>
+        <onDays>6.0</onDays>
+        <offDays>3.0</offDays>
+        <numIncidentsRange>0.3~1</numIncidentsRange>
+        <acceptPercentFactorPerThreatPointsCurve>
+          <points>
+            <li>(800, 1)</li>
+            <li>(2800, 0)</li>
+          </points>
+        </acceptPercentFactorPerThreatPointsCurve>
+      </li>
+
+      <!-- Ordinary life continues. The Board is not a siege. -->
+      <li Class="StorytellerCompProperties_CategoryMTB">
+        <category>Misc</category>
+        <allowedTargetTags>
+          <li>Map_PlayerHome</li>
+        </allowedTargetTags>
+        <minDaysPassed>5</minDaysPassed>
+        <mtbDays>4.8</mtbDays>
+      </li>
+      <li Class="StorytellerCompProperties_ShipChunkDrop"/>
+      <li Class="StorytellerCompProperties_Disease">
+        <category>DiseaseHuman</category>
+        <minDaysPassed>7</minDaysPassed>
+      </li>
+      <li Class="StorytellerCompProperties_Disease">
+        <category>DiseaseAnimal</category>
+        <minDaysPassed>9</minDaysPassed>
+      </li>
+
+      <!--
+        Help comes less often. Allies still relieve you, but the Board's world is
+        one where fewer people are willing to be seen arriving.
+      -->
+      <li Class="StorytellerCompProperties_FactionInteraction">
+        <incident>RaidFriendly</incident>
+        <baseIncidentsPerYear>9</baseIncidentsPerYear>
+        <minSpacingDays>0.4</minSpacingDays>
+        <fullAlliesOnly>true</fullAlliesOnly>
+        <minDanger>High</minDanger>
+      </li>
+      <!--
+        Trade is NOT reduced. Strangling the economy would make this unplayable
+        rather than hard, and the merchant houses deal with everyone regardless of
+        what the Board thinks - which is the entire point of Julii.
+      -->
+      <li Class="StorytellerCompProperties_FactionInteraction">
+        <incident>TraderCaravanArrival</incident>
+        <minDaysPassed>5</minDaysPassed>
+        <baseIncidentsPerYear>5</baseIncidentsPerYear>
+        <minSpacingDays>6</minSpacingDays>
+        <allowedTargetTags>
+          <li>Map_PlayerHome</li>
+        </allowedTargetTags>
+      </li>
+      <li Class="StorytellerCompProperties_FactionInteraction">
+        <incident>VisitorGroup</incident>
+        <minDaysPassed>3</minDaysPassed>
+        <baseIncidentsPerYear>3</baseIncidentsPerYear>
+        <minSpacingDays>5</minSpacingDays>
+        <allowedTargetTags>
+          <li>Map_PlayerHome</li>
+        </allowedTargetTags>
+      </li>
+      <li Class="StorytellerCompProperties_FactionInteraction">
+        <incident>TravelerGroup</incident>
+        <minDaysPassed>1</minDaysPassed>
+        <baseIncidentsPerYear>5</baseIncidentsPerYear>
+        <minSpacingDays>1</minSpacingDays>
+        <allowedTargetTags>
+          <li>Map_PlayerHome</li>
+        </allowedTargetTags>
+      </li>
+
+      <!-- Caravan and temporary maps, unchanged from vanilla. -->
+      <li Class="StorytellerCompProperties_CategoryIndividualMTBByBiome">
+        <category>Misc</category>
+        <allowedTargetTags>
+          <li>Caravan</li>
+          <li>Map_TempIncident</li>
+        </allowedTargetTags>
+      </li>
+      <li Class="StorytellerCompProperties_CategoryIndividualMTBByBiome">
+        <category>ThreatSmall</category>
+        <applyCaravanVisibility>true</applyCaravanVisibility>
+        <allowedTargetTags>
+          <li>Caravan</li>
+          <li>Map_TempIncident</li>
+        </allowedTargetTags>
+      </li>
+      <li Class="StorytellerCompProperties_CategoryIndividualMTBByBiome">
+        <category>ThreatBig</category>
+        <applyCaravanVisibility>true</applyCaravanVisibility>
+        <allowedTargetTags>
+          <li>Caravan</li>
+          <li>Map_TempIncident</li>
+        </allowedTargetTags>
+      </li>
+
+      <!-- Quests, split on Royalty exactly as vanilla does. -->
+      <li Class="StorytellerCompProperties_RandomQuest">
+        <category>GiveQuest</category>
+        <allowedTargetTags>
+          <li>World</li>
+        </allowedTargetTags>
+        <onDays>10</onDays>
+        <numIncidentsRange>1</numIncidentsRange>
+        <acceptFractionByDaysPassedCurve>
+          <points>
+            <li>(8, 0)</li>
+            <li>(15, 1)</li>
+          </points>
+        </acceptFractionByDaysPassedCurve>
+        <minSpacingDays>3</minSpacingDays>
+        <disableIfAnyModActive>
+          <li>Ludeon.RimWorld.Royalty</li>
+        </disableIfAnyModActive>
+      </li>
+      <li Class="StorytellerCompProperties_RandomQuest">
+        <category>GiveQuest</category>
+        <allowedTargetTags>
+          <li>World</li>
+        </allowedTargetTags>
+        <onDays>12</onDays>
+        <numIncidentsRange>2</numIncidentsRange>
+        <acceptFractionByDaysPassedCurve>
+          <points>
+            <li>(8, 0)</li>
+            <li>(15, 1)</li>
+          </points>
+        </acceptFractionByDaysPassedCurve>
+        <minSpacingDays>3</minSpacingDays>
+        <enableIfAnyModActive>
+          <li>Ludeon.RimWorld.Royalty</li>
+        </enableIfAnyModActive>
+      </li>
+
+      <li Class="StorytellerCompProperties_CategoryMTB">
+        <category>Misc</category>
+        <allowedTargetTags>
+          <li>World</li>
+        </allowedTargetTags>
+        <minDaysPassed>15</minDaysPassed>
+        <mtbDays>15</mtbDays>
+      </li>
+      <li Class="StorytellerCompProperties_OnOffCycle">
+        <incident>OrbitalTraderArrival</incident>
+        <onDays>7</onDays>
+        <offDays>8</offDays>
+        <numIncidentsRange>1</numIncidentsRange>
+      </li>
+      <li Class="StorytellerCompProperties_Triggered">
+        <incident>StrangerInBlackJoin</incident>
+        <delayTicks>180</delayTicks>
+      </li>
+    </comps>
+  </StorytellerDef>
+
+</Defs>

@@ -71,6 +71,10 @@ $script:SizeRules = @(
     @{ Prefix = 'Things/Pawn';                       Size = 256 }
     @{ Prefix = 'Things/Apparel';                    Size = 256 }
     @{ Prefix = 'Things/Building';                   Size = 128 }
+    # Storyteller portraits. Vanilla's are tall rectangles rather than squares;
+    # this generator only writes squares, so these are placeholders in shape as
+    # well as in content. Big enough to be legible on the selection page.
+    @{ Prefix = 'UI/HeroArt';                        Size = 256 }
     @{ Prefix = 'UI';                                Size = 128 }
 )
 $script:DefaultSize = 128
@@ -234,7 +238,11 @@ function New-PlaceholderPng {
 
 # ------------------------------------------------- collect referenced textures
 
-$script:TexturePathSuffixes = @('texpath', 'iconpath', 'graphicpath')
+# 'portrait' covers StorytellerDef.portraitLarge / portraitTiny. Left out
+# originally, so a storyteller's art was invisible to BOTH tools: nothing
+# generated it and nothing complained it was missing. A storyteller with no
+# portrait shows as a blank slot on the selection page.
+$script:TexturePathSuffixes = @('texpath', 'iconpath', 'graphicpath', 'portrait', 'portraitlarge', 'portraittiny')
 
 function Test-IsTexturePathNode {
     param([string] $NodeName)

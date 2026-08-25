@@ -606,7 +606,11 @@ function Build-DependencyGeneIndex {
 # Biotech and Ideology Defs: texPath, iconPath, uiIconPath, wornGraphicPath,
 # graphicPath, factionIconPath, activateTexPath, and many more all share one of
 # these suffixes, so we match on suffix rather than enumerating.
-$script:TexturePathSuffixes = @('texpath', 'iconpath', 'graphicpath')
+# 'portrait' covers StorytellerDef.portraitLarge / portraitTiny. Left out
+# originally, so a storyteller's art was invisible to BOTH tools: nothing
+# generated it and nothing complained it was missing. A storyteller with no
+# portrait shows as a blank slot on the selection page.
+$script:TexturePathSuffixes = @('texpath', 'iconpath', 'graphicpath', 'portrait', 'portraitlarge', 'portraittiny')
 
 function Test-IsTexturePathNode {
     param([string] $NodeName)
