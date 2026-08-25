@@ -397,6 +397,51 @@ examples. There is no `XenotypeDef.cs`, no `GeneDef.cs`. Field verification come
 or from decompiling `RimWorldWin64_Data\Managed\Assembly-CSharp.dll`. No decompiler is installed;
 `dotnet tool install -g ilspycmd` if one becomes necessary.
 
+### associatedMemes does not make a precept happen
+
+**This shipped two features completely inert.** `associatedMemes` on a `PreceptDef`
+makes it *eligible* for an ideoligion carrying that meme. It does **not** make
+generation pick it, and with no "none" option on the issue a generated ideoligion
+can carry the meme and take no stance on that issue at all.
+
+The issue still appears in the ideoligion UI - every issue does - so the omission
+looks like it worked. The razor lock and the Color ladder both passed inspection
+this way while doing nothing.
+
+`requireOne` on the **MemeDef** is the lever that forces the pick: a list of lists,
+one precept taken from each inner list. Mirrored from Ideology's
+`Memes_GroupRelation.xml`. `Test-ModDefs.ps1` now enforces this
+(`PreceptNotGuaranteed`).
+
+### A requireOne group can be unsatisfiable
+
+`IdeoFoundation` drops any precept whose `requiredMemes` are absent. So a
+`requireOne` group whose every member needs some *other* meme is satisfied by
+nothing, silently.
+
+Vanilla's `Scarification_Minor`, `_Heavy` and `_Extreme` all require `PainIsVirtue`.
+Requiring scarification from a meme that does not also supply `PainIsVirtue` yields
+no scarification precept at all. (`Scarification_Horrible` is the inverse - it
+*conflicts* with `PainIsVirtue`.)
+
+Where the required meme is unwanted, clone the precept without the gate rather than
+patching `requiredMemes` off vanilla's - see `Precepts_Scarification.xml`. Patching
+vanilla would hand the content to every other ideoligion in the player's game.
+Checked by `RequireOneUnsatisfiable`.
+
+### Never raise a HistoryEvent during pawn generation
+
+RimWorld fabricates backstory relationships and hands out weapons while generating
+pawns, long before a player faction exists. `IdeoUtility.Notify_HistoryEvent` walks
+caravans, maps and the player faction, so raising an event then throws.
+
+`HistoryEventsManager` catches and logs it, so nothing breaks - but the log fills at
+every world creation and **the trace stops at the catch site**, so nothing in it
+points at the mod responsible.
+
+Guard with `ProgramState.Playing` plus `Faction.OfPlayerSilentFail != null`.
+Checking `Find.HistoryEventsManager` is not enough; it already exists by then.
+
 ### Heredocs eat backslashes in this environment
 
 Writing PowerShell through a bash heredoc silently strips backslashes, even a quoted
