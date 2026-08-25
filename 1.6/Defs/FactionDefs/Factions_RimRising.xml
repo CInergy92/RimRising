@@ -131,6 +131,7 @@
         <kindDef>Combat</kindDef>
         <commonality>100</commonality>
         <options>
+          <RR_Society_Green_Bellator>2</RR_Society_Green_Bellator>
           <RR_Society_Legionary>10</RR_Society_Legionary>
           <RR_Society_Obsidian_Knight>3</RR_Society_Obsidian_Knight>
           <RR_Society_Lurcher>1.5</RR_Society_Lurcher>
@@ -159,6 +160,12 @@
       <li>
         <kindDef>Peaceful</kindDef>
         <options>
+          <RR_Society_White_Arbiter>2</RR_Society_White_Arbiter>
+          <RR_Society_Blue_Helmsman>3</RR_Society_Blue_Helmsman>
+          <RR_Society_Violet_Artisan>2</RR_Society_Violet_Artisan>
+          <RR_Society_Pink_Companion>3</RR_Society_Pink_Companion>
+          <RR_Society_Pink_Rose>0.4</RR_Society_Pink_Rose>
+          <RR_Society_Copper_Official>3</RR_Society_Copper_Official>
           <RR_Society_Copper_Official>6</RR_Society_Copper_Official>
           <RR_Society_Yellow_Medicus>4</RR_Society_Yellow_Medicus>
           <RR_Society_Silver_Factor>3</RR_Society_Silver_Factor>
@@ -348,6 +355,11 @@
       <li>
         <kindDef>Peaceful</kindDef>
         <options>
+          <RR_Society_White_Arbiter>2</RR_Society_White_Arbiter>
+          <RR_Society_Blue_Helmsman>3</RR_Society_Blue_Helmsman>
+          <RR_Society_Violet_Artisan>2</RR_Society_Violet_Artisan>
+          <RR_Society_Pink_Companion>3</RR_Society_Pink_Companion>
+          <RR_Society_Copper_Official>3</RR_Society_Copper_Official>
           <RR_Society_Copper_Official>5</RR_Society_Copper_Official>
           <RR_Society_Red_Laborer>8</RR_Society_Red_Laborer>
           <RR_Society_Brown_Servant>5</RR_Society_Brown_Servant>

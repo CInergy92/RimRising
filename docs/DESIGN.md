@@ -474,6 +474,39 @@ per-Color one, so it belongs with the Sons of Ares rather than here.
 
 ---
 
+## 8c. Resolved by the user — Pink
+
+Pinks are a lowColor and the **second-lowest caste**, above Red only. The ladder was
+corrected for this: Brown 120, Pink 130, Red 140. Rose follows its parent at 132.
+
+The Society files them as **property, bought rather than employed**. RimWorld already
+models that through Ideology's slavery, so nothing needed inventing and nothing
+needed depicting.
+
+What the Gardens actually train is emotional read — body language, empathy,
+detecting a lie — which is why the Solar Republic later used Pinks as field lie
+detectors when equipment was unavailable. That is the part of the caste that is
+expressible in this game, and it is what the pawn kind reflects: Social 13–20,
+Artistic, and Melee floored at 0–2.
+
+Physiology from the reference, already carried by the xenotype: bred for beauty and
+correspondingly fragile — `Beauty_Beautiful`, `Delicate`, `Pain_Extra`,
+`MeleeDamage_Weak`. Added on this pass: **`Sterile`**, because Pinks under the
+Society are chemically sterilised and new generations come out of breeding tubes.
+
+**Roses** are the rare, ruinously expensive tier, which the reference puts on a par
+with a Stained Obsidian. Weighted at 0.4 against the ordinary companion's 3.
+
+Not modelled, deliberately: **Cupid's Kiss**, the conditioning implant that inflicts
+constant pain until a Pink obeys. It is expressible — it is just a hediff — but it is
+a torture device fitted to children, and putting a working version of it in a colony
+sim is a different thing from describing it in a wiki. Left out unless the user asks.
+
+Adult content stays out of the base mod entirely; the RimJobWorld integration remains
+optional and unbuilt.
+
+---
+
 ## 8. Open questions for the user
 
 ### Resolved in play

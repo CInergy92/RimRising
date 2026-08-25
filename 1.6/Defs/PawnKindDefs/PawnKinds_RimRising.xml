@@ -747,4 +747,184 @@
     </xenotypeSet>
   </PawnKindDef>
 
+  <!-- ==================== the Colors that had no kind ===================== -->
+  <!--
+    White, Blue, Violet and Pink existed as xenotypes but could never spawn.
+
+    EVERY pawn kind in this file sets useFactionXenotypes false and pins its own
+    Color, which means a FactionDef's xenotypeSet is never consulted for any of
+    them - those carefully weighted faction tables were dead data. A Color with no
+    pawn kind therefore appears nowhere at all, and nothing says so: the xenotype
+    loads, the faction lists it, and no pawn is ever made from it.
+
+    That is why the Copper and Blue name prefixes looked broken. They were not;
+    Blue had no kind at all, and Copper had exactly one that appears only in
+    peaceful groups.
+  -->
+
+  <PawnKindDef ParentName="RR_ColorPawnBase">
+    <defName>RR_Society_White_Arbiter</defName>
+    <label>arbiter</label>
+    <defaultFactionDef>RR_Society</defaultFactionDef>
+    <combatPower>34</combatPower>
+    <apparelColor>(238,238,238)</apparelColor>
+    <apparelMoney>1400~2800</apparelMoney>
+    <weaponMoney>200~500</weaponMoney>
+    <apparelTags>
+      <li>IndustrialAdvanced</li>
+    </apparelTags>
+    <weaponTags>
+      <li>Autopistol</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Social</skill><range>12~18</range></li>
+      <li><skill>Intellectual</skill><range>10~16</range></li>
+      <li><skill>Artistic</skill><range>6~12</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_White>1</RR_White>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <PawnKindDef ParentName="RR_ColorPawnBase">
+    <defName>RR_Society_Blue_Helmsman</defName>
+    <label>helmsman</label>
+    <defaultFactionDef>RR_Society</defaultFactionDef>
+    <combatPower>30</combatPower>
+    <apparelColor>(74,124,196)</apparelColor>
+    <apparelMoney>900~1900</apparelMoney>
+    <weaponMoney>200~500</weaponMoney>
+    <apparelTags>
+      <li>IndustrialAdvanced</li>
+      <li>SpacerMilitary</li>
+    </apparelTags>
+    <weaponTags>
+      <li>Autopistol</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Intellectual</skill><range>12~18</range></li>
+      <li><skill>Shooting</skill><range>6~11</range></li>
+      <li><skill>Social</skill><range>0~3</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Blue>1</RR_Blue>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <PawnKindDef ParentName="RR_ColorPawnBase">
+    <defName>RR_Society_Violet_Artisan</defName>
+    <label>artisan</label>
+    <defaultFactionDef>RR_Society</defaultFactionDef>
+    <combatPower>26</combatPower>
+    <apparelColor>(148,90,190)</apparelColor>
+    <apparelMoney>800~1800</apparelMoney>
+    <apparelTags>
+      <li>IndustrialAdvanced</li>
+    </apparelTags>
+    <skills>
+      <li><skill>Artistic</skill><range>13~19</range></li>
+      <li><skill>Social</skill><range>7~13</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Violet>1</RR_Violet>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <!--
+    Pink, as the Society files them: household service, and legally property.
+
+    The reference is explicit that Pinks are bought rather than employed, and
+    RimWorld already models exactly that through Ideology's slavery, so nothing
+    needed inventing and nothing needed depicting. What the Gardens actually train
+    is emotional read - body language, empathy, detecting a lie - which is why the
+    Solar Republic later used Pinks as field lie-detectors. That reads as Social,
+    and it is the part of the caste that is expressible in this game.
+  -->
+  <PawnKindDef ParentName="RR_ColorPawnBase">
+    <defName>RR_Society_Pink_Companion</defName>
+    <label>companion</label>
+    <defaultFactionDef>RR_Society</defaultFactionDef>
+    <combatPower>18</combatPower>
+    <apparelColor>(236,150,190)</apparelColor>
+    <apparelMoney>700~1600</apparelMoney>
+    <apparelTags>
+      <li>IndustrialAdvanced</li>
+    </apparelTags>
+    <skills>
+      <li><skill>Social</skill><range>13~20</range></li>
+      <li><skill>Artistic</skill><range>8~14</range></li>
+      <li><skill>Melee</skill><range>0~2</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Pink>1</RR_Pink>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <!--
+    The two sub-strains the reachability check caught after the four above. Both
+    had existed as xenotypes since Milestone 2 and could never once have spawned.
+  -->
+
+  <PawnKindDef ParentName="RR_ColorPawnBase">
+    <defName>RR_Society_Green_Bellator</defName>
+    <label>fulgur bellator</label>
+    <defaultFactionDef>RR_Society</defaultFactionDef>
+    <combatPower>52</combatPower>
+    <apparelColor>(70,150,90)</apparelColor>
+    <apparelMoney>1000~2100</apparelMoney>
+    <weaponMoney>600~1400</weaponMoney>
+    <apparelTags>
+      <li>IndustrialAdvanced</li>
+      <li>SpacerMilitary</li>
+    </apparelTags>
+    <weaponTags>
+      <li>SimpleGun</li>
+      <li>IndustrialGunAdvanced</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Intellectual</skill><range>11~17</range></li>
+      <li><skill>Crafting</skill><range>9~15</range></li>
+      <li><skill>Shooting</skill><range>6~11</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Green_FulgurBellator>1</RR_Green_FulgurBellator>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
+  <!--
+    A Rose is rare and ruinously expensive, which the reference puts on a par with
+    a Stained Obsidian. Weighted accordingly wherever it appears.
+  -->
+  <PawnKindDef ParentName="RR_ColorPawnBase">
+    <defName>RR_Society_Pink_Rose</defName>
+    <label>rose</label>
+    <defaultFactionDef>RR_Society</defaultFactionDef>
+    <combatPower>20</combatPower>
+    <apparelColor>(246,176,206)</apparelColor>
+    <apparelMoney>2200~4200</apparelMoney>
+    <apparelTags>
+      <li>IndustrialAdvanced</li>
+    </apparelTags>
+    <skills>
+      <li><skill>Social</skill><range>16~20</range></li>
+      <li><skill>Artistic</skill><range>12~18</range></li>
+      <li><skill>Melee</skill><range>0~2</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Pink_Rose>1</RR_Pink_Rose>
+      </xenotypeChances>
+    </xenotypeSet>
+  </PawnKindDef>
+
 </Defs>

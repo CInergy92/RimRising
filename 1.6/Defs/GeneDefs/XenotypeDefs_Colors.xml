@@ -453,7 +453,7 @@
     <description>Pinks are engineered for company - for reading a room faster than anyone in it, for grace, for the performance of ease. It is genuine skill, and the Society is careful never to call it that.\n\nThey were also built breakable. Slight frames, low pain tolerance, no capacity for a fight worth the name. A caste kept for its presence is not permitted the means to leave.</description>
     <descriptionShort>Social functionaries, engineered for beauty, grace, and reading people. Genuinely skilled, and deliberately built fragile.</descriptionShort>
     <iconPath>UI/Icons/Xenotypes/RR_Pink</iconPath>
-    <displayPriority>120</displayPriority>
+    <displayPriority>130</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>1.5</factionlessGenerationWeight>
     <genes>
@@ -466,6 +466,7 @@
       <li>AptitudeTerrible_Melee</li>
       <li>AptitudePoor_Mining</li>
       <li>Beauty_Beautiful</li>
+      <li>Sterile</li>
       <li>Delicate</li>
       <li>Pain_Extra</li>
       <li>MeleeDamage_Weak</li>
@@ -478,7 +479,7 @@
     <description>Browns cook, clean, carry, and keep house for every Color above them, which is all of them. The work is endless and almost entirely invisible, and it is performed by people engineered to be placid about that.\n\nThey are hardy in the small ways that matter for the job - iron stomachs, even tempers, an unusual tolerance for being ignored.</description>
     <descriptionShort>Servants and cooks, engineered placid and hardy with iron stomachs. Capable in the kitchen and the household, and nowhere else.</descriptionShort>
     <iconPath>UI/Icons/Xenotypes/RR_Brown</iconPath>
-    <displayPriority>130</displayPriority>
+    <displayPriority>120</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>6</factionlessGenerationWeight>
     <genes>
@@ -682,7 +683,7 @@
     <description>The Gardens produce a great many Pinks and, occasionally, a Rose. The difference is not effort - every Pink is trained past exhaustion - but something in the stock that the trainers can recognise early and the buyers will ruin themselves over.\n\nA Rose reads a room the way a Blue reads a ship. They are priced accordingly, and the pricing is the point: to own one is to be seen owning one.</description>
     <descriptionShort>The finest Pinks, rare and ruinously expensive. Unmatched at reading and moving a room, and as fragile as the rest of their caste.</descriptionShort>
     <iconPath>UI/Icons/Xenotypes/RR_Pink_Rose</iconPath>
-    <displayPriority>122</displayPriority>
+    <displayPriority>132</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>0.25</factionlessGenerationWeight>
     <genes>

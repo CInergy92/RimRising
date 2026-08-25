@@ -811,6 +811,11 @@ $modMemes         = [System.Collections.Generic.HashSet[string]]::new([StringCom
 $memeGuaranteed   = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 $preceptMemeRefs  = [System.Collections.Generic.List[object]]::new()
 $requireOneGroups = [System.Collections.Generic.List[object]]::new()
+
+# Every xenotype we define, and every xenotype some PawnKindDef can actually
+# produce. A Color in the first set and not the second can never spawn.
+$modXenotypes      = [System.Collections.Generic.List[object]]::new()
+$kindProducedXenos = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 $modPreceptReqMemes = @{}
 
 # Vehicle Framework's VehicleDef <-> VehicleBuildDef pair. They must point at each
@@ -998,6 +1003,7 @@ foreach ($file in $xmlFiles) {
             # with zero errors and are only visible by looking at a pawn's face,
             # which is exactly the kind of silent failure this script exists for.
             if ($node.LocalName -eq 'XenotypeDef' -and $dnNode) {
+                $modXenotypes.Add([pscustomobject]@{ File = $rel; Name = $dnNode.InnerText.Trim() })
                 $xt = $dnNode.InnerText.Trim()
                 $genesNode = $node.SelectSingleNode('genes')
                 if ($genesNode) {
@@ -1089,6 +1095,11 @@ foreach ($file in $xmlFiles) {
             }
 
             if ($node.LocalName -eq 'PawnKindDef' -and $dnNode) {
+                foreach ($xc in $node.SelectNodes('xenotypeSet/xenotypeChances/*')) {
+                    if ($xc.NodeType -eq [System.Xml.XmlNodeType]::Element) {
+                        [void]$kindProducedXenos.Add($xc.LocalName)
+                    }
+                }
                 $kindName = $dnNode.InnerText.Trim()
                 foreach ($li in $node.SelectNodes('weaponTags/li')) {
                     if ($li.InnerText) {
@@ -1364,6 +1375,22 @@ foreach ($ref in $listRefs) {
             }
         }
     }
+}
+
+# --- xenotype reachability ----------------------------------------------------
+#
+# Every pawn kind in this mod sets useFactionXenotypes false and pins its own
+# Color, so a FactionDef's xenotypeSet is NEVER consulted for our kinds. A Color
+# with no pawn kind therefore appears nowhere in the game at all - and nothing
+# reports it, because the xenotype loads cleanly and the faction happily lists it
+# in a table that is never read.
+#
+# Found the hard way: White, Blue, Violet and Pink shipped unreachable, which
+# presented as their name prefixes "not working".
+foreach ($x in $modXenotypes) {
+    if ($kindProducedXenos.Contains($x.Name)) { continue }
+    Add-Problem -Severity ERROR -Check 'XenotypeUnreachable' -File $x.File `
+        -Message ("XenotypeDef '{0}' is produced by no PawnKindDef. Our kinds all set useFactionXenotypes false, so a faction xenotypeSet cannot spawn it either - it will never appear on any pawn." -f $x.Name)
 }
 
 # --- requireOne satisfiability ------------------------------------------------
