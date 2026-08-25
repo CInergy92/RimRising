@@ -138,7 +138,7 @@ if ($Pipeline -eq 'zcontrol') {
         '64' = @{ class_type = 'ModelPatchLoader'; inputs = @{ name = $patch } }
         '58' = @{ class_type = 'LoadImage'; inputs = @{ image = $uploaded } }
         '62' = @{ class_type = 'ImageScaleToMaxDimension'; inputs = @{
-                    image = @('58', 0); upscale_method = 'lanczos'; max_dimension = $Width } }
+                    image = @('58', 0); upscale_method = 'lanczos'; largest_size = $Width } }
         # ControlNet patches the raw UNet; the AuraFlow shift goes AFTER it.
         '60' = @{ class_type = 'QwenImageDiffsynthControlnet'; inputs = @{
                     model = @('46', 0); model_patch = @('64', 0); vae = @('40', 0)
@@ -159,7 +159,7 @@ if ($Pipeline -eq 'zcontrol') {
     }
     if ($NoCanny) {
         $prompt['57'] = @{ class_type = 'ImageScaleToMaxDimension'; inputs = @{
-                            image = @('58', 0); upscale_method = 'lanczos'; max_dimension = $Width } }
+                            image = @('58', 0); upscale_method = 'lanczos'; largest_size = $Width } }
         $prompt.Remove('62')
     } else {
         $prompt['57'] = @{ class_type = 'Canny'; inputs = @{
