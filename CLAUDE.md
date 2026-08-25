@@ -217,6 +217,27 @@ Also: xenogerm implantation grants **xenogenes**, which are not inherited, while
 xenotypes pass on **endogenes**. So a carved pawn's children inherit their birth Color, not the
 carved one. That matches the setting exactly. See `docs/DESIGN.md`.
 
+### What it actually takes to assemble a Gold xenogerm
+
+Verified against `Building_GeneExtractor`, `GeneUtility.GenerateGeneSet` and the
+gene processor def. Carving a Gold the legitimate way is a late-game institutional
+project, which suits the setting but is worth knowing before promising it:
+
+| Requirement | Why |
+|---|---|
+| **22 gene processors** | `GeneticComplexityIncrease` is **2** each on a base of 6. Gold is complexity 49, so 6 + 2x22 = 50. |
+| Archogenetics research + **archite capsules** | Gold carries `ArchiteMetabolism` (arc 2) and `EBSG_ArchiteWoundHealing` (arc 2). |
+| Archite genepacks **bought from traders** | The extractor scores any gene with `biostatArc > 0` at weight **zero**. Archite genes can never be extracted from a captured Gold, only traded for. |
+| Many extractions | `Building_GeneExtractor` takes a random weighted SUBSET per use, not the whole genome. |
+
+Metabolism is not a problem: Gold is met -4, inside the widened -10..5 range.
+
+**Consequence for design:** vanilla xenogerm assembly is a valid carving path but an
+enormously long one, and it is gated behind trade for the archite genes. If carving is
+meant to be a story beat rather than a megaproject, RimRising needs its own shorter
+route - a Carver recipe that grants a Color directly. That is a design decision, not a
+technical one.
+
 ### U1, answered: a carved pawn reads as BASELINER
 
 Settled by decompiling `GeneUtility.ImplantXenogermItem`, not by guessing:
