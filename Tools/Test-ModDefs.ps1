@@ -786,6 +786,13 @@ $modApparelTags = [System.Collections.Generic.HashSet[string]]::new([StringCompa
 $tagRefs = [System.Collections.Generic.List[object]]::new()
 $ammoSetRefs = [System.Collections.Generic.List[object]]::new()
 
+# Memes we own, and every precept they GUARANTEE through requireOne or
+# selectOneOrNone. Compared after the scan against the precepts that merely claim
+# the meme through associatedMemes.
+$modMemes         = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+$memeGuaranteed   = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+$preceptMemeRefs  = [System.Collections.Generic.List[object]]::new()
+
 # Vehicle Framework's VehicleDef <-> VehicleBuildDef pair. They must point at each
 # other and neither direction is optional.
 $vehicleDefs   = @{}   # defName -> buildDef it names
@@ -856,6 +863,25 @@ foreach ($file in $xmlFiles) {
             # passes a null path to ContentFinder and throws while DRAWING the world
             # map. It presents to the player as "the planet will not generate", with
             # nothing in the startup log to explain it.
+            if ($node.LocalName -eq 'MemeDef' -and $dnNode) {
+                [void]$modMemes.Add($dnNode.InnerText.Trim())
+                foreach ($li in $node.SelectNodes('requireOne/li/li')) {
+                    if ($li.InnerText) { [void]$memeGuaranteed.Add($li.InnerText.Trim()) }
+                }
+                foreach ($li in $node.SelectNodes('selectOneOrNone/precepts/li')) {
+                    if ($li.InnerText) { [void]$memeGuaranteed.Add($li.InnerText.Trim()) }
+                }
+            }
+
+            if ($node.LocalName -eq 'PreceptDef' -and $dnNode) {
+                foreach ($li in $node.SelectNodes('associatedMemes/li')) {
+                    if (-not $li.InnerText) { continue }
+                    $preceptMemeRefs.Add([pscustomobject]@{
+                        File = $rel; Precept = $dnNode.InnerText.Trim(); Meme = $li.InnerText.Trim()
+                    })
+                }
+            }
+
             if ($node.LocalName -eq 'FactionDef') {
                 $isAbstract = $node.Attributes['Abstract']
                 $hidden = $node.SelectSingleNode('hidden')
@@ -1301,6 +1327,28 @@ foreach ($ref in $listRefs) {
             }
         }
     }
+}
+
+# --- precept guarantee resolution ---------------------------------------------
+#
+# associatedMemes on a PreceptDef makes it ELIGIBLE for an ideoligion carrying
+# that meme. It does NOT make ideoligion generation pick it. With no "none" option
+# on the issue, a generated ideoligion can carry the meme and take no stance on
+# that issue at all - so the precept never applies, and nothing anywhere says so.
+#
+# This is how the razor lock and the Color ladder both shipped inert: the issue
+# still shows in the ideoligion UI (every issue does), so the omission looks like
+# it worked. requireOne on the MemeDef is the vanilla lever that forces the pick.
+#
+# Only our own memes are checked. A precept associated with a VANILLA meme cannot
+# be guaranteed from here, and that is a legitimate design choice rather than a
+# fault.
+foreach ($ref in $preceptMemeRefs) {
+    if (-not $modMemes.Contains($ref.Meme)) { continue }
+    if ($memeGuaranteed.Contains($ref.Precept)) { continue }
+
+    Add-Problem -Severity ERROR -Check 'PreceptNotGuaranteed' -File $ref.File `
+        -Message ("PreceptDef '{0}' claims meme '{1}' through associatedMemes, but that meme's <requireOne> never lists it. Generation may take the meme and skip this precept entirely, leaving it inert with no error. Add it to requireOne, or to selectOneOrNone if it is meant to be optional." -f $ref.Precept, $ref.Meme)
 }
 
 # --- ammoSet resolution -------------------------------------------------------

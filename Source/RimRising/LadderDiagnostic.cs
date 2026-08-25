@@ -63,6 +63,40 @@ namespace RimRising
             }
         }
 
+        // Reports on the base-class gate, which is where the chain actually stops.
+        public static int RemainingGateReports = 3;
+
+        /// <summary>
+        /// Prints whether the pawn's ideoligion holds a precept naming this thought,
+        /// and if not, what precepts it does hold - which distinguishes "wrong
+        /// ideoligion" from "precept present but cache not rebuilt".
+        /// </summary>
+        public static void ReportGate(Pawn p, Ideo ideo, ThoughtDef def)
+        {
+            if (ideo == null)
+            {
+                Log.Warning("[RimRising] ladder gate: " + (p?.LabelShort ?? "?") + " has NO IDEO.");
+                return;
+            }
+
+            bool held = ideo.cachedPossibleSituationalThoughts != null &&
+                        ideo.cachedPossibleSituationalThoughts.Contains(def);
+
+            string precepts = string.Join(", ", ideo.PreceptsListForReading
+                .Select(pr => pr.def.defName)
+                .Where(n => n.StartsWith("RR_"))
+                .DefaultIfEmpty("<none of ours>"));
+
+            string memes = string.Join(", ", ideo.memes
+                .Select(m => m.defName)
+                .Where(n => n.StartsWith("RR_"))
+                .DefaultIfEmpty("<none of ours>"));
+
+            Log.Message(string.Format(
+                "[RimRising] ladder gate: pawn={0} ideo='{1}' holdsThought={2} | our memes: {3} | our precepts: {4}",
+                p?.LabelShort, ideo.name, held, memes, precepts));
+        }
+
         // Counts down the number of per-evaluation reports still to print.
         public static int RemainingCallReports = 3;
 

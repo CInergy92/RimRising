@@ -67,6 +67,28 @@ namespace RimRising
         /// stage(a,b) + stage(b,a) == 6 an identity rather than something that has
         /// to be re-checked whenever a Color is added or the ladder reordered.
         /// </summary>
+        /// <summary>
+        /// Diagnostic only. The startup report proved this ThoughtDef reaches
+        /// RimWorld's candidate list, and no per-call line ever appeared - so
+        /// ShouldHaveThought is never reached, and the gate that stops it is in the
+        /// base class:
+        ///
+        ///     if (!ideo.cachedPossibleSituationalThoughts.Contains(def))
+        ///         return ThoughtState.Inactive;
+        ///
+        /// This measures that gate rather than reasoning about it.
+        /// </summary>
+        protected override ThoughtState CurrentSocialStateInternal(Pawn p, Pawn otherPawn)
+        {
+            if (LadderDiagnostic.RemainingGateReports > 0)
+            {
+                LadderDiagnostic.RemainingGateReports--;
+                Ideo ideo = p?.Ideo;
+                LadderDiagnostic.ReportGate(p, ideo, def);
+            }
+            return base.CurrentSocialStateInternal(p, otherPawn);
+        }
+
         protected override ThoughtState ShouldHaveThought(Pawn p, Pawn otherPawn)
         {
             // Not about oneself, and not about anything that cannot hold a Color.

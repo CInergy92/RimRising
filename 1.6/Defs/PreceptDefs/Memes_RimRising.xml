@@ -86,6 +86,34 @@
         </rulesStrings>
       </rules>
     </descriptionMaker>
+    <!--
+      GUARANTEES THE PRECEPTS ARE ACTUALLY TAKEN, and leaving it out is why the
+      razor lock and the Color ladder both did nothing in play.
+
+      associatedMemes on a PreceptDef only makes it ELIGIBLE for an ideoligion
+      carrying that meme. It does not make generation pick it, and with no "none"
+      option on the issue an ideoligion could carry RR_ColorHierarchy and simply
+      never take a stance on razors or deference at all. The issue still appears
+      in the ideoligion UI - every issue does - which makes the omission look like
+      it worked.
+
+      requireOne is the vanilla lever for this: a list of lists, each inner list a
+      set from which the ideoligion MUST take exactly one. Mirrored from
+      Ideology/Defs/MemeDefs/Memes_GroupRelation.xml, which uses it to force a
+      slavery stance and an execution stance.
+    -->
+    <requireOne>
+      <li>
+        <li>RR_RazorBearing_GoldOnly</li>
+      </li>
+      <li>
+        <li>RR_ColorDeference_Graded</li>
+      </li>
+      <li>
+        <li>RR_InterColorUnion_Defect</li>
+        <li>RR_InterColorUnion_Unbecoming</li>
+      </li>
+    </requireOne>
   </MemeDef>
 
   <!-- ========================== the obsidian tribes ======================= -->
@@ -135,6 +163,27 @@
         </rulesStrings>
       </rules>
     </descriptionMaker>
+    <!--
+      GUARANTEES THE PRECEPTS ARE ACTUALLY TAKEN, and leaving it out is why the
+      razor lock and the Color ladder both did nothing in play.
+
+      associatedMemes on a PreceptDef only makes it ELIGIBLE for an ideoligion
+      carrying that meme. It does not make generation pick it, and with no "none"
+      option on the issue an ideoligion could carry RR_ColorHierarchy and simply
+      never take a stance on razors or deference at all. The issue still appears
+      in the ideoligion UI - every issue does - which makes the omission look like
+      it worked.
+
+      requireOne is the vanilla lever for this: a list of lists, each inner list a
+      set from which the ideoligion MUST take exactly one. Mirrored from
+      Ideology/Defs/MemeDefs/Memes_GroupRelation.xml, which uses it to force a
+      slavery stance and an execution stance.
+    -->
+    <requireOne>
+      <li>
+        <li>RR_ColorDeference_Graded</li>
+      </li>
+    </requireOne>
   </MemeDef>
 
   <!-- =========================== the resistance =========================== -->
@@ -170,6 +219,33 @@
         </rulesStrings>
       </rules>
     </descriptionMaker>
+    <!--
+      GUARANTEES THE PRECEPTS ARE ACTUALLY TAKEN, and leaving it out is why the
+      razor lock and the Color ladder both did nothing in play.
+
+      associatedMemes on a PreceptDef only makes it ELIGIBLE for an ideoligion
+      carrying that meme. It does not make generation pick it, and with no "none"
+      option on the issue an ideoligion could carry RR_ColorHierarchy and simply
+      never take a stance on razors or deference at all. The issue still appears
+      in the ideoligion UI - every issue does - which makes the omission look like
+      it worked.
+
+      requireOne is the vanilla lever for this: a list of lists, each inner list a
+      set from which the ideoligion MUST take exactly one. Mirrored from
+      Ideology/Defs/MemeDefs/Memes_GroupRelation.xml, which uses it to force a
+      slavery stance and an execution stance.
+    -->
+    <requireOne>
+      <li>
+        <li>RR_RazorBearing_Anyone</li>
+      </li>
+      <li>
+        <li>RR_ColorDeference_None</li>
+      </li>
+      <li>
+        <li>RR_InterColorUnion_Free</li>
+      </li>
+    </requireOne>
   </MemeDef>
 
 </Defs>
