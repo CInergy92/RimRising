@@ -12,6 +12,11 @@ Tools/.cache/
 # 1.6/Assemblies/*.dll
 # 1.6/Assemblies/*.pdb
 
+# Generated art candidates awaiting review. The chosen one is copied into
+# Textures/ and committed there; the rest are churn. Art/Silhouettes IS committed -
+# it is the ControlNet input, so keeping it makes a regeneration reproducible.
+Art/Review/
+
 # OS noise
 Thumbs.db
 desktop.ini

@@ -39,7 +39,23 @@
     Repo root. Defaults to the parent of the folder holding this script.
 #>
 [CmdletBinding()]
-param([string] $ModRoot)
+param(
+    [string] $ModRoot,
+    # Where to write. Defaults to the mod's own Textures tree. The generative art
+    # pass points this at a masters folder instead, because these sprites are the
+    # CONTROL INPUT for that pass - if the finished art overwrote them, the next
+    # regeneration would trace its own output and drift.
+    [string] $OutRoot,
+    # Multiplier on every sprite's edge length. The art pass renders at 4x so the
+    # Canny edge map is crisp; a 128px master upscaled to 1024 gives soft edges and
+    # a correspondingly weak control signal.
+    [int] $Scale = 1,
+    # Suppress the highlight pass, producing a pure FORM map. Used as ControlNet
+    # input: Canny traces the highlight band as a hard edge, and the model then
+    # renders it literally as a chrome stripe down the middle of the blade. A
+    # control image should describe shape and let the model decide the shading.
+    [switch] $Flat
+)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -48,10 +64,12 @@ if (-not $ModRoot) { $ModRoot = Split-Path -Parent $PSScriptRoot }
 $ModRoot = (Resolve-Path $ModRoot).Path
 . (Join-Path $PSScriptRoot 'GlyphPrimitives.ps1')
 
-$texRoot = Join-Path $ModRoot 'Textures'
+$texRoot = if ($OutRoot) { $OutRoot } else { Join-Path $ModRoot 'Textures' }
 
 # RimWorld's outline is a dark warm grey. Pure black reads as clip-art.
 $script:Outline = [System.Drawing.Color]::FromArgb(255, 38, 34, 30)
+$script:Scale = $Scale
+$script:Flat  = [bool]$Flat
 
 function Shade([System.Drawing.Color] $c, [double] $f) {
     [System.Drawing.Color]::FromArgb($c.A,
@@ -89,7 +107,7 @@ function Stroke-Form {
     $pen = New-Pen $Color ([single]($W * $S))
     try { Draw-Path $g $pen $px } finally { $pen.Dispose() }
 
-    if (-not $NoHighlight) {
+    if (-not $NoHighlight -and -not $script:Flat) {
         $off = $S * 0.018
         $hi = @()
         foreach ($p in $px) {
@@ -119,6 +137,7 @@ function Write-Sprite {
     $dir = Split-Path -Parent $out
     if (-not (Test-Path $dir)) { $null = New-Item -ItemType Directory -Path $dir -Force }
 
+    $Size = $Size * $script:Scale
     $bmp = New-Object System.Drawing.Bitmap($Size, $Size)
     try {
         $g = [System.Drawing.Graphics]::FromImage($bmp)
@@ -152,9 +171,19 @@ Write-Sprite 'Things/Item/Equipment/WeaponMelee/RR_Razor' 128 {
     Stroke-Form $g $S @(@(0.30,0.72), @(0.50,0.52)) 0.075 $SteelHi
     Stroke-Form $g $S @(@(0.48,0.54), @(0.68,0.34)) 0.058 $SteelHi
     Stroke-Form $g $S @(@(0.66,0.36), @(0.87,0.14)) 0.034 $SteelHi
-    Stroke-Form $g $S @(@(0.17,0.85), @(0.31,0.71)) 0.105 $Brass
-    Stroke-Dot  $g $S 0.155 0.865 0.045 $Brass
-    # The shape-sensor stud: the toggle between blade and whip.
+    # Stroke-Form uses ROUND caps, so a blade drawn as capsules ends in a dome and
+    # reads blunt - which a ControlNet pass then faithfully renders as a blunt tip.
+    # A final hairline segment carries the taper out to an actual point.
+    Stroke-Form $g $S @(@(0.845,0.165), @(0.925,0.085)) 0.013 $SteelHi
+    # The pommel is a WIDER CAPSULE DRAWN UNDER THE GRIP, not a Stroke-Dot on top
+    # of it. A dot draws its own complete dark ring, which Canny reads as a closed
+    # contour independent of the grip - and a ControlNet pass then renders it as a
+    # sphere floating loose beside the weapon. Anything meant to read as part of a
+    # form has to share that form's silhouette, with no closed outline of its own.
+    Stroke-Form $g $S @(@(0.135,0.885), @(0.175,0.845)) 0.132 $Brass
+    Stroke-Form $g $S @(@(0.175,0.845), @(0.31,0.71))   0.105 $Brass
+    # The shape-sensor stud: the toggle between blade and whip. This one stays a
+    # dot - it sits well inside the grip and is meant to read as a separate rivet.
     Stroke-Dot  $g $S 0.245 0.775 0.026 $Amber
 }
 
@@ -247,12 +276,19 @@ Write-Sprite 'Things/Item/Health/RR_CarvingKit' 128 {
 # would then iterate over numbers instead of bars. Trap #2.
 function Write-Ionsteel {
     param([string] $Variant, [array] $Bars)
+    # NOT .GetNewClosure(). A closure binds the scriptblock to a fresh module
+    # scope, which captures variables but CANNOT see this script's own functions -
+    # so Stroke-Form goes missing the moment the script is invoked from another
+    # script instead of run directly. It works standalone and fails under the art
+    # pass, which is the worst way for it to fail. A $script: variable carries the
+    # bars across instead, and the scriptblock stays in normal script scope.
+    $script:IonsteelBars = $Bars
     Write-Sprite ("Things/Item/Resource/RR_Ionsteel/RR_Ionsteel_" + $Variant) 128 {
         param($g, $S)
-        foreach ($b in $Bars) {
+        foreach ($b in $script:IonsteelBars) {
             Stroke-Form $g $S @(@($b[0],$b[1]), @($b[2],$b[3])) 0.155 $Ion
         }
-    }.GetNewClosure()
+    }
 }
 
 Write-Ionsteel 'a' @(

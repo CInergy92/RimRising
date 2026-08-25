@@ -85,6 +85,7 @@ $excludeDirs = @(
     'Source'
     'docs'
     'Tools'
+    'Art'           # silhouette masters and generated candidates, not shipped art
     'obj'
     'bin'
 )
