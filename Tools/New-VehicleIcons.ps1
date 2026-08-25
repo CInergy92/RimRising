@@ -212,27 +212,41 @@ V-Form $g $W $H @(@(0.710,0.375), @(0.710,0.580)) 0.19 $Plate
 
 # Six arms, three a side, every one raked FORWARD to an elbow ahead of its
 # shoulder, with the cannon running forward again from there.
-foreach ($arm in @(
+#
+# THE ION CLEAVER GROWS OUT OF THE LAST RIGHT ELBOW. It used to be a separate
+# spike floating beside the arms, touching nothing - and an unattached shape in
+# the control image is an unattached shape in the art, exactly as the razor's
+# pommel became a floating sphere. Painted in the palette's lightest grey and
+# a third wider than it needed to be, it read as a pale sail stuck to the mech's
+# side rather than a weapon. Making one arm carry it instead of a cannon also
+# matches the def: an ion cleaver in whichever hand is free.
+$armList = @(
     @(0.285, 0.400, 0.155, 0.285),
     @(0.280, 0.485, 0.135, 0.390),
     @(0.285, 0.570, 0.150, 0.495)
-)) {
+)
+for ($ai = 0; $ai -lt $armList.Count; $ai++) {
+    $arm = $armList[$ai]
     $sx = $arm[0]; $sy = $arm[1]; $ex = $arm[2]; $ey = $arm[3]
     $bx = $ex - 0.018
     $by = $ey - 0.135
     V-Form  $g $W $H @(@($sx,$sy), @($ex,$ey)) 0.110 $Hull
     V-Dot   $g $W $H $ex $ey 0.054 $Plate
     V-Spike $g $W $H @(@($ex,$ey), @($bx,$by)) 0.060 0.026 $HullDk
+
     # Mirrored arm. Reflect every x about the centreline.
     $msx = 1.0 - $sx; $mex = 1.0 - $ex; $mbx = 1.0 - $bx
-    V-Form  $g $W $H @(@($msx,$sy), @($mex,$ey)) 0.110 $Hull
-    V-Dot   $g $W $H $mex $ey 0.054 $Plate
-    V-Spike $g $W $H @(@($mex,$ey), @($mbx,$by)) 0.060 0.026 $HullDk
+    V-Form $g $W $H @(@($msx,$sy), @($mex,$ey)) 0.110 $Hull
+    V-Dot  $g $W $H $mex $ey 0.054 $Plate
+    if ($ai -eq ($armList.Count - 1)) {
+        $c1x = $mex + 0.022
+        $c2x = $mex + 0.034
+        V-Spike $g $W $H @(@($mex,$ey), @($c1x,0.300), @($c2x,0.118)) 0.066 0.005 $Plate
+    }
+    else {
+        V-Spike $g $W $H @(@($mex,$ey), @($mbx,$by)) 0.060 0.026 $HullDk
+    }
 }
-
-# The ion cleaver, carried forward alongside the right arms rather than held out
-# to the side, for the same reason.
-V-Spike $g $W $H @(@(0.855,0.560), @(0.885,0.330), @(0.900,0.130)) 0.080 0.005 $Plate
 
 # Cockpit, sunk between the shoulders where a neck should be. No head above it.
 V-Form $g $W $H @(@(0.500,0.300), @(0.500,0.360)) 0.26 $Plate
