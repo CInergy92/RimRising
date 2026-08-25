@@ -530,6 +530,48 @@ optional and unbuilt.
 
 ---
 
+## 8d. Resolved by the user — may the player reject the hierarchy?
+
+**Yes, and it should be much harder.** The user's ruling, and the last open lore
+question.
+
+Rejecting was already *possible* — `RR_ColorEquality` and its precepts have existed
+since Milestone 5. What was missing was the cost. `Faction.GoodwillToMakeHostile`
+returns **−75**, and the hierarchy-versus-egalitarian offsets were −40 and −35: enough
+to sour a relation, not enough to make anyone come for you.
+
+| Situation | Was | Now |
+|---|---|---|
+| hierarchy sees an egalitarian colony | −40 | **−100** |
+| gold worship sees an egalitarian colony | −35 | **−90** |
+| shared equality | +20 | **+50** |
+
+Past −75 the offset does not merely sour the relation, it holds the faction
+permanently hostile. Both hierarchy factions are **Spacer** tech, and their raids
+bring praetors, obsidian knights and the Olympic orders. Throwing off the castes
+means fighting the people who built them, with what a mining colony has to hand.
+
+**Deliberately survivable, not merely brutal.** The board makes the difference:
+
+| Faction | Tech | Toward an egalitarian colony |
+|---|---|---|
+| the Society | Spacer | permanently hostile |
+| Rim Dominion | Spacer | permanently hostile |
+| obsidian tribes | Neolithic | permanently hostile |
+| Sons of Ares | Industrial | strong ally |
+| Sun Industries | Spacer | strong ally, and the one merchant that arms you |
+| Julii Industries | Spacer | neutral — sells to anyone, by design |
+| Ascomanni | Industrial | hostile to everyone regardless |
+
+So the Rising has friends, an arms supplier and a trade route. It just does not have
+the two strongest powers in the system, and that is the whole point.
+
+**The asymmetry is intentional.** A colony that keeps the hierarchy is disliked by
+the Sons of Ares at −40 and they are Industrial. Keeping the castes is meaningfully
+easier than breaking them, because in the setting it is.
+
+---
+
 ## 8. Open questions for the user
 
 ### Resolved in play

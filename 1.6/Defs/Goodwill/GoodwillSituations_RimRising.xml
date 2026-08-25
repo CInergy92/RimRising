@@ -42,7 +42,10 @@
     <workerClass>GoodwillSituationWorker_MemeCompatibility</workerClass>
     <meme>RR_ColorEquality</meme>
     <otherMeme>RR_ColorEquality</otherMeme>
-    <naturalGoodwillOffset>20</naturalGoodwillOffset>
+    <!-- Raised from 20. If the two strongest powers are permanently hostile, the
+         Rising needs allies who are actually reliable rather than merely warm -
+         the Sons of Ares and Sun Industries both hold this meme. -->
+    <naturalGoodwillOffset>50</naturalGoodwillOffset>
   </GoodwillSituationDef>
 
   <!-- ============================ disagreement ============================ -->
@@ -67,7 +70,24 @@
     <workerClass>GoodwillSituationWorker_MemeCompatibility</workerClass>
     <meme>RR_ColorEquality</meme>
     <otherMeme>RR_ColorHierarchy</otherMeme>
-    <naturalGoodwillOffset>-40</naturalGoodwillOffset>
+    <!--
+      THE PRICE OF THE RISING, and it is meant to be steep.
+
+      Faction.GoodwillToMakeHostile returns -75, so an offset past that floor does
+      not merely sour a relation - it holds the faction permanently hostile. At -40
+      the Society disliked an egalitarian colony. At -100 it comes for it.
+
+      Both factions that carry the hierarchy are SPACER tech, and their raids bring
+      praetors, obsidian knights and the Olympic orders. Throwing off the castes
+      should mean fighting the people who built them, with what a mining colony
+      has to hand.
+
+      It is deliberately survivable, not merely brutal. The Sons of Ares and Sun
+      Industries both hold RR_ColorEquality and become real allies, and Julii sells
+      to anyone by design. The Rising has friends; it just does not have the two
+      strongest powers in the system.
+    -->
+    <naturalGoodwillOffset>-100</naturalGoodwillOffset>
   </GoodwillSituationDef>
 
   <!-- ========================= the tribes' position ======================= -->
@@ -106,7 +126,10 @@
     <workerClass>GoodwillSituationWorker_MemeCompatibility</workerClass>
     <meme>RR_GoldWorship</meme>
     <otherMeme>RR_ColorEquality</otherMeme>
-    <naturalGoodwillOffset>-35</naturalGoodwillOffset>
+    <!-- The tribes are neolithic, so they are less lethal than the Society - but
+         they worship Gold, and an egalitarian colony is a heresy to them. Also
+         past the -75 hostility floor. -->
+    <naturalGoodwillOffset>-90</naturalGoodwillOffset>
   </GoodwillSituationDef>
 
 </Defs>
