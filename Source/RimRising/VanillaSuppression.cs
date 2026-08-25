@@ -219,12 +219,18 @@ namespace RimRising
     {
         public bool suppressVanillaXenotypes = true;
         public bool suppressVanillaFactions  = true;
+        // The Carver's operating table. On by default; a player who wants carving
+        // to remain the gene assembler megaproject turns it off and the surgeries
+        // vanish from the list. Vanilla xenogerm assembly is never touched either
+        // way, so switching this off removes a shortcut rather than a capability.
+        public bool allowCarverSurgery       = true;
 
         public override void ExposeData()
         {
             base.ExposeData();
             Scribe_Values.Look(ref suppressVanillaXenotypes, "suppressVanillaXenotypes", true);
             Scribe_Values.Look(ref suppressVanillaFactions,  "suppressVanillaFactions",  true);
+            Scribe_Values.Look(ref allowCarverSurgery,       "allowCarverSurgery",       true);
         }
     }
 
@@ -259,6 +265,13 @@ namespace RimRising
                 "RR_Setting_SuppressFactions".Translate(),
                 ref Settings.suppressVanillaFactions,
                 "RR_Setting_SuppressFactionsTip".Translate());
+
+            list.Gap();
+
+            list.CheckboxLabeled(
+                "RR_Setting_AllowCarving".Translate(),
+                ref Settings.allowCarverSurgery,
+                "RR_Setting_AllowCarvingTip".Translate());
 
             list.Gap(24f);
             list.Label("RR_Setting_SuppressNote".Translate());

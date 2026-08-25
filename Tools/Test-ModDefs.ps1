@@ -107,6 +107,11 @@ function Build-VanillaIndex {
     # entirely when these are absent, so a meme cannot force a precept it does not
     # also supply the requirement for.
     $preceptReqMemes = @{}
+    # Vanilla ABSTRACT RecipeDefs that hand recipeUsers to their children.
+    # SurgeryInstallImplantBase is the one that matters: it supplies <li>Human</li>,
+    # so every implant surgery inheriting it is reachable without any patch. Missing
+    # this produced confident false positives on two working defs.
+    $recipeUserAbstracts = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 
     # Abstract (Name=) defs and the list-valued fields they declare, so a child can
     # be checked for re-declaring something it already inherits. RimWorld APPENDS
@@ -145,6 +150,13 @@ function Build-VanillaIndex {
             # itself.
             # $dn here is the defName NODE, not its text. Keying the table on the
             # node object would make every later lookup miss silently.
+            if ($node.LocalName -eq 'RecipeDef') {
+                $rna = $node.Attributes['Name']
+                if ($rna -and $rna.Value -and $node.SelectSingleNode('recipeUsers')) {
+                    [void]$recipeUserAbstracts.Add($rna.Value.Trim())
+                }
+            }
+
             if ($node.LocalName -eq 'PreceptDef' -and $dn -and $dn.InnerText) {
                 $rm = @()
                 foreach ($li in $node.SelectNodes('requiredMemes/li')) {
@@ -211,6 +223,7 @@ function Build-VanillaIndex {
         WeaponTags    = @($weaponTags)
         ApparelTags   = @($apparelTags)
         PreceptReqMemes = $preceptReqMemes
+        RecipeUserAbstracts = @($recipeUserAbstracts)
         Abstracts     = $abstracts
     }
 }
@@ -230,7 +243,7 @@ function Get-VanillaIndex {
 
     # Bumped whenever the cached shape changes, so an old cache is rebuilt rather
     # than read with missing fields.
-    $cacheSchema = 7
+    $cacheSchema = 8
 
     if (-not $Refresh -and (Test-Path $cacheFile)) {
         try {
@@ -247,6 +260,7 @@ function Get-VanillaIndex {
                     WeaponTags    = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.WeaponTags, [StringComparer]::Ordinal)
                     ApparelTags   = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.ApparelTags, [StringComparer]::Ordinal)
                     PreceptReqMemes = $cached.PreceptReqMemes
+                    RecipeUserAbstracts = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.RecipeUserAbstracts, [StringComparer]::Ordinal)
                     Abstracts     = $cached.Abstracts
                     Version       = $version
                 }
@@ -273,6 +287,7 @@ function Get-VanillaIndex {
         WeaponTags    = $idx.WeaponTags
         ApparelTags   = $idx.ApparelTags
         PreceptReqMemes = $idx.PreceptReqMemes
+        RecipeUserAbstracts = $idx.RecipeUserAbstracts
         Abstracts     = $idx.Abstracts
     } | ConvertTo-Json -Depth 8 -Compress | Set-Content -Path $cacheFile -Encoding UTF8
 
@@ -288,6 +303,7 @@ function Get-VanillaIndex {
         WeaponTags    = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.WeaponTags, [StringComparer]::Ordinal)
         ApparelTags   = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.ApparelTags, [StringComparer]::Ordinal)
         PreceptReqMemes = $idx.PreceptReqMemes
+        RecipeUserAbstracts = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.RecipeUserAbstracts, [StringComparer]::Ordinal)
         Abstracts     = $idx.Abstracts
         Version       = $version
     }
@@ -816,6 +832,10 @@ $memeGuaranteed   = [System.Collections.Generic.HashSet[string]]::new([StringCom
 $preceptMemeRefs  = [System.Collections.Generic.List[object]]::new()
 $requireOneGroups = [System.Collections.Generic.List[object]]::new()
 
+# Recipes we define, and whether anything can actually run them.
+$recipeRefs = [System.Collections.Generic.List[object]]::new()
+$abstractRecipeUsers = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+
 # Every xenotype we define, and every xenotype some PawnKindDef can actually
 # produce. A Color in the first set and not the second can never spawn.
 $modXenotypes      = [System.Collections.Generic.List[object]]::new()
@@ -892,6 +912,23 @@ foreach ($file in $xmlFiles) {
             # passes a null path to ContentFinder and throws while DRAWING the world
             # map. It presents to the player as "the planet will not generate", with
             # nothing in the startup log to explain it.
+            if ($node.LocalName -eq 'RecipeDef' -and -not $dnNode) {
+                # Abstract. Record it only if it hands recipeUsers to its children.
+                $na2 = $node.Attributes['Name']
+                if ($na2 -and $na2.Value -and $node.SelectSingleNode('recipeUsers')) {
+                    [void]$abstractRecipeUsers.Add($na2.Value.Trim())
+                }
+            }
+
+            if ($node.LocalName -eq 'RecipeDef' -and $dnNode) {
+                $recipeRefs.Add([pscustomobject]@{
+                    File  = $rel
+                    Def   = $dnNode.InnerText.Trim()
+                    Users = ($node.SelectSingleNode('recipeUsers') -ne $null)
+                    Parent = if ($node.Attributes['ParentName']) { $node.Attributes['ParentName'].Value.Trim() } else { $null }
+                })
+            }
+
             if ($node.LocalName -eq 'MemeDef' -and $dnNode) {
                 [void]$modMemes.Add($dnNode.InnerText.Trim())
                 foreach ($li in $node.SelectNodes('requireOne/li/li')) {
@@ -1379,6 +1416,49 @@ foreach ($ref in $listRefs) {
             }
         }
     }
+}
+
+# --- recipe reachability ------------------------------------------------------
+#
+# A RecipeDef does not appear anywhere just because it exists. A production recipe
+# needs recipeUsers naming the bench; a SURGERY has to be listed in the target's own
+# ThingDef <recipes>, which for people means patching Human - vanilla wires
+# ImplantXenogerm exactly that way in Races_Humanlike.xml.
+#
+# Miss it and the recipe loads with zero errors, passes every other check here, and
+# is simply never offered. Fifteen carving surgeries nearly shipped that way.
+#
+# A recipe counts as reachable if it declares recipeUsers, inherits them from one of
+# our abstracts, or its defName appears anywhere under 1.6/Patches.
+$patchText = ''
+$patchDir = Join-Path $ModRoot '1.6\Patches'
+if (Test-Path $patchDir) {
+    foreach ($pf in (Get-ChildItem -Path $patchDir -Filter *.xml -Recurse -File -ErrorAction SilentlyContinue)) {
+        $patchText += (Get-Content $pf.FullName -Raw)
+    }
+}
+
+foreach ($ref in $recipeRefs) {
+    if ($ref.Users) { continue }
+
+    $inherits = $false
+    $cur = $ref.Parent
+    $guard = 0
+    while ($cur -and $guard -lt 10) {
+        $guard++
+        $match = @($recipeRefs | Where-Object { $_.Def -eq $cur })
+        if ($abstractRecipeUsers.Contains($cur)) { $inherits = $true; break }
+        if ($vanilla.RecipeUserAbstracts -and $vanilla.RecipeUserAbstracts.Contains($cur)) { $inherits = $true; break }
+        if ($vanilla.NameAttrs.Contains($cur) -and -not $modAbstracts.ContainsKey($cur)) { break }
+        if ($match.Count -gt 0 -and $match[0].Users) { $inherits = $true; break }
+        if ($modAbstracts.ContainsKey($cur)) { $cur = $modAbstracts[$cur].Parent } else { break }
+    }
+    if ($inherits) { continue }
+
+    if ($patchText -and $patchText.Contains($ref.Def)) { continue }
+
+    Add-Problem -Severity ERROR -Check 'RecipeUnreachable' -File $ref.File `
+        -Message ("RecipeDef '{0}' has no <recipeUsers> and is named in no patch, so nothing can ever run it. A surgery must be added to the target ThingDef's <recipes> list - for people that means patching Human." -f $ref.Def)
 }
 
 # --- xenotype reachability ----------------------------------------------------

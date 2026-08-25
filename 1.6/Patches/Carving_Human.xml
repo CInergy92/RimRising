@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Attach the carving surgeries to people.
+
+  A RecipeDef with a surgery worker does NOT appear on a pawn just because it
+  exists. Vanilla wires surgeries through the Human ThingDef's own <recipes> list -
+  Core/Defs/ThingDefs_Races/Races_Humanlike.xml line 187 onward, where
+  ImplantXenogerm sits behind a MayRequire for Biotech.
+
+  Without this patch all fifteen recipes load with zero errors, pass every check in
+  Test-ModDefs.ps1, and simply never show up on anybody. recipeUsers is the wrong
+  lever here: it works for production recipes at a bench (which is how the Carver's
+  kit is made) but not for operations on a pawn.
+
+  Guarded with success Always so that a future rename upstream degrades quietly
+  rather than spamming red at load, per this project's patch convention.
+-->
+<Patch>
+
+  <Operation Class="PatchOperationAdd">
+    <success>Always</success>
+    <xpath>/Defs/ThingDef[defName="Human"]/recipes</xpath>
+    <value>
+      <li>RR_Carve_Gold</li>
+      <li>RR_Carve_Bronzie</li>
+      <li>RR_Carve_Silver</li>
+      <li>RR_Carve_White</li>
+      <li>RR_Carve_Copper</li>
+      <li>RR_Carve_Blue</li>
+      <li>RR_Carve_Yellow</li>
+      <li>RR_Carve_Green</li>
+      <li>RR_Carve_Violet</li>
+      <li>RR_Carve_Orange</li>
+      <li>RR_Carve_Gray</li>
+      <li>RR_Carve_Obsidian</li>
+      <li>RR_Carve_Brown</li>
+      <li>RR_Carve_Pink</li>
+      <li>RR_Carve_Red</li>
+    </value>
+  </Operation>
+
+</Patch>

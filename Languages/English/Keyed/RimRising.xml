@@ -23,4 +23,10 @@
   <!-- Shown when a title reserved to Gold is offered to anyone else. -->
   <RR_CannotHoldGoldTitle>{PAWN_nameDef} is not of Gold. The standing of {TITLE} is conferred by the Institute, and the Institute does not admit lesser Colors.</RR_CannotHoldGoldTitle>
 
+  <RR_Setting_AllowCarving>Allow the Carver's table</RR_Setting_AllowCarving>
+  <RR_Setting_AllowCarvingTip>Adds surgeries that rebuild a person into another Color directly, at great expense. Turn this off to keep carving as it is in vanilla Biotech - assembling a xenogerm at a gene assembler, which for a Gold means twenty-two gene processors and archite genes bought from traders. Switching this off removes a shortcut, not a capability.</RR_Setting_AllowCarvingTip>
+
+  <!-- Posted when a carving succeeds. -->
+  <RR_CarvingComplete>{PAWN_nameDef} has been carved. The registries will record {PAWN_objective} as {COLOR}.</RR_CarvingComplete>
+
 </LanguageData>

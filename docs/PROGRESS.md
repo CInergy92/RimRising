@@ -1050,6 +1050,55 @@ mod's xenotype has no business being sorted onto a Society ladder.
 
 ---
 
+## Carving — the Carver's table
+
+A second path, not a replacement. Vanilla xenogerm assembly is untouched and still
+works exactly as before; this adds the version the reference actually describes — one
+person, one room, ruinous cost — and a **mod setting to turn it off** for anyone who
+wants carving to stay the megaproject.
+
+| | Vanilla assembly | The Carver's table |
+|---|---|---|
+| Gate | 22 gene processors + traded archite genepacks | research + a Carver's kit |
+| Shape | industrialised, repeatable | one surgery, 26 000 work |
+| Risk | complexity-scaled implant failure | 55% success, 25% death on failure |
+| Toggle | always available | mod setting, default on |
+
+### The pawn is left a Baseliner, deliberately
+
+Genes go on as **xenogenes** and `Xenotype` is not changed — exactly what
+`GeneUtility.ImplantXenogermItem` does. Two reasons, and the second is the one that
+matters: xenogenes are **not inherited**, so a carved pawn's children are born the
+Color their parent was *born*, not the Color their parent was *made*.
+
+That is the cruellest fact in the setting and it falls out of the mechanic for free.
+Only `xenotypeName` is set, so the UI reads the new Color while the biology quietly
+remembers otherwise.
+
+### Ideoligions have an opinion
+
+`RR_ColorCarved` fires on success. A hierarchy ideoligion holds carving an
+**abomination** — believers are unwilling to perform it and take a mood hit when it
+happens. An egalitarian one holds it **liberation** and gains mood. Both guaranteed
+through `requireOne`, so neither can generate inert.
+
+### Two more unreachable defs found, and one false positive
+
+`RecipeUnreachable` was written because the fifteen surgeries nearly shipped invisible
+— a RecipeDef does not appear on a pawn just because it exists; vanilla wires
+surgeries through the **Human ThingDef's own `<recipes>` list**, which needs a patch.
+
+The check then flagged `RR_InstallSynapticLattice` and `RR_InstallCupidsKiss`. **Both
+were false positives** — they inherit `SurgeryInstallImplantBase`, a *vanilla* abstract
+that supplies `<li>Human</li>`, and the check only tracked our own abstracts. Fixed by
+indexing vanilla's recipe abstracts too (cache schema 8).
+
+Worth recording that the check was believed for about a minute before being verified.
+Checking a suspicious result against vanilla before "fixing" working defs is the whole
+discipline.
+
+---
+
 ## Open questions
 
 Carried in `docs/DESIGN.md` §8.

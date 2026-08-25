@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The Carver's table.
+
+  A SECOND PATH, NOT A REPLACEMENT. Vanilla xenogerm assembly still works exactly as
+  it always did and is untouched by any of this. But measured against the real defs
+  it is a megaproject rather than a story beat:
+
+    Gold is complexity 49; a gene processor grants +2 on a base of 6, so twenty-two
+    of them, and the archite genes cannot be extracted from a captured Gold at all -
+    Building_GeneExtractor scores biostatArc > 0 at weight zero, so they must be
+    bought as archite genepacks.
+
+  In the reference a carving is something done to one person, in one room, over
+  months, at ruinous cost. That is what this is. A player who would rather carving
+  stayed the megaproject switches it off in mod settings and these surgeries vanish;
+  the vanilla route is unaffected either way, so the toggle removes a shortcut rather
+  than a capability.
+
+  THE SURGERY LEAVES THE PAWN A BASELINER, deliberately, exactly as vanilla's
+  xenogerm implant does. Genes go on as XENOGENES, which are not inherited - so a
+  carved pawn's children are born the Color their parent was BORN, not the Color
+  their parent was made. That is the cruellest fact in the setting and it falls out
+  of the mechanic for free. See Source/RimRising/Recipe_CarveColor.cs.
+
+  Identity is resolved by RR_CasteIdentity, which reads genes rather than the
+  xenotype field - see the U1 note in CLAUDE.md for why that is necessary.
+-->
+<Defs>
+
+  <!-- ============================== research ============================== -->
+
+  <ResearchProjectDef>
+    <defName>RR_Carving</defName>
+    <label>carving</label>
+    <description>Rebuilding a living person into another Color: bone lengthened or shortened, marrow replaced, the endocrine system rewritten, and the face taken apart and reassembled to a specification.\n\nThe procedure is survivable. It is not, by any account given afterwards, bearable.\n\nUnlocks the Carver's kit and the carving surgeries.</description>
+    <tab>RR_Artificer</tab>
+    <baseCost>7000</baseCost>
+    <techLevel>Spacer</techLevel>
+    <prerequisites>
+      <li>RR_NeuralInterface</li>
+      <li>GeneticEngineering</li>
+    </prerequisites>
+    <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+    <requiredResearchFacilities>
+      <li>MultiAnalyzer</li>
+    </requiredResearchFacilities>
+    <researchViewX>6.00</researchViewX>
+    <researchViewY>1.20</researchViewY>
+  </ResearchProjectDef>
+
+  <!-- ============================ the Carver's kit ========================= -->
+  <!--
+    The expense lives here rather than in the surgery's medicine cost, so carving is
+    gated on a thing you had to build and can run out of, not on a number that
+    scales with how much glitterworld medicine happens to be in the freezer.
+  -->
+
+  <ThingDef ParentName="ResourceBase">
+    <defName>RR_CarvingKit</defName>
+    <label>Carver's kit</label>
+    <description>A sealed tray of shaped enzymes, marrow scaffolds and bone cement, keyed to one target Color and useless for any other. Assembling one is most of the work; the surgery itself is comparatively quick and entirely irreversible.\n\nCarvers are Yellows. The caste that makes the hierarchy transgressable is a midColor, which the Society has never found as funny as it is.</description>
+    <graphicData>
+      <texPath>Things/Item/Health/RR_CarvingKit</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <statBases>
+      <MarketValue>1400</MarketValue>
+      <Mass>2.5</Mass>
+      <MaxHitPoints>60</MaxHitPoints>
+      <DeteriorationRate>2</DeteriorationRate>
+    </statBases>
+    <stackLimit>10</stackLimit>
+    <thingCategories>
+      <li>Medicine</li>
+    </thingCategories>
+    <tradeTags>
+      <li>ExoticMisc</li>
+    </tradeTags>
+  </ThingDef>
+
+  <RecipeDef>
+    <defName>RR_MakeCarvingKit</defName>
+    <label>make Carver's kit</label>
+    <description>Assemble a Carver's kit.</description>
+    <jobString>Assembling Carver's kit.</jobString>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Intellectual</workSkill>
+    <workAmount>9000</workAmount>
+    <effectWorking>Cook</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <researchPrerequisite>RR_Carving</researchPrerequisite>
+    <recipeUsers>
+      <li>FabricationBench</li>
+    </recipeUsers>
+    <skillRequirements>
+      <Intellectual>10</Intellectual>
+    </skillRequirements>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Plasteel</li>
+          </thingDefs>
+        </filter>
+        <count>20</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentSpacer</li>
+          </thingDefs>
+        </filter>
+        <count>3</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>MedicineUltratech</li>
+          </thingDefs>
+        </filter>
+        <count>4</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>Plasteel</li>
+        <li>ComponentSpacer</li>
+        <li>MedicineUltratech</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <products>
+      <RR_CarvingKit>1</RR_CarvingKit>
+    </products>
+  </RecipeDef>
+
+  <!-- ========================== the surgery itself ========================= -->
+  <!--
+    isViolation is true: carving somebody without their consent is exactly the crime
+    the Society commits routinely and the Rising exists because of.
+
+    surgerySuccessChanceFactor is low and workAmount is enormous. A carving should be
+    a decision a colony makes once and then lives with, not a production line.
+  -->
+
+  <RecipeDef Abstract="True" Name="RR_CarveBase" ParentName="SurgeryFlesh">
+    <workerClass>RimRising.Recipe_CarveColor</workerClass>
+    <workAmount>26000</workAmount>
+    <hideBodyPartNames>true</hideBodyPartNames>
+    <targetsBodyPart>false</targetsBodyPart>
+    <isViolation>true</isViolation>
+    <surgerySuccessChanceFactor>0.55</surgerySuccessChanceFactor>
+    <deathOnFailedSurgeryChance>0.25</deathOnFailedSurgeryChance>
+    <researchPrerequisite>RR_Carving</researchPrerequisite>
+    <anesthetize>true</anesthetize>
+    <skillRequirements>
+      <Medicine>12</Medicine>
+    </skillRequirements>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>RR_CarvingKit</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+      <li>
+        <filter>
+          <categories>
+            <li>Medicine</li>
+          </categories>
+        </filter>
+        <count>6</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>RR_CarvingKit</li>
+      </thingDefs>
+      <categories>
+        <li>Medicine</li>
+      </categories>
+    </fixedIngredientFilter>
+  </RecipeDef>
+
+  <!-- ======================== ideoligious reaction ========================= -->
+
+  <HistoryEventDef>
+    <defName>RR_ColorCarved</defName>
+    <label>someone was carved into another Color</label>
+  </HistoryEventDef>
+
+  <IssueDef>
+    <defName>RR_Carving</defName>
+    <label>carving</label>
+    <iconPath>UI/Issues/RR_Carving</iconPath>
+  </IssueDef>
+
+  <ThoughtDef>
+    <defName>RR_KnowColorCarved_Abomination</defName>
+    <durationDays>12</durationDays>
+    <stackLimit>3</stackLimit>
+    <stages>
+      <li>
+        <label>a Color was counterfeited</label>
+        <description>Somebody was cut into a shape they were not born to, and the shape held. If that can be done then the Colors are a costume, and everything follows from that.</description>
+        <baseMoodEffect>-8</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>RR_KnowColorCarved_Liberation</defName>
+    <durationDays>12</durationDays>
+    <stackLimit>3</stackLimit>
+    <stages>
+      <li>
+        <label>a Color was proven false</label>
+        <description>Somebody walked in as one thing and walked out as another, and the world could not tell. Every argument for the hierarchy died a little on that table.</description>
+        <baseMoodEffect>6</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <PreceptDef>
+    <defName>RR_Carving_Abomination</defName>
+    <issue>RR_Carving</issue>
+    <label>abomination</label>
+    <description>A Color is not a costume. To cut a person into the shape of a better one is not ambition, it is forgery against the order of things, and the forgery is worse than the theft.</description>
+    <impact>High</impact>
+    <displayOrderInIssue>10</displayOrderInIssue>
+    <associatedMemes>
+      <li>RR_ColorHierarchy</li>
+      <li>RR_GoldWorship</li>
+    </associatedMemes>
+    <conflictingMemes>
+      <li>RR_ColorEquality</li>
+    </conflictingMemes>
+    <comps>
+      <li Class="PreceptComp_UnwillingToDo">
+        <eventDef>RR_ColorCarved</eventDef>
+        <description>Carve someone into another Color</description>
+      </li>
+      <li Class="PreceptComp_KnowsMemoryThought">
+        <eventDef>RR_ColorCarved</eventDef>
+        <thought>RR_KnowColorCarved_Abomination</thought>
+        <description>Someone was carved</description>
+      </li>
+    </comps>
+  </PreceptDef>
+
+  <PreceptDef>
+    <defName>RR_Carving_Liberation</defName>
+    <issue>RR_Carving</issue>
+    <label>liberation</label>
+    <description>Every carving is an argument won. The castes claim to be facts of nature; a good Carver demonstrates in an afternoon that they are a manufacturing process, and manufacturing can be seized.</description>
+    <impact>High</impact>
+    <displayOrderInIssue>20</displayOrderInIssue>
+    <associatedMemes>
+      <li>RR_ColorEquality</li>
+    </associatedMemes>
+    <conflictingMemes>
+      <li>RR_ColorHierarchy</li>
+      <li>RR_GoldWorship</li>
+    </conflictingMemes>
+    <comps>
+      <li Class="PreceptComp_KnowsMemoryThought">
+        <eventDef>RR_ColorCarved</eventDef>
+        <thought>RR_KnowColorCarved_Liberation</thought>
+        <description>Someone was carved</description>
+      </li>
+    </comps>
+  </PreceptDef>
+
+  <!-- ===================== one surgery per Color ======================== -->
+  <!--
+    Generated from the fifteen base Colors in displayPriority order. Sub-strains
+    are deliberately absent: twenty-one entries would make the surgery menu
+    unusable, and anyone who wants a Stained or a Rose can still assemble one
+    the vanilla way.
+  -->
+
+  <RecipeDef ParentName="RR_CarveBase">
+    <defName>RR_Carve_Gold</defName>
+    <label>carve into Gold</label>
+    <description>Rebuild this person as Gold. Irreversible, frequently fatal, and not survived unchanged by anyone who has done it.</description>
+    <jobString>Carving into Gold.</jobString>
+    <modExtensions>
+      <li Class="RimRising.CarveTargetExtension">
+        <color>RR_Gold</color>
+      </li>
+    </modExtensions>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_CarveBase">
+    <defName>RR_Carve_Bronzie</defName>
+    <label>carve into Bronzie</label>
+    <description>Rebuild this person as Bronzie. Irreversible, frequently fatal, and not survived unchanged by anyone who has done it.</description>
+    <jobString>Carving into Bronzie.</jobString>
+    <modExtensions>
+      <li Class="RimRising.CarveTargetExtension">
+        <color>RR_Bronzie</color>
+      </li>
+    </modExtensions>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_CarveBase">
+    <defName>RR_Carve_Silver</defName>
+    <label>carve into Silver</label>
+    <description>Rebuild this person as Silver. Irreversible, frequently fatal, and not survived unchanged by anyone who has done it.</description>
+    <jobString>Carving into Silver.</jobString>
+    <modExtensions>
+      <li Class="RimRising.CarveTargetExtension">
+        <color>RR_Silver</color>
+      </li>
+    </modExtensions>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_CarveBase">
+    <defName>RR_Carve_White</defName>
+    <label>carve into White</label>
+    <description>Rebuild this person as White. Irreversible, frequently fatal, and not survived unchanged by anyone who has done it.</description>
+    <jobString>Carving into White.</jobString>
+    <modExtensions>
+      <li Class="RimRising.CarveTargetExtension">
+        <color>RR_White</color>
+      </li>
+    </modExtensions>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_CarveBase">
+    <defName>RR_Carve_Copper</defName>
+    <label>carve into Copper</label>
+    <description>Rebuild this person as Copper. Irreversible, frequently fatal, and not survived unchanged by anyone who has done it.</description>
+    <jobString>Carving into Copper.</jobString>
+    <modExtensions>
+      <li Class="RimRising.CarveTargetExtension">
+        <color>RR_Copper</color>
+      </li>
+    </modExtensions>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_CarveBase">
+    <defName>RR_Carve_Blue</defName>
+    <label>carve into Blue</label>
+    <description>Rebuild this person as Blue. Irreversible, frequently fatal, and not survived unchanged by anyone who has done it.</description>
+    <jobString>Carving into Blue.</jobString>
+    <modExtensions>
+      <li Class="RimRising.CarveTargetExtension">
+        <color>RR_Blue</color>
+      </li>
+    </modExtensions>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_CarveBase">
+    <defName>RR_Carve_Yellow</defName>
+    <label>carve into Yellow</label>
+    <description>Rebuild this person as Yellow. Irreversible, frequently fatal, and not survived unchanged by anyone who has done it.</description>
+    <jobString>Carving into Yellow.</jobString>
+    <modExtensions>
+      <li Class="RimRising.CarveTargetExtension">
+        <color>RR_Yellow</color>
+      </li>
+    </modExtensions>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_CarveBase">
+    <defName>RR_Carve_Green</defName>
+    <label>carve into Green</label>
+    <description>Rebuild this person as Green. Irreversible, frequently fatal, and not survived unchanged by anyone who has done it.</description>
+    <jobString>Carving into Green.</jobString>
+    <modExtensions>
+      <li Class="RimRising.CarveTargetExtension">
+        <color>RR_Green</color>
+      </li>
+    </modExtensions>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_CarveBase">
+    <defName>RR_Carve_Violet</defName>
+    <label>carve into Violet</label>
+    <description>Rebuild this person as Violet. Irreversible, frequently fatal, and not survived unchanged by anyone who has done it.</description>
+    <jobString>Carving into Violet.</jobString>
+    <modExtensions>
+      <li Class="RimRising.CarveTargetExtension">
+        <color>RR_Violet</color>
+      </li>
+    </modExtensions>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_CarveBase">
+    <defName>RR_Carve_Orange</defName>
+    <label>carve into Orange</label>
+    <description>Rebuild this person as Orange. Irreversible, frequently fatal, and not survived unchanged by anyone who has done it.</description>
+    <jobString>Carving into Orange.</jobString>
+    <modExtensions>
+      <li Class="RimRising.CarveTargetExtension">
+        <color>RR_Orange</color>
+      </li>
+    </modExtensions>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_CarveBase">
+    <defName>RR_Carve_Gray</defName>
+    <label>carve into Gray</label>
+    <description>Rebuild this person as Gray. Irreversible, frequently fatal, and not survived unchanged by anyone who has done it.</description>
+    <jobString>Carving into Gray.</jobString>
+    <modExtensions>
+      <li Class="RimRising.CarveTargetExtension">
+        <color>RR_Gray</color>
+      </li>
+    </modExtensions>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_CarveBase">
+    <defName>RR_Carve_Obsidian</defName>
+    <label>carve into Obsidian</label>
+    <description>Rebuild this person as Obsidian. Irreversible, frequently fatal, and not survived unchanged by anyone who has done it.</description>
+    <jobString>Carving into Obsidian.</jobString>
+    <modExtensions>
+      <li Class="RimRising.CarveTargetExtension">
+        <color>RR_Obsidian</color>
+      </li>
+    </modExtensions>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_CarveBase">
+    <defName>RR_Carve_Brown</defName>
+    <label>carve into Brown</label>
+    <description>Rebuild this person as Brown. Irreversible, frequently fatal, and not survived unchanged by anyone who has done it.</description>
+    <jobString>Carving into Brown.</jobString>
+    <modExtensions>
+      <li Class="RimRising.CarveTargetExtension">
+        <color>RR_Brown</color>
+      </li>
+    </modExtensions>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_CarveBase">
+    <defName>RR_Carve_Pink</defName>
+    <label>carve into Pink</label>
+    <description>Rebuild this person as Pink. Irreversible, frequently fatal, and not survived unchanged by anyone who has done it.</description>
+    <jobString>Carving into Pink.</jobString>
+    <modExtensions>
+      <li Class="RimRising.CarveTargetExtension">
+        <color>RR_Pink</color>
+      </li>
+    </modExtensions>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_CarveBase">
+    <defName>RR_Carve_Red</defName>
+    <label>carve into Red</label>
+    <description>Rebuild this person as Red. Irreversible, frequently fatal, and not survived unchanged by anyone who has done it.</description>
+    <jobString>Carving into Red.</jobString>
+    <modExtensions>
+      <li Class="RimRising.CarveTargetExtension">
+        <color>RR_Red</color>
+      </li>
+    </modExtensions>
+  </RecipeDef>
+
+</Defs>
