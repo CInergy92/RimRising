@@ -38,7 +38,13 @@ param(
     [int]    $Size      = 256,
     [int]    $OutWidth  = 0,
     [int]    $OutHeight = 0,
-    [int]    $Tolerance = 42,
+    # 42 was too loose. RimWorld's outline is a dark warm grey around (38,34,30),
+    # which is WITHIN 42 of black on every channel - so on a black background the
+    # fill treats the outline itself as background and flows straight through it.
+    # Measured on the razor: 42 ate 1.5% of the sprite (the outer edge of the
+    # outline) and, worse, let the fill through the joints so the weapon read as
+    # six separate pieces. 24 sits below the outline and above the background.
+    [int]    $Tolerance = 24,
     [int]    $Margin    = 4,
     [switch] $NoTrim
 )
