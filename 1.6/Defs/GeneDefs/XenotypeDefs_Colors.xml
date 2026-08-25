@@ -56,6 +56,14 @@
     <displayPriority>10</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>0.1</factionlessGenerationWeight>
+    <!--
+      The caste prefix. chanceToUseNameMaker is 1 because the prefix is not
+      decoration - under the Society a name without one belongs to something
+      the registries do not count as a person. See Namers_ColorPrefixes.xml,
+      which records which Colors deliberately have none.
+    -->
+    <nameMaker>RR_Namer_Gold</nameMaker>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_Blonde</li>
       <li>Eyes_Golden</li>
@@ -125,6 +133,14 @@
     <displayPriority>15</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>0.5</factionlessGenerationWeight>
+    <!--
+      The caste prefix. chanceToUseNameMaker is 1 because the prefix is not
+      decoration - under the Society a name without one belongs to something
+      the registries do not count as a person. See Namers_ColorPrefixes.xml,
+      which records which Colors deliberately have none.
+    -->
+    <nameMaker>RR_Namer_Gold</nameMaker>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_SandyBlonde</li>
       <li>Eyes_DarkYellow</li>
@@ -151,6 +167,14 @@
     <displayPriority>20</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>0.4</factionlessGenerationWeight>
+    <!--
+      The caste prefix. chanceToUseNameMaker is 1 because the prefix is not
+      decoration - under the Society a name without one belongs to something
+      the registries do not count as a person. See Namers_ColorPrefixes.xml,
+      which records which Colors deliberately have none.
+    -->
+    <nameMaker>RR_Namer_Silver</nameMaker>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_Gray</li>
       <li>Eyes_Silver</li>
@@ -200,6 +224,14 @@
     <displayPriority>40</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>1</factionlessGenerationWeight>
+    <!--
+      The caste prefix. chanceToUseNameMaker is 1 because the prefix is not
+      decoration - under the Society a name without one belongs to something
+      the registries do not count as a person. See Namers_ColorPrefixes.xml,
+      which records which Colors deliberately have none.
+    -->
+    <nameMaker>RR_Namer_Copper</nameMaker>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_ReddishBrown</li>
       <li>Eyes_LightBrown</li>
@@ -226,6 +258,14 @@
     <displayPriority>50</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>2</factionlessGenerationWeight>
+    <!--
+      The caste prefix. chanceToUseNameMaker is 1 because the prefix is not
+      decoration - under the Society a name without one belongs to something
+      the registries do not count as a person. See Namers_ColorPrefixes.xml,
+      which records which Colors deliberately have none.
+    -->
+    <nameMaker>RR_Namer_Blue</nameMaker>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_BaldOnly</li>
       <li>Hair_LightBlue</li>
@@ -276,6 +316,14 @@
     <displayPriority>70</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>2</factionlessGenerationWeight>
+    <!--
+      The caste prefix. chanceToUseNameMaker is 1 because the prefix is not
+      decoration - under the Society a name without one belongs to something
+      the registries do not count as a person. See Namers_ColorPrefixes.xml,
+      which records which Colors deliberately have none.
+    -->
+    <nameMaker>RR_Namer_Green</nameMaker>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_ShortOnly</li>
       <li>Hair_LightGreen</li>
@@ -345,6 +393,14 @@
     <displayPriority>100</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>10</factionlessGenerationWeight>
+    <!--
+      The caste prefix. chanceToUseNameMaker is 1 because the prefix is not
+      decoration - under the Society a name without one belongs to something
+      the registries do not count as a person. See Namers_ColorPrefixes.xml,
+      which records which Colors deliberately have none.
+    -->
+    <nameMaker>RR_Namer_Gray</nameMaker>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_Gray</li>
       <li>Eyes_Gray</li>
@@ -506,6 +562,14 @@
     <displayPriority>75</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>0.4</factionlessGenerationWeight>
+    <!--
+      The caste prefix. chanceToUseNameMaker is 1 because the prefix is not
+      decoration - under the Society a name without one belongs to something
+      the registries do not count as a person. See Namers_ColorPrefixes.xml,
+      which records which Colors deliberately have none.
+    -->
+    <nameMaker>RR_Namer_Green</nameMaker>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_ShortOnly</li>
       <li>Hair_LightGreen</li>
@@ -529,6 +593,14 @@
     <displayPriority>105</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>0.3</factionlessGenerationWeight>
+    <!--
+      The caste prefix. chanceToUseNameMaker is 1 because the prefix is not
+      decoration - under the Society a name without one belongs to something
+      the registries do not count as a person. See Namers_ColorPrefixes.xml,
+      which records which Colors deliberately have none.
+    -->
+    <nameMaker>RR_Namer_Gray</nameMaker>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_Gray</li>
       <li>Eyes_Gray</li>

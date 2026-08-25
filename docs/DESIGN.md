@@ -436,6 +436,44 @@ Points worth taking from them, or deliberately not:
 
 ---
 
+## 8b. Resolved by the user — caste name prefixes
+
+Six Colors carry a prefix between given name and family name, each the chemical
+symbol of the element the caste is named for:
+
+| Color | Prefix | Element |
+|---|---|---|
+| Gold | `au` | gold |
+| Silver | `ag` | silver |
+| Copper | `cu` | copper |
+| Blue | `xe` | xenon |
+| Green | `si` | silicon |
+| Gray | `ti` | titanium |
+
+**The omissions carry the meaning.** Red, Pink and Obsidian have no prefix because
+the Society files them as property rather than as people — leaving them plain says
+the same thing the prefix says, in reverse.
+
+White, Yellow, Violet, Orange and Brown have none in the reference either, and are
+left plain rather than given invented symbols. A fabricated caste marker would read
+as canon to anyone who did not know better, which is worse than an absence. This
+closes the "invent, or leave prefix-less?" question with: leave them.
+
+Implemented as `RulePackDef` name makers in `Defs/RulePackDefs/`, attached to the
+nine xenotypes that carry a prefix (the six Colors plus Bronzie, Lurcher and Fulgur
+Bellator, which follow their parent Color). `chanceToUseNameMaker` is 1: the prefix
+is not decoration.
+
+**No character name from the books is used.** Given names are ordinary historical
+Latin and Greek forms; family names are assembled from syllables. Only the
+convention is borrowed, and a convention is a rule rather than an asset.
+
+Noted for later: characters who join the Rising abandon the prefix, and Reds take
+birthplace surnames instead. That is a per-faction naming rule rather than a
+per-Color one, so it belongs with the Sons of Ares rather than here.
+
+---
+
 ## 8. Open questions for the user
 
 ### Resolved in play

@@ -20,4 +20,7 @@
 
   <RR_Setting_SuppressNote>These affect world generation only. Changing them will not alter a world that already exists - start a new one to see the difference.</RR_Setting_SuppressNote>
 
+  <!-- Shown when a title reserved to Gold is offered to anyone else. -->
+  <RR_CannotHoldGoldTitle>{PAWN_nameDef} is not of Gold. The standing of {TITLE} is conferred by the Institute, and the Institute does not admit lesser Colors.</RR_CannotHoldGoldTitle>
+
 </LanguageData>

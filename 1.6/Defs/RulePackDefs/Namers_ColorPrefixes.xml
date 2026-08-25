@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Caste name prefixes.
+
+  Six Colors carry a prefix between given name and family name, and each is the
+  chemical symbol of the metal or element the caste is named for:
+
+      Gold    au      Silver  ag      Copper  cu
+      Blue    xe      Green   si      Gray    ti
+
+  THE OMISSIONS ARE THE POINT, and they are deliberate rather than gaps:
+
+    Red, Pink and Obsidian carry NO prefix, because the Society files them as
+    property rather than as people. Leaving them plain is not an oversight, it is
+    the same statement the prefix makes, in reverse.
+
+    White, Yellow, Violet, Orange and Brown have no prefix in the reference either.
+    They are left plain rather than given invented symbols - a fabricated caste
+    marker would read as canon to anyone who did not know better, which is a worse
+    outcome than an absence.
+
+  The user is the authority on the setting and ruled on all of this directly.
+
+  NAMES ARE ORIGINAL. No character name from the books appears here. The given
+  names are ordinary historical Latin and Greek forms in the public domain, and the
+  family names are built from syllables. Only the PREFIX CONVENTION is taken from
+  the reference, and a convention is a rule, not an asset.
+
+  Structure mirrored from Biotech/Defs/RulePackDefs/RulePacks_Namers_Xenohumans.xml
+  (NamerPersonImpid), and the shared pools use RulePackDef.include, which vanilla
+  uses the same way in Anomaly's RulePacks_Art.xml.
+-->
+<Defs>
+
+  <!-- ========================= shared name material ======================== -->
+  <!--
+    Included by every namer below, so the pools are written once. The prefix is
+    the only thing that differs between Colors.
+  -->
+
+  <RulePackDef>
+    <defName>RR_NameParts_Highborn</defName>
+    <rulePack>
+      <rulesStrings>
+        <!-- Latin and Greek given names, the register the ruling caste affects. -->
+        <li>given->Cassia</li>
+        <li>given->Aurelia</li>
+        <li>given->Livia</li>
+        <li>given->Octavius</li>
+        <li>given->Marcus</li>
+        <li>given->Tiberius</li>
+        <li>given->Lucia</li>
+        <li>given->Valeria</li>
+        <li>given->Quintus</li>
+        <li>given->Severus</li>
+        <li>given->Antonia</li>
+        <li>given->Drusilla</li>
+        <li>given->Cornelius</li>
+        <li>given->Julia</li>
+        <li>given->Aemilia</li>
+        <li>given->Gaius</li>
+        <li>given->Flavia</li>
+        <li>given->Priscus</li>
+        <li>given->Theodora</li>
+        <li>given->Lysandros</li>
+        <li>given->Kallista</li>
+        <li>given->Nikanor</li>
+        <li>given->Isidora</li>
+        <li>given->Demetria</li>
+
+        <!-- House names, assembled rather than listed. -->
+        <li>house->[hSyl][hEnd]</li>
+        <li>house->[hSyl][hSyl][hEnd]</li>
+
+        <li>hSyl->Bel</li>
+        <li>hSyl->Cor</li>
+        <li>hSyl->Var</li>
+        <li>hSyl->Ar</li>
+        <li>hSyl->Ther</li>
+        <li>hSyl->Mor</li>
+        <li>hSyl->Sev</li>
+        <li>hSyl->Tal</li>
+        <li>hSyl->Kav</li>
+        <li>hSyl->Rho</li>
+        <li>hSyl->Vel</li>
+        <li>hSyl->Ost</li>
+        <li>hSyl->Lyr</li>
+        <li>hSyl->Cae</li>
+        <li>hSyl->Ner</li>
+
+        <li>hEnd->ona</li>
+        <li>hEnd->anus</li>
+        <li>hEnd->ius</li>
+        <li>hEnd->ax</li>
+        <li>hEnd->os</li>
+        <li>hEnd->idus</li>
+        <li>hEnd->ena</li>
+        <li>hEnd->antor</li>
+        <li>hEnd->esca</li>
+        <li>hEnd->orian</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_NameParts_Servant</defName>
+    <rulePack>
+      <rulesStrings>
+        <!--
+          A plainer register for the working castes. Still prefixed - a Gray or a
+          Green is a person in the Society's own accounting - but not affecting the
+          classical manner the highColors do.
+        -->
+        <li>given->Trigg</li>
+        <li>given->Halla</li>
+        <li>given->Bram</li>
+        <li>given->Nessa</li>
+        <li>given->Coran</li>
+        <li>given->Wren</li>
+        <li>given->Dax</li>
+        <li>given->Mira</li>
+        <li>given->Holt</li>
+        <li>given->Sable</li>
+        <li>given->Jory</li>
+        <li>given->Petra</li>
+        <li>given->Lorn</li>
+        <li>given->Ansa</li>
+        <li>given->Kade</li>
+        <li>given->Rill</li>
+        <li>given->Tessa</li>
+        <li>given->Ovid</li>
+
+        <li>house->[sSyl][sEnd]</li>
+        <li>house->[sSyl][sSyl][sEnd]</li>
+
+        <li>sSyl->Naka</li>
+        <li>sSyl->Bar</li>
+        <li>sSyl->Fen</li>
+        <li>sSyl->Grim</li>
+        <li>sSyl->Hal</li>
+        <li>sSyl->Kor</li>
+        <li>sSyl->Mal</li>
+        <li>sSyl->Ras</li>
+        <li>sSyl->Tul</li>
+        <li>sSyl->Vin</li>
+        <li>sSyl->Dorn</li>
+        <li>sSyl->Esk</li>
+
+        <li>sEnd->mura</li>
+        <li>sEnd->son</li>
+        <li>sEnd->ley</li>
+        <li>sEnd->wick</li>
+        <li>sEnd->dan</li>
+        <li>sEnd->ric</li>
+        <li>sEnd->ova</li>
+        <li>sEnd->ka</li>
+        <li>sEnd->ton</li>
+        <li>sEnd->arr</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <!-- ============================== the six =============================== -->
+
+  <RulePackDef>
+    <defName>RR_Namer_Gold</defName>
+    <include><li>RR_NameParts_Highborn</li></include>
+    <rulePack>
+      <rulesStrings>
+        <li>r_name->[given] au [house]</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_Namer_Silver</defName>
+    <include><li>RR_NameParts_Highborn</li></include>
+    <rulePack>
+      <rulesStrings>
+        <li>r_name->[given] ag [house]</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_Namer_Copper</defName>
+    <include><li>RR_NameParts_Highborn</li></include>
+    <rulePack>
+      <rulesStrings>
+        <li>r_name->[given] cu [house]</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_Namer_Blue</defName>
+    <include><li>RR_NameParts_Servant</li></include>
+    <rulePack>
+      <rulesStrings>
+        <li>r_name->[given] xe [house]</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_Namer_Green</defName>
+    <include><li>RR_NameParts_Servant</li></include>
+    <rulePack>
+      <rulesStrings>
+        <li>r_name->[given] si [house]</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_Namer_Gray</defName>
+    <include><li>RR_NameParts_Servant</li></include>
+    <rulePack>
+      <rulesStrings>
+        <li>r_name->[given] ti [house]</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+</Defs>
