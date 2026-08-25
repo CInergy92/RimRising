@@ -572,6 +572,26 @@ easier than breaking them, because in the setting it is.
 
 ---
 
+## 8e. Ruled by the user — carving has no age gate, deliberately
+
+Cupid's Kiss is adults-only (`minAllowedAge` 18 plus `developmentalStageFilter`).
+**Carving is not, and that is a decision rather than an oversight.**
+
+The reference's central carving is performed on a teenager — it is the event the
+whole saga turns on. Gating the surgery to adults would quietly make the mod unable
+to tell its own founding story, and the Society carving children is precisely the
+horror the Rising exists in response to.
+
+The distinction between the two is consent and subject, not squeamishness. Cupid's
+Kiss is a conditioning device the Society fits to children to make them obedient, and
+the mod declines to hand a player that specific tool. Carving is the thing done *to*
+somebody that also becomes the thing they use *against* the people who did it.
+
+**Do not add an age gate to `RR_CarveBase`.** If it ever seems like an obvious
+tidy-up, this is why it is not.
+
+---
+
 ## 8. Open questions for the user
 
 ### Resolved in play
