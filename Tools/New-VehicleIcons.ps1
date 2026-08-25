@@ -174,49 +174,65 @@ $g = [System.Drawing.Graphics]::FromImage($body)
 $g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
 $g.Clear([System.Drawing.Color]::Transparent)
 
-# Backpack rack first, so everything else sits over it. Spikes splay rearward.
+# EVERY LIMB SWEEPS FORWARD. Reported from the east and south sprites: the mech
+# looked like it was crawling on spider legs. The first version had the six arms
+# radiating straight out sideways, which reads as "a mech with its arms out" only
+# while the torso is vertical. Rotate that same shape ninety degrees and the arms
+# become limbs splayed around a body - a spider, not a walker facing east.
+#
+# The fix is a rule, not a nudge: nothing points sideways or backwards. Arms rake
+# forward from the shoulder, cannons extend forward from the elbow, legs tuck in
+# close behind, and only the backpack spikes trail. Forward-swept limbs still
+# point along the facing after a rotation, so all three facings read as heading
+# somewhere.
+
+# Backpack rack first, so everything else sits over it. These are the one thing
+# that DOES trail rearward - they are a rack, not a limb, and they mark the back.
 foreach ($sp in @(
-    @(0.500, 0.735, 0.500, 0.900),
-    @(0.380, 0.720, 0.250, 0.860),
-    @(0.620, 0.720, 0.750, 0.860),
-    @(0.300, 0.690, 0.120, 0.760),
-    @(0.700, 0.690, 0.880, 0.760)
+    @(0.500, 0.745, 0.500, 0.930),
+    @(0.395, 0.735, 0.330, 0.905),
+    @(0.605, 0.735, 0.670, 0.905),
+    @(0.320, 0.710, 0.215, 0.845),
+    @(0.680, 0.710, 0.785, 0.845)
 )) {
-    V-Spike $g $W $H @(@($sp[0],$sp[1]), @($sp[2],$sp[3])) 0.075 0.006 $HullDk
+    V-Spike $g $W $H @(@($sp[0],$sp[1]), @($sp[2],$sp[3])) 0.070 0.006 $HullDk
 }
-V-Form $g $W $H @(@(0.500,0.620), @(0.500,0.730)) 0.44 $HullDk
+V-Form $g $W $H @(@(0.500,0.630), @(0.500,0.740)) 0.42 $HullDk
 
-# Legs, splayed back under the hull.
-V-Form $g $W $H @(@(0.395,0.660), @(0.330,0.885)) 0.14 $HullDk
-V-Form $g $W $H @(@(0.605,0.660), @(0.670,0.885)) 0.14 $HullDk
+# Legs, tucked close and running fore-aft rather than splayed out.
+V-Form $g $W $H @(@(0.430,0.640), @(0.418,0.880)) 0.15 $HullDk
+V-Form $g $W $H @(@(0.570,0.640), @(0.582,0.880)) 0.15 $HullDk
 
-# Torso.
-V-Form $g $W $H @(@(0.500,0.330), @(0.500,0.640)) 0.36 $Hull
+# Torso, long along the facing axis so the orientation is legible on its own.
+V-Form $g $W $H @(@(0.500,0.300), @(0.500,0.660)) 0.34 $Hull
 
 # Shoulder blocks.
-V-Form $g $W $H @(@(0.270,0.360), @(0.270,0.560)) 0.20 $Plate
-V-Form $g $W $H @(@(0.730,0.360), @(0.730,0.560)) 0.20 $Plate
+V-Form $g $W $H @(@(0.290,0.375), @(0.290,0.580)) 0.19 $Plate
+V-Form $g $W $H @(@(0.710,0.375), @(0.710,0.580)) 0.19 $Plate
 
-# Six arms - three a side. Upper arm out to an elbow, then the cannon barrel.
+# Six arms, three a side, every one raked FORWARD to an elbow ahead of its
+# shoulder, with the cannon running forward again from there.
 foreach ($arm in @(
-    @(0.255, 0.385, 0.130, 0.345),
-    @(0.250, 0.470, 0.105, 0.470),
-    @(0.255, 0.555, 0.130, 0.615)
+    @(0.285, 0.400, 0.155, 0.285),
+    @(0.280, 0.485, 0.135, 0.390),
+    @(0.285, 0.570, 0.150, 0.495)
 )) {
-    $ex = $arm[2]; $ey = $arm[3]
-    V-Form  $g $W $H @(@($arm[0],$arm[1]), @($ex,$ey)) 0.115 $Hull
-    V-Dot   $g $W $H $ex $ey 0.058 $Plate
-    $bx = $ex - 0.070; $by = $ey - 0.090
-    V-Spike $g $W $H @(@($ex,$ey), @($bx,$by)) 0.062 0.022 $HullDk
-    # Mirrored arm.
-    $mx0 = 1.0 - $arm[0]; $mex = 1.0 - $ex; $mbx = 1.0 - $bx
-    V-Form  $g $W $H @(@($mx0,$arm[1]), @($mex,$ey)) 0.115 $Hull
-    V-Dot   $g $W $H $mex $ey 0.058 $Plate
-    V-Spike $g $W $H @(@($mex,$ey), @($mbx,$by)) 0.062 0.022 $HullDk
+    $sx = $arm[0]; $sy = $arm[1]; $ex = $arm[2]; $ey = $arm[3]
+    $bx = $ex - 0.018
+    $by = $ey - 0.135
+    V-Form  $g $W $H @(@($sx,$sy), @($ex,$ey)) 0.110 $Hull
+    V-Dot   $g $W $H $ex $ey 0.054 $Plate
+    V-Spike $g $W $H @(@($ex,$ey), @($bx,$by)) 0.060 0.026 $HullDk
+    # Mirrored arm. Reflect every x about the centreline.
+    $msx = 1.0 - $sx; $mex = 1.0 - $ex; $mbx = 1.0 - $bx
+    V-Form  $g $W $H @(@($msx,$sy), @($mex,$ey)) 0.110 $Hull
+    V-Dot   $g $W $H $mex $ey 0.054 $Plate
+    V-Spike $g $W $H @(@($mex,$ey), @($mbx,$by)) 0.060 0.026 $HullDk
 }
 
-# The ion cleaver, held out on the lower right arm.
-V-Spike $g $W $H @(@(0.845,0.610), @(0.930,0.400), @(0.965,0.230)) 0.085 0.005 $Plate
+# The ion cleaver, carried forward alongside the right arms rather than held out
+# to the side, for the same reason.
+V-Spike $g $W $H @(@(0.855,0.560), @(0.885,0.330), @(0.900,0.130)) 0.080 0.005 $Plate
 
 # Cockpit, sunk between the shoulders where a neck should be. No head above it.
 V-Form $g $W $H @(@(0.500,0.300), @(0.500,0.360)) 0.26 $Plate

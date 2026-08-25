@@ -127,7 +127,12 @@ if (-not $NoTrim) {
         }
     }
 }
-if ($maxX -lt 0) {
+if ($NoTrim) {
+    # Not a failure: the scan above was skipped on purpose, so maxX is still -1.
+    # Falling into the branch below would cry wolf on every vehicle sprite.
+    $minX = 0; $minY = 0; $maxX = $w - 1; $maxY = $h - 1
+}
+elseif ($maxX -lt 0) {
     Write-Warning 'Everything was keyed out - the whole image matched the background. Lower -Tolerance.'
     $minX = 0; $minY = 0; $maxX = $w - 1; $maxY = $h - 1
 }
