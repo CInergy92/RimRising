@@ -275,11 +275,15 @@ $g.Clear([System.Drawing.Color]::Transparent)
 # The pivot sits at the texture centre because turretType is Rotatable and the
 # framework spins the texture about its middle; the breech is placed around that
 # point and the barrels run forward from it.
-V-Spike $g $T $T @(@(0.415,0.545), @(0.415,0.080)) 0.100 0.062 $HullDk  # left barrel
-V-Spike $g $T $T @(@(0.585,0.545), @(0.585,0.080)) 0.100 0.062 $HullDk  # right barrel
-V-Form  $g $T $T @(@(0.500,0.500), @(0.500,0.745)) 0.32 $Hull           # breech
-V-Dot   $g $T $T 0.500 0.500 0.090 $Plate                               # pivot
-V-Dot   $g $T $T 0.500 0.665 0.042 $Amber                               # charge port
+# Barrels stop short of the canvas edge. Run them to 0.08 and the generated art
+# reaches the frame boundary and is cut off flat, which reads as a broken stub.
+# The breech is also narrower than the first pass: at 0.32 wide it dominated the
+# frame and the model treated IT as the body, leaving the barrels as two nubs.
+V-Spike $g $T $T @(@(0.425,0.560), @(0.425,0.140)) 0.088 0.056 $HullDk  # left barrel
+V-Spike $g $T $T @(@(0.575,0.560), @(0.575,0.140)) 0.088 0.056 $HullDk  # right barrel
+V-Form  $g $T $T @(@(0.500,0.520), @(0.500,0.700)) 0.25 $Hull           # breech
+V-Dot   $g $T $T 0.500 0.500 0.076 $Plate                               # pivot
+V-Dot   $g $T $T 0.500 0.632 0.036 $Amber                               # charge port
 $g.Dispose()
 Save-Png $pc 'Things/Vehicles/RR_Drachenjager/RR_Drachenjager_ParticleCannon'
 $pc.Dispose()
