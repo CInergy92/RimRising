@@ -116,12 +116,18 @@ foreach ($item in $items) {
         if ($n -eq 0) { Write-Warning "No candidates on disk for $leaf; skipping."; continue }
     }
     else {
+        # A 768x1024 body at batch 4 with ControlNet attached faults the GPU
+        # ("RuntimeError: Fault failed: 2" out of KSampler). The turrets are a
+        # quarter of the pixels and are fine at full batch, so cap by area rather
+        # than lowering it for everything.
+        $batch = $Variants
+        if (($item.W * $item.H) -gt (640 * 640)) { $batch = [Math]::Min($Variants, 2) }
         $long = [Math]::Max($item.W, $item.H)
         $raw = & (Join-Path $PSScriptRoot 'Invoke-ComfyPrompt.ps1') `
                     -Pipeline zcontrol -Server $Server `
                     -InitImage $sil -ControlStrength $ControlStrength `
                     -Positive ($item.Subject + $style) -Negative '' `
-                    -Width $long -Batch $Variants -Seed $Seed `
+                    -Width $long -Batch $batch -Seed $Seed `
                     -Name $leaf -TimeoutSec 1200
         foreach ($file in $raw) {
             $n++

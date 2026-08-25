@@ -289,6 +289,25 @@ while ((Get-Date) -lt $deadline) {
 
 if (-not $entry) { throw "Timed out after $TimeoutSec s waiting for $promptId. Is the model still loading? First run loads several GB." }
 
+# A FAILED JOB STILL PRODUCES A HISTORY ENTRY - one with an error status and no
+# outputs. Walking straight into $entry.outputs then reports "the property 'Name'
+# cannot be found on this object", which says nothing about what went wrong and
+# sends you looking in the wrong place entirely. Surface ComfyUI's own message.
+if ($entry.status -and $entry.status.status_str -eq 'error') {
+    $detail = 'no detail given'
+    foreach ($m in $entry.status.messages) {
+        if ($m[0] -match 'error' -and $m[1].PSObject.Properties['exception_message']) {
+            $detail = "$($m[1].exception_type): $($m[1].exception_message)".Trim()
+            if ($m[1].PSObject.Properties['node_type']) { $detail += " (node $($m[1].node_type))" }
+            break
+        }
+    }
+    throw "ComfyUI failed this job: $detail`nA 'Fault failed' or 'out of memory' here means the batch or resolution is too big for the card - lower -Batch."
+}
+if (-not $entry.PSObject.Properties['outputs']) {
+    throw "ComfyUI returned a history entry with no outputs and no error status. Check its console."
+}
+
 $saved = @()
 foreach ($nodeId in $entry.outputs.PSObject.Properties.Name) {
     $node = $entry.outputs.$nodeId
