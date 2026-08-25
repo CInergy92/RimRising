@@ -927,6 +927,42 @@ would quietly rank every pawn in the game on a ladder they have never heard of.
 
 ---
 
+## A third start — the Rising
+
+The two existing scenarios sat at opposite ends of the hierarchy but both accepted
+it. With the user's ruling that a player may reject the castes, there was an obvious
+gap: no way to *begin* as the thing that rejects them.
+
+**Deliberately not a harder Breakout.** Breakout is anonymity — the shaft flooded,
+the census never had your name, nobody is looking for you. The Rising is the
+opposite: a cell is something the Society already knows exists and is already
+hunting.
+
+| | Household | Breakout | Rising |
+|---|---|---|---|
+| Party | Gold + 4 castes | 3 Reds | cross-Color cell of 5 |
+| Arrival | drop pods | standing | drop pods |
+| Gear | Society issue | nothing | stolen |
+| First raid | storyteller's call | storyteller's call | **scheduled, day 4–7** |
+
+Three things worth recording:
+
+**It starts with kinds, not xenotypes.** `ScenPart_ConfigPage_ConfigureStartingPawns_KindDefs`
+lets the party be actual Sons of Ares pawn kinds, so the Gray defector arrives with a
+Gray's marksmanship and the Orange saboteur with an Orange's hands. Picking xenotypes
+alone would have produced the right Colors with the wrong lives behind them.
+
+**No ideoligion is forced, because RimWorld ships no ScenPart that can.** Checked
+against every ScenPart vanilla actually uses — there is no ideo lever. Color equality
+has to be chosen on the ideoligion page, so the description says so outright rather
+than letting the player discover afterwards that the premise never took.
+
+**The party composition is the argument.** A Gold, a Gray, an Orange and two Reds in
+one room is the thing the Society says is impossible, stated as a starting roster
+instead of as flavour text.
+
+---
+
 ## Open questions
 
 Carried in `docs/DESIGN.md` §8.

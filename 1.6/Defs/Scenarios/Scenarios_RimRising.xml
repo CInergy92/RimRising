@@ -207,4 +207,148 @@
     </scenario>
   </ScenarioDef>
 
+  <!-- ============================== the Rising ============================= -->
+  <!--
+    The third start, and deliberately not a harder Breakout.
+
+    Breakout is anonymity: the shaft flooded, the census never had your name, and
+    nobody is looking for you. This is the opposite. A cell of the Rising is a
+    thing the Society already knows exists and is already hunting, and it is made
+    of people from Colors that are not supposed to be able to stand in the same
+    room - which is the entire argument the Rising is making, expressed as a party
+    composition rather than as a description.
+
+    STARTS WITH KINDS, NOT XENOTYPES. ScenPart_ConfigPage_ConfigureStartingPawns_
+    KindDefs lets the party be actual Sons of Ares pawn kinds, so a Gray defector
+    arrives with a Gray's marksmanship and an Orange saboteur with an Orange's
+    hands. Picking xenotypes alone would have produced the right Colors with the
+    wrong lives behind them.
+
+    NO IDEOLIGION IS FORCED, because RimWorld ships no ScenPart that can set one -
+    checked against every ScenPart vanilla uses. Color equality has to be chosen on
+    the ideoligion page, and the description says so rather than leaving the player
+    to discover that the premise did not take.
+
+    THE FIRST RAID IS SCHEDULED. Every other start waits for the storyteller. This
+    one does not, because being found is the premise rather than a risk.
+  -->
+
+  <ScenarioDef ParentName="ScenarioBase">
+    <defName>RR_Scenario_Rising</defName>
+    <label>A Cell of the Rising</label>
+    <description>Five people who by every rule of the Society should never have met, in a hole in the ground with somebody else's weapons.
+
+A Gold who was not supposed to be able to doubt. A Gray who was told to shoot and did not. An Orange whose hands are worth more than the rest of the cell combined. Two Reds who were never asked whether any of it was acceptable, and have now answered.
+
+The Society knows the Rising exists. It does not yet know you do, and that will not last.
+
+Pick Color equality on the ideoligion page - the premise of this start is that the castes are a lie, and the game cannot assume that for you.</description>
+    <scenario>
+      <summary>A cross-Color insurgent cell. Stolen gear, powerful enemies, and a first raid already on the way.</summary>
+      <parts>
+
+        <li Class="ScenPart_GameStartDialog">
+          <def>GameStartDialog</def>
+          <text>The five of you agree on almost nothing except the one thing.
+
+Outside, the Society is a fact so large it is mistaken for weather. In here it is five people and a stolen razor, which is a worse ratio than it sounds and a better one than it has ever been.</text>
+          <closeSound>GameStartSting</closeSound>
+        </li>
+
+        <li Class="ScenPart_ConfigPage_ConfigureStartingPawns_KindDefs">
+          <def>ConfigurePawnsKindDefs</def>
+          <pawnChoiceCount>10</pawnChoiceCount>
+          <kindCounts>
+            <li>
+              <kindDef>RR_Ares_Gold_Turncoat</kindDef>
+              <count>1</count>
+              <requiredAtStart>true</requiredAtStart>
+            </li>
+            <li>
+              <kindDef>RR_Ares_Gray_Defector</kindDef>
+              <count>1</count>
+            </li>
+            <li>
+              <kindDef>RR_Ares_Orange_Saboteur</kindDef>
+              <count>1</count>
+            </li>
+            <li>
+              <kindDef>RR_Ares_Red_Fighter</kindDef>
+              <count>2</count>
+            </li>
+          </kindCounts>
+        </li>
+
+        <!-- Inserted, or shot down. Either reading works. -->
+        <li Class="ScenPart_PlayerPawnsArriveMethod">
+          <def>PlayerPawnsArriveMethod</def>
+          <visible>false</visible>
+          <method>DropPods</method>
+        </li>
+
+        <!--
+          Taken, not issued. A razor in a lowColor's hands is the single most
+          inflammatory object in the setting, and the Rising began in part with
+          exactly that.
+        -->
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>RR_Weapon_Razor</thingDef>
+          <count>1</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Gun_AssaultRifle</thingDef>
+          <count>2</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>MedicineIndustrial</thingDef>
+          <count>18</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>ComponentIndustrial</thingDef>
+          <count>15</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Steel</thingDef>
+          <count>350</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>MealSurvivalPack</thingDef>
+          <count>25</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Silver</thingDef>
+          <count>400</count>
+        </li>
+
+        <!--
+          The Orange brought her trade with her. One research project, and it is
+          the one that makes armour possible later rather than anything immediate.
+        -->
+        <li Class="ScenPart_StartingResearch">
+          <def>StartingResearch</def>
+          <project>RR_PolyenneWeaving</project>
+        </li>
+
+        <!--
+          Being found is the premise. Scheduled early enough to set the tone and
+          late enough to build something first.
+        -->
+        <li Class="ScenPart_CreateIncident">
+          <def>CreateIncident</def>
+          <incident>RaidEnemy</incident>
+          <minDays>4</minDays>
+          <maxDays>7</maxDays>
+        </li>
+
+      </parts>
+    </scenario>
+  </ScenarioDef>
+
 </Defs>
