@@ -132,7 +132,14 @@
       <texPath>Things/Vehicles/RR_Drachenjager/RR_Drachenjager_ParticleCannon</texPath>
       <graphicClass>Vehicles.Graphic_Turret</graphicClass>
       <shaderType>Cutout</shaderType>
-      <drawSize>(4, 4)</drawSize>
+      <!--
+        Shrunk from (4,4) now that this is arm-mounted rather than centred on the
+        torso. Four cells across, offset 1.8 cells left on a six-cell-wide sprite,
+        puts half the turret off the edge of the mech. At 2.6 it reads as a weapon
+        an arm is carrying. The 512x512 texture is left as it is - drawSize only
+        changes how large it is drawn, so the extra resolution costs nothing.
+      -->
+      <drawSize>(2.6, 2.6)</drawSize>
     </graphicData>
     <ammunition>
       <thingDefs>
@@ -170,7 +177,8 @@
       <texPath>Things/Vehicles/RR_Drachenjager/RR_Drachenjager_WarheadRack</texPath>
       <graphicClass>Vehicles.Graphic_Turret</graphicClass>
       <shaderType>Cutout</shaderType>
-      <drawSize>(4, 4)</drawSize>
+      <!-- Stays wider than the cannon: it sits on the back and spans the pack. -->
+      <drawSize>(3, 3)</drawSize>
     </graphicData>
     <ammunition>
       <thingDefs>
@@ -420,22 +428,55 @@
             <turretDef>RR_Drachenjager_ParticleCannon</turretDef>
             <key>particleCannon</key>
             <parentKey></parentKey>
+            <!--
+              OFFSETS ARE BODY-RELATIVE CELLS: +x is the vehicle's right, +y its
+              forward. Confirmed against Vanilla Vehicles Expanded's Goliath,
+              whose paired turrets are (-1.1, 1.955) and (1.1, 1.955) - one point
+              mirrored - and which declares ONLY <north>, leaving the framework to
+              derive the rest.
+
+              The values here used to be eyeballed against the placeholder squares
+              and did not agree with each other under any single convention: north
+              (0, 2.4) with east (1.6, 0.8) is not one point seen from two sides.
+              They are now derived from a single body-relative position, rotated:
+
+                  north (r, f)   east (f, -r)   south (-r, -f)   west (-f, r)
+
+              All four are written out rather than trusting the framework to infer
+              them, since that inference is unverified here.
+
+              The cannon now sits on the FRONT-LEFT ELBOW instead of the torso.
+              Centred, it gave the mech guns twice over - six painted onto the arms
+              and two more floating across the cockpit.
+
+              Position comes from the silhouette: normalised (0.155, 0.285) on a
+              drawSize (6,8) sprite is ((0.155-0.5)*6, (0.5-0.285)*8) = (-2.07,
+              1.72), pulled in to (-1.8, 1.6) so a 3x3 turret does not hang off the
+              sprite's left edge.
+            -->
             <renderProperties>
-              <north>(0, 2.4)</north>
-              <east>(1.6, 0.8)</east>
-              <south>(0, -1.2)</south>
-              <west>(-1.6, 0.8)</west>
+              <north>(-1.8, 1.6)</north>
+              <east>(1.6, 1.8)</east>
+              <south>(1.8, -1.6)</south>
+              <west>(-1.6, -1.8)</west>
             </renderProperties>
           </li>
           <li>
             <turretDef>RR_Drachenjager_WarheadRack</turretDef>
             <key>warheadRack</key>
             <parentKey></parentKey>
+            <!--
+              The rack stays on the centreline but moves back onto the spiked
+              pack, which is exactly what the def calls it - the spiked pack on its
+              back. An arm would be the wrong place for it. The pack centres at
+              normalised y 0.75, so (0.5-0.75)*8 = -2 cells, i.e. two cells behind
+              the vehicle's middle. Rotated by the same rule as the cannon.
+            -->
             <renderProperties>
-              <north>(0, -0.8)</north>
-              <east>(-0.8, -0.4)</east>
-              <south>(0, 1.6)</south>
-              <west>(0.8, -0.4)</west>
+              <north>(0, -2)</north>
+              <east>(-2, 0)</east>
+              <south>(0, 2)</south>
+              <west>(2, 0)</west>
             </renderProperties>
           </li>
         </turrets>
