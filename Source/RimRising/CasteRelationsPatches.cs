@@ -151,14 +151,9 @@ namespace RimRising
         /// <summary>True only when both pawns are RimRising Colors and the Colors differ.</summary>
         public static bool AreDifferentColors(Pawn a, Pawn b)
         {
-            if (a?.genes == null || b?.genes == null) { return false; }
-
-            XenotypeDef xa = a.genes.Xenotype;
-            XenotypeDef xb = b.genes.Xenotype;
-            if (xa == null || xb == null) { return false; }
-            if (xa == xb) { return false; }
-
-            return IsColor(xa) && IsColor(xb);
+            // Carving is precisely how two Colors stop being different, so this has
+            // to read as-presented rather than as-born.
+            return RR_CasteIdentity.AreDifferentColors(a, b);
         }
 
         /// <summary>

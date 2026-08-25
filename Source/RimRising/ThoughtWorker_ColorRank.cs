@@ -116,11 +116,10 @@ namespace RimRising
         /// </summary>
         private static float? RankOf(Pawn pawn)
         {
-            if (pawn?.genes == null) { return null; }
-
-            XenotypeDef xeno = pawn.genes.Xenotype;
+            // Reads as, not born as. A carved Gold has a Gold's rung, which is the
+            // whole reason anyone submits to the surgery - see RR_CasteIdentity.
+            XenotypeDef xeno = RR_CasteIdentity.ColorOf(pawn);
             if (xeno == null) { return null; }
-            if (!xeno.defName.StartsWith("RR_")) { return null; }
 
             return xeno.displayPriority / PointsPerRung;
         }
@@ -156,9 +155,8 @@ namespace RimRising
 
         private static float? RankOfPublic(Pawn pawn)
         {
-            if (pawn?.genes == null) { return null; }
-            XenotypeDef xeno = pawn.genes.Xenotype;
-            if (xeno == null || !xeno.defName.StartsWith("RR_")) { return null; }
+            XenotypeDef xeno = RR_CasteIdentity.ColorOf(pawn);
+            if (xeno == null) { return null; }
             return xeno.displayPriority / 10f;
         }
     }

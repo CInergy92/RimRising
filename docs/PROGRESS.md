@@ -12,7 +12,7 @@ Game target: **RimWorld 1.6.4871 rev590**. packageId: `cinergy92.rimrising`.
 |---|---|---|
 | 0 | Discovery | **Done.** `docs/DISCOVERY.md` |
 | 1 | Skeleton | **Done** |
-| 2 | The Color system | **Built and published; U1 parked as flavour** |
+| 2 | The Color system | **Verified. U1 answered by decompilation — a carved pawn reads as Baseliner** |
 | 3 | Factions and pawn kinds | **Verified: planet generates, log clean** |
 | 4 | Tech and equipment | **Verified in game.** Razor, pulse fist, pulse armor, scarabSkin, demonHelm |
 | 5 | Ideology and hierarchy | **Verified in game.** Memes, 13 knighthoods, razor lock, caste romance, Gold ladder |
@@ -1004,6 +1004,49 @@ errors instead of passing silently.
 
 This is the same lesson the collection graphics and the directional textures both
 taught: **a texture check only covers the node names it happens to know about.**
+
+---
+
+## Carving, step one — U1 answered, and what it broke
+
+U1 asked whether a xenogerm built from an exact Color gene set makes the pawn read as
+that Color or as "Hybrid". It had been parked as flavour since Milestone 2. The answer
+is neither, and it was not a flavour question at all.
+
+`GeneUtility.ImplantXenogermItem` sets the xenotype to **Baseliner unconditionally**,
+keeps only the free-text name the player typed and an icon, and adds every gene as a
+xenogene. Nothing is matched against any `XenotypeDef`.
+
+### Which meant the mod handled carving worse than anything else
+
+Every caste check read `genes.Xenotype` directly. For a carved Gold that returns
+Baseliner, so:
+
+| System | Carved Gold, before |
+|---|---|
+| the Color ladder | no rung at all — invisible to the hierarchy |
+| the razor lock | could not pick up a razor |
+| Gold-only titles | could not hold one |
+| cross-Color romance | read as no Color |
+
+A lowColor carved into a Gold and passing is the single thing the setting turns on, and
+it was the one case that did not work.
+
+### RR_CasteIdentity
+
+One resolver, and every check now goes through it. Birth first — if the pawn's
+`XenotypeDef` is ours, that is their Color. Otherwise match the pawn's genes against
+each Color's gene set, **most specific first** so a sub-strain wins over its parent.
+
+Containment rather than equality, deliberately: a carved pawn keeps endogenes from the
+Color they were born, and a carved Red still has a Red's history in them. That is the
+tragedy of the thing, not a reason to fail the match.
+
+Pawns with a non-baseliner xenotype that is not ours are left alone entirely — another
+mod's xenotype has no business being sorted onto a Society ladder.
+
+**This was the necessary first step.** Any carving content built on top of
+`genes.Xenotype` would have been built on sand.
 
 ---
 

@@ -52,7 +52,9 @@ namespace RimRising
             if (p == null || p.genes == null) { return false; }
             if (xenotypes == null || xenotypes.Count == 0) { return false; }
 
-            XenotypeDef current = p.genes.Xenotype;
+            // A carved Gold can hold a knighthood. That is not a loophole - it is
+            // the plot, and the Institute has no gene scanner at the door.
+            XenotypeDef current = RR_CasteIdentity.ColorOf(p);
             if (current == null) { return false; }
 
             for (int i = 0; i < xenotypes.Count; i++)

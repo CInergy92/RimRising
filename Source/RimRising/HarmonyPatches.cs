@@ -102,12 +102,10 @@ namespace RimRising
     {
         public static bool IsRulingCaste(Pawn pawn)
         {
-            if (pawn?.genes == null) { return false; }
-            XenotypeDef x = pawn.genes.Xenotype;
-            if (x == null) { return false; }
-            // Bronzies are Gold by birth and by law. The order and the Compact
-            // both admit them, so the razor does too.
-            return x == RR_DefOf.RR_Gold || x == RR_DefOf.RR_Bronzie;
+            // Delegates to RR_CasteIdentity so a CARVED Gold passes too. Reading
+            // genes.Xenotype directly here meant the one pawn the setting is
+            // actually about could not pick up a razor.
+            return RR_CasteIdentity.IsRulingCaste(pawn);
         }
     }
 

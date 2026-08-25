@@ -217,9 +217,28 @@ Also: xenogerm implantation grants **xenogenes**, which are not inherited, while
 xenotypes pass on **endogenes**. So a carved pawn's children inherit their birth Color, not the
 carved one. That matches the setting exactly. See `docs/DESIGN.md`.
 
-**Unverified:** whether implanting a xenogerm assembled from an exact Color gene set makes the pawn
-read as that Color, or as "Hybrid". That is C# behaviour in `Building_GeneAssembler` and is not
-visible in XML. Must be tested in game before Milestone 2 is called done.
+### U1, answered: a carved pawn reads as BASELINER
+
+Settled by decompiling `GeneUtility.ImplantXenogermItem`, not by guessing:
+
+```csharp
+pawn.genes.SetXenotype(XenotypeDefOf.Baseliner);
+pawn.genes.xenotypeName = xenogerm.xenotypeName;   // free text the player typed
+pawn.genes.iconDef      = xenogerm.iconDef;
+foreach (GeneDef item in xenogerm.GeneSet.GenesListForReading)
+    pawn.genes.AddGene(item, xenogene: true);
+```
+
+The xenotype is set to **Baseliner unconditionally**. Nothing is matched against any
+`XenotypeDef`; all that survives is a name and an icon. So a carved pawn has every gene
+of a Gold and, as far as `Pawn.genes.Xenotype` is concerned, is nobody.
+
+**Never read `Pawn.genes.Xenotype` to decide caste.** Every check in this mod did, which
+meant a carved Gold had no rung on the ladder, could not bear a razor and could not hold
+a Society title - the one pawn the setting is about was the one case handled worst.
+
+Use `RR_CasteIdentity.ColorOf(pawn)`, which tries birth first and then falls back to
+matching the pawn's genes against each Color's gene set, most specific first.
 
 ---
 
