@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Scars for an ideoligion that does not venerate pain.
+
+  WHY THIS DEF EXISTS AT ALL
+
+  Vanilla models scarification completely and we would rather have used it as-is.
+  But all three of its tiers carry
+
+      <requiredMemes><li>PainIsVirtue</li></requiredMemes>
+
+  and IdeoFoundation filters a precept out entirely when its requiredMemes are
+  absent. So an ideoligion cannot take ANY vanilla scarification precept without
+  also taking PainIsVirtue - which drags in its own requireOne chain of
+  Pain_Idealized, Comfort_Ignored and SlabBed_Preferred.
+
+  That chain suits the tribes on the ice and a hard dominion on the cold moons.
+  It does not suit Luna. The Society's whole character is that it is comfortable;
+  making it ascetic to explain a scar would be the tail wagging the dog.
+
+  THE ALTERNATIVE WAS WORSE. Patching requiredMemes off the vanilla precepts would
+  have worked, and would also have silently handed scarification to every other
+  ideoligion in anyone's game. A precept of our own is scoped to us and changes
+  nothing for anybody else.
+
+  Everything except the meme gate is vanilla's: the Scarification issue, the
+  ThoughtDefs, the GotScarified event and the ScarificationCeremony ritual. The
+  only new things here are the def name, the flavour, and the absent requirement.
+
+  Structure mirrored from Ideology/Defs/PreceptDefs/Precepts_Scarification.xml.
+-->
+<Defs>
+
+  <PreceptDef>
+    <defName>RR_Scarification_Peerless</defName>
+    <issue>Scarification</issue>
+    <impact>Medium</impact>
+    <displayOrderInIssue>25</displayOrderInIssue>
+    <displayOrderInImpact>100</displayOrderInImpact>
+    <label>the mark</label>
+    <description>A scar is not damage. It is a record, cut on purpose and in one place, that says a thing was survived and by whom. A face without one is a face with nothing written on it yet.\n\nThe cut is made once, and it is made where everybody can read it.</description>
+    <!--
+      One scar, and only one. The reference mark is a single line from ear to jaw,
+      and its meaning depends entirely on being singular - a face covered in them
+      would say something else. Vanilla's Heavy and Extreme tiers cover that other
+      reading and are still used by the tribes, who mean it.
+    -->
+    <requiredScars>1</requiredScars>
+    <associatedMemes>
+      <li>RR_ColorHierarchy</li>
+      <li>RR_GoldWorship</li>
+    </associatedMemes>
+    <!--
+      Deliberately NO requiredMemes. That absence is the entire reason this def is
+      here; adding one would recreate the problem it was written to avoid.
+
+      The thoughts, the event and the ritual are all vanilla's, reused rather than
+      cloned so the ceremony, the mood effects and the opinion offsets behave
+      exactly as a player already expects.
+    -->
+    <comps>
+      <li Class="PreceptComp_SituationalThought">
+        <thought>Scarification_Minor</thought>
+        <thoughtStageDescriptions>
+          <li>Scarification (1 scar required)</li>
+        </thoughtStageDescriptions>
+      </li>
+      <li Class="PreceptComp_SituationalThought">
+        <thought>Scarification_Minor_Opinion</thought>
+        <thoughtStageDescriptions>
+          <li>Scarification (1 scar required)</li>
+        </thoughtStageDescriptions>
+      </li>
+      <li Class="PreceptComp_SelfTookMemoryThought">
+        <eventDef>GotScarified</eventDef>
+        <thought>ScarificationCeremony_Self_Minor</thought>
+      </li>
+    </comps>
+  </PreceptDef>
+
+</Defs>

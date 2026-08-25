@@ -263,8 +263,23 @@
       <Structure_Ideological MayRequire="Ludeon.RimWorld.Ideology">5</Structure_Ideological>
       <Structure_Archist MayRequire="Ludeon.RimWorld.Ideology">2</Structure_Archist>
       <Structure_TheistEmbodied MayRequire="Ludeon.RimWorld.Ideology">1</Structure_TheistEmbodied>
-    </structureMemeWeights>    <requiredMemes>
+    </structureMemeWeights>    <!--
+      PainIsVirtue alongside the hierarchy meme. FactionDef.requiredMemes really
+      does force these at generation - IdeoUtility adds them to the meme list
+      directly - and an NPC ideoligion takes one to three normal memes, so two
+      forced ones fit.
+
+      DELIBERATELY NOT ON THE SOCIETY. PainIsVirtue carries its own requireOne
+      chain: Pain_Idealized, Comfort_Ignored, SlabBed_Preferred. Austerity and
+      slab beds suit a hard dominion on the cold moons and suit exiles on the ice.
+      They do not suit Luna, whose whole character is that it is comfortable, and
+      forcing it there would make the Society read as ascetic rather than
+      decadent. The Society still scars - that comes from the meme's own
+      Scarification requirement - it simply does not venerate the pain.
+    -->
+    <requiredMemes>
       <li>RR_ColorHierarchy</li>
+      <li>PainIsVirtue</li>
     </requiredMemes>    <xenotypeSet>
       <xenotypeChances>
         <RR_Red>0.22</RR_Red>
@@ -560,8 +575,23 @@
     <structureMemeWeights>
       <Structure_TheistEmbodied MayRequire="Ludeon.RimWorld.Ideology">8</Structure_TheistEmbodied>
       <Structure_Animist MayRequire="Ludeon.RimWorld.Ideology">2</Structure_Animist>
-    </structureMemeWeights>    <requiredMemes>
+    </structureMemeWeights>    <!--
+      PainIsVirtue alongside the hierarchy meme. FactionDef.requiredMemes really
+      does force these at generation - IdeoUtility adds them to the meme list
+      directly - and an NPC ideoligion takes one to three normal memes, so two
+      forced ones fit.
+
+      DELIBERATELY NOT ON THE SOCIETY. PainIsVirtue carries its own requireOne
+      chain: Pain_Idealized, Comfort_Ignored, SlabBed_Preferred. Austerity and
+      slab beds suit a hard dominion on the cold moons and suit exiles on the ice.
+      They do not suit Luna, whose whole character is that it is comfortable, and
+      forcing it there would make the Society read as ascetic rather than
+      decadent. The Society still scars - that comes from the meme's own
+      Scarification requirement - it simply does not venerate the pain.
+    -->
+    <requiredMemes>
       <li>RR_GoldWorship</li>
+      <li>PainIsVirtue</li>
     </requiredMemes>    <xenotypeSet>
       <xenotypeChances>
         <RR_Obsidian>0.88</RR_Obsidian>

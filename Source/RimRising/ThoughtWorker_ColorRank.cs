@@ -67,28 +67,6 @@ namespace RimRising
         /// stage(a,b) + stage(b,a) == 6 an identity rather than something that has
         /// to be re-checked whenever a Color is added or the ladder reordered.
         /// </summary>
-        /// <summary>
-        /// Diagnostic only. The startup report proved this ThoughtDef reaches
-        /// RimWorld's candidate list, and no per-call line ever appeared - so
-        /// ShouldHaveThought is never reached, and the gate that stops it is in the
-        /// base class:
-        ///
-        ///     if (!ideo.cachedPossibleSituationalThoughts.Contains(def))
-        ///         return ThoughtState.Inactive;
-        ///
-        /// This measures that gate rather than reasoning about it.
-        /// </summary>
-        protected override ThoughtState CurrentSocialStateInternal(Pawn p, Pawn otherPawn)
-        {
-            if (LadderDiagnostic.RemainingGateReports > 0)
-            {
-                LadderDiagnostic.RemainingGateReports--;
-                Ideo ideo = p?.Ideo;
-                LadderDiagnostic.ReportGate(p, ideo, def);
-            }
-            return base.CurrentSocialStateInternal(p, otherPawn);
-        }
-
         protected override ThoughtState ShouldHaveThought(Pawn p, Pawn otherPawn)
         {
             // Not about oneself, and not about anything that cannot hold a Color.
@@ -96,11 +74,7 @@ namespace RimRising
 
             float? mine  = RankOf(p);
             float? theirs = RankOf(otherPawn);
-            if (!mine.HasValue || !theirs.HasValue)
-            {
-                LadderDiagnostic.ReportCall(p, otherPawn, "INACTIVE - one or both pawns have no Color rank");
-                return ThoughtState.Inactive;
-            }
+            if (!mine.HasValue || !theirs.HasValue) { return ThoughtState.Inactive; }
 
             // Positive gap means the other pawn sits BELOW the observer, because
             // displayPriority counts downward from Gold.
@@ -128,7 +102,6 @@ namespace RimRising
             if (stage > last) { stage = last; }
             if (stage < 0)    { stage = 0; }
 
-            LadderDiagnostic.ReportCall(p, otherPawn, "stage " + stage);
             return ThoughtState.ActiveAtStage(stage);
         }
 

@@ -106,6 +106,21 @@
       <li>
         <li>RR_RazorBearing_GoldOnly</li>
       </li>
+      <!--
+        SCARS. Vanilla Ideology already models this completely - the Scarification
+        issue, its tiers, and the ScarificationCeremony ritual - and none of those
+        precepts claim a meme of their own, so they are free to be required here.
+        Nothing needed building.
+
+        Tiered by who holds the meme. The hierarchy proper marks deliberately and
+        once: the Peerless Scar is a single line from ear to jaw and it means a
+        specific thing, so Minor or Heavy. Gold worship as the tribes practise it
+        is not restrained about it, so Heavy or Extreme.
+      -->
+      <li>
+        <li>RR_Scarification_Peerless</li>
+        <li>Scarification_Heavy</li>
+      </li>
       <li>
         <li>RR_ColorDeference_Graded</li>
       </li>
@@ -182,6 +197,12 @@
     <requireOne>
       <li>
         <li>RR_ColorDeference_Graded</li>
+      </li>
+      <!-- The tribes cut deeper, and for different reasons. See above. -->
+      <li>
+        <li>Scarification_Heavy</li>
+        <li>Scarification_Extreme</li>
+        <li>RR_Scarification_Peerless</li>
       </li>
     </requireOne>
   </MemeDef>

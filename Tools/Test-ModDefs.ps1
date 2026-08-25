@@ -103,6 +103,10 @@ function Build-VanillaIndex {
     # spawns the pawn with no weapon or no clothes and logs absolutely nothing.
     $weaponTags  = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     $apparelTags = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    # PreceptDef -> the memes it REQUIRES. IdeoFoundation filters a precept out
+    # entirely when these are absent, so a meme cannot force a precept it does not
+    # also supply the requirement for.
+    $preceptReqMemes = @{}
 
     # Abstract (Name=) defs and the list-valued fields they declare, so a child can
     # be checked for re-declaring something it already inherits. RimWorld APPENDS
@@ -139,6 +143,16 @@ function Build-VanillaIndex {
             # (ThingDef/weaponTags and ThingDef/apparel/tags), never from the
             # PawnKindDefs that request them - otherwise a typo would validate
             # itself.
+            # $dn here is the defName NODE, not its text. Keying the table on the
+            # node object would make every later lookup miss silently.
+            if ($node.LocalName -eq 'PreceptDef' -and $dn -and $dn.InnerText) {
+                $rm = @()
+                foreach ($li in $node.SelectNodes('requiredMemes/li')) {
+                    if ($li.InnerText) { $rm += $li.InnerText.Trim() }
+                }
+                $preceptReqMemes[$dn.InnerText.Trim()] = $rm
+            }
+
             if ($node.LocalName -eq 'ThingDef') {
                 foreach ($li in $node.SelectNodes('weaponTags/li')) {
                     if ($li.InnerText) { [void]$weaponTags.Add($li.InnerText.Trim()) }
@@ -196,6 +210,7 @@ function Build-VanillaIndex {
         HairColorGenes= @($hairColorGenes)
         WeaponTags    = @($weaponTags)
         ApparelTags   = @($apparelTags)
+        PreceptReqMemes = $preceptReqMemes
         Abstracts     = $abstracts
     }
 }
@@ -215,7 +230,7 @@ function Get-VanillaIndex {
 
     # Bumped whenever the cached shape changes, so an old cache is rebuilt rather
     # than read with missing fields.
-    $cacheSchema = 6
+    $cacheSchema = 7
 
     if (-not $Refresh -and (Test-Path $cacheFile)) {
         try {
@@ -231,6 +246,7 @@ function Get-VanillaIndex {
                     HairColorGenes= [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.HairColorGenes, [StringComparer]::Ordinal)
                     WeaponTags    = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.WeaponTags, [StringComparer]::Ordinal)
                     ApparelTags   = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.ApparelTags, [StringComparer]::Ordinal)
+                    PreceptReqMemes = $cached.PreceptReqMemes
                     Abstracts     = $cached.Abstracts
                     Version       = $version
                 }
@@ -256,6 +272,7 @@ function Get-VanillaIndex {
         HairColorGenes= $idx.HairColorGenes
         WeaponTags    = $idx.WeaponTags
         ApparelTags   = $idx.ApparelTags
+        PreceptReqMemes = $idx.PreceptReqMemes
         Abstracts     = $idx.Abstracts
     } | ConvertTo-Json -Depth 8 -Compress | Set-Content -Path $cacheFile -Encoding UTF8
 
@@ -270,6 +287,7 @@ function Get-VanillaIndex {
         HairColorGenes= [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.HairColorGenes, [StringComparer]::Ordinal)
         WeaponTags    = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.WeaponTags, [StringComparer]::Ordinal)
         ApparelTags   = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.ApparelTags, [StringComparer]::Ordinal)
+        PreceptReqMemes = $idx.PreceptReqMemes
         Abstracts     = $idx.Abstracts
         Version       = $version
     }
@@ -792,6 +810,8 @@ $ammoSetRefs = [System.Collections.Generic.List[object]]::new()
 $modMemes         = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 $memeGuaranteed   = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 $preceptMemeRefs  = [System.Collections.Generic.List[object]]::new()
+$requireOneGroups = [System.Collections.Generic.List[object]]::new()
+$modPreceptReqMemes = @{}
 
 # Vehicle Framework's VehicleDef <-> VehicleBuildDef pair. They must point at each
 # other and neither direction is optional.
@@ -868,12 +888,29 @@ foreach ($file in $xmlFiles) {
                 foreach ($li in $node.SelectNodes('requireOne/li/li')) {
                     if ($li.InnerText) { [void]$memeGuaranteed.Add($li.InnerText.Trim()) }
                 }
+                foreach ($grp in $node.SelectNodes('requireOne/li')) {
+                    $members = @()
+                    foreach ($li in $grp.SelectNodes('li')) {
+                        if ($li.InnerText) { $members += $li.InnerText.Trim() }
+                    }
+                    if ($members.Count -gt 0) {
+                        $requireOneGroups.Add([pscustomobject]@{
+                            File = $rel; Meme = $dnNode.InnerText.Trim(); Members = $members
+                        })
+                    }
+                }
                 foreach ($li in $node.SelectNodes('selectOneOrNone/precepts/li')) {
                     if ($li.InnerText) { [void]$memeGuaranteed.Add($li.InnerText.Trim()) }
                 }
             }
 
             if ($node.LocalName -eq 'PreceptDef' -and $dnNode) {
+                $ourRm = @()
+                foreach ($li in $node.SelectNodes('requiredMemes/li')) {
+                    if ($li.InnerText) { $ourRm += $li.InnerText.Trim() }
+                }
+                $modPreceptReqMemes[$dnNode.InnerText.Trim()] = $ourRm
+
                 foreach ($li in $node.SelectNodes('associatedMemes/li')) {
                     if (-not $li.InnerText) { continue }
                     $preceptMemeRefs.Add([pscustomobject]@{
@@ -1326,6 +1363,40 @@ foreach ($ref in $listRefs) {
                     -Message ("'{0}' re-declares <{1}> value '{2}', which it already inherits from '{3}'. List fields append on inherit - remove it, or mark the list Inherit=False." -f $ref.Def, $field, $val, $ref.Parent)
             }
         }
+    }
+}
+
+# --- requireOne satisfiability ------------------------------------------------
+#
+# A meme's requireOne forces the ideoligion to take ONE precept from each group.
+# But IdeoFoundation filters out any precept whose requiredMemes are absent, so a
+# group where EVERY member needs some other meme can be satisfied by nothing.
+#
+# This is not hypothetical. Vanilla's Scarification_Minor, _Heavy and _Extreme all
+# carry requiredMemes PainIsVirtue, so requiring scarification from a meme that
+# does not also supply PainIsVirtue silently yields no scarification precept at
+# all - which is exactly the trap this project walked into.
+#
+# A group is safe when at least one member is unconditionally selectable: it has
+# no requiredMemes, or lists this meme among them.
+foreach ($grp in $requireOneGroups) {
+    $anySafe = $false
+    $why = @()
+    foreach ($m in $grp.Members) {
+        $req = $null
+        if ($modPreceptReqMemes.ContainsKey($m))          { $req = $modPreceptReqMemes[$m] }
+        elseif ($vanilla.PreceptReqMemes -and $vanilla.PreceptReqMemes.PSObject.Properties[$m]) {
+            $req = $vanilla.PreceptReqMemes.PSObject.Properties[$m].Value
+        }
+
+        if (-not $req -or @($req).Count -eq 0) { $anySafe = $true; break }
+        if (@($req) -contains $grp.Meme)       { $anySafe = $true; break }
+        $why += ("{0} needs {1}" -f $m, (@($req) -join '/'))
+    }
+
+    if (-not $anySafe) {
+        Add-Problem -Severity ERROR -Check 'RequireOneUnsatisfiable' -File $grp.File `
+            -Message ("MemeDef '{0}' has a <requireOne> group no ideoligion can satisfy on this meme alone - {1}. IdeoFoundation drops a precept whose requiredMemes are absent, so the group yields nothing and the issue is silently skipped." -f $grp.Meme, ($why -join '; '))
     }
 }
 
