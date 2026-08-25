@@ -51,7 +51,27 @@
       <ComponentSpacer>3</ComponentSpacer>
       <Gold>10</Gold>
     </costList>
-    <comps>
+    <!--
+      Inherit="False" IS REQUIRED, and the reason is not obvious. BaseWeapon
+      supplies CompProperties_Forbiddable, CompEquippable and
+      CompProperties_Styleable. CompEquippableAbility REPLACES CompEquippable
+      rather than sitting beside it, so the inherited list has to be discarded and
+      restated - which means Forbiddable and Styleable must be repeated here or
+      the razor quietly loses the ability to be forbidden or restyled. Vanilla
+      does exactly this for the bioferrite burner, with the same warning attached.
+
+      CompProperties_EquippableAbility is the plain, ammo-free form. The only
+      equippable-ability comp used anywhere in vanilla is the RELOADABLE subclass,
+      which needs an ammoDef and charges; decompiling it showed it derives from
+      this one, which carries nothing but an abilityDef. So a pure cooldown needs
+      no C# and no ammo item.
+    -->
+    <comps Inherit="False">
+      <li Class="CompProperties_EquippableAbility">
+        <abilityDef>RR_RazorWhip</abilityDef>
+      </li>
+      <li Class="CompProperties_Forbiddable"/>
+      <li Class="CompProperties_Styleable"/>
       <li>
         <compClass>CompQuality</compClass>
       </li>
@@ -195,6 +215,67 @@
       <damageAmountBase>18</damageAmountBase>
       <armorPenetrationBase>0.45</armorPenetrationBase>
       <speed>62</speed>
+    </projectile>
+  </ThingDef>
+
+  <!-- ========================= the razor's whip form =========================
+
+    A razor toggles between a rigid blade and a whip roughly twice its length.
+    The blade is the weapon's ordinary melee; the whip is this: a lash out to
+    just under eight cells, on a flat cooldown with no ammunition.
+
+    The AbilityDef and its projectile are colocated with the weapon rather than
+    filed under Defs/AbilityDefs, following vanilla - Anomaly keeps the bioferrite
+    burner's AbilityDef inside Weapons_Ranged.xml beside the gun that grants it.
+  -->
+  <AbilityDef>
+    <defName>RR_RazorWhip</defName>
+    <label>whip form</label>
+    <description>Release the razor's spine and let it uncoil to twice its length, then lash. The blade is limp until the instant it lands, which is what lets it reach around cover and why it cannot simply be parried. Recovering the edge and stiffening it again takes time the wielder does not have in a melee, so it is used to open a fight rather than to win one.</description>
+    <iconPath>UI/Abilities/RR_RazorWhip</iconPath>
+    <!-- Fifteen seconds. Long enough that it opens an engagement rather than
+         replacing the razor's melee, which is the whole point of carrying one. -->
+    <cooldownTicksRange>900</cooldownTicksRange>
+    <displayOrder>100</displayOrder>
+    <!-- It belongs to the weapon, not the pawn, so it does not belong on the
+         character card. Vanilla does the same for the bioferrite burner. -->
+    <showOnCharacterCard>false</showOnCharacterCard>
+    <!-- Enemy Golds use it too. They are meant to be dangerous. -->
+    <aiCanUse>true</aiCanUse>
+    <verbProperties>
+      <verbClass>Verb_CastAbility</verbClass>
+      <range>7.9</range>
+      <warmupTime>0.6</warmupTime>
+      <requireLineOfSight>true</requireLineOfSight>
+      <targetParams>
+        <canTargetPawns>true</canTargetPawns>
+        <canTargetBuildings>false</canTargetBuildings>
+        <canTargetSelf>false</canTargetSelf>
+      </targetParams>
+    </verbProperties>
+    <comps>
+      <li Class="CompProperties_AbilityLaunchProjectile">
+        <projectileDef>RR_Bullet_RazorLash</projectileDef>
+      </li>
+    </comps>
+  </AbilityDef>
+
+  <ThingDef ParentName="BaseBullet">
+    <defName>RR_Bullet_RazorLash</defName>
+    <label>razor lash</label>
+    <graphicData>
+      <texPath>Things/Projectile/RR_RazorLash</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <projectile>
+      <damageDef>Cut</damageDef>
+      <!-- Below the razor's own 26-power stab. Reach is what the whip buys; it
+           is not also meant to be the harder hit. -->
+      <damageAmountBase>19</damageAmountBase>
+      <!-- Canonically a razor cuts through armour. This stays under the blade's
+           own penetration for the same reason as the damage. -->
+      <armorPenetrationBase>0.75</armorPenetrationBase>
+      <speed>55</speed>
     </projectile>
   </ThingDef>
 
