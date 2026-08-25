@@ -41,11 +41,15 @@
 [CmdletBinding()]
 param(
     [string] $ModRoot,
-    # Where to write. Defaults to the mod's own Textures tree. The generative art
-    # pass points this at a masters folder instead, because these sprites are the
-    # CONTROL INPUT for that pass - if the finished art overwrote them, the next
-    # regeneration would trace its own output and drift.
+    # Where to write. Defaults to Art/Silhouettes, NOT Textures.
+    #
+    # Textures/ now holds finished art produced by New-GeneratedArt.ps1, which uses
+    # these sprites as its ControlNet input. Writing here by default would mean that
+    # merely re-running this script silently destroyed the shipped art, and that a
+    # regeneration would trace its own previous output and drift a little further
+    # every pass. Pass -ToTextures to get the old behaviour deliberately.
     [string] $OutRoot,
+    [switch] $ToTextures,
     # Multiplier on every sprite's edge length. The art pass renders at 4x so the
     # Canny edge map is crisp; a 128px master upscaled to 1024 gives soft edges and
     # a correspondingly weak control signal.
@@ -64,7 +68,10 @@ if (-not $ModRoot) { $ModRoot = Split-Path -Parent $PSScriptRoot }
 $ModRoot = (Resolve-Path $ModRoot).Path
 . (Join-Path $PSScriptRoot 'GlyphPrimitives.ps1')
 
-$texRoot = if ($OutRoot) { $OutRoot } else { Join-Path $ModRoot 'Textures' }
+$texRoot =
+    if     ($OutRoot)     { $OutRoot }
+    elseif ($ToTextures)  { Join-Path $ModRoot 'Textures' }
+    else                  { Join-Path $ModRoot 'Art/Silhouettes' }
 
 # RimWorld's outline is a dark warm grey. Pure black reads as clip-art.
 $script:Outline = [System.Drawing.Color]::FromArgb(255, 38, 34, 30)
