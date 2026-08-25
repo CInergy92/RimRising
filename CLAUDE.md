@@ -482,6 +482,43 @@ points at the mod responsible.
 Guard with `ProgramState.Playing` plus `Faction.OfPlayerSilentFail != null`.
 Checking `Find.HistoryEventsManager` is not enough; it already exists by then.
 
+### PowerShell variable names are CASE-INSENSITIVE
+
+`$pts` and `$Pts` are the same variable. A local named like its parameter in a
+different case **silently empties the parameter** before the body reads it:
+
+```powershell
+function Stroke-Form {
+    param([array] $Pts)
+    $pts = @()                    # this just cleared $Pts
+    foreach ($p in $Pts) { ... }  # iterates nothing
+}
+```
+
+The function then draws nothing and GDI+ reports a bare "Parameter is not valid"
+from somewhere else entirely. Cost a full debugging round; the stack trace pointed
+at the drawing call, not at the assignment.
+
+### RimWorld's art idiom, measured
+
+Taken from an installed weapon sprite rather than remembered, and the difference
+between this and the first attempt was the difference between "RimWorld" and
+"infographic":
+
+- **Muted, desaturated** colour. Steel is grey-blue, brass is dull ochre.
+- The outline is a **dark warm grey** (~`#26221E`), never black, and thick.
+- Forms are **rounded** - no sharp polygon corners anywhere.
+- Shading is **one** lighter band along the upper-left edge. Not a gradient.
+- Silhouette runs **diagonally**, lower-left to upper-right, filling most of the canvas.
+
+Procedurally, rounded forms come from stroking a path with a wide round-capped pen
+rather than filling a polygon - a capsule, not a rectangle - laid down three times:
+wide dark outline, narrower body colour, thin offset highlight. See
+`Tools/New-ItemIcons.ps1`.
+
+**Shapes come from the reference too.** A razor is based on the *urumi*, a slender
+flexible whip-sword - a long thin tapering blade, not a curved sabre.
+
 ### Heredocs eat backslashes in this environment
 
 Writing PowerShell through a bash heredoc silently strips backslashes, even a quoted
