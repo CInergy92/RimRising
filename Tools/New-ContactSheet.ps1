@@ -31,6 +31,16 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
 
+# A shell that is not PowerShell collapses an array argument into ONE
+# comma-joined string, so -Labels "a","b","c" arrives as the single label "a,b,c"
+# and every caption after the first silently disappears. Split it back.
+if ($Labels -and $Labels.Count -eq 1 -and $Labels[0] -match ',') {
+    $Labels = $Labels[0] -split ','
+}
+if ($Path.Count -eq 1 -and $Path[0] -match ',' -and -not (Test-Path -LiteralPath $Path[0])) {
+    $Path = $Path[0] -split ','
+}
+
 $files = @(Get-ChildItem -Path $Path -File | Sort-Object Name)
 if ($files.Count -eq 0) { throw "No images matched: $($Path -join ', ')" }
 

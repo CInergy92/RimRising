@@ -118,6 +118,76 @@ function Stroke-Form {
     }
 }
 
+<#
+    A TAPERING BLADE along a spine, filled as a polygon.
+
+    Stroke-Form cannot draw a blade. It strokes a round-capped pen, so every form
+    it makes has a constant width and a domed end - which is a baton, not a sword,
+    and reads as one in game however it is shaded. Width has to vary along the
+    length and reach zero at the tip, and that means an explicit polygon: walk the
+    spine, offset each point perpendicular by a half-width interpolated from base
+    to tip, and close the two sides into one outline.
+
+    Drawn outline-then-fill like Stroke-Form, so the fill covers the inner half of
+    the stroke and leaves RimWorld's thick dark edge outside.
+#>
+function Stroke-Taper {
+    param($g, [single]$S, [array]$Spine, [single]$WBase, [single]$WTip, [System.Drawing.Color]$Color)
+
+    $n = $Spine.Count
+    $sideA = New-Object 'System.Collections.Generic.List[System.Drawing.PointF]'
+    $sideB = New-Object 'System.Collections.Generic.List[System.Drawing.PointF]'
+    $crest = New-Object 'System.Collections.Generic.List[System.Drawing.PointF]'
+
+    for ($i = 0; $i -lt $n; $i++) {
+        # Local tangent from the neighbours, so interior points follow the curve.
+        $ia = [Math]::Max(0, $i - 1)
+        $ib = [Math]::Min(($n - 1), ($i + 1))
+        $dx = [double]$Spine[$ib][0] - [double]$Spine[$ia][0]
+        $dy = [double]$Spine[$ib][1] - [double]$Spine[$ia][1]
+        $len = [Math]::Sqrt(($dx * $dx) + ($dy * $dy))
+        if ($len -lt 1e-9) { $len = 1e-9 }
+        $nx = -$dy / $len
+        $ny =  $dx / $len
+
+        $t = 0.0
+        if ($n -gt 1) { $t = [double]$i / ($n - 1) }
+        $hw = ((([double]$WBase * (1.0 - $t)) + ([double]$WTip * $t)) / 2.0)
+
+        $px = [double]$Spine[$i][0]
+        $py = [double]$Spine[$i][1]
+        # Arithmetic into variables first: inside an array literal the comma binds
+        # before the minus and PowerShell subtracts from an array instead.
+        $ax = ($px + ($nx * $hw)) * $S
+        $ay = ($py + ($ny * $hw)) * $S
+        $bx = ($px - ($nx * $hw)) * $S
+        $by = ($py - ($ny * $hw)) * $S
+        $cx = ($px - ($nx * $hw * 0.45)) * $S
+        $cy = ($py - ($ny * $hw * 0.45)) * $S
+        $sideA.Add((New-Object System.Drawing.PointF([single]$ax, [single]$ay)))
+        $sideB.Add((New-Object System.Drawing.PointF([single]$bx, [single]$by)))
+        $crest.Add((New-Object System.Drawing.PointF([single]$cx, [single]$cy)))
+    }
+
+    $sideB.Reverse()
+    $poly = New-Object 'System.Collections.Generic.List[System.Drawing.PointF]'
+    $poly.AddRange($sideA)
+    $poly.AddRange($sideB)
+    $arr = [System.Drawing.PointF[]]$poly.ToArray()
+
+    $pen = New-Pen $script:Outline ([single]($S * 0.055))
+    try { $g.DrawPolygon($pen, $arr) } finally { $pen.Dispose() }
+    $b = New-Object System.Drawing.SolidBrush($Color)
+    try { $g.FillPolygon($b, $arr) } finally { $b.Dispose() }
+
+    # The bevel runs along the upper-left face, which for a lower-left to
+    # upper-right spine is the -n side.
+    if (-not $script:Flat) {
+        $pen = New-Pen (Shade $Color 1.28) ([single]($S * [double]$WBase * 0.30))
+        try { $g.DrawLines($pen, [System.Drawing.PointF[]]$crest.ToArray()) } finally { $pen.Dispose() }
+    }
+}
+
 <# A rounded blob - knobs, apertures, rivets. #>
 function Stroke-Dot {
     param($g, [single]$S, [single]$cx, [single]$cy, [single]$r, [System.Drawing.Color]$Color)
@@ -166,25 +236,29 @@ $Amber   = [System.Drawing.Color]::FromArgb(255, 198, 150,  66)
 # An urumi: slender, near-straight, tapering, with a slight flex. Diagonal
 # lower-left to upper-right like every vanilla weapon. Gold's weapon, so a brass
 # hilt against a pale polyenne blade.
+# PROPORTION IS WHAT MAKES IT READ AS A BLADE. Drawn in game the previous version
+# looked like a baton, and the reason was not shading: the grip took a third of the
+# length and the blade was a constant-width capsule with a domed end. A sword
+# silhouette is mostly blade, and the blade narrows the whole way to a point.
+# Grip is now about a quarter of the length and the blade is a Stroke-Taper.
 Write-Sprite 'Things/Item/Equipment/WeaponMelee/RR_Razor' 128 {
     param($g, $S)
-    Stroke-Form $g $S @(@(0.30,0.72), @(0.50,0.52)) 0.075 $SteelHi
-    Stroke-Form $g $S @(@(0.48,0.54), @(0.68,0.34)) 0.058 $SteelHi
-    Stroke-Form $g $S @(@(0.66,0.36), @(0.87,0.14)) 0.034 $SteelHi
-    # Stroke-Form uses ROUND caps, so a blade drawn as capsules ends in a dome and
-    # reads blunt - which a ControlNet pass then faithfully renders as a blunt tip.
-    # A final hairline segment carries the taper out to an actual point.
-    Stroke-Form $g $S @(@(0.845,0.165), @(0.925,0.085)) 0.013 $SteelHi
+    # Three spine points, the middle one lifted a little off the straight line, so
+    # the blade carries the urumi's slight flex rather than being dead straight.
+    Stroke-Taper $g $S @(@(0.295,0.715), @(0.618,0.388), @(0.955,0.052)) 0.058 0.004 $SteelHi
     # The pommel is a WIDER CAPSULE DRAWN UNDER THE GRIP, not a Stroke-Dot on top
     # of it. A dot draws its own complete dark ring, which Canny reads as a closed
     # contour independent of the grip - and a ControlNet pass then renders it as a
     # sphere floating loose beside the weapon. Anything meant to read as part of a
     # form has to share that form's silhouette, with no closed outline of its own.
-    Stroke-Form $g $S @(@(0.135,0.885), @(0.175,0.845)) 0.132 $Brass
-    Stroke-Form $g $S @(@(0.175,0.845), @(0.31,0.71))   0.105 $Brass
+    Stroke-Form $g $S @(@(0.108,0.902), @(0.145,0.865)) 0.112 $Brass
+    Stroke-Form $g $S @(@(0.145,0.865), @(0.300,0.710)) 0.082 $Brass
+    # A collar over the joint, so blade and grip meet at a hilt rather than just
+    # overlapping.
+    Stroke-Form $g $S @(@(0.292,0.722), @(0.322,0.692)) 0.098 $Brass
     # The shape-sensor stud: the toggle between blade and whip. This one stays a
     # dot - it sits well inside the grip and is meant to read as a separate rivet.
-    Stroke-Dot  $g $S 0.245 0.775 0.026 $Amber
+    Stroke-Dot  $g $S 0.205 0.805 0.021 $Amber
 }
 
 # ---------------------------------------------------------------- pulse weapons
