@@ -497,10 +497,33 @@ Society are chemically sterilised and new generations come out of breeding tubes
 **Roses** are the rare, ruinously expensive tier, which the reference puts on a par
 with a Stained Obsidian. Weighted at 0.4 against the ordinary companion's 3.
 
-Not modelled, deliberately: **Cupid's Kiss**, the conditioning implant that inflicts
-constant pain until a Pink obeys. It is expressible — it is just a hediff — but it is
-a torture device fitted to children, and putting a working version of it in a colony
-sim is a different thing from describing it in a wiki. Left out unless the user asks.
+**Cupid's Kiss** is built, after the user pushed back on leaving it out — correctly.
+RimWorld already lets you butcher people into clothing, harvest organs and enslave
+prisoners; an obedience implant is not outside that register, and the user's own
+framing was the right one: it is a joywire. A brain-adjacent implant that buys
+compliance out of somebody's nervous system is a thing this game already ships.
+
+Modelled on Core's Joywire, whose ThingDef, HediffDef and install RecipeDef share a
+file exactly as this one does:
+
+| Source detail | Mechanic |
+|---|---|
+| conditioning: obedience switches the pain off | `SlaveSuppressionOffset` +0.45 |
+| constant burning and an unending headache | `painOffset` 0.12, permanent |
+| what living inside it costs | Consciousness −0.08 |
+
+Removable, and removal returns the item — taking one out of somebody should be
+something a colony can decide to do.
+
+**Adults only.** The reference fits these in childhood and removes them around
+twelve. That part is deliberately not modelled: `minAllowedAge` 18 *and*
+`developmentalStageFilter` Adult, both set, because they are checked in different
+places and either alone leaves a route in. The Society's practice can be described
+without the game offering it.
+
+Nothing sexual attaches to this or to any Pink content. The user's standing rule —
+nothing sexual involving anyone under 18 — is absolute, and the RimJobWorld
+integration remains optional and unbuilt.
 
 Adult content stays out of the base mod entirely; the RimJobWorld integration remains
 optional and unbuilt.
