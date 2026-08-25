@@ -89,7 +89,9 @@ namespace RimRising
             if (RR_XenotypeUtility.IsRulingCaste(pawn)) { return; }
 
             HistoryEventDef ev = RR_DefOf.RR_LowColorBoreRazor;
-            if (ev == null) { return; }
+            // Same generation-time guard as the relations patch: pawns are handed
+            // weapons during worldgen too, well before there is a game to notify.
+            if (ev == null || !RR_CasteUtility.CanRaiseHistoryEvent()) { return; }
 
             Find.HistoryEventsManager.RecordEvent(new HistoryEvent(ev, pawn.Named(HistoryEventArgsNames.Doer)));
         }

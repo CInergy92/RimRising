@@ -98,7 +98,7 @@ namespace RimRising
             if (!RR_CasteUtility.AreDifferentColors(pawn, otherPawn)) { return; }
 
             HistoryEventDef ev = RR_RelationDefOf.RR_InterColorUnion;
-            if (ev == null || Find.HistoryEventsManager == null) { return; }
+            if (ev == null || !RR_CasteUtility.CanRaiseHistoryEvent()) { return; }
 
             Find.HistoryEventsManager.RecordEvent(
                 new HistoryEvent(ev, pawn.Named(HistoryEventArgsNames.Doer)));
@@ -107,6 +107,36 @@ namespace RimRising
 
     public static class RR_CasteUtility
     {
+        /// <summary>
+        /// Whether it is safe to raise a HistoryEvent right now.
+        ///
+        /// RimWorld fabricates relationships and hands out weapons while GENERATING
+        /// pawns - during worldgen, faction creation and the scenario page - long
+        /// before there is a game to notify. Raising an event then reaches
+        /// IdeoUtility.Notify_HistoryEvent, which walks caravans, maps and the
+        /// player faction, and throws:
+        ///
+        ///     Could not find player faction.
+        ///     Error while notifying ideos of a HistoryEvent: NullReferenceException
+        ///
+        /// HistoryEventsManager catches and logs it, so nothing breaks - it just
+        /// fills the log at every world creation, and the trace stops at the catch
+        /// site so nothing in it points back to us.
+        ///
+        /// Nothing is lost by skipping these. A backstory marriage invented during
+        /// pawn generation is not a lowColor defying the hierarchy; it is set
+        /// dressing that predates the colony. These events exist for things that
+        /// happen in play.
+        /// </summary>
+        public static bool CanRaiseHistoryEvent()
+        {
+            if (Current.ProgramState != ProgramState.Playing) { return false; }
+            if (Find.HistoryEventsManager == null) { return false; }
+            if (Find.FactionManager == null) { return false; }
+            if (Faction.OfPlayerSilentFail == null) { return false; }
+            return true;
+        }
+
         private static readonly AccessTools.FieldRef<Pawn_RelationsTracker, Pawn> PawnField =
             AccessTools.FieldRefAccess<Pawn_RelationsTracker, Pawn>("pawn");
 
