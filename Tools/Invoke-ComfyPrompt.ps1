@@ -48,6 +48,17 @@ param(
     [string] $Sampler   = 'euler_ancestral',
     [string] $Scheduler = 'normal',
     [int]    $Seed = 0,
+    # 'sdxl'     - CheckpointLoaderSimple, for SDXL/SD checkpoints
+    # 'pixeldit' - NVIDIA PixelDiT: separate UNet + Gemma text encoder + pixel_space
+    #              VAE, and crucially it runs at cfg > 1 with a WORKING negative
+    #              prompt, unlike the distilled turbo models.
+    [ValidateSet('sdxl','pixeldit')] [string] $Pipeline = 'sdxl',
+    # img2img: start from an existing sprite instead of noise, so OUR geometry is
+    # preserved and the model only supplies texture and shading. There are no
+    # ControlNet models installed for PixelDiT (and none are likely to exist - it
+    # is a new architecture), so this is the only structural control available.
+    [string] $InitImage,
+    [double] $Denoise = 1.0,
     [string] $Name = 'RimRising',
     [string] $OutDir,
     [int]    $TimeoutSec = 300
@@ -65,7 +76,7 @@ if ($Seed -eq 0) { $Seed = Get-Random -Minimum 1 -Maximum 2147483646 }
 
 # Pick the first installed checkpoint unless told otherwise, so the script works
 # on a fresh install without the caller knowing what is there.
-if (-not $Checkpoint) {
+if (-not $Checkpoint -and $Pipeline -eq 'sdxl') {
     $info = Invoke-RestMethod -Uri "$Server/object_info/CheckpointLoaderSimple" -TimeoutSec 30
     $Checkpoint = $info.CheckpointLoaderSimple.input.required.ckpt_name[0][0]
     Write-Host ("  checkpoint : {0}" -f $Checkpoint) -ForegroundColor DarkGray
@@ -75,6 +86,55 @@ $clientId = [guid]::NewGuid().ToString()
 
 # ComfyUI API format. Node ids are arbitrary strings; the wiring is the
 # [ "<id>", <slot> ] references.
+if ($Pipeline -eq 'pixeldit') {
+    # Node graph copied from ComfyUI's own image_pixeldit_t2i template rather than
+    # guessed: the CLIP loader needs type 'pixeldit', the latent comes from
+    # EmptyChromaRadianceLatentImage (NOT EmptyLatentImage), and the sampler
+    # defaults are er_sde / simple at 30 steps, cfg 4.
+    if (-not $PSBoundParameters.ContainsKey('Steps'))     { $Steps = 30 }
+    if (-not $PSBoundParameters.ContainsKey('Cfg'))       { $Cfg = 4.0 }
+    if (-not $PSBoundParameters.ContainsKey('Sampler'))   { $Sampler = 'er_sde' }
+    if (-not $PSBoundParameters.ContainsKey('Scheduler')) { $Scheduler = 'simple' }
+
+    if ($InitImage) {
+        # ComfyUI can only read images from its own input folder, so push it there
+        # first. PS7's -Form does the multipart encoding.
+        $up = Invoke-RestMethod -Uri "$Server/upload/image" -Method Post -TimeoutSec 60 -Form @{
+            image = Get-Item -LiteralPath $InitImage
+            overwrite = 'true'
+        }
+        $uploaded = if ($up.subfolder) { "$($up.subfolder)/$($up.name)" } else { $up.name }
+        Write-Host ("  init image : {0} (denoise {1})" -f $uploaded, $Denoise) -ForegroundColor DarkGray
+        $latentSrc = @('34', 0)
+    } else {
+        $latentSrc = @('31', 0)
+    }
+
+    $prompt = @{
+        '2'  = @{ class_type = 'UNETLoader'; inputs = @{ unet_name = 'pixeldit_1300m_1024px_bf16.safetensors'; weight_dtype = 'default' } }
+        '9'  = @{ class_type = 'CLIPLoader'; inputs = @{ clip_name = 'gemma_2_2b_it_elm_bf16.safetensors'; type = 'pixeldit'; device = 'default' } }
+        '16' = @{ class_type = 'VAELoader';  inputs = @{ vae_name = 'pixel_space' } }
+        '31' = @{ class_type = 'EmptyChromaRadianceLatentImage'; inputs = @{ width = $Width; height = $Height; batch_size = $Batch } }
+        '6'  = @{ class_type = 'CLIPTextEncode'; inputs = @{ text = $Positive; clip = @('9', 0) } }
+        '30' = @{ class_type = 'CLIPTextEncode'; inputs = @{ text = $Negative; clip = @('9', 0) } }
+        '42' = @{ class_type = 'KSampler'; inputs = @{
+                    seed = $Seed; steps = $Steps; cfg = $Cfg
+                    sampler_name = $Sampler; scheduler = $Scheduler; denoise = 1.0
+                    model = @('2', 0); positive = @('6', 0); negative = @('30', 0); latent_image = $latentSrc } }
+        '15' = @{ class_type = 'VAEDecode'; inputs = @{ samples = @('42', 0); vae = @('16', 0) } }
+        '43' = @{ class_type = 'SaveImage'; inputs = @{ filename_prefix = $Name; images = @('15', 0) } }
+    }
+    if ($InitImage) {
+        $prompt['32'] = @{ class_type = 'LoadImage';  inputs = @{ image = $uploaded } }
+        $prompt['33'] = @{ class_type = 'ImageScale'; inputs = @{
+                            image = @('32', 0); width = $Width; height = $Height
+                            upscale_method = 'lanczos'; crop = 'disabled' } }
+        $prompt['34'] = @{ class_type = 'VAEEncode'; inputs = @{ pixels = @('33', 0); vae = @('16', 0) } }
+        $prompt['42'].inputs.denoise = $Denoise
+        $prompt.Remove('31')
+    }
+}
+else {
 $prompt = @{
     '4' = @{ class_type = 'CheckpointLoaderSimple'; inputs = @{ ckpt_name = $Checkpoint } }
     '5' = @{ class_type = 'EmptyLatentImage';       inputs = @{ width = $Width; height = $Height; batch_size = $Batch } }
@@ -86,6 +146,7 @@ $prompt = @{
                 model = @('4', 0); positive = @('6', 0); negative = @('7', 0); latent_image = @('5', 0) } }
     '8' = @{ class_type = 'VAEDecode';  inputs = @{ samples = @('3', 0); vae = @('4', 2) } }
     '9' = @{ class_type = 'SaveImage';  inputs = @{ filename_prefix = $Name; images = @('8', 0) } }
+}
 }
 
 $body = @{ prompt = $prompt; client_id = $clientId } | ConvertTo-Json -Depth 12 -Compress
