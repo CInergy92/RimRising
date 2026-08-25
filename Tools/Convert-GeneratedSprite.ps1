@@ -32,7 +32,12 @@
 param(
     [Parameter(Mandatory)] [string] $Path,
     [string] $OutFile,
+    # Square shorthand. -OutWidth/-OutHeight override it for non-square targets
+    # such as vehicle bodies, whose north/south sprites are portrait and east
+    # landscape.
     [int]    $Size      = 256,
+    [int]    $OutWidth  = 0,
+    [int]    $OutHeight = 0,
     [int]    $Tolerance = 42,
     [int]    $Margin    = 4,
     [switch] $NoTrim
@@ -41,6 +46,9 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
+
+if ($OutWidth  -le 0) { $OutWidth  = $Size }
+if ($OutHeight -le 0) { $OutHeight = $Size }
 
 $src = [System.Drawing.Image]::FromFile((Resolve-Path -LiteralPath $Path).Path)
 $w = $src.Width; $h = $src.Height
@@ -130,19 +138,20 @@ Write-Host ("  content    : {0}x{1} at ({2},{3})" -f $cw, $ch, $minX, $minY) -Fo
 
 # Letterbox into the target square. Scale from the LONGER edge so the sprite
 # keeps its aspect ratio - a stretched weapon reads instantly as wrong.
-$avail = $Size - 2 * $Margin
-$scale = [math]::Min($avail / $cw, $avail / $ch)
+$availW = $OutWidth  - 2 * $Margin
+$availH = $OutHeight - 2 * $Margin
+$scale = [math]::Min($availW / $cw, $availH / $ch)
 $dw = [math]::Max(1, [int]($cw * $scale))
 $dh = [math]::Max(1, [int]($ch * $scale))
 
-$out = New-Object System.Drawing.Bitmap($Size, $Size, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+$out = New-Object System.Drawing.Bitmap($OutWidth, $OutHeight, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
 $og = [System.Drawing.Graphics]::FromImage($out)
 $og.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
 $og.PixelOffsetMode   = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
 $og.CompositingQuality = [System.Drawing.Drawing2D.CompositingQuality]::HighQuality
 
-$destX = [int](($Size - $dw) / 2)
-$destY = [int](($Size - $dh) / 2)
+$destX = [int](($OutWidth  - $dw) / 2)
+$destY = [int](($OutHeight - $dh) / 2)
 $dest = New-Object System.Drawing.Rectangle($destX, $destY, $dw, $dh)
 $srcR = New-Object System.Drawing.Rectangle($minX, $minY, $cw, $ch)
 $og.DrawImage($bmp, $dest, $srcR, [System.Drawing.GraphicsUnit]::Pixel)
@@ -150,12 +159,12 @@ $og.Dispose(); $bmp.Dispose()
 
 if (-not $OutFile) {
     $OutFile = Join-Path (Split-Path -Parent (Resolve-Path -LiteralPath $Path).Path) `
-                         ([System.IO.Path]::GetFileNameWithoutExtension($Path) + "_${Size}.png")
+                         ([System.IO.Path]::GetFileNameWithoutExtension($Path) + "_${OutWidth}x${OutHeight}.png")
 }
 # Bitmap.Save does NOT append an extension - the path must already carry it.
 if ([System.IO.Path]::GetExtension($OutFile) -eq '') { $OutFile += '.png' }
 $out.Save($OutFile, [System.Drawing.Imaging.ImageFormat]::Png)
 $out.Dispose()
 
-Write-Host ("  wrote      : {0} ({1}x{1})" -f $OutFile, $Size) -ForegroundColor Green
+Write-Host ("  wrote      : {0} ({1}x{2})" -f $OutFile, $OutWidth, $OutHeight) -ForegroundColor Green
 $OutFile
