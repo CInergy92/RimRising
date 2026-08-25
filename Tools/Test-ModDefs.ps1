@@ -793,6 +793,8 @@ if ($xmlFiles.Count -eq 0) {
 
 # defName -> list of files, for duplicate detection
 $seenDefNames = @{}
+# Our own defNames, type-agnostic, for resolving references we make to ourselves.
+$modDefNames = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 # Name= attributes declared by this mod, for ParentName resolution
 $modNameAttrs = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 # deferred ParentName checks: resolution needs the full mod-wide Name set first
@@ -834,6 +836,10 @@ $requireOneGroups = [System.Collections.Generic.List[object]]::new()
 
 # Recipes we define, and whether anything can actually run them.
 $recipeRefs = [System.Collections.Generic.List[object]]::new()
+
+# Research a def says it depends on. Unresolvable ones are reported by RimWorld as
+# "Could not resolve cross-reference" and then the dependent def never unlocks.
+$researchRefs = [System.Collections.Generic.List[object]]::new()
 $abstractRecipeUsers = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 
 # Every xenotype we define, and every xenotype some PawnKindDef can actually
@@ -897,6 +903,7 @@ foreach ($file in $xmlFiles) {
                         -Message ("{0} '{1}' already defined in {2}" -f $node.LocalName, $dn, $seenDefNames[$dupKey])
                 } else {
                     $seenDefNames[$dupKey] = $rel
+                    [void]$modDefNames.Add($dn)
                 }
 
                 if ($vanilla.DefNames.Contains($dn)) {
@@ -912,6 +919,28 @@ foreach ($file in $xmlFiles) {
             # passes a null path to ContentFinder and throws while DRAWING the world
             # map. It presents to the player as "the planet will not generate", with
             # nothing in the startup log to explain it.
+            # <prerequisites> means research only on a ResearchProjectDef; on other
+            # def types the same node name means something else entirely.
+            if ($node.LocalName -eq 'ResearchProjectDef' -and $dnNode) {
+                foreach ($li in $node.SelectNodes('prerequisites/li')) {
+                    if ($li.InnerText -and -not $li.Attributes['MayRequire']) {
+                        $researchRefs.Add([pscustomobject]@{ File=$rel; Def=$dnNode.InnerText.Trim(); Ref=$li.InnerText.Trim() })
+                    }
+                }
+            }
+            if ($dnNode) {
+                foreach ($rp in $node.SelectNodes('.//researchPrerequisite')) {
+                    if ($rp.InnerText -and -not $rp.Attributes['MayRequire']) {
+                        $researchRefs.Add([pscustomobject]@{ File=$rel; Def=$dnNode.InnerText.Trim(); Ref=$rp.InnerText.Trim() })
+                    }
+                }
+                foreach ($rp in $node.SelectNodes('.//researchPrerequisites/li')) {
+                    if ($rp.InnerText -and -not $rp.Attributes['MayRequire']) {
+                        $researchRefs.Add([pscustomobject]@{ File=$rel; Def=$dnNode.InnerText.Trim(); Ref=$rp.InnerText.Trim() })
+                    }
+                }
+            }
+
             if ($node.LocalName -eq 'RecipeDef' -and -not $dnNode) {
                 # Abstract. Record it only if it hands recipeUsers to its children.
                 $na2 = $node.Attributes['Name']
@@ -1565,6 +1594,26 @@ if ($allCoreDefs.Count -gt 0) {
         Add-Problem -Severity ERROR -Check 'UnknownAmmoSet' -File $ref.File `
             -Message ("<ammoSet> '{0}' matches no def in any mod our LoadFolders gates on. The turret extension will resolve to nothing and throw on every shot." -f $ref.Name)
     }
+}
+
+# --- research reference resolution --------------------------------------------
+#
+# A research prerequisite naming something that does not exist logs
+# "Could not resolve cross-reference to ResearchProjectDef named X" once at load and
+# is then easy to miss among everyone else's warnings - but the dependent project
+# never becomes researchable, so everything gated behind it is unreachable forever.
+#
+# That is exactly how fifteen carving surgeries stayed invisible: RR_Carving listed
+# a prerequisite called GeneticEngineering, which is not a real def. Biotech's gene
+# research is Xenogermination.
+foreach ($ref in $researchRefs) {
+    if ($modDefNames -and $modDefNames.Contains($ref.Ref)) { continue }
+    if ($vanilla.DefNames.Contains($ref.Ref))              { continue }
+    if ($allCoreDefs -and $allCoreDefs.Contains($ref.Ref))  { continue }
+    if ($allPatchDefs -and $allPatchDefs.Contains($ref.Ref)) { continue }
+
+    Add-Problem -Severity ERROR -Check 'UnknownResearchRef' -File $ref.File `
+        -Message ("'{0}' requires research '{1}', which is not a def anywhere. The project will never unlock and everything gated behind it is unreachable." -f $ref.Def, $ref.Ref)
 }
 
 # --- vehicle def/build pair resolution ----------------------------------------

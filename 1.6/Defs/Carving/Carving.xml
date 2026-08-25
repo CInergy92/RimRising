@@ -39,7 +39,7 @@
     <techLevel>Spacer</techLevel>
     <prerequisites>
       <li>RR_NeuralInterface</li>
-      <li>GeneticEngineering</li>
+      <li>Xenogermination</li>
     </prerequisites>
     <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
     <requiredResearchFacilities>
