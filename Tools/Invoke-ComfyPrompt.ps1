@@ -76,6 +76,12 @@ param(
     # ControlNet models installed for PixelDiT (and none are likely to exist - it
     # is a new architecture), so this is the only structural control available.
     [string] $InitImage,
+    # zcontrol only: an already-finished sprite to start from, so a new facing
+    # inherits an APPROVED DESIGN while ControlNet still dictates its geometry.
+    # Without this, each facing is generated from noise and comes back with its own
+    # invented detailing - a shared seed does not force a shared design when the
+    # control image differs.
+    [string] $RefImage,
     [double] $Denoise = 1.0,
     [string] $Name = 'RimRising',
     [string] $OutDir,
@@ -156,6 +162,20 @@ if ($Pipeline -eq 'zcontrol') {
                     model = @('47', 0); positive = @('45', 0); negative = @('42', 0); latent_image = @('41', 0) } }
         '43' = @{ class_type = 'VAEDecode'; inputs = @{ samples = @('44', 0); vae = @('40', 0) } }
         '9'  = @{ class_type = 'SaveImage'; inputs = @{ filename_prefix = $Name; images = @('43', 0) } }
+    }
+    if ($RefImage) {
+        $refUp = Send-InitImage -Server $Server -Path $RefImage
+        Write-Host ("  reference  : {0} (denoise {1})" -f $refUp, $Denoise) -ForegroundColor DarkGray
+        $prompt['80'] = @{ class_type = 'LoadImage'; inputs = @{ image = $refUp } }
+        # Match the control image's size exactly, or the two latents disagree.
+        $prompt['81'] = @{ class_type = 'ImageScaleToMaxDimension'; inputs = @{
+                            image = @('80', 0); upscale_method = 'lanczos'; largest_size = $Width } }
+        $prompt['82'] = @{ class_type = 'VAEEncode'; inputs = @{ pixels = @('81', 0); vae = @('40', 0) } }
+        $prompt['83'] = @{ class_type = 'RepeatLatentBatch'; inputs = @{ samples = @('82', 0); amount = $Batch } }
+        $prompt['44'].inputs.latent_image = @('83', 0)
+        $prompt['44'].inputs.denoise = $Denoise
+        $prompt.Remove('41')
+        $prompt.Remove('69')
     }
     if ($NoCanny) {
         $prompt['57'] = @{ class_type = 'ImageScaleToMaxDimension'; inputs = @{
