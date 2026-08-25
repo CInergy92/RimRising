@@ -60,6 +60,20 @@ $texturesRoot = Join-Path $ModRoot 'Textures'
 #   apparel  256x256 (24 samples)
 #   items    128x128
 #   gene     128x128, xenotype 64x64
+# Paths owned by the ICON GENERATORS, which this script must never overwrite - not
+# even under -Force. New-XenotypeIcons.ps1 draws the caste glyphs and gene icons;
+# New-ItemIcons.ps1 draws the weapons, implants and resources. A placeholder written
+# over either would silently undo real art.
+$script:GeneratedArtPrefixes = @(
+    'UI/Icons/Xenotypes'
+    'UI/Icons/Genes'
+    'Things/Item/Equipment'
+    'Things/Item/Health'
+    'Things/Item/Resource/RR_Ionsteel'
+    'Things/Projectile'
+    'Things/Weapons'
+)
+
 $script:SizeRules = @(
     @{ Prefix = 'UI/Icons/Xenotypes';                Size = 64  }
     @{ Prefix = 'UI/Icons/Genes';                    Size = 128 }
@@ -357,11 +371,12 @@ if ($foreign.Count -gt 0) {
 # real artwork rather than labelled squares. Never overwrite those here - not even
 # with -Force, which would otherwise silently undo the whole icon set.
 $ownedElsewhere = @($owned | Where-Object {
-    $_ -like 'UI/Icons/Xenotypes/*' -or $_ -like 'UI/Icons/Genes/*'
+    $path = $_
+    ($script:GeneratedArtPrefixes | Where-Object { $path.StartsWith($_, [StringComparison]::OrdinalIgnoreCase) }).Count -gt 0
 })
 if ($ownedElsewhere.Count -gt 0) {
     $owned = @($owned | Where-Object { $ownedElsewhere -notcontains $_ })
-    Write-Host ("  skipping : {0} icon path(s) owned by New-XenotypeIcons.ps1" -f $ownedElsewhere.Count) -ForegroundColor DarkGray
+    Write-Host ("  skipping : {0} path(s) owned by the icon generators" -f $ownedElsewhere.Count) -ForegroundColor DarkGray
 }
 
 $created = 0
