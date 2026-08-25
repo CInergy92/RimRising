@@ -1019,13 +1019,32 @@ Carried in `docs/DESIGN.md` §8.
 - **packageId: `cinergy92.rimrising`.** Changed at the user's direction.
 - **Mod name: RimRising.**
 
-### Still open
+### Also resolved — all three remaining lore calls, ruled by the user
 
-1. **Prefixes for the five Colors with no established one** — invent, or leave prefix-less?
-   *Lore call, user's.*
-2. **Pink's framing** — social functionary with no adult content in the base mod and RJW content
-   gated, or something more pointed. *Lore call, user's.*
-3. **May the player reject the hierarchy?** *Lore call, user's.*
+1. **Caste name prefixes.** Six Colors carry the chemical symbol of their element;
+   Red, Pink and Obsidian carry none because the Society files them as property; the
+   five with none in the reference are left plain rather than given invented symbols.
+   DESIGN §8b.
+2. **Pink's framing.** Second-lowest caste, property rather than employees, sterilised
+   under the Society. Modelled through Ideology's slavery and a Social-heavy pawn
+   kind; Cupid's Kiss built as an adults-only implant after the user pushed back on
+   leaving it out. DESIGN §8c.
+3. **The player may reject the hierarchy, and it is much harder.** Both Spacer
+   superpowers turn permanently hostile past the −75 floor; the Sons of Ares and Sun
+   Industries become real allies. DESIGN §8d.
+
+**No lore questions remain open.**
+
+### Still open — the one real gap
+
+**Carving is not actually built.** `docs/DESIGN.md` §3 calls it the most distinctive
+thing this mod can do, and today it is entirely vanilla: the gene assembler and
+`ImplantXenogerm` exist, but nothing in RimRising references them. There is no
+Carver, no Institute, no cost, and no ideoligious reaction to a lowColor being carved
+up into a Gold — which is the single event the whole setting turns on.
+
+U1 (does an implanted Color gene set read as that Color, or as "Hybrid"?) is still
+unanswered, and it is the first thing to check if carving is ever built out.
 
 ---
 
