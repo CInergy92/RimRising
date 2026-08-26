@@ -30,5 +30,10 @@
 
   <!-- Posted when a carving succeeds. -->
   <RR_CarvingComplete>{PAWN_nameDef} has been carved. The registries will record {PAWN_objective} as {COLOR}.</RR_CarvingComplete>
+  <!-- gravBoot world-map launch. Distance is in world tiles. -->
+  <RR_GravLaunch>Launch</RR_GravLaunch>
+  <RR_GravLaunchDesc>Ride the boots' field up out of the map and set down somewhere else on the planet, up to {0} tiles away. Anyone launching alone arrives alone, and arrives as a caravan on open ground rather than inside a settlement.</RR_GravLaunchDesc>
+  <RR_GravLaunchCooldown>The boots are still bleeding off charge: {0} remaining.</RR_GravLaunchCooldown>
+  <RR_GravLaunchDowned>Cannot launch while down.</RR_GravLaunchDowned>
 
 </LanguageData>

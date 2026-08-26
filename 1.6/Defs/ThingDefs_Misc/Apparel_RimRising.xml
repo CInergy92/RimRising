@@ -580,7 +580,9 @@ All of that is chemistry and springs rather than circuits, so it goes on working
     <label>gravBoots</label>
     <description>A pair of boots that argue with gravity and usually win. Three parallel latches close around each leg, the field comes up, and the ground stops being the only place you are allowed to be.
 
-They are heavy - nine kilos a boot - and that weight is with you every step you do not spend flying. A good pair will carry two people. A bad pair will carry you most of the way.</description>
+They are heavy - nine kilos a boot - and that weight is with you every step you do not spend flying. A good pair will carry two people. A bad pair will carry you most of the way.
+
+Given room to climb they will carry the wearer clean off the map and set them down elsewhere on the planet, which is what they are actually for.</description>
     <techLevel>Spacer</techLevel>
     <tickerType>Normal</tickerType>
     <graphicData>
@@ -651,6 +653,20 @@ They are heavy - nine kilos a boot - and that weight is with you every step you 
         <cooldownGerund>recharging</cooldownGerund>
         <hotKey>Misc4</hotKey>
         <displayGizmoWhileUndrafted>false</displayGizmoWhileUndrafted>
+      </li>
+      <!--
+        THE WORLD-MAP HALF OF THE BOOTS. The verb below is the local jump; this is
+        the journey. Hand-rolled because CompLaunchable is welded to transport pod
+        groups and a fuel port - see Source/RimRising/GravLaunch.cs for why it
+        could not be reused, and for why arrival always forms a caravan.
+
+        25 tiles is a little under a transport pod's 33. A day of cooldown keeps it
+        a journey rather than a teleport.
+      -->
+      <li Class="RimRising.CompProperties_GravLaunch">
+        <maxLaunchDistance>25</maxLaunchDistance>
+        <cooldownTicks>60000</cooldownTicks>
+        <soundLaunch>Longjump_Jump</soundLaunch>
       </li>
     </comps>
     <verbs>
