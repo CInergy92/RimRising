@@ -87,10 +87,11 @@ $items = @(
     }
     [pscustomobject]@{
         Path = 'Things/Item/Equipment/WeaponRanged/RR_Scorcher'; Size = 256
-        Subject = 'A scorcher: a cheap plain directed-energy carbine with a dull steel ' +
-                  'receiver, a long thin barrel, a worn dark leather stock and grip, and a ' +
-                  'small amber charge light. Utilitarian mass-issue equipment, scuffed and ' +
-                  'unremarkable, no ornament.'
+        Subject = 'A scorcher: a compact sidearm seen in side profile, clearly a FIREARM - ' +
+                  'a raked dark grip with a trigger and a trigger guard loop, a boxy steel ' +
+                  'receiver above it, a pale sage-green ribbed cooling housing along the top ' +
+                  'and side, and a dark barrel projecting forward past everything. Cheap ' +
+                  'mass-issue military hardware, scuffed and unremarkable, no ornament.'
     }
     [pscustomobject]@{
         Path = 'Things/Pawn/Humanlike/Apparel/RR_DuroArmor/RR_DuroArmor'; Size = 128

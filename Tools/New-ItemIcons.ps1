@@ -250,6 +250,7 @@ $Ion     = [System.Drawing.Color]::FromArgb(255, 122, 142, 168)
 $Flesh   = [System.Drawing.Color]::FromArgb(255, 150,  96, 112)
 $Teal    = [System.Drawing.Color]::FromArgb(255,  96, 142, 136)
 $Amber   = [System.Drawing.Color]::FromArgb(255, 198, 150,  66)
+$Olive   = [System.Drawing.Color]::FromArgb(255, 150, 162, 132)   # pale service green
 
 # ------------------------------------------------------------------- the razor
 #
@@ -323,13 +324,44 @@ Write-Sprite 'Things/Weapons/RR_PulseCannon' 128 {
 #
 # A cheap carbine: long thin barrel, plain stock, nothing ornamental. It has to
 # read as the poor relation of the pulseFist at a glance in an inventory list.
+# IT HAS TO READ AS A FIREARM. The first version was three capsules in a line,
+# which is a shape, not a gun - ControlNet rendered exactly that and it came out
+# an abstract tube. A gun is legible from four things and they all have to be in
+# the silhouette: a raked GRIP below and behind, a TRIGGER GUARD loop, a boxy
+# RECEIVER, and a BARREL projecting past everything else.
 Write-Sprite 'Things/Item/Equipment/WeaponRanged/RR_Scorcher' 128 {
     param($g, $S)
-    Stroke-Form $g $S @(@(0.12,0.78), @(0.34,0.64)) 0.155 $Leather   # stock
-    Stroke-Form $g $S @(@(0.30,0.66), @(0.70,0.42)) 0.120 $Steel     # receiver
-    Stroke-Form $g $S @(@(0.68,0.43), @(0.94,0.28)) 0.058 $Steel     # barrel
-    Stroke-Form $g $S @(@(0.40,0.62), @(0.45,0.76)) 0.080 $Leather   # grip
-    Stroke-Dot  $g $S 0.560 0.520 0.034 $Amber                       # charge light
+    # ORDER MATTERS AS MUCH AS POSITION. The first attempt drew the barrel first
+    # and the receiver last, so the housing swallowed the barrel and the receiver
+    # covered every cooling fin - the gun had no muzzle and no texture. Back to
+    # front: frame, then grip and trigger, then the shroud, then the fins on it,
+    # and the barrel LAST so it reads as lying in front and projecting clear.
+    Stroke-Form $g $S @(@(0.282,0.556), @(0.575,0.503)) 0.170 $Steel    # receiver
+    Stroke-Form $g $S @(@(0.300,0.585), @(0.238,0.862)) 0.175 $Leather  # grip, raked back
+    # Trigger guard: a loop ATTACHED at both ends. A guard drawn as a free-
+    # floating arc is the razor's pommel mistake over again.
+    Stroke-Form $g $S @(@(0.330,0.628), @(0.392,0.706), @(0.478,0.636)) 0.040 $Steel
+    Stroke-Form $g $S @(@(0.386,0.618), @(0.394,0.676)) 0.032 $Steel    # trigger
+
+    Stroke-Form $g $S @(@(0.505,0.498), @(0.815,0.452)) 0.215 $Olive    # ribbed shroud
+
+    # Cooling fins across the shroud. They give Canny interior detail to hold, so
+    # the shroud does not come back as a featureless slab.
+    $ax = 0.815 - 0.505; $ay = 0.452 - 0.498
+    $al = [Math]::Sqrt(($ax * $ax) + ($ay * $ay))
+    $nx = -$ay / $al; $ny = $ax / $al
+    foreach ($t in @(0.12, 0.30, 0.48, 0.66, 0.84)) {
+        $cx = 0.505 + ($ax * $t)
+        $cy = 0.498 + ($ay * $t)
+        $x1 = $cx - ($nx * 0.082); $y1 = $cy - ($ny * 0.082)
+        $x2 = $cx + ($nx * 0.082); $y2 = $cy + ($ny * 0.082)
+        Stroke-Form $g $S @(@($x1,$y1), @($x2,$y2)) 0.026 (Shade $Olive 0.66) -NoHighlight
+    }
+
+    # Barrel last, sitting below the shroud's centreline and running well past its
+    # front face, which is what makes the thing read as a gun rather than a box.
+    Stroke-Form $g $S @(@(0.545,0.548), @(0.960,0.485)) 0.072 (Shade $Steel 0.52)
+    Stroke-Dot  $g $S 0.470 0.528 0.028 $Amber                          # charge light
 }
 
 # ------------------------------------------------------------------- duroArmor
