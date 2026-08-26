@@ -582,6 +582,30 @@ Write-Sprite 'Things/Pawn/Humanlike/Apparel/RR_ScarabSkin/RR_ScarabSkin' 128 {
     }
 }
 
+# -------------------------------------------------------------------- gravBoots
+#
+# A PAIR, seen three-quarters on. One boot reads as a boot; two read as gravBoots,
+# and the difference matters in a stockpile list. Three parallel latches per boot
+# is the canonical detail and the thing that stops them looking like footwear.
+Write-Sprite 'Things/Pawn/Humanlike/Apparel/RR_GravBoots/RR_GravBoots' 128 {
+    param($g, $S)
+    foreach ($o in @(-0.155, 0.155)) {
+        $x = 0.50 + $o
+        # Shaft and foot, as one angular boot.
+        Stroke-Plate $g $S @(
+            @(($x - 0.085), 0.24), @(($x + 0.085), 0.24),
+            @(($x + 0.095), 0.66), @(($x + 0.175), 0.70),
+            @(($x + 0.175), 0.82), @(($x - 0.095), 0.82),
+            @(($x - 0.095), 0.66)) $Steel
+        # The three latches.
+        foreach ($ly in @(0.32, 0.44, 0.56)) {
+            Stroke-Form $g $S @(@(($x - 0.085),$ly), @(($x + 0.090),$ly)) 0.042 $Brass -NoHighlight
+        }
+        # The emitter in the sole, which is the whole point of the object.
+        Stroke-Form $g $S @(@(($x - 0.085),0.775), @(($x + 0.165),0.775)) 0.048 $Ion -NoHighlight
+    }
+}
+
 # ------------------------------------------------------------------ projectiles
 
 Write-Sprite 'Things/Projectile/RR_PulseWave' 64 {

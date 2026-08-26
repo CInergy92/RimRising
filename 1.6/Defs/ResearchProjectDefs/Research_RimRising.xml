@@ -144,5 +144,24 @@ Unlocks the ghostCloak.</description>
     <researchViewX>3.00</researchViewX>
     <researchViewY>0.50</researchViewY>
   </ResearchProjectDef>
+  <!--
+    Gravity manipulation. Its own root rather than hanging off pulse physics,
+    because the Society's grav tech is a separate line entirely - gravBoots,
+    gravLifts, gravFloors and the gravFist all come out of it, and none of them
+    have anything to do with pulse weapons.
+  -->
+  <ResearchProjectDef>
+    <defName>RR_GravManipulation</defName>
+    <label>gravity manipulation</label>
+    <description>Local gravity, bent to a shape and made to hold it. The Society uses it to lift ore, level ballrooms and let its Golds step off a roof and not arrive at the bottom.
+
+Unlocks gravBoots.</description>
+    <tab>RR_Artificer</tab>
+    <baseCost>3800</baseCost>
+    <techLevel>Spacer</techLevel>
+    <prerequisites>
+      <li>Fabrication</li>
+    </prerequisites>
+  </ResearchProjectDef>
 
 </Defs>

@@ -145,6 +145,14 @@ $items = @(
                   'material takes in light rather than reflecting it.'
     }
     [pscustomobject]@{
+        Path = 'Things/Pawn/Humanlike/Apparel/RR_GravBoots/RR_GravBoots'; Size = 128
+        Subject = 'A PAIR of heavy grav boots standing side by side, seen three-quarters on: ' +
+                  'tall angular dull steel boots with three parallel brass latch bands closing ' +
+                  'around each shaft, thick armoured soles, and a glowing pale blue gravity ' +
+                  'emitter strip set into the underside of each sole. Heavy powered footwear, ' +
+                  'scuffed and industrial.'
+    }
+    [pscustomobject]@{
         Path = 'Things/Pawn/Humanlike/Apparel/RR_Aegis/RR_Aegis'; Size = 128
         Subject = 'An aegis: a translucent glowing pale blue oval of projected energy, ' +
                   'seen face on, with NO metal frame and no rim of any kind - the whole ' +

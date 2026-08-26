@@ -544,5 +544,135 @@ All of that is chemistry and springs rather than circuits, so it goes on working
       <useDeflectMetalEffect>true</useDeflectMetalEffect>
     </apparel>
   </ThingDef>
+  <!-- ============================== gravBoots ===============================
+
+    Boots that bend local gravity so the wearer can hop a wall, cross a river or
+    drop off a roof and not arrive at the bottom. Mechanically a jump pack, and
+    mirrored from Royalty's Apparel_PackJump - Verb_Jump and the JumpRange stat
+    are both Royalty content, which this mod already requires for the Gold ladder.
+
+    NO AMMUNITION, AND THAT IS NOT A SHORTCUT. Vanilla's jump pack burns chemfuel,
+    which is wrong for something that manipulates gravity rather than burning
+    anything. CompProperties_ApparelReloadable carries replenishAfterCooldown,
+    which no vanilla def uses - decompiling CompApparelReloadable confirms it
+    works: spending the last charge sets replenishInTicks to baseReloadTicks,
+    CompTick counts it down and refills to maxCharges, and NeedsReload returns
+    false outright when ammoDef is null. So the boots recharge themselves.
+
+    tickerType Normal IS REQUIRED for that. CompTick is where the timer runs, and
+    without it the boots would spend their charges once and never recover them,
+    with nothing in the log to say why.
+
+    NINE KILOS EACH, per the reference, so eighteen for the pair. That is a real
+    load next to a jump pack's three, and it is the drawback that makes them a
+    choice rather than a free upgrade.
+
+    FEET, which nothing else in the mod covers - recoilArmor and scarabSkin take
+    Legs. So the boots stack with a suit instead of fighting it.
+
+    They do not render on the pawn, by design: only the item icon exists.
+
+    Quality varies by who is wearing them in the fiction - lowColor pairs are
+    poor. RimWorld's own quality system expresses that without any extra work.
+  -->
+  <ThingDef ParentName="ApparelMakeableBase">
+    <defName>RR_Apparel_GravBoots</defName>
+    <label>gravBoots</label>
+    <description>A pair of boots that argue with gravity and usually win. Three parallel latches close around each leg, the field comes up, and the ground stops being the only place you are allowed to be.
+
+They are heavy - nine kilos a boot - and that weight is with you every step you do not spend flying. A good pair will carry two people. A bad pair will carry you most of the way.</description>
+    <techLevel>Spacer</techLevel>
+    <tickerType>Normal</tickerType>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/RR_GravBoots/RR_GravBoots</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <statBases>
+      <MaxHitPoints>140</MaxHitPoints>
+      <!-- Nine kilos a boot. Vanilla's jump pack is 3 for the whole thing. -->
+      <Mass>18</Mass>
+      <WorkToMake>26000</WorkToMake>
+      <Flammability>0.2</Flammability>
+      <EquipDelay>3</EquipDelay>
+      <!-- Vanilla's jump pack is 23.9. These fly rather than hop. -->
+      <JumpRange>34.9</JumpRange>
+    </statBases>
+    <equippedStatOffsets>
+      <!-- Eighteen kilos strapped to the shins. -->
+      <MoveSpeed>-0.12</MoveSpeed>
+    </equippedStatOffsets>
+    <costList>
+      <Plasteel>40</Plasteel>
+      <ComponentSpacer>3</ComponentSpacer>
+      <Steel>30</Steel>
+    </costList>
+    <recipeMaker>
+      <researchPrerequisite>RR_GravManipulation</researchPrerequisite>
+      <unfinishedThingDef>UnfinishedPack</unfinishedThingDef>
+      <recipeUsers Inherit="False">
+        <li>FabricationBench</li>
+      </recipeUsers>
+      <skillRequirements>
+        <Crafting>7</Crafting>
+      </skillRequirements>
+      <displayPriority>240</displayPriority>
+    </recipeMaker>
+    <thingCategories>
+      <li>ApparelUtility</li>
+    </thingCategories>
+    <tradeTags>
+      <li>ExoticMisc</li>
+    </tradeTags>
+    <comps>
+      <li Class="CompProperties_ApparelReloadable">
+        <maxCharges>3</maxCharges>
+        <!-- With replenishAfterCooldown and no ammoDef this is the SELF-RECHARGE
+             time once the last charge is spent: 30 seconds. -->
+        <replenishAfterCooldown>true</replenishAfterCooldown>
+        <baseReloadTicks>1800</baseReloadTicks>
+        <chargeNoun>lift</chargeNoun>
+        <cooldownGerund>recharging</cooldownGerund>
+        <hotKey>Misc4</hotKey>
+        <displayGizmoWhileUndrafted>false</displayGizmoWhileUndrafted>
+      </li>
+    </comps>
+    <verbs>
+      <li>
+        <verbClass>Verb_Jump</verbClass>
+        <label>lift</label>
+        <violent>false</violent>
+        <hasStandardCommand>true</hasStandardCommand>
+        <onlyManualCast>True</onlyManualCast>
+        <forceNormalTimeSpeed>false</forceNormalTimeSpeed>
+        <warmupTime>0.4</warmupTime>
+        <warmupEffecter>JumpWarmupEffect</warmupEffecter>
+        <requireLineOfSight>true</requireLineOfSight>
+        <flightEffecterDef>JumpFlightEffect</flightEffecterDef>
+        <soundLanding>JumpPackLand</soundLanding>
+        <targetParams>
+          <canTargetLocations>true</canTargetLocations>
+          <canTargetPawns>false</canTargetPawns>
+          <canTargetBuildings>false</canTargetBuildings>
+        </targetParams>
+      </li>
+    </verbs>
+    <apparel>
+      <countsAsClothingForNudity>false</countsAsClothingForNudity>
+      <careIfWornByCorpse>false</careIfWornByCorpse>
+      <scoreOffset>4</scoreOffset>
+      <!-- Feet: free in this mod, so these stack with a full suit rather than
+           competing with it for the Legs group. -->
+      <bodyPartGroups>
+        <li>Feet</li>
+      </bodyPartGroups>
+      <!-- No wornGraphicPath on purpose. They are not drawn on the pawn. -->
+      <layers>
+        <li>Middle</li>
+      </layers>
+      <tags>
+        <li>RR_GravBoots</li>
+      </tags>
+    </apparel>
+  </ThingDef>
 
 </Defs>
