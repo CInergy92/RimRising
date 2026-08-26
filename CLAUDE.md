@@ -404,6 +404,41 @@ Taken from installed reference mods, not from memory:
 | Weapon (`Things/Weapons`) | 256x256 | Combat Extended Guns |
 | Everything else | 128x128 | **default, unverified — measure before relying on it** |
 
+### Worn apparel: where the body actually is
+
+**Measured, and this was the thing blocking worn apparel entirely.** Vanilla's pawn
+and apparel art lives inside Unity asset bundles, so alignment could never be
+checked from disk - every attempt would have been guessing and finding out in game.
+
+Taken from a full-torso garment shipped loose by an installed mod (`Jumpsuit`), as
+the fraction of a **256x256** canvas the body occupies:
+
+| body | facing | x | y |
+|---|---|---|---|
+| Fat | east | 0.18-0.77 | 0.30-0.89 |
+| Fat | north/south | 0.19-0.81 | 0.30-0.88 |
+| Female | east | 0.29-0.62 | 0.31-0.88 |
+| Female | north/south | 0.32-0.68 | 0.30-0.88 |
+| Hulk | east | 0.23-0.73 | 0.28-0.97 |
+| Hulk | north/south | 0.21-0.78 | 0.27-0.97 |
+| Male | east | 0.34-0.66 | 0.34-0.83 |
+| Male | north/south | 0.30-0.69 | 0.34-0.84 |
+| Thin | east | 0.34-0.59 | 0.35-0.83 |
+| Thin | north/south | 0.40-0.59 | 0.34-0.84 |
+
+Ten unrelated mods' `Male_south` textures agreed to within a couple of percent, so
+this is the convention rather than one author's habit. **Child is interpolated from
+Thin, not measured** - the sample garment shipped no child variant, and that row is
+the one to check in game.
+
+`Tools/New-WornApparel.ps1` derives every shape from these boxes rather than
+hard-coding coordinates, which is what makes one drawing fit six body types.
+
+**Worn apparel does NOT go through the generative pipeline.** It is not judged on
+how good the painting is, it is judged on whether it sits on the body. ControlNet
+moves edges by a few pixels - invisible on an item icon, fatal on a sprite that has
+to register with a shoulder.
+
 Apparel and pawn-worn sizes are still unverified. Measure at Milestone 4.
 
 ---
