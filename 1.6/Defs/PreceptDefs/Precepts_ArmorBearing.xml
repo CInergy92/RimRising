@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Who may wear the good plate.
+
+  Inside the Society, recoilArmor and pulseArmor belong to Golds - plus the small
+  number of Obsidians and Grays who have been given a title, which is how the
+  Society says out loud that it has decided to trust someone. Everyone else fights
+  in duroArmor, and the gap between 0.42 and 1.24 sharp is what that decision is
+  worth in a firefight.
+
+  SAME SHAPE AS THE RAZOR RESTRICTION, and for the same reason. Vanilla cannot
+  express "this armour is reserved to a caste": apparel gating is by body part,
+  layer, gender and developmental stage, and none of those know anything about who
+  a pawn is. So enforcement lives in Source/RimRising/CasteArmor.cs and this file
+  is the belief it enforces.
+
+  IT IS A LAW, NOT A LAW OF PHYSICS. It binds only pawns whose ideoligion actually
+  holds the precept. The Rising armours whoever it likes - that is its whole
+  argument, and enforcing the Society's rule on the people rejecting it would be
+  perverse.
+
+  NOTE WHAT IS NOT GATED HERE: the caste TINT. Armour takes its wearer's Color on
+  both sides, because the Rising has not stopped caring what Color someone is - it
+  cares enormously. A Gold's plate is gold to say the hierarchy is right; Darrow's
+  is red to say it is not. Same mechanic, opposite argument.
+-->
+<Defs>
+
+  <IssueDef>
+    <defName>RR_ArmorBearing</defName>
+    <label>armor bearing</label>
+    <iconPath>UI/Issues/RR_ArmorBearing</iconPath>
+  </IssueDef>
+
+  <!-- =============================== the Society ========================== -->
+
+  <PreceptDef>
+    <defName>RR_ArmorBearing_Restricted</defName>
+    <issue>RR_ArmorBearing</issue>
+    <label>plate for the proven</label>
+    <description>Recoil plate is not clothing. It is the Society's confidence, cut to fit, and it is issued to those who have earned the right to survive - Golds by birth, and the rare Obsidian or Gray who has been handed a title for service that could not be ignored.\n\nEveryone else is given duroSteel and told it is enough. For the work they are expected to do, it is.</description>
+    <impact>Medium</impact>
+    <displayOrderInIssue>10</displayOrderInIssue>
+    <associatedMemes>
+      <li>RR_ColorHierarchy</li>
+    </associatedMemes>
+    <conflictingMemes>
+      <li>RR_ColorEquality</li>
+    </conflictingMemes>
+  </PreceptDef>
+
+  <!-- ============================= the resistance ========================= -->
+
+  <PreceptDef>
+    <defName>RR_ArmorBearing_Earned</defName>
+    <issue>RR_ArmorBearing</issue>
+    <label>plate for the fighting</label>
+    <description>Armour goes to whoever is going to be shot at. It is not a statement about their blood and it never was - it is plate, and plate stops things.\n\nThere is never enough of it, so it goes to the ones who have already proven they will walk toward the guns. That is a different kind of rank, and it is earned rather than inherited.</description>
+    <impact>Low</impact>
+    <displayOrderInIssue>20</displayOrderInIssue>
+    <associatedMemes>
+      <li>RR_ColorEquality</li>
+    </associatedMemes>
+    <conflictingMemes>
+      <li>RR_ColorHierarchy</li>
+    </conflictingMemes>
+  </PreceptDef>
+
+</Defs>

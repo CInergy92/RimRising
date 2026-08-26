@@ -81,6 +81,9 @@
       <Uranium>30</Uranium>
       <Gold>15</Gold>
     </costList>
+    <comps>
+      <li Class="CompProperties_Colorable" />
+    </comps>
     <apparel>
       <!--
         THE HELMET IS BUILT IN. PulseArmor is a sealed suit in the books, not a
@@ -104,6 +107,10 @@
         <li>Overhead</li>
       </layers>
       <tags>
+        <!-- Read by Source/RimRising/CasteArmor.cs. RR_ArmorRestricted gates
+             who may wear it; RR_CasteColored makes it take the wearer Color. -->
+        <li>RR_ArmorRestricted</li>
+        <li>RR_CasteColored</li>
         <li>SpacerMilitary</li>
       </tags>
       <defaultOutfitTags>
@@ -443,6 +450,9 @@ All of that is chemistry and springs rather than circuits, so it goes on working
     <tradeTags>
       <li>Armor</li>
     </tradeTags>
+    <comps>
+      <li Class="CompProperties_Colorable" />
+    </comps>
     <apparel>
       <!-- NO head coverage, unlike pulseArmor. RecoilArmor is a suit rather than a
            sealed system, so it pairs with a demonHelm - which is the combination
@@ -460,6 +470,10 @@ All of that is chemistry and springs rather than circuits, so it goes on working
         <li>Shell</li>
       </layers>
       <tags>
+        <!-- Read by Source/RimRising/CasteArmor.cs. RR_ArmorRestricted gates
+             who may wear it; RR_CasteColored makes it take the wearer Color. -->
+        <li>RR_ArmorRestricted</li>
+        <li>RR_CasteColored</li>
         <li>SpacerMilitary</li>
       </tags>
       <defaultOutfitTags>

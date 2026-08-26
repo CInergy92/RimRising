@@ -107,6 +107,17 @@
         <li>RR_RazorBearing_GoldOnly</li>
       </li>
       <!--
+        WHO WEARS THE PLATE. Required rather than merely associated, for the same
+        reason as everything else in this list: associatedMemes only makes a
+        precept ELIGIBLE, and an ideoligion that carried the meme without taking a
+        stance on the issue would leave the armour restriction in
+        Source/RimRising/CasteArmor.cs enforcing nothing at all, while the issue
+        still showed up in the ideoligion UI looking as though it worked.
+      -->
+      <li>
+        <li>RR_ArmorBearing_Restricted</li>
+      </li>
+      <!--
         SCARS. Vanilla Ideology already models this completely - the Scarification
         issue, its tiers, and the ScarificationCeremony ritual - and none of those
         precepts claim a meme of their own, so they are free to be required here.
@@ -274,6 +285,12 @@
       </li>
       <li>
         <li>RR_Carving_Liberation</li>
+      </li>
+      <!-- The mirror of RR_ArmorBearing_Restricted, and required for the same
+           reason: without it an equality ideoligion could take no stance on the
+           issue at all, which reads in the UI as a stance and behaves as none. -->
+      <li>
+        <li>RR_ArmorBearing_Earned</li>
       </li>
     </requireOne>
   </MemeDef>
