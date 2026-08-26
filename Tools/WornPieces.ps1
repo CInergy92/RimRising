@@ -147,7 +147,13 @@ function Draw-RecoilPlate {
 }
 
 function Draw-RecoilArmor { param($g, [int]$S, [array]$Box, [string]$Facing) Draw-RecoilPlate $g $S $Box $Facing }
-function Draw-PulseArmor  { param($g, [int]$S, [array]$Box, [string]$Facing) Draw-RecoilPlate $g $S $Box $Facing -Pulse }
+# NO HELM IS DRAWN. pulseArmor covers FullHead, but the helm folds back into the
+# collar when unsealed, so a bare head is the correct rendering rather than a gap -
+# and the head stays mechanically protected either way. Drawing one would also have
+# required knowing where the head sits in BODY space, which the measured head box
+# does NOT give: those numbers are in head-node space, and using them here produced
+# a helmet swallowing two thirds of the torso.
+function Draw-PulseArmor { param($g, [int]$S, [array]$Box, [string]$Facing) Draw-RecoilPlate $g $S $Box $Facing -Pulse }
 
 <#
     scarabSkin: a suit that takes in light and renders itself pitch black.

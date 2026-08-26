@@ -92,10 +92,12 @@
     <apparel>
       <!--
         THE HELMET IS BUILT IN. PulseArmor is a sealed suit in the books, not a
-        cuirass you pair with headgear - so it covers FullHead and occupies the
-        Overhead layer itself rather than shipping a separate helmet piece. That
-        also means it cannot be worn with a demonHelm, which is correct: the
-        demonHelm goes with scarabSkin.
+        cuirass you pair with headgear - so it covers FullHead and draws its own
+        helm, rather than shipping a separate helmet piece. That also means it
+        cannot be worn with a demonHelm, which is correct: the demonHelm goes with
+        scarabSkin.
+
+        It does NOT take the Overhead layer to do that; see the note further down.
       -->
       <bodyPartGroups>
         <li>Torso</li>
@@ -106,10 +108,27 @@
         <li>FullHead</li>
       </bodyPartGroups>
       <wornGraphicPath>Things/Pawn/Humanlike/Apparel/RR_PulseArmor/RR_PulseArmor</wornGraphicPath>
+      <!--
+        NOT Overhead, even though this covers FullHead. Overhead attaches the
+        apparel to the HEAD render node, so RimWorld drew this body-sized
+        texture anchored to the head - a suit of armour floating at head
+        height, twice the size of the pawn.
+
+        Vanilla solves the sealed-suit case with the burka, which covers
+        FullHead and Torso together and still uses Shell alone, anchored to
+        ApparelBody. The anchor is copied; the rest is not needed here.
+
+        NO renderSkipFlags AND NO DRAWN HELM. The helm folds back into the
+        collar when it is not sealed, so an uncovered head is the correct
+        rendering rather than a gap - the head stays mechanically protected
+        because FullHead coverage is unchanged. Hiding the head and drawing a
+        helm would also have meant guessing where the head sits in BODY space,
+        which is not measurable from here.
+      -->
+      <parentTagDef>ApparelBody</parentTagDef>
       <layers>
         <li>Middle</li>
         <li>Shell</li>
-        <li>Overhead</li>
       </layers>
       <tags>
         <!-- Read by Source/RimRising/CasteArmor.cs. RR_ArmorRestricted gates
