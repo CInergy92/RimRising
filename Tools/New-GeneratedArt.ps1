@@ -77,10 +77,12 @@ $items = @(
     }
     [pscustomobject]@{
         Path = 'Things/Item/Equipment/WeaponMelee/RR_ReaperRazor'; Size = 256
-        Subject = 'A reaper razor: a long slender curved sickle blade sweeping in a smooth 
-crescent to a fine point, pale steel with a warm amber sheen along the inner 
-edge, mounted on a short dark leather grip with a brass ferrule. Like a 
-harvesting slingBlade but bladed and deadly.'
+        Subject = 'A reaper razor: a long slender CURVED SICKLE blade sweeping in a smooth ' +
+                  'crescent to a needle point, its blade DIVIDED INTO SEGMENTS by narrow dark ' +
+                  'joint bands and carrying a bright honed cutting edge along the inner curve. ' +
+                  'Same materials as a matching straight razor - cool desaturated pale blue-grey ' +
+                  'steel, a short worn dark leather grip, a dull brass ferrule. Keen and clearly ' +
+                  'sharp, a harvesting slingBlade reforged as a weapon.'
     }
     [pscustomobject]@{
         Path = 'Things/Item/Equipment/WeaponRanged/RR_PulseFist'; Size = 256

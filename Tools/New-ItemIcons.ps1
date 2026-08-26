@@ -339,6 +339,40 @@ Write-Sprite 'Things/Item/Equipment/WeaponMelee/RR_ReaperRazor' 128 {
         $spine += , @($sx, $sy)
     }
     Stroke-Taper $g $S $spine 0.088 0.005 $SteelHi
+
+    # SEGMENT JOINTS AND A CUTTING EDGE, because a smooth crescent came back
+    # looking blunt and unbroken next to the straight razor. The razor's blade is
+    # visibly divided into sections by dark bands and carries a distinct edge; the
+    # sickle needs the same marks or the two do not read as the same object made
+    # by the same hands. Both have to be in the SILHOUETTE - Canny is what carries
+    # them into the generated art, and no prompt wording substitutes for that.
+    foreach ($bt in @(0.24, 0.46, 0.68)) {
+        $bang = ($aStart + (($aEnd - $aStart) * $bt)) * [Math]::PI / 180.0
+        $bcx = $acx + ($arad * [Math]::Cos($bang))
+        $bcy = $acy + ($arad * [Math]::Sin($bang))
+        # Perpendicular to the arc at this point is simply the radial direction.
+        $rx = [Math]::Cos($bang); $ry = [Math]::Sin($bang)
+        $half = ((0.088 * (1.0 - $bt)) + (0.005 * $bt)) / 2.0
+        $b1x = $bcx - ($rx * $half); $b1y = $bcy - ($ry * $half)
+        $b2x = $bcx + ($rx * $half); $b2y = $bcy + ($ry * $half)
+        Stroke-Form $g $S @(@($b1x,$b1y), @($b2x,$b2y)) 0.016 (Shade $Steel 0.55) -NoHighlight
+    }
+
+    # The edge, a hairline running along the INNER curve - the side a sickle cuts
+    # with. Offset toward the arc centre by most of the half-width so it sits on
+    # the cutting side rather than down the middle.
+    $edge = @()
+    for ($i = 0; $i -le $steps; $i++) {
+        $t = [double]$i / $steps
+        $ang = ($aStart + (($aEnd - $aStart) * $t)) * [Math]::PI / 180.0
+        $half = ((0.088 * (1.0 - $t)) + (0.005 * $t)) / 2.0
+        $off = $half * 0.55
+        $ex = $acx + (($arad - $off) * [Math]::Cos($ang))
+        $ey = $acy + (($arad - $off) * [Math]::Sin($ang))
+        $edge += , @($ex, $ey)
+    }
+    Stroke-Taper $g $S $edge 0.026 0.004 (Shade $SteelHi 1.18)
+
     # Grip, and a brass ferrule where blade meets haft.
     Stroke-Form $g $S @(@(0.105,0.900), @(0.150,0.855)) 0.120 $Brass
     Stroke-Form $g $S @(@(0.150,0.855), @(0.268,0.738)) 0.092 $Leather
