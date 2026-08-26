@@ -263,3 +263,125 @@ function Draw-DemonHelm {
         Bar $g $S $mid ($y0 + ($h * 0.18)) $mid ($y1 - ($h * 0.14)) ($w * 0.08) $script:BlackHi
     }
 }
+
+# ---------------------------------------------------------------- the starShell
+#
+# THIS ONE IS NOT VERIFIED, and the reason is worth stating. The exosuit framework
+# renders modules on its OWN transform - custom ExosuitLayer_* layers, WGApparel*
+# parent tags, and a PawnRenderSubWorker_OffsetRoot that moves the render root -
+# so the vanilla body boxes measured for everything else do not apply.
+#
+# The framework ships no example suit to measure, and the only content mod using
+# it is an autocannon with no apparel. The closest evidence available is the
+# framework's own 512x512 apparel textures, which occupy x 0.22-0.79, y 0.09-0.82
+# - taller and wider than vanilla apparel, which fits: an exosuit is bigger than
+# the person inside it. That footprint is what these are drawn to.
+#
+# If it sits wrong in game the fix is this one box, not a redraw.
+$script:ExoBox = @(0.22, 0.79, 0.09, 0.82)
+
+function Draw-StarShellCore {
+    param($g, [int]$S, [array]$Box, [string]$Facing)
+    $x0 = $Box[0]; $x1 = $Box[1]; $y0 = $Box[2]; $y1 = $Box[3]
+    $w = $x1 - $x0; $h = $y1 - $y0; $mid = ($x0 + $x1) / 2
+    $waist = $y0 + ($h * 0.54)
+
+    # Leg columns - an exosuit stands on its own frame, so these are structural
+    # rather than the tapering greaves the plate suits get.
+    foreach ($side in @(-1, 1)) {
+        $lx = $mid + ($w * 0.20 * $side)
+        Plate $g $S @(
+            @(($lx - ($w * 0.11)), $waist), @(($lx + ($w * 0.11)), $waist),
+            @(($lx + ($w * 0.13)), $y1), @(($lx - ($w * 0.13)), $y1)) $script:CrimsonDk
+    }
+    # Torso block.
+    Plate $g $S @(
+        @($mid, ($y0 + ($h * 0.10))),
+        @(($x1 - ($w * 0.10)), ($y0 + ($h * 0.20))),
+        @(($x1 - ($w * 0.06)), ($y0 + ($h * 0.44))),
+        @(($x1 - ($w * 0.16)), $waist),
+        @(($x0 + ($w * 0.16)), $waist),
+        @(($x0 + ($w * 0.06)), ($y0 + ($h * 0.44))),
+        @(($x0 + ($w * 0.10)), ($y0 + ($h * 0.20)))) $script:Crimson
+
+    if ($Facing -eq 'east') {
+        Plate $g $S @(
+            @(($x0 - ($w * 0.02)), ($y0 + ($h * 0.14))),
+            @(($x0 + ($w * 0.44)), ($y0 + ($h * 0.06))),
+            @(($x0 + ($w * 0.48)), ($y0 + ($h * 0.26))),
+            @(($x0 + ($w * 0.02)), ($y0 + ($h * 0.30)))) $script:CrimsonDk
+        Dot $g $S ($mid + ($w * 0.12)) ($y0 + ($h * 0.34)) ($w * 0.09) $script:Glow
+        return
+    }
+    # Shoulder blocks, squared off - this is a machine, not a cuirass.
+    foreach ($side in @(-1, 1)) {
+        $ex = if ($side -lt 0) { $x0 } else { $x1 }
+        Plate $g $S @(
+            @(($ex + ($w * 0.06 * $side)), ($y0 + ($h * 0.12))),
+            @(($ex - ($w * 0.14 * $side)), ($y0 + ($h * 0.06))),
+            @(($ex - ($w * 0.16 * $side)), ($y0 + ($h * 0.30))),
+            @(($ex + ($w * 0.04 * $side)), ($y0 + ($h * 0.34)))) $script:CrimsonDk
+        Bar $g $S ($ex + ($w * 0.06 * $side)) ($y0 + ($h * 0.115)) ($ex - ($w * 0.14 * $side)) ($y0 + ($h * 0.055)) ($h * 0.020) $Brass
+    }
+    if ($Facing -eq 'south') {
+        Dot  $g $S $mid ($y0 + ($h * 0.32)) ($w * 0.11) $script:Glow
+        Bar  $g $S $mid ($y0 + ($h * 0.44)) $mid ($waist - ($h * 0.02)) ($w * 0.08) $script:CrimsonHi
+    }
+    else {
+        Bar $g $S $mid ($y0 + ($h * 0.12)) $mid ($waist - ($h * 0.02)) ($w * 0.09) $script:CrimsonDk
+        foreach ($f in @(0.24, 0.40)) {
+            Bar $g $S ($x0 + ($w * 0.14)) ($y0 + ($h * $f)) ($x1 - ($w * 0.14)) ($y0 + ($h * $f)) ($h * 0.022) $Brass
+        }
+    }
+}
+
+function Draw-StarShellHead {
+    param($g, [int]$S, [array]$Box, [string]$Facing)
+    $x0 = $Box[0]; $x1 = $Box[1]; $y0 = $Box[2]; $y1 = $Box[3]
+    $w = $x1 - $x0; $h = $y1 - $y0; $mid = ($x0 + $x1) / 2
+    # A sensor pod riding the shoulders, occupying only the top of the frame.
+    $top = $y0 + ($h * 0.02); $bot = $y0 + ($h * 0.26)
+    Plate $g $S @(
+        @($mid, $top),
+        @(($mid + ($w * 0.16)), ($top + (($bot - $top) * 0.30))),
+        @(($mid + ($w * 0.13)), $bot),
+        @(($mid - ($w * 0.13)), $bot),
+        @(($mid - ($w * 0.16)), ($top + (($bot - $top) * 0.30)))) $script:Crimson
+    if ($Facing -eq 'south') {
+        Plate $g $S @(
+            @(($mid - ($w * 0.10)), ($top + (($bot - $top) * 0.46))),
+            @(($mid + ($w * 0.10)), ($top + (($bot - $top) * 0.46))),
+            @(($mid + ($w * 0.07)), ($top + (($bot - $top) * 0.72))),
+            @(($mid - ($w * 0.07)), ($top + (($bot - $top) * 0.72)))) $script:Glow
+    }
+    elseif ($Facing -eq 'east') {
+        Plate $g $S @(
+            @(($mid + ($w * 0.02)), ($top + (($bot - $top) * 0.44))),
+            @(($mid + ($w * 0.15)), ($top + (($bot - $top) * 0.40))),
+            @(($mid + ($w * 0.14)), ($top + (($bot - $top) * 0.70))),
+            @(($mid + ($w * 0.02)), ($top + (($bot - $top) * 0.72)))) $script:Glow
+    }
+    else {
+        Bar $g $S $mid ($top + (($bot - $top) * 0.30)) $mid $bot ($w * 0.06) $script:CrimsonDk
+    }
+}
+
+function Draw-StarShellCannonArm {
+    param($g, [int]$S, [array]$Box, [string]$Facing)
+    $x0 = $Box[0]; $x1 = $Box[1]; $y0 = $Box[2]; $y1 = $Box[3]
+    $w = $x1 - $x0; $h = $y1 - $y0; $mid = ($x0 + $x1) / 2
+    # Right-arm mount: a shoulder yoke and a barrel down the flank.
+    $ax = $mid + ($w * 0.30)
+    Plate $g $S @(
+        @(($ax - ($w * 0.10)), ($y0 + ($h * 0.12))),
+        @(($ax + ($w * 0.12)), ($y0 + ($h * 0.08))),
+        @(($ax + ($w * 0.14)), ($y0 + ($h * 0.34))),
+        @(($ax - ($w * 0.08)), ($y0 + ($h * 0.36)))) $script:CrimsonDk
+    Plate $g $S @(
+        @(($ax - ($w * 0.05)), ($y0 + ($h * 0.32))),
+        @(($ax + ($w * 0.09)), ($y0 + ($h * 0.32))),
+        @(($ax + ($w * 0.07)), ($y0 + ($h * 0.74))),
+        @(($ax - ($w * 0.03)), ($y0 + ($h * 0.74)))) $script:Crimson
+    Bar $g $S ($ax + ($w * 0.02)) ($y0 + ($h * 0.70)) ($ax + ($w * 0.02)) ($y0 + ($h * 0.92)) ($w * 0.07) $script:BlackHi
+    if ($Facing -ne 'north') { Dot $g $S ($ax + ($w * 0.02)) ($y0 + ($h * 0.46)) ($w * 0.06) $script:Glow }
+}

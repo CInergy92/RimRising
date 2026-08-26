@@ -208,6 +208,15 @@ $Headgear = @{
     'RR_DemonHelm' = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_DemonHelm/RR_DemonHelm'; Draw = ${function:Draw-DemonHelm} }
 }
 
+# Exosuit modules: three facings like headgear, but drawn to the FRAMEWORK's own
+# footprint at 512, not to the vanilla body boxes - see the note in WornPieces.ps1
+# for why those do not apply here and why this set is the one that is unverified.
+$Exosuit = @{
+    'RR_StarShellCore'      = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_StarShell/RR_StarShellCore';  Draw = ${function:Draw-StarShellCore} }
+    'RR_StarShellHead'      = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_StarShell/RR_StarShellHead';  Draw = ${function:Draw-StarShellHead} }
+    'RR_StarShellCannonArm' = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_StarShell/RR_StarShellArm';   Draw = ${function:Draw-StarShellCannonArm} }
+}
+
 $made = 0
 foreach ($name in $Pieces.Keys) {
     if ($Only -and $name -notlike "*$Only*") { continue }
@@ -241,5 +250,20 @@ foreach ($name in $Headgear.Keys) {
     Write-Host ("  + {0}  (3 facings, headgear - no body types)" -f $name) -ForegroundColor Green
 }
 
+foreach ($name in $Exosuit.Keys) {
+    if ($Only -and $name -notlike "*$Only*") { continue }
+    $piece = $Exosuit[$name]
+    foreach ($facing in @('north', 'east', 'south')) {
+        $c = New-Canvas 512
+        try {
+            & $piece.Draw $c.G $c.S $script:ExoBox $facing
+            Save-Worn $c.Bmp ("{0}_{1}" -f $piece.Path, $facing)
+            $made++
+        } finally { $c.G.Dispose(); $c.Bmp.Dispose() }
+    }
+    Write-Host ("  + {0}  (3 facings, exosuit module at 512)" -f $name) -ForegroundColor Green
+}
+
 Write-Host ''
 Write-Host ("{0} worn sprites written. Body and head boxes are MEASURED; Child is interpolated." -f $made)
+Write-Host 'The starShell set is drawn to the exosuit framework footprint and is NOT verified.'
