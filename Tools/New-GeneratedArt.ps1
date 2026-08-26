@@ -76,6 +76,13 @@ $items = @(
                   'dark leather-wrapped grip and a rounded brass pommel at the butt.'
     }
     [pscustomobject]@{
+        Path = 'Things/Item/Equipment/WeaponMelee/RR_ReaperRazor'; Size = 256
+        Subject = 'A reaper razor: a long slender curved sickle blade sweeping in a smooth 
+crescent to a fine point, pale steel with a warm amber sheen along the inner 
+edge, mounted on a short dark leather grip with a brass ferrule. Like a 
+harvesting slingBlade but bladed and deadly.'
+    }
+    [pscustomobject]@{
         Path = 'Things/Item/Equipment/WeaponRanged/RR_PulseFist'; Size = 256
         Subject = 'A pulse fist: a compact forearm-mounted energy weapon, a dull brass ' +
                   'body with a dark leather wrist strap and a round amber emitter aperture at the front.'
@@ -92,6 +99,15 @@ $items = @(
                   'receiver above it, a pale sage-green ribbed cooling housing along the top ' +
                   'and side, and a dark barrel projecting forward past everything. Cheap ' +
                   'mass-issue military hardware, scuffed and unremarkable, no ornament.'
+    }
+    [pscustomobject]@{
+        Path = 'Things/Pawn/Humanlike/Apparel/RR_PulseArmor/RR_PulseArmor'; Size = 128
+        Subject = 'A suit of pulse armour seen face on: deep crimson red ANGULAR FACETED ' +
+                  'powered armour with hard bevelled edges and sharp gold trim, huge doubled ' +
+                  'layered wing-like pauldrons jutting up and outward, heavy servo blocks at ' +
+                  'the shoulder joints, and a glowing pale blue shield generator set into the ' +
+                  'centre of the chest plate. A gold throat collar and a deep skirt of ' +
+                  'hanging angular tassets. Heavier and more built-up than ordinary armour.'
     }
     [pscustomobject]@{
         Path = 'Things/Pawn/Humanlike/Apparel/RR_RecoilArmor/RR_RecoilArmor'; Size = 128

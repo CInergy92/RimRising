@@ -309,6 +309,43 @@ Write-Sprite 'Things/Item/Equipment/WeaponMelee/RR_Razor' 128 {
     Stroke-Dot  $g $S 0.205 0.805 0.021 $Amber
 }
 
+# ------------------------------------------------------- the Reaper's razor
+#
+# A razor holds whatever shape its bearer sets it to, and Darrow sets his into a
+# sickle - the slingBlade a Red cuts helium from Martian rock with. That is the
+# point of it: the most feared weapon in the Society, wearing the shape of a
+# mining tool.
+#
+# So this is NOT a correction to the ordinary razor, which is correctly a slim
+# straight blade. It is the same object shaped differently, and it gets its own
+# def for that reason.
+Write-Sprite 'Things/Item/Equipment/WeaponMelee/RR_ReaperRazor' 128 {
+    param($g, $S)
+    # The crescent, as a COMPUTED ARC. Hand-placing six spine points produced a
+    # visibly faceted blade: Stroke-Taper joins its points with straight segments,
+    # so a 160 degree sweep needs far more of them than a nearly straight razor
+    # does. Sampling a circle gives a clean curve and keeps the geometry honest.
+    $acx = 0.40; $acy = 0.38; $arad = 0.38
+    $aStart = 111.0; $aEnd = -53.0
+    $steps = 18
+    $spine = @()
+    for ($i = 0; $i -le $steps; $i++) {
+        $t = [double]$i / $steps
+        $ang = ($aStart + (($aEnd - $aStart) * $t)) * [Math]::PI / 180.0
+        $sx = $acx + ($arad * [Math]::Cos($ang))
+        $sy = $acy + ($arad * [Math]::Sin($ang))
+        # Comma operator: without it a two-element array unrolls into the outer
+        # array and the spine becomes a flat list of numbers.
+        $spine += , @($sx, $sy)
+    }
+    Stroke-Taper $g $S $spine 0.088 0.005 $SteelHi
+    # Grip, and a brass ferrule where blade meets haft.
+    Stroke-Form $g $S @(@(0.105,0.900), @(0.150,0.855)) 0.120 $Brass
+    Stroke-Form $g $S @(@(0.150,0.855), @(0.268,0.738)) 0.092 $Leather
+    Stroke-Form $g $S @(@(0.255,0.752), @(0.290,0.717)) 0.106 $Brass
+    Stroke-Dot  $g $S 0.196 0.808 0.024 $Amber
+}
+
 # ------------------------------------------------------------------- the aegis
 #
 # A buckler that projects an OVAL field - the shape is the canonical detail, so it
@@ -435,6 +472,40 @@ Write-Sprite 'Things/Pawn/Humanlike/Apparel/RR_RecoilArmor/RR_RecoilArmor' 128 {
     # Gold collar throat plate, and the amber vent below it.
     Stroke-Plate $g $S @(@(0.500,0.286), @(0.575,0.330), @(0.500,0.372), @(0.425,0.330)) $Brass
     Stroke-Dot   $g $S 0.500 0.560 0.042 $Amber
+}
+
+# ------------------------------------------------------------------ pulseArmor
+#
+# Canonically recoilArmor WITH a shield generator and limb motors added, so it is
+# drawn as the same suit carrying more: doubled pauldrons, servo blocks at the
+# shoulder roots, a shield emitter on the plastron, and a deeper skirt. If the two
+# did not share a silhouette the upgrade would not read as an upgrade.
+Write-Sprite 'Things/Pawn/Humanlike/Apparel/RR_PulseArmor/RR_PulseArmor' 128 {
+    param($g, $S)
+    foreach ($sx in @(0.345, 0.448, 0.552, 0.655)) {
+        $l = $sx - 0.046; $r = $sx + 0.046
+        Stroke-Plate $g $S @(@($l,0.672), @($r,0.672), @(($r - 0.012),0.855), @(($l + 0.012),0.855)) $CrimsonDk
+    }
+    # Doubled pauldrons: a big outer wing with a second plate layered over it.
+    Stroke-Plate $g $S @(@(0.315,0.372), @(0.040,0.258), @(0.000,0.398), @(0.088,0.512), @(0.315,0.505)) $Crimson
+    Stroke-Plate $g $S @(@(0.685,0.372), @(0.960,0.258), @(1.000,0.398), @(0.912,0.512), @(0.685,0.505)) $Crimson
+    Stroke-Plate $g $S @(@(0.300,0.402), @(0.128,0.330), @(0.104,0.428), @(0.188,0.486), @(0.300,0.480)) (Shade $Crimson 1.20)
+    Stroke-Plate $g $S @(@(0.700,0.402), @(0.872,0.330), @(0.896,0.428), @(0.812,0.486), @(0.700,0.480)) (Shade $Crimson 1.20)
+    Stroke-Form $g $S @(@(0.305,0.369), @(0.045,0.262)) 0.030 $Brass -NoHighlight
+    Stroke-Form $g $S @(@(0.695,0.369), @(0.955,0.262)) 0.030 $Brass -NoHighlight
+
+    # Servo blocks at the shoulder roots - the limb motors, and the visible
+    # difference from a plain recoilArmor.
+    Stroke-Plate $g $S @(@(0.268,0.418), @(0.330,0.398), @(0.330,0.492), @(0.268,0.472)) $CrimsonDk
+    Stroke-Plate $g $S @(@(0.732,0.418), @(0.670,0.398), @(0.670,0.492), @(0.732,0.472)) $CrimsonDk
+
+    Stroke-Plate $g $S @(@(0.500,0.268), @(0.688,0.348), @(0.718,0.502), @(0.660,0.662),
+                         @(0.500,0.742), @(0.340,0.662), @(0.282,0.502), @(0.312,0.348)) $Crimson
+    Stroke-Plate $g $S @(@(0.500,0.325), @(0.562,0.440), @(0.500,0.690), @(0.438,0.440)) (Shade $Crimson 1.22)
+    Stroke-Plate $g $S @(@(0.500,0.264), @(0.580,0.312), @(0.500,0.356), @(0.420,0.312)) $Brass
+    # The shield generator on the plastron. This is the whole upgrade in one mark.
+    Stroke-Dot $g $S 0.500 0.512 0.088 $Ion
+    Stroke-Dot $g $S 0.500 0.512 0.042 (Shade $Ion 1.45)
 }
 
 # ------------------------------------------------------------------ projectiles

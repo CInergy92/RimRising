@@ -462,5 +462,120 @@
       <li Class="CompProperties_Shield" />
     </comps>
   </ThingDef>
+  <!-- ========================== the Reaper's razor ==========================
+
+    A razor holds whatever shape its bearer sets it to. Darrow sets his into a
+    sickle - the slingBlade a Red cuts helium from Martian rock with - so the most
+    feared weapon in the Society goes about wearing the shape of a mining tool.
+
+    NOT A CORRECTION TO THE ORDINARY RAZOR, which is correctly a slim straight
+    blade; this is the same object shaped differently, and it gets its own def for
+    that reason.
+
+    IT DOES NOT CARRY RR_CasteRestricted, and that is the entire point. The Gold
+    monopoly on razors is enforced by a precept the Society's ideoligion holds; a
+    Reaper's razor exists specifically to break it, so gating it to the ruling
+    caste would invert its meaning. It is tagged RR_RisingWeapon instead, which is
+    what the Sons of Ares pawnkinds draw from.
+
+    Sickle geometry, so the numbers follow the shape: more cutting power than the
+    straight razor and markedly less thrust. Armour penetration is unchanged -
+    it is still a razor.
+  -->
+  <ThingDef ParentName="BaseMeleeWeapon">
+    <defName>RR_Weapon_ReaperRazor</defName>
+    <label>reaper's razor</label>
+    <description>A razor set to a curve, which is a thing razors will do for anyone who knows the trick and a thing almost nobody does. The shape is a slingBlade - what a Red holds all day in a drill, cutting helium out of Martian rock - and the first person to carry one openly did it so that the people watching would understand the joke.
+
+It cuts as well as any razor. It is worth rather more than that to the people who see it.</description>
+    <techLevel>Ultra</techLevel>
+    <equippedAngleOffset>-55</equippedAngleOffset>
+    <graphicData>
+      <texPath>Things/Item/Equipment/WeaponMelee/RR_ReaperRazor</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <statBases>
+      <WorkToMake>54000</WorkToMake>
+      <MarketValue>2900</MarketValue>
+      <Mass>1.5</Mass>
+    </statBases>
+    <recipeMaker>
+      <researchPrerequisite>RR_PolyenneWeaving</researchPrerequisite>
+      <skillRequirements>
+        <Crafting>9</Crafting>
+      </skillRequirements>
+      <recipeUsers Inherit="False">
+        <li>FabricationBench</li>
+      </recipeUsers>
+      <displayPriority>211</displayPriority>
+    </recipeMaker>
+    <costList>
+      <Plasteel>60</Plasteel>
+      <ComponentSpacer>3</ComponentSpacer>
+      <Gold>10</Gold>
+    </costList>
+    <!-- Same Inherit="False" requirement as the razor: CompEquippableAbility
+         replaces CompEquippable, so the inherited comp list must be restated. -->
+    <comps Inherit="False">
+      <li Class="CompProperties_EquippableAbility">
+        <abilityDef>RR_RazorWhip</abilityDef>
+      </li>
+      <li Class="CompProperties_Forbiddable"/>
+      <li Class="CompProperties_Styleable"/>
+      <li>
+        <compClass>CompQuality</compClass>
+      </li>
+      <li Class="CompProperties_Biocodable"/>
+    </comps>
+    <smeltable>false</smeltable>
+    <burnableByRecipe>false</burnableByRecipe>
+    <weaponTags>
+      <li>UltratechMelee</li>
+      <li>RR_RisingWeapon</li>
+    </weaponTags>
+    <weaponClasses>
+      <li>Ultratech</li>
+      <li>MeleeSharp</li>
+    </weaponClasses>
+    <tools>
+      <li>
+        <label>haft</label>
+        <capacities>
+          <li>Blunt</li>
+        </capacities>
+        <power>10</power>
+        <cooldownTime>1.5</cooldownTime>
+      </li>
+      <li>
+        <label>hook</label>
+        <capacities>
+          <li>Stab</li>
+        </capacities>
+        <!-- A sickle is a poor thrusting weapon; the straight razor stabs at 26. -->
+        <power>17</power>
+        <cooldownTime>2.1</cooldownTime>
+        <armorPenetration>0.95</armorPenetration>
+      </li>
+      <li>
+        <label>edge</label>
+        <capacities>
+          <li>Cut</li>
+        </capacities>
+        <!-- And a superb cutting one; the straight razor cuts at 27. -->
+        <power>31</power>
+        <cooldownTime>1.9</cooldownTime>
+        <armorPenetration>0.95</armorPenetration>
+      </li>
+      <li>
+        <label>lash</label>
+        <capacities>
+          <li>Cut</li>
+        </capacities>
+        <power>20</power>
+        <cooldownTime>1.4</cooldownTime>
+        <armorPenetration>0.6</armorPenetration>
+      </li>
+    </tools>
+  </ThingDef>
 
 </Defs>

@@ -374,6 +374,7 @@
     <apparelMoney>350~950</apparelMoney>
     <weaponMoney>450~1200</weaponMoney>
     <weaponTags>
+      <li>RR_RisingWeapon</li>
       <li>SimpleGun</li>
       <li>IndustrialGunAdvanced</li>
       <li>GrenadeDestructive</li>
@@ -398,6 +399,7 @@
     <apparelMoney>500~1200</apparelMoney>
     <weaponMoney>600~1500</weaponMoney>
     <weaponTags>
+      <li>RR_RisingWeapon</li>
       <li>IndustrialGunAdvanced</li>
       <li>GrenadeDestructive</li>
       <li>GrenadeEMP</li>
@@ -422,6 +424,7 @@
     <apparelMoney>700~1600</apparelMoney>
     <weaponMoney>900~2000</weaponMoney>
     <weaponTags>
+      <li>RR_RisingWeapon</li>
       <li>IndustrialGunAdvanced</li>
       <li>SpacerGun</li>
     </weaponTags>
@@ -444,6 +447,7 @@
     <apparelMoney>500~1400</apparelMoney>
     <weaponMoney>800~2000</weaponMoney>
     <weaponTags>
+      <li>RR_RisingWeapon</li>
       <li>MedievalMeleeAdvanced</li>
       <li>UltratechMelee</li>
     </weaponTags>
@@ -468,6 +472,7 @@
     <weaponMoney>2000~4000</weaponMoney>
     <itemQuality>Good</itemQuality>
     <weaponTags>
+      <li>RR_RisingWeapon</li>
       <li>UltratechMelee</li>
       <li>SpacerGun</li>
     </weaponTags>
