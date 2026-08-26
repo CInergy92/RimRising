@@ -86,6 +86,19 @@ $items = @(
                   'a long grey-steel barrel housing and a brass muzzle assembly, with a thin amber power conduit along the side.'
     }
     [pscustomobject]@{
+        Path = 'Things/Item/Equipment/WeaponRanged/RR_Scorcher'; Size = 256
+        Subject = 'A scorcher: a cheap plain directed-energy carbine with a dull steel ' +
+                  'receiver, a long thin barrel, a worn dark leather stock and grip, and a ' +
+                  'small amber charge light. Utilitarian mass-issue equipment, scuffed and ' +
+                  'unremarkable, no ornament.'
+    }
+    [pscustomobject]@{
+        Path = 'Things/Pawn/Humanlike/Apparel/RR_DuroArmor/RR_DuroArmor'; Size = 128
+        Subject = 'A duroArmor cuirass seen face on: a plain stamped dull steel breastplate ' +
+                  'with two shoulder caps, a dark leather centre strap and a small brass ' +
+                  'collar stud. Cheap mass-issue plate, dented and scratched from use.'
+    }
+    [pscustomobject]@{
         Path = 'Things/Pawn/Humanlike/Apparel/RR_Aegis/RR_Aegis'; Size = 128
         Subject = 'An aegis: a translucent glowing pale blue oval of projected energy, ' +
                   'seen face on, with NO metal frame and no rim of any kind - the whole ' +

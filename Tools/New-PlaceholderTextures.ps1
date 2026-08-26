@@ -372,7 +372,10 @@ if ($foreign.Count -gt 0) {
 # with -Force, which would otherwise silently undo the whole icon set.
 $ownedElsewhere = @($owned | Where-Object {
     $path = $_
-    ($script:GeneratedArtPrefixes | Where-Object { $path.StartsWith($_, [StringComparison]::OrdinalIgnoreCase) }).Count -gt 0
+    # @() around the pipeline. Where-Object returns $null when nothing matches and
+    # a bare object when one thing does, and under Set-StrictMode reading .Count
+    # off either throws - so this blew up the moment a path matched no prefix.
+    @($script:GeneratedArtPrefixes | Where-Object { $path.StartsWith($_, [StringComparison]::OrdinalIgnoreCase) }).Count -gt 0
 })
 if ($ownedElsewhere.Count -gt 0) {
     $owned = @($owned | Where-Object { $ownedElsewhere -notcontains $_ })

@@ -291,5 +291,80 @@
       <li Class="CompProperties_Biocodable"/>
     </comps>
   </ThingDef>
+  <!-- ============================== duroArmor ===============================
+
+    Standard Gray issue, and the most common armour in the setting by a wide
+    margin. Canonically it stops blades and about copes with an ionBlade; a razor
+    or a pulseBlade goes straight through it.
+
+    That last part is not flavour text, it is the numbers. Sharp 0.42 against the
+    razor's 0.95 armour penetration means the razor is barely slowed - which is
+    the caste gap made legible the moment a Gold walks into a room full of Grays.
+    Against a scorcher's 0.15 it is genuinely useful, so Grays shooting at Grays
+    is a real fight and Grays shooting at a Gold is not.
+
+    No research prerequisite, deliberately. ArmorMachineableBase supplies none of
+    its own, and this is meant to be the thing everybody already has.
+  -->
+  <ThingDef ParentName="ArmorMachineableBase">
+    <defName>RR_Apparel_DuroArmor</defName>
+    <label>duroArmor</label>
+    <description>A stamped duroSteel cuirass with shoulder caps, issued by the crate and fitted by nobody. It turns a knife, blunts a club, and has saved a great many Grays from a great many things that were not aimed at them very carefully.
+
+Against anything a Gold is carrying it is a formality. Everyone wearing one knows this.</description>
+    <techLevel>Industrial</techLevel>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/RR_DuroArmor/RR_DuroArmor</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <statBases>
+      <MaxHitPoints>180</MaxHitPoints>
+      <Mass>7</Mass>
+      <WorkToMake>9000</WorkToMake>
+      <Flammability>0.4</Flammability>
+      <EquipDelay>4</EquipDelay>
+      <ArmorRating_Sharp>0.42</ArmorRating_Sharp>
+      <ArmorRating_Blunt>0.24</ArmorRating_Blunt>
+      <ArmorRating_Heat>0.18</ArmorRating_Heat>
+      <Insulation_Cold>4</Insulation_Cold>
+    </statBases>
+    <equippedStatOffsets>
+      <!-- Stamped plate that was never fitted to the wearer. -->
+      <MoveSpeed>-0.10</MoveSpeed>
+    </equippedStatOffsets>
+    <costList>
+      <Steel>75</Steel>
+      <ComponentIndustrial>2</ComponentIndustrial>
+    </costList>
+    <recipeMaker>
+      <skillRequirements>
+        <Crafting>3</Crafting>
+      </skillRequirements>
+      <displayPriority>190</displayPriority>
+    </recipeMaker>
+    <thingCategories>
+      <li>ApparelArmor</li>
+    </thingCategories>
+    <tradeTags>
+      <li>Armor</li>
+    </tradeTags>
+    <apparel>
+      <bodyPartGroups>
+        <li>Torso</li>
+        <li>Shoulders</li>
+      </bodyPartGroups>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/RR_DuroArmor/RR_DuroArmor</wornGraphicPath>
+      <layers>
+        <li>Middle</li>
+      </layers>
+      <tags>
+        <li>IndustrialMilitaryBasic</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+      <useDeflectMetalEffect>true</useDeflectMetalEffect>
+    </apparel>
+  </ThingDef>
 
 </Defs>

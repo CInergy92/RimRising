@@ -319,6 +319,33 @@ Write-Sprite 'Things/Weapons/RR_PulseCannon' 128 {
     Stroke-Form $g $S @(@(0.46,0.50), @(0.66,0.39)) 0.036 $Amber
 }
 
+# -------------------------------------------------------------------- scorcher
+#
+# A cheap carbine: long thin barrel, plain stock, nothing ornamental. It has to
+# read as the poor relation of the pulseFist at a glance in an inventory list.
+Write-Sprite 'Things/Item/Equipment/WeaponRanged/RR_Scorcher' 128 {
+    param($g, $S)
+    Stroke-Form $g $S @(@(0.12,0.78), @(0.34,0.64)) 0.155 $Leather   # stock
+    Stroke-Form $g $S @(@(0.30,0.66), @(0.70,0.42)) 0.120 $Steel     # receiver
+    Stroke-Form $g $S @(@(0.68,0.43), @(0.94,0.28)) 0.058 $Steel     # barrel
+    Stroke-Form $g $S @(@(0.40,0.62), @(0.45,0.76)) 0.080 $Leather   # grip
+    Stroke-Dot  $g $S 0.560 0.520 0.034 $Amber                       # charge light
+}
+
+# ------------------------------------------------------------------- duroArmor
+#
+# A stamped cuirass with shoulder caps, drawn front on the way vanilla draws its
+# armour ITEM icons - the worn sprites are a separate directional set and are not
+# generated here.
+Write-Sprite 'Things/Pawn/Humanlike/Apparel/RR_DuroArmor/RR_DuroArmor' 128 {
+    param($g, $S)
+    Stroke-Form $g $S @(@(0.50,0.36), @(0.50,0.70)) 0.42 $Steel      # breastplate
+    Stroke-Form $g $S @(@(0.245,0.375), @(0.245,0.455)) 0.185 $Steel # shoulder cap
+    Stroke-Form $g $S @(@(0.755,0.375), @(0.755,0.455)) 0.185 $Steel # shoulder cap
+    Stroke-Form $g $S @(@(0.50,0.42), @(0.50,0.66)) 0.055 $Leather   # centre seam
+    Stroke-Dot  $g $S 0.500 0.430 0.045 $Brass                       # collar stud
+}
+
 # ------------------------------------------------------------------ projectiles
 
 Write-Sprite 'Things/Projectile/RR_PulseWave' 64 {

@@ -279,6 +279,101 @@
     </projectile>
   </ThingDef>
 
+  <!-- ============================== scorcher ================================
+
+    The other end of the Society from a razor. A scorcher works on the same idea
+    as a railgun and does it badly: accurate, easy to shoot, and specifically
+    unable to get through anything better than basic armour. It is what a Gray
+    carries because a pulseFist is either unaffordable or not permitted.
+
+    THE LOW ARMOUR PENETRATION IS THE POINT, not a balance compromise. At 0.15 it
+    is stopped cold by pulseArmor (1.24 sharp) and merely inconvenienced by
+    duroArmor (0.40) - which is exactly the gap between the castes, expressed in
+    numbers a firefight will actually demonstrate.
+
+    Reusing a vanilla projectile texture the way the pulseFist already does. Both
+    reference Core paths rather than shipping our own, which is allowed - what is
+    forbidden is WRITING a placeholder over a vanilla path.
+  -->
+  <ThingDef ParentName="BaseHumanMakeableGun">
+    <defName>RR_Weapon_Scorcher</defName>
+    <label>scorcher</label>
+    <description>A cheap directed-energy carbine that whirrs while it charges and smells faintly of hot oil. It is easier to shoot straight than anything that uses gunpowder, which is why Grays are issued them by the crate.\n\nIt will not get through a pulseShield, and it will not get through good plate. Against a man in a work smock it is entirely sufficient, and the Society has thought carefully about who it expects Grays to be shooting.</description>
+    <techLevel>Spacer</techLevel>
+    <graphicData>
+      <texPath>Things/Item/Equipment/WeaponRanged/RR_Scorcher</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <statBases>
+      <WorkToMake>16000</WorkToMake>
+      <MarketValue>420</MarketValue>
+      <Mass>3.2</Mass>
+      <!-- Canonically more accurate and easier to use than a powder weapon. -->
+      <AccuracyTouch>0.78</AccuracyTouch>
+      <AccuracyShort>0.82</AccuracyShort>
+      <AccuracyMedium>0.74</AccuracyMedium>
+      <AccuracyLong>0.55</AccuracyLong>
+      <RangedWeapon_Cooldown>1.40</RangedWeapon_Cooldown>
+    </statBases>
+    <recipeMaker>
+      <researchPrerequisite>RR_Artificer</researchPrerequisite>
+      <skillRequirements>
+        <Crafting>4</Crafting>
+      </skillRequirements>
+      <displayPriority>230</displayPriority>
+    </recipeMaker>
+    <costList>
+      <Steel>50</Steel>
+      <ComponentIndustrial>3</ComponentIndustrial>
+    </costList>
+    <weaponTags>
+      <li>SpacerGun</li>
+    </weaponTags>
+    <weaponClasses>
+      <li>RangedLight</li>
+    </weaponClasses>
+    <verbs>
+      <li>
+        <verbClass>Verb_Shoot</verbClass>
+        <hasStandardCommand>true</hasStandardCommand>
+        <defaultProjectile>RR_Bullet_Scorcher</defaultProjectile>
+        <!-- The audible charge-up before it fires. -->
+        <warmupTime>1.2</warmupTime>
+        <range>25.9</range>
+        <burstShotCount>1</burstShotCount>
+        <soundCast>Shot_ChargeRifle</soundCast>
+        <soundCastTail>GunTail_Light</soundCastTail>
+        <muzzleFlashScale>7</muzzleFlashScale>
+      </li>
+    </verbs>
+    <tools>
+      <li>
+        <label>stock</label>
+        <capacities>
+          <li>Blunt</li>
+        </capacities>
+        <power>9</power>
+        <cooldownTime>2</cooldownTime>
+      </li>
+    </tools>
+  </ThingDef>
+
+  <ThingDef ParentName="BaseBullet">
+    <defName>RR_Bullet_Scorcher</defName>
+    <label>scorcher bolt</label>
+    <graphicData>
+      <texPath>Things/Projectile/Charge_Small</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <projectile>
+      <damageDef>Burn</damageDef>
+      <damageAmountBase>12</damageAmountBase>
+      <!-- The whole character of the weapon. Basic armour only. -->
+      <armorPenetrationBase>0.15</armorPenetrationBase>
+      <speed>70</speed>
+    </projectile>
+  </ThingDef>
+
   <!-- ============================== the aegis ===============================
 
     Canonically a buckler that projects an OVAL energy field, carried by Golds in
