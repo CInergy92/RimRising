@@ -67,7 +67,8 @@
     <weaponMoney>800~1700</weaponMoney>
     <apparelTags>
       <!-- Rank-and-file Gray. Had NO apparelTags at all, so it could generate any apparel in the game including recoil plate. -->
-      <li>IndustrialMilitaryBasic</li>
+      <li>RR_BasicPlate</li>
+      <li>IndustrialBasic</li>
     </apparelTags>
     <weaponTags>
       <li>IndustrialGunAdvanced</li>
@@ -94,7 +95,8 @@
     <itemQuality>Good</itemQuality>
     <apparelTags>
       <!-- As the Legionary. -->
-      <li>IndustrialMilitaryBasic</li>
+      <li>RR_BasicPlate</li>
+      <li>IndustrialBasic</li>
     </apparelTags>
     <weaponTags>
       <li>SpacerGun</li>
@@ -117,11 +119,14 @@
     <label>obsidian knight</label>
     <combatPower>130</combatPower>
     <apparelColor>(46,44,52)</apparelColor>
-    <apparelMoney>1200~2400</apparelMoney>
+    <apparelMoney>2800~4400</apparelMoney>
     <weaponMoney>1200~2600</weaponMoney>
     <apparelTags>
       <!-- The trusted Obsidian: this kind IS the Praetorian case the armour rule describes. -->
-      <li>SpacerMilitary</li>
+      <li>RR_HeavyPlate</li>
+      <!-- Clothing to wear under it; with only an armour tag the
+           generator has nothing to buy but plate. -->
+      <li>IndustrialBasic</li>
     </apparelTags>
     <weaponTags>
       <li>MedievalMeleeAdvanced</li>
@@ -144,12 +149,15 @@
     <label>bronzie officer</label>
     <combatPower>140</combatPower>
     <apparelColor>(176,138,70)</apparelColor>
-    <apparelMoney>1800~3200</apparelMoney>
+    <apparelMoney>3000~4800</apparelMoney>
     <weaponMoney>1800~3400</weaponMoney>
     <itemQuality>Good</itemQuality>
     <apparelTags>
       <!-- Bronzie counts as ruling caste - see IsRulingCaste. -->
-      <li>SpacerMilitary</li>
+      <li>RR_HeavyPlate</li>
+      <!-- Clothing to wear under it; with only an armour tag the
+           generator has nothing to buy but plate. -->
+      <li>IndustrialBasic</li>
     </apparelTags>
     <weaponTags>
       <li>SpacerGun</li>
@@ -175,13 +183,16 @@
     <initialWillRange>3~5</initialWillRange>
     <combatPower>240</combatPower>
     <apparelColor>(232,194,74)</apparelColor>
-    <apparelMoney>3000~5200</apparelMoney>
+    <apparelMoney>3800~6500</apparelMoney>
     <weaponMoney>3000~5500</weaponMoney>
     <itemQuality>Excellent</itemQuality>
     <apparelAllowHeadgearChance>0.5</apparelAllowHeadgearChance>
     <apparelTags>
       <!-- Gold. The rule exists for him. -->
-      <li>SpacerMilitary</li>
+      <li>RR_HeavyPlate</li>
+      <!-- Clothing to wear under it; with only an armour tag the
+           generator has nothing to buy but plate. -->
+      <li>IndustrialBasic</li>
     </apparelTags>
     <weaponTags>
       <li>UltratechMelee</li>
@@ -224,14 +235,17 @@
     <initialWillRange>4~6</initialWillRange>
     <combatPower>340</combatPower>
     <apparelColor>(244,208,96)</apparelColor>
-    <apparelMoney>4500~7000</apparelMoney>
+    <apparelMoney>5200~8500</apparelMoney>
     <weaponMoney>4500~7500</weaponMoney>
     <itemQuality>Masterwork</itemQuality>
     <apparelAllowHeadgearChance>0.85</apparelAllowHeadgearChance>
     <apparelTags>
-      <li>SpacerMilitary</li>
+      <li>RR_HeavyPlate</li>
       <li>IndustrialMilitaryAdvanced</li>
       <li>IndustrialMilitaryBasic</li>
+      <!-- Clothing to wear under it; with only an armour tag the
+           generator has nothing to buy but plate. -->
+      <li>IndustrialBasic</li>
     </apparelTags>
     <weaponTags>
       <li>UltratechMelee</li>
@@ -396,7 +410,8 @@
     <weaponMoney>450~1200</weaponMoney>
     <apparelTags>
         <!-- Rank and file: duroSteel, like almost everyone on both sides. -->
-      <li>IndustrialMilitaryBasic</li>
+      <li>RR_BasicPlate</li>
+      <li>IndustrialBasic</li>
     </apparelTags>
     <weaponTags>
       <li>RR_RisingWeapon</li>
@@ -425,7 +440,8 @@
     <weaponMoney>600~1500</weaponMoney>
     <apparelTags>
         <!-- Rank and file: duroSteel, like almost everyone on both sides. -->
-      <li>IndustrialMilitaryBasic</li>
+      <li>RR_BasicPlate</li>
+      <li>IndustrialBasic</li>
     </apparelTags>
     <weaponTags>
       <li>RR_RisingWeapon</li>
@@ -450,12 +466,15 @@
     <label>defector</label>
     <combatPower>85</combatPower>
     <apparelColor>(120,126,133)</apparelColor>
-    <apparelMoney>700~1600</apparelMoney>
+    <apparelMoney>2800~4200</apparelMoney>
     <weaponMoney>900~2000</weaponMoney>
     <apparelTags>
         <!-- Elite: the Rising has no caste rule, but it has very little
              plate, so the good armour goes to the few who have earned it. -->
-      <li>SpacerMilitary</li>
+      <li>RR_HeavyPlate</li>
+      <!-- Clothing to wear under it; with only an armour tag the
+           generator has nothing to buy but plate. -->
+      <li>IndustrialBasic</li>
     </apparelTags>
     <weaponTags>
       <li>RR_RisingWeapon</li>
@@ -478,12 +497,15 @@
     <label>freed obsidian</label>
     <combatPower>125</combatPower>
     <apparelColor>(52,50,58)</apparelColor>
-    <apparelMoney>500~1400</apparelMoney>
+    <apparelMoney>2800~4200</apparelMoney>
     <weaponMoney>800~2000</weaponMoney>
     <apparelTags>
         <!-- Elite: the Rising has no caste rule, but it has very little
              plate, so the good armour goes to the few who have earned it. -->
-      <li>SpacerMilitary</li>
+      <li>RR_HeavyPlate</li>
+      <!-- Clothing to wear under it; with only an armour tag the
+           generator has nothing to buy but plate. -->
+      <li>IndustrialBasic</li>
     </apparelTags>
     <weaponTags>
       <li>RR_RisingWeapon</li>
@@ -507,13 +529,16 @@
     <label>turncoat</label>
     <combatPower>200</combatPower>
     <apparelColor>(176,138,70)</apparelColor>
-    <apparelMoney>1500~3000</apparelMoney>
+    <apparelMoney>3400~5600</apparelMoney>
     <weaponMoney>2000~4000</weaponMoney>
     <itemQuality>Good</itemQuality>
     <apparelTags>
         <!-- Elite: the Rising has no caste rule, but it has very little
              plate, so the good armour goes to the few who have earned it. -->
-      <li>SpacerMilitary</li>
+      <li>RR_HeavyPlate</li>
+      <!-- Clothing to wear under it; with only an armour tag the
+           generator has nothing to buy but plate. -->
+      <li>IndustrialBasic</li>
     </apparelTags>
     <weaponTags>
       <li>RR_RisingWeapon</li>
@@ -708,12 +733,12 @@
     <defaultFactionDef>RR_JuliiIndustries</defaultFactionDef>
     <combatPower>62</combatPower>
     <apparelColor>(120,30,30)</apparelColor>
-    <apparelMoney>1100~2300</apparelMoney>
+    <apparelMoney>2800~4400</apparelMoney>
     <weaponMoney>700~1500</weaponMoney>
     <apparelTags>
       <li>IndustrialBasic</li>
       <li>IndustrialAdvanced</li>
-      <li>SpacerMilitary</li>
+      <li>RR_HeavyPlate</li>
     </apparelTags>
     <weaponTags>
       <li>SimpleGun</li>
@@ -766,12 +791,12 @@
     <defaultFactionDef>RR_SunIndustries</defaultFactionDef>
     <combatPower>58</combatPower>
     <apparelColor>(90,110,140)</apparelColor>
-    <apparelMoney>1200~2400</apparelMoney>
+    <apparelMoney>2800~4400</apparelMoney>
     <weaponMoney>800~1600</weaponMoney>
     <apparelTags>
       <li>IndustrialBasic</li>
       <li>IndustrialAdvanced</li>
-      <li>SpacerMilitary</li>
+      <li>RR_HeavyPlate</li>
     </apparelTags>
     <weaponTags>
       <li>SimpleGun</li>
@@ -952,7 +977,8 @@
     <apparelTags>
       <li>IndustrialAdvanced</li>
       <!-- A combat Green is still not Gold and still holds no title. -->
-      <li>IndustrialMilitaryBasic</li>
+      <li>RR_BasicPlate</li>
+      <li>IndustrialBasic</li>
     </apparelTags>
     <weaponTags>
       <li>SimpleGun</li>

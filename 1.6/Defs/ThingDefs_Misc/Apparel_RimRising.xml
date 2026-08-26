@@ -111,7 +111,9 @@
              who may wear it; RR_CasteColored makes it take the wearer Color. -->
         <li>RR_ArmorRestricted</li>
         <li>RR_CasteColored</li>
-        <li>SpacerMilitary</li>
+        <!-- so a pawnkind asking for it drew vanilla plate as often as ours - Golds were
+           spawning in marine armour. RR_HeavyPlate is ours alone. -->
+      <li>RR_HeavyPlate</li>
       </tags>
       <defaultOutfitTags>
         <li>Soldier</li>
@@ -366,6 +368,10 @@ Against anything a Gold is carrying it is a formality. Everyone wearing one know
       </layers>
       <tags>
         <li>IndustrialMilitaryBasic</li>
+      <!-- Ours specifically, so our own kinds draw duroArmor rather than
+           a vanilla flak vest. The vanilla tag stays so other kinds may
+           still find it. -->
+      <li>RR_BasicPlate</li>
       </tags>
       <defaultOutfitTags>
         <li>Soldier</li>
@@ -474,7 +480,9 @@ All of that is chemistry and springs rather than circuits, so it goes on working
              who may wear it; RR_CasteColored makes it take the wearer Color. -->
         <li>RR_ArmorRestricted</li>
         <li>RR_CasteColored</li>
-        <li>SpacerMilitary</li>
+        <!-- NOT SpacerMilitary. That is a VANILLA tag carried by marine and power armour,
+           spawning in marine armour. RR_HeavyPlate is ours alone. -->
+      <li>RR_HeavyPlate</li>
       </tags>
       <defaultOutfitTags>
         <li>Soldier</li>
