@@ -145,6 +145,14 @@ $items = @(
                   'material takes in light rather than reflecting it.'
     }
     [pscustomobject]@{
+        Path = 'Things/Pawn/Humanlike/Apparel/RR_SkipBoots/RR_SkipBoots'; Size = 128
+        Subject = 'A PAIR of light low-cut skip boots standing side by side: sleek dull steel ' +
+                  'ankle boots with a single brass strap across each, angled air vents down the ' +
+                  'outer flank, and compact armoured soles. Lightweight compressed-air jump ' +
+                  'boots, scuffed and practical, noticeably lower and slimmer than heavy ' +
+                  'powered boots.'
+    }
+    [pscustomobject]@{
         Path = 'Things/Pawn/Humanlike/Apparel/RR_GravBoots/RR_GravBoots'; Size = 128
         Subject = 'A PAIR of heavy grav boots standing side by side, seen three-quarters on: ' +
                   'tall angular dull steel boots with three parallel brass latch bands closing ' +

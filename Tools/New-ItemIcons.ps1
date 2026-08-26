@@ -606,6 +606,28 @@ Write-Sprite 'Things/Pawn/Humanlike/Apparel/RR_GravBoots/RR_GravBoots' 128 {
     }
 }
 
+# ------------------------------------------------------------------- skipBoots
+#
+# The same pair read as the LIGHT option: a low-cut boot rather than a tall shaft,
+# one strap instead of three latches, and side vents where the gravBoots carry a
+# sole emitter. At icon size the height difference is what separates them.
+Write-Sprite 'Things/Pawn/Humanlike/Apparel/RR_SkipBoots/RR_SkipBoots' 128 {
+    param($g, $S)
+    foreach ($o in @(-0.155, 0.155)) {
+        $x = 0.50 + $o
+        Stroke-Plate $g $S @(
+            @(($x - 0.080), 0.44), @(($x + 0.080), 0.44),
+            @(($x + 0.090), 0.68), @(($x + 0.170), 0.72),
+            @(($x + 0.170), 0.82), @(($x - 0.090), 0.82),
+            @(($x - 0.090), 0.68)) $Steel
+        Stroke-Form $g $S @(@(($x - 0.080),0.52), @(($x + 0.086),0.52)) 0.040 $Brass -NoHighlight
+        # Air vents down the flank: condensed air, not gravity.
+        foreach ($vy in @(0.60, 0.66, 0.72)) {
+            Stroke-Form $g $S @(@(($x - 0.070),$vy), @(($x + 0.010),$vy)) 0.022 (Shade $Steel 0.60) -NoHighlight
+        }
+    }
+}
+
 # ------------------------------------------------------------------ projectiles
 
 Write-Sprite 'Things/Projectile/RR_PulseWave' 64 {

@@ -600,6 +600,23 @@ They are heavy - nine kilos a boot - and that weight is with you every step you 
     <equippedStatOffsets>
       <!-- Eighteen kilos strapped to the shins. -->
       <MoveSpeed>-0.12</MoveSpeed>
+      <!--
+        THE POINT OF THEM. In the books gravBoots are how a Gold gets from one
+        place to another, not just how they clear a wall - so they carry a world
+        map bonus as well as the jump.
+
+        These two offsets do NOT fight each other, which is worth knowing before
+        anybody "fixes" one of them. Decompiling CaravanTicksPerMoveUtility shows
+        caravan speed is built from the ABSTRACT Human MoveSpeed value, never from
+        each pawn's own, and then multiplied by the summed CaravanBonusSpeedFactor
+        of everyone travelling. So the weight penalty is purely local and the
+        caravan bonus is purely world map. Heavy on foot, fast between places.
+
+        Vanilla's nomadic precept offsets this stat by 0.3; 0.45 sits above that
+        because the wearer is flying rather than walking well. It is summed across
+        the caravan, so a party where only one pawn has boots gains far less.
+      -->
+      <CaravanBonusSpeedFactor>0.45</CaravanBonusSpeedFactor>
     </equippedStatOffsets>
     <costList>
       <Plasteel>40</Plasteel>
@@ -666,6 +683,120 @@ They are heavy - nine kilos a boot - and that weight is with you every step you 
         <li>Feet</li>
       </bodyPartGroups>
       <!-- No wornGraphicPath on purpose. They are not drawn on the pawn. -->
+      <layers>
+        <li>Middle</li>
+      </layers>
+      <tags>
+        <li>RR_GravBoots</li>
+      </tags>
+    </apparel>
+  </ThingDef>
+  <!-- ============================== skipBoots ===============================
+
+    A variant of gravBoots that throws the wearer on condensed air rather than by
+    bending gravity. Lower altitude, far greater horizontal reach - the wearer
+    skips across the ground like a stone on water at nearly sixty an hour - and a
+    quarter of the weight.
+
+    STRICTLY A LOCAL WEAPON. No CaravanBonusSpeedFactor and no launch: skippers
+    move you across a battlefield, not across a planet. That division is the whole
+    reason both exist - gravBoots are how a Gold travels, skipBoots are how a
+    lightly-armoured one fights.
+
+    So this is a better jump pack in every local respect and nothing at all
+    outside one: longer reach than the gravBoots, more charges, faster recovery,
+    and no movement penalty worth the name.
+
+    The canonical year-long battery is why these need no ammunition either. The
+    self-recharge is the same replenishAfterCooldown arrangement as the gravBoots
+    and needs tickerType Normal for the same reason.
+  -->
+  <ThingDef ParentName="ApparelMakeableBase">
+    <defName>RR_Apparel_SkipBoots</defName>
+    <label>skipBoots</label>
+    <description>Skippers. They do not lift you so much as throw you, flat and fast, so you cross open ground in a series of long shallow skips and arrive somewhere nobody was aiming.\n\nA quarter the weight of gravBoots, and they will not get you over a wall worth the name. What they will do is put you behind someone, which in a close fight is worth more than altitude. The battery lasts about a year and they are stone cold to thermal optics.</description>
+    <techLevel>Spacer</techLevel>
+    <tickerType>Normal</tickerType>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/RR_SkipBoots/RR_SkipBoots</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <statBases>
+      <MaxHitPoints>110</MaxHitPoints>
+      <!-- A quarter of the gravBoots' eighteen, per the reference. -->
+      <Mass>4.5</Mass>
+      <WorkToMake>19000</WorkToMake>
+      <Flammability>0.2</Flammability>
+      <EquipDelay>2</EquipDelay>
+      <!-- Greater HORIZONTAL reach than the gravBoots' 34.9, which is the
+           canonical difference between the two. Vanilla's jump pack is 23.9. -->
+      <JumpRange>44.9</JumpRange>
+    </statBases>
+    <equippedStatOffsets>
+      <!-- Light enough that the penalty is nominal. -->
+      <MoveSpeed>-0.02</MoveSpeed>
+    </equippedStatOffsets>
+    <costList>
+      <Plasteel>25</Plasteel>
+      <ComponentSpacer>2</ComponentSpacer>
+      <Steel>20</Steel>
+    </costList>
+    <recipeMaker>
+      <researchPrerequisite>RR_GravManipulation</researchPrerequisite>
+      <unfinishedThingDef>UnfinishedPack</unfinishedThingDef>
+      <recipeUsers Inherit="False">
+        <li>FabricationBench</li>
+      </recipeUsers>
+      <skillRequirements>
+        <Crafting>6</Crafting>
+      </skillRequirements>
+      <displayPriority>241</displayPriority>
+    </recipeMaker>
+    <thingCategories>
+      <li>ApparelUtility</li>
+    </thingCategories>
+    <tradeTags>
+      <li>ExoticMisc</li>
+    </tradeTags>
+    <comps>
+      <li Class="CompProperties_ApparelReloadable">
+        <maxCharges>5</maxCharges>
+        <replenishAfterCooldown>true</replenishAfterCooldown>
+        <!-- 15 seconds, against the gravBoots' 30. -->
+        <baseReloadTicks>900</baseReloadTicks>
+        <chargeNoun>skip</chargeNoun>
+        <cooldownGerund>repressurising</cooldownGerund>
+        <hotKey>Misc4</hotKey>
+        <displayGizmoWhileUndrafted>false</displayGizmoWhileUndrafted>
+      </li>
+    </comps>
+    <verbs>
+      <li>
+        <verbClass>Verb_Jump</verbClass>
+        <label>skip</label>
+        <violent>false</violent>
+        <hasStandardCommand>true</hasStandardCommand>
+        <onlyManualCast>True</onlyManualCast>
+        <forceNormalTimeSpeed>false</forceNormalTimeSpeed>
+        <warmupTime>0.25</warmupTime>
+        <warmupEffecter>JumpWarmupEffect</warmupEffecter>
+        <requireLineOfSight>true</requireLineOfSight>
+        <flightEffecterDef>JumpFlightEffect</flightEffecterDef>
+        <soundLanding>JumpPackLand</soundLanding>
+        <targetParams>
+          <canTargetLocations>true</canTargetLocations>
+          <canTargetPawns>false</canTargetPawns>
+          <canTargetBuildings>false</canTargetBuildings>
+        </targetParams>
+      </li>
+    </verbs>
+    <apparel>
+      <countsAsClothingForNudity>false</countsAsClothingForNudity>
+      <careIfWornByCorpse>false</careIfWornByCorpse>
+      <scoreOffset>3</scoreOffset>
+      <bodyPartGroups>
+        <li>Feet</li>
+      </bodyPartGroups>
       <layers>
         <li>Middle</li>
       </layers>
