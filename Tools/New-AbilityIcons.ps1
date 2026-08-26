@@ -8,7 +8,10 @@
 
         New-XenotypeIcons.ps1  owns UI/Icons/Xenotypes and UI/Icons/Genes
         New-ItemIcons.ps1      owns the item/weapon silhouettes
-        New-AbilityIcons.ps1   owns UI/Abilities and ability projectiles
+        New-WornApparel.ps1    owns the worn apparel sprites
+        New-AbilityIcons.ps1   owns the REST of UI/ - abilities, issues, memes,
+                               roles, the mod icon - plus ability projectiles and
+                               the biome marks
 
     These are NOT run through the generative art pass. A gizmo icon is read at
     32 px in a crowded button strip, where a painted illustration turns to mush and
@@ -121,5 +124,30 @@ Save-Icon 'Things/Projectile/RR_RazorLash' 64 {
     ) 0.30 $Steel 0.07
 }
 
+# Everything else under UI/, plus the biome marks. Drawing routines live in
+# UIGlyphs.ps1, dot-sourced purely for size.
+. (Join-Path $PSScriptRoot 'UIGlyphs.ps1')
+
+$glyphs = @(
+    @('UI/Issues/RR_RazorBearing',      128, ${function:Glyph-RazorBearing}),
+    @('UI/Issues/RR_ArmorBearing',      128, ${function:Glyph-ArmorBearing}),
+    @('UI/Issues/RR_Carving',           128, ${function:Glyph-Carving}),
+    @('UI/Issues/RR_ColorDeference',    128, ${function:Glyph-ColorDeference}),
+    @('UI/Issues/RR_InterColorUnion',   128, ${function:Glyph-InterColorUnion}),
+    @('UI/Memes/RR_ColorHierarchy',     128, ${function:Glyph-ColorHierarchy}),
+    @('UI/Memes/RR_ColorEquality',      128, ${function:Glyph-ColorEquality}),
+    @('UI/Memes/RR_GoldWorship',        128, ${function:Glyph-GoldWorship}),
+    @('UI/Roles/RR_OlympicKnight',      128, ${function:Glyph-OlympicKnight}),
+    @('UI/Abilities/RR_GhostCloak',     128, ${function:Glyph-GhostCloakAbility}),
+    @('UI/RimRisingModIcon',             64, ${function:Glyph-ModIcon}),
+    @('World/Biomes/RR_HeliumBarrens',  512, ${function:Glyph-HeliumBarrens}),
+    @('World/Biomes/RR_TerraformedSteppe', 512, ${function:Glyph-TerraformedSteppe})
+)
+
+foreach ($gl in $glyphs) {
+    $path = [string]$gl[0]; $size = [int]$gl[1]; $draw = $gl[2]
+    Save-Icon $path $size $draw
+}
+
 Write-Host ''
-Write-Host 'Ability icons drawn. These are flat glyphs on purpose: a gizmo is read at 32px.'
+Write-Host 'UI icons drawn. Flat glyphs on purpose: these are read at 32px in dense lists.'

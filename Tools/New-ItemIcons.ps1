@@ -508,6 +508,46 @@ Write-Sprite 'Things/Pawn/Humanlike/Apparel/RR_PulseArmor/RR_PulseArmor' 128 {
     Stroke-Dot $g $S 0.500 0.512 0.042 (Shade $Ion 1.45)
 }
 
+# ------------------------------------------------- apparel INVENTORY icons
+#
+# The worn sprites live in New-WornApparel.ps1 and are drawn, not generated. These
+# are the separate ITEM icons - what the piece looks like lying in a stockpile -
+# and those do go through the generative pass like every other item.
+
+Write-Sprite 'Things/Pawn/Humanlike/Apparel/RR_DemonHelm/RR_DemonHelm' 128 {
+    param($g, $S)
+    Stroke-Plate $g $S @(@(0.50,0.16), @(0.78,0.34), @(0.74,0.70), @(0.50,0.86), @(0.26,0.70), @(0.22,0.34)) (Shade $Steel 0.34)
+    foreach ($side in @(-1, 1)) {
+        $ex = 0.50 + (0.14 * $side)
+        Stroke-Plate $g $S @(
+            @(($ex - (0.09 * $side)), 0.48), @(($ex + (0.06 * $side)), 0.42),
+            @(($ex + (0.07 * $side)), 0.56), @(($ex - (0.07 * $side)), 0.58)) $Amber
+    }
+    Stroke-Form $g $S @(@(0.50,0.62), @(0.50,0.80)) 0.055 (Shade $Steel 0.48) -NoHighlight
+}
+
+Write-Sprite 'Things/Pawn/Humanlike/Apparel/RR_GhostCloak/RR_GhostCloak' 128 {
+    param($g, $S)
+    # Folded, the way cloth reads as cloth in an inventory slot rather than as a
+    # flat sheet: a hood above a bundled fall.
+    Stroke-Plate $g $S @(@(0.50,0.12), @(0.68,0.28), @(0.50,0.42), @(0.32,0.28)) (Shade $Teal 0.72)
+    Stroke-Plate $g $S @(@(0.30,0.36), @(0.70,0.36), @(0.80,0.84), @(0.20,0.84)) $Teal
+    foreach ($x in @(0.38, 0.50, 0.62)) {
+        Stroke-Form $g $S @(@($x,0.42), @(($x + (($x - 0.50) * 0.5)),0.80)) 0.045 (Shade $Teal 0.80) -NoHighlight
+    }
+}
+
+Write-Sprite 'Things/Pawn/Humanlike/Apparel/RR_ScarabSkin/RR_ScarabSkin' 128 {
+    param($g, $S)
+    # A folded bodysuit. Almost black on purpose - it takes in light, and an icon
+    # that reads as bright armour would be the wrong object.
+    Stroke-Plate $g $S @(@(0.22,0.30), @(0.78,0.30), @(0.78,0.74), @(0.22,0.74)) (Shade $Steel 0.26)
+    Stroke-Plate $g $S @(@(0.30,0.22), @(0.50,0.30), @(0.70,0.22), @(0.70,0.32), @(0.30,0.32)) (Shade $Steel 0.34)
+    foreach ($y in @(0.42, 0.54, 0.66)) {
+        Stroke-Form $g $S @(@(0.28,$y), @(0.72,$y)) 0.032 (Shade $Steel 0.40) -NoHighlight
+    }
+}
+
 # ------------------------------------------------------------------ projectiles
 
 Write-Sprite 'Things/Projectile/RR_PulseWave' 64 {

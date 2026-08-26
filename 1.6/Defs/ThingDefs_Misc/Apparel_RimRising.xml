@@ -92,12 +92,12 @@
     <apparel>
       <!--
         THE HELMET IS BUILT IN. PulseArmor is a sealed suit in the books, not a
-        cuirass you pair with headgear - so it covers FullHead and draws its own
-        helm, rather than shipping a separate helmet piece. That also means it
-        cannot be worn with a demonHelm, which is correct: the demonHelm goes with
-        scarabSkin.
+        cuirass you pair with headgear, so it covers FullHead rather than shipping
+        a separate helmet piece. That also means it cannot be worn with a
+        demonHelm, which is correct: the demonHelm goes with scarabSkin.
 
-        It does NOT take the Overhead layer to do that; see the note further down.
+        The helm is not DRAWN, because it folds back into the collar when unsealed.
+        See the rendering notes further down - both of them matter.
       -->
       <bodyPartGroups>
         <li>Torso</li>
@@ -118,14 +118,23 @@
         FullHead and Torso together and still uses Shell alone, anchored to
         ApparelBody. The anchor is copied; the rest is not needed here.
 
-        NO renderSkipFlags AND NO DRAWN HELM. The helm folds back into the
-        collar when it is not sealed, so an uncovered head is the correct
-        rendering rather than a gap - the head stays mechanically protected
-        because FullHead coverage is unchanged. Hiding the head and drawing a
-        helm would also have meant guessing where the head sits in BODY space,
-        which is not measurable from here.
+        NO DRAWN HELM. It folds back into the collar when unsealed, so an
+        uncovered head is the correct rendering rather than a gap, and the head
+        stays mechanically protected because FullHead coverage is unchanged.
+        Drawing one would also have meant guessing where the head sits in BODY
+        space, which is not measurable from here - a first attempt used the
+        measured HEAD-NODE box and produced a helm swallowing two thirds of the
+        torso.
       -->
       <parentTagDef>ApparelBody</parentTagDef>
+      <!--
+        None means SKIP NOTHING. Covering FullHead otherwise hides the wearer
+        hair, and a suit whose helm is folded back into the collar should not
+        make anybody bald. Vanilla uses this exact idiom twelve times.
+      -->
+      <renderSkipFlags>
+        <li>None</li>
+      </renderSkipFlags>
       <layers>
         <li>Middle</li>
         <li>Shell</li>
@@ -489,16 +498,32 @@ All of that is chemistry and springs rather than circuits, so it goes on working
       </li>
     </comps>
     <apparel>
-      <!-- NO head coverage, unlike pulseArmor. RecoilArmor is a suit rather than a
-           sealed system, so it pairs with a demonHelm - which is the combination
-           the scarabSkin-wearing units actually use. -->
+      <!--
+        IT COVERS THE HEAD. RecoilArmor carries the same folding helm as
+        pulseArmor - it is the suit pulseArmor is built from - so it takes
+        FullHead, renders on the body with the helm retracted, and skips
+        nothing so the wearer keeps their hair.
+
+        That does mean it cannot be worn with a demonHelm. Correct: the
+        demonHelm goes with scarabSkin, which covers no head at all.
+      -->
       <bodyPartGroups>
         <li>Torso</li>
         <li>Neck</li>
         <li>Shoulders</li>
         <li>Arms</li>
         <li>Legs</li>
+        <li>FullHead</li>
       </bodyPartGroups>
+      <parentTagDef>ApparelBody</parentTagDef>
+      <!--
+        None means SKIP NOTHING. Covering FullHead otherwise hides the wearer
+        hair, and a suit whose helm is folded back into the collar should not
+        make anybody bald. Vanilla uses this exact idiom twelve times.
+      -->
+      <renderSkipFlags>
+        <li>None</li>
+      </renderSkipFlags>
       <wornGraphicPath>Things/Pawn/Humanlike/Apparel/RR_RecoilArmor/RR_RecoilArmor</wornGraphicPath>
       <layers>
         <li>Middle</li>

@@ -125,6 +125,24 @@ harvesting slingBlade but bladed and deadly.'
                   'collar stud. Cheap mass-issue plate, dented and scratched from use.'
     }
     [pscustomobject]@{
+        Path = 'Things/Pawn/Humanlike/Apparel/RR_DemonHelm/RR_DemonHelm'; Size = 128
+        Subject = 'A demon helm seen face on: a pitiless matte black full-face helmet ' +
+                  'shaped subtly like a screaming demon, with two narrow slanted glowing ' +
+                  'amber eye slits and a ridged chin guard. Sinister, angular, light-drinking.'
+    }
+    [pscustomobject]@{
+        Path = 'Things/Pawn/Humanlike/Apparel/RR_GhostCloak/RR_GhostCloak'; Size = 128
+        Subject = 'A folded hooded cloak lying in a heap: heavy muted grey-green fabric with ' +
+                  'a hood at the top and soft vertical folds falling below, faintly ' +
+                  'iridescent as though the surface is not quite holding still.'
+    }
+    [pscustomobject]@{
+        Path = 'Things/Pawn/Humanlike/Apparel/RR_ScarabSkin/RR_ScarabSkin'; Size = 128
+        Subject = 'A folded matte black bodysuit: a tightly folded rubbery light-absorbing ' +
+                  'suit with fine segmented banding, almost no highlights at all because the ' +
+                  'material takes in light rather than reflecting it.'
+    }
+    [pscustomobject]@{
         Path = 'Things/Pawn/Humanlike/Apparel/RR_Aegis/RR_Aegis'; Size = 128
         Subject = 'An aegis: a translucent glowing pale blue oval of projected energy, ' +
                   'seen face on, with NO metal frame and no rim of any kind - the whole ' +
