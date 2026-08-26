@@ -204,6 +204,19 @@ function Stroke-Dot {
     try { Draw-Disc $g $b $S $cx $cy $r } finally { $b.Dispose() }
 }
 
+<# An oval - Stroke-Dot only makes circles, and an aegis is specifically oval. #>
+function Stroke-Oval {
+    param($g, [single]$S, [single]$cx, [single]$cy, [single]$rx, [single]$ry, [System.Drawing.Color]$Color)
+    $x = ($cx - $rx) * $S
+    $y = ($cy - $ry) * $S
+    $ow = $rx * 2 * $S
+    $oh = $ry * 2 * $S
+    $pen = New-Pen $script:Outline ([single]($S * 0.055))
+    try { $g.DrawEllipse($pen, $x, $y, $ow, $oh) } finally { $pen.Dispose() }
+    $b = New-Object System.Drawing.SolidBrush($Color)
+    try { $g.FillEllipse($b, $x, $y, $ow, $oh) } finally { $b.Dispose() }
+}
+
 function Write-Sprite {
     param([string] $RelPath, [int] $Size, [scriptblock] $Draw)
 
@@ -266,6 +279,25 @@ Write-Sprite 'Things/Item/Equipment/WeaponMelee/RR_Razor' 128 {
     # The shape-sensor stud: the toggle between blade and whip. This one stays a
     # dot - it sits well inside the grip and is meant to read as a separate rivet.
     Stroke-Dot  $g $S 0.205 0.805 0.021 $Amber
+}
+
+# ------------------------------------------------------------------- the aegis
+#
+# A buckler that projects an OVAL field - the shape is the canonical detail, so it
+# is an oval rather than the round shield the word suggests. The physical part is
+# only the rim and the boss the hand grips; the oval is projected. Drawn as one
+# connected form throughout, because a rim floating clear of its boss is exactly
+# how the razor's pommel became a sphere lying beside the weapon.
+Write-Sprite 'Things/Pawn/Humanlike/Apparel/RR_Aegis/RR_Aegis' 128 {
+    param($g, $S)
+    # THE OVAL IS ENTIRELY FIELD. The first version put a steel ring inside the
+    # oval, and the model duly read the whole thing as a rimmed metal shield with a
+    # glowing centre - a physical buckler, which is the wrong object. An aegis is
+    # projected light; the ONLY solid part is the emitter the hand holds. So there
+    # is one oval, no frame inside it, and a brass boss at the middle.
+    Stroke-Oval $g $S 0.50 0.50 0.300 0.435 $Ion       # the projected field, all of it
+    Stroke-Dot  $g $S 0.50 0.50 0.115 $Brass           # the emitter boss - the only metal
+    Stroke-Dot  $g $S 0.50 0.50 0.048 $Amber           # its core
 }
 
 # ---------------------------------------------------------------- pulse weapons

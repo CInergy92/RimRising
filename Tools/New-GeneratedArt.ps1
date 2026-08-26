@@ -86,6 +86,13 @@ $items = @(
                   'a long grey-steel barrel housing and a brass muzzle assembly, with a thin amber power conduit along the side.'
     }
     [pscustomobject]@{
+        Path = 'Things/Pawn/Humanlike/Apparel/RR_Aegis/RR_Aegis'; Size = 128
+        Subject = 'An aegis: a translucent glowing pale blue oval of projected energy, ' +
+                  'seen face on, with NO metal frame and no rim of any kind - the whole ' +
+                  'oval is light. At its centre sits one small solid brass emitter boss ' +
+                  'with a warm amber core, the only physical part.'
+    }
+    [pscustomobject]@{
         Path = 'Things/Item/Health/RR_CupidsKiss'; Size = 128
         Subject = 'A small bionic neural implant: a slender steel spine carrying four paired ' +
                   'rose-coloured contact pads and one amber indicator bead at its centre, a clinical medical component.'
@@ -127,6 +134,9 @@ if ($Install) {
             $cand = Join-Path $reviewDir ("{0}_{1}.png" -f $leaf, $n)
             if (-not (Test-Path $cand)) { throw "No candidate at $cand. Generate first." }
             $dest = (Join-Path $texRoot ($item.Path -replace '/', $bs)) + '.png'
+            # A brand new sprite has no folder yet, and Copy-Item will not make one.
+            $destDir = Split-Path -Parent $dest
+            if (-not (Test-Path $destDir)) { $null = New-Item -ItemType Directory -Path $destDir -Force }
             Copy-Item -LiteralPath $cand -Destination $dest -Force
             Write-Host ("  installed  : {0} <- candidate {1}" -f $item.Path, $n) -ForegroundColor Green
         }
@@ -181,14 +191,20 @@ foreach ($item in $items) {
     if (Test-Path $cmp) { Remove-Item $cmp -Recurse -Force }
     $null = New-Item -ItemType Directory -Path $cmp -Force
     $cur = (Join-Path $texRoot ($item.Path -replace '/', $bs)) + '.png'
-    if (Test-Path $cur) { Copy-Item $cur (Join-Path $cmp '0_current.png') }
+    # Track whether a 'before' cell actually exists. A brand new sprite has no
+    # current texture, and prepending 'now' unconditionally then shifts every
+    # caption by one - so candidate 1 gets labelled 'now' and -Install installs
+    # the wrong image. This is the same off-by-one the captions were added to
+    # prevent in the first place.
+    $hasCurrent = Test-Path $cur
+    if ($hasCurrent) { Copy-Item $cur (Join-Path $cmp '0_current.png') }
     for ($i = 1; $i -le $n; $i++) {
         Copy-Item (Join-Path $reviewDir ("{0}_{1}.png" -f $leaf, $i)) (Join-Path $cmp ("{0}_cand.png" -f $i))
     }
-    $labels = @('now') + (1..$n | ForEach-Object { "$_" })
+    $labels = @(); if ($hasCurrent) { $labels += 'now' }; $labels += (1..$n | ForEach-Object { "$_" })
     $sheet = Join-Path $reviewDir ("sheet_{0}.png" -f $leaf)
     & (Join-Path $PSScriptRoot 'New-ContactSheet.ps1') -Path (Join-Path $cmp '*.png') `
-        -Columns ($n + 1) -Cell $item.Size -Labels $labels -OutFile $sheet | Out-Null
+        -Columns $(if ($hasCurrent) { $n + 1 } else { $n }) -Cell $item.Size -Labels $labels -OutFile $sheet | Out-Null
     $sheets += $sheet
     Write-Host ("  sheet      : {0}" -f $sheet) -ForegroundColor Green
 }

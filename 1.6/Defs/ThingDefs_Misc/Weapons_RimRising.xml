@@ -279,4 +279,93 @@
     </projectile>
   </ThingDef>
 
+  <!-- ============================== the aegis ===============================
+
+    Canonically a buckler that projects an OVAL energy field, carried by Golds in
+    single combat and specifically in duels of honour. It can be taken into a
+    battle, but against other Golds or Obsidians a full pulseShield covers more.
+
+    WHY THIS IS NOT JUST A SHIELD BELT. Decompiling CompShield settles it:
+    PostPreApplyDamage absorbs only when dinfo.Def.isRanged or isExplosive. Melee
+    damage is neither, so a shield belt does nothing whatsoever against a razor -
+    and there is no XML switch to change that. blocksRangedWeapons governs what
+    the WEARER may fire, not what gets stopped. An aegis built purely from
+    CompProperties_Shield would be exactly the wrong item: useless in the one
+    situation it exists for.
+
+    So the duelling defence is a MeleeDodgeChance offset instead - the aegis
+    parries rather than absorbs, which is also the truer reading of a buckler.
+    Vanilla offsets this stat by 15 on a trait and 8 on a hediff, so 20 here is
+    substantial without being absurd. The shield comp is kept as well, at a
+    deliberately smaller capacity than vanilla's shield belt, so the projected
+    field still stops shots.
+
+    Note what that combination costs: CompProperties_Shield refuses ranged weapon
+    use. Carrying an aegis therefore means giving up the pulse fist, which is
+    precisely the trade canon describes - you bring one to a duel, not to a war.
+  -->
+  <ThingDef ParentName="ApparelMakeableBase">
+    <defName>RR_Apparel_Aegis</defName>
+    <label>aegis</label>
+    <description>A palm-sized emitter on a forearm cuff, throwing an oval of hardened field about the size of a door. It is not much use against a barrage and was never meant to be - it exists for the moment when two people who both know exactly what they are doing stand inside each other's reach, and one of them has half a second more than the other.\n\nGolds duel with these. Everyone else who carries one is making a statement about themselves that they may not be able to support.</description>
+    <techLevel>Spacer</techLevel>
+    <thingClass>Apparel</thingClass>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/RR_Aegis/RR_Aegis</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <statBases>
+      <MaxHitPoints>120</MaxHitPoints>
+      <Mass>2.5</Mass>
+      <WorkToMake>28000</WorkToMake>
+      <Flammability>0.2</Flammability>
+      <EquipDelay>2</EquipDelay>
+      <!-- Vanilla's shield belt is 1.1 max / 0.13 recharge. The aegis holds less
+           and recovers faster: a buckler, not a bubble. -->
+      <EnergyShieldEnergyMax>0.75</EnergyShieldEnergyMax>
+      <EnergyShieldRechargeRate>0.20</EnergyShieldRechargeRate>
+    </statBases>
+    <equippedStatOffsets>
+      <MeleeDodgeChance>20</MeleeDodgeChance>
+    </equippedStatOffsets>
+    <costList>
+      <Plasteel>40</Plasteel>
+      <ComponentSpacer>4</ComponentSpacer>
+      <Gold>5</Gold>
+    </costList>
+    <recipeMaker>
+      <researchPrerequisite>RR_PolyenneWeaving</researchPrerequisite>
+      <skillRequirements>
+        <Crafting>8</Crafting>
+      </skillRequirements>
+      <recipeUsers Inherit="False">
+        <li>FabricationBench</li>
+      </recipeUsers>
+      <displayPriority>215</displayPriority>
+    </recipeMaker>
+    <apparel>
+      <countsAsClothingForNudity>false</countsAsClothingForNudity>
+      <careIfWornByCorpse>false</careIfWornByCorpse>
+      <careIfDamaged>false</careIfDamaged>
+      <wearPerDay>0</wearPerDay>
+      <!-- Waist on the Belt layer, exactly as the shield belt does, so an aegis
+           can be carried over pulse armor rather than instead of it. -->
+      <bodyPartGroups>
+        <li>Waist</li>
+      </bodyPartGroups>
+      <layers>
+        <li>Belt</li>
+      </layers>
+      <tags>
+        <li>RR_Aegis</li>
+      </tags>
+    </apparel>
+    <tradeTags>
+      <li>ExoticMisc</li>
+    </tradeTags>
+    <comps>
+      <li Class="CompProperties_Shield" />
+    </comps>
+  </ThingDef>
+
 </Defs>
