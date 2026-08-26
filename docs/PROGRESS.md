@@ -18,6 +18,8 @@ Game target: **RimWorld 1.6.4871 rev590**. packageId: `cinergy92.rimrising`.
 | 5 | Ideology and hierarchy | **Verified in game.** Memes, 13 knighthoods, razor lock, caste romance, Gold ladder |
 | 6 | Scenarios and world | **Verified in game.** Two starts, two biomes, faction placement |
 | 7 | Vanilla suppression | **Verified in game.** Settings toggle, xenotypes + generic factions, two merchant houses |
+| 8 | Art pass | **Items, weapons, vehicle done and verified. Worn apparel in progress** |
+| 9 | Caste armour | **Verified in game.** Colour cast, wear restriction, service ladder, loadouts |
 
 ---
 
@@ -1153,6 +1155,118 @@ unanswered, and it is the first thing to check if carving is ever built out.
 | U7 | Is it safe for `LoadFolders.xml` to name a folder that does not exist on disk? | Adding compat folders | Currently sidestepped by only listing folders that exist. Test when the first compat folder lands. |
 
 ---
+
+---
+
+## Milestone 8 — the art pass
+
+### The pipeline
+
+    New-ItemIcons.ps1  ->  flat silhouette masters at 4x
+    Canny              ->  edge map
+    Z-Image-Turbo + Z-Image-Turbo-Fun-Controlnet-Union  ->  repaint at denoise 1.0
+    Convert-GeneratedSprite.ps1  ->  key background, trim, resize
+    New-ContactSheet.ps1         ->  pick a candidate by number
+    New-GeneratedArt.ps1 -Install <leaf>=<n>
+
+Driven through a LOCAL ComfyUI on 127.0.0.1:8188 via `Tools/Invoke-ComfyPrompt.ps1`.
+
+**Why ControlNet and not img2img.** Measured on the razor: at denoise 0.45 the image
+barely changes, at 0.65 the silhouette is gone, and nothing in between both restyles
+and keeps the shape. These turbo models are distilled to cfg 1 and 8 steps.
+ControlNet constrains geometry through the edge map instead, so denoise stays at 1.0.
+
+**Model notes.** Z-Image-Turbo runs 8 steps / cfg 1 / res_multistep, CLIP type
+`lumina2`, and its NEGATIVE PROMPT IS INERT - the official template wires
+ConditioningZeroOut into the negative slot. PixelDiT is the only local model with a
+working negative (30 steps, cfg 4, er_sde) but no ControlNet exists for it.
+
+### What the silhouette has to get right
+
+Every art failure so far was a silhouette failure, not a prompt failure:
+
+- **An unattached shape comes back as an unattached object.** The razor's pommel
+  became a sphere lying beside the weapon; the ion cleaver became a pale sail beside
+  the mech. Anything meant to read as part of a form must share that form's outline.
+- **Capsules cannot make a blade.** Stroke-Form uses round caps, so it makes batons.
+  Stroke-Taper walks a spine and interpolates half-width to zero at the tip.
+- **A curve needs many spine points.** Six made a visibly faceted sickle; the
+  crescent is sampled off a circle now.
+- **Highlights get traced.** Canny reads the highlight band as an edge and the model
+  paints a chrome stripe. Control renders use `-Flat`.
+- **Draw ORDER matters as much as position.** The scorcher had all four gun elements
+  and still failed: barrel first meant the shroud swallowed it, receiver last meant
+  it covered every cooling fin.
+- **A gun needs four things** to read as one: raked grip, trigger guard loop, boxy
+  receiver, barrel projecting past everything.
+- **Red Rising armour is ANGULAR**, not RimWorld-rounded, and the pauldrons are the
+  silhouette. Armour uses Stroke-Plate polygons, deep red over black with gold trim.
+
+### Vehicle art
+
+**128 px per drawSize unit**, north/south portrait and east the same texture
+landscape. Measured from Vanilla Vehicles Expanded. The Drachenjaeger is drawSize
+(6,8) so 768x1024 and 1024x768, turrets at (4,4) are 512x512.
+
+East and south are ROTATIONS of the chosen south sprite, because a shared seed does
+not force a shared design when the control image differs - three independent
+generations gave three different machines. Framing stays untrimmed so turret offsets
+still register.
+
+**Turret render offsets are body-relative cells**, +x right and +y forward,
+confirmed against VVE's Goliath whose paired turrets are one point mirrored. All
+four facings are derived by rotating a single position:
+
+    north (r, f)   east (f, -r)   south (-r, -f)   west (-f, r)
+
+### Still to do
+
+- Worn apparel for recoilArmor, pulseArmor, scarabSkin, ghostCloak, starShell.
+  duroArmor is done and is the proof of approach.
+- Storyteller portrait and `About/Preview.png`.
+
+---
+
+## Milestone 9 — caste armour
+
+Colour cast, wear restriction and the service ladder. See
+`Source/RimRising/CasteArmor.cs`.
+
+- **Tint applies on BOTH sides.** The Rising cares about Color enormously; a Gold's
+  plate is gold to say the hierarchy is right and Darrow's is red to say it is not.
+- **The restriction binds only those who hold RR_ArmorBearing_Restricted**, so the
+  Society is bound and the Rising is not. Permissive on anything it cannot determine.
+- **Two hooks**, because either alone leaves the rule half-enforced:
+  `ApparelProperties.PawnCanWear` for the AI and outfit paths,
+  `EquipmentUtility.CanEquip` for a player's deliberate order.
+- **Vanilla cannot express caste-restricted apparel at all** - gating is by body
+  part, layer, gender and developmental stage, none of which know who a pawn is.
+- **The service ladder had to be invented.** The Obsidian/Gray branch was
+  unreachable: the only titles were tagged RR_GoldTitle and the existing patch
+  refuses those to non-Golds. Legionnaire and Praetorian; only Praetorian carries
+  RR_PlateBearer.
+
+### Load errors found on first run — all three passed validation
+
+- **CompProperties_Colorable does not exist.** Vanilla uses a bare compClass. Naming
+  a missing properties class throws and takes the WHOLE ThingDef with it, so both
+  armour defs were absent from the game rather than broken.
+- **RR_Artificer is a ResearchTabDef, not a project.** A name-only check resolved it
+  happily. The validator now carries TYPED ResearchProjects and WeaponClasses sets.
+- **MeleeSharp is not a WeaponClassDef.** It is MeleePiercer.
+
+### Generation is separate from wearing
+
+The restriction governs equipping; `apparelTags` governs what spawns. Both had to be
+fixed:
+
+- `SpacerMilitary` is a VANILLA tag - marine and power armour carry it, so Golds
+  spawned in marine armour. Our plate now carries `RR_HeavyPlate`.
+- Budgets could not buy the armour. Priced from the real recipes, recoilArmor is
+  about 2100 and pulseArmor about 3100; `RR_Ares_Obsidian_Freed` had 500~1400 and so
+  generated bare.
+- `PawnApparelGenerator.CanUsePair` SKIPS the tag filter entirely when apparelTags is
+  empty, so five military kinds could generate anything in the game.
 
 ## Known errors
 
