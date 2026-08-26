@@ -316,7 +316,10 @@
       <RangedWeapon_Cooldown>1.40</RangedWeapon_Cooldown>
     </statBases>
     <recipeMaker>
-      <researchPrerequisite>RR_Artificer</researchPrerequisite>
+      <!-- ChargedShot, not our own tab def. A scorcher is a cheap directed-
+           energy weapon and RR_PulsePhysics already requires ChargedShot, so
+           this correctly sits BELOW pulse tech: basic kit before the good stuff. -->
+      <researchPrerequisite>ChargedShot</researchPrerequisite>
       <skillRequirements>
         <Crafting>4</Crafting>
       </skillRequirements>
@@ -535,7 +538,8 @@ It cuts as well as any razor. It is worth rather more than that to the people wh
     </weaponTags>
     <weaponClasses>
       <li>Ultratech</li>
-      <li>MeleeSharp</li>
+      <!-- MeleePiercer. There is no MeleeSharp WeaponClassDef. -->
+      <li>MeleePiercer</li>
     </weaponClasses>
     <tools>
       <li>

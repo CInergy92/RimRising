@@ -82,7 +82,12 @@
       <Gold>15</Gold>
     </costList>
     <comps>
-      <li Class="CompProperties_Colorable" />
+      <!-- There is no CompProperties_Colorable. Vanilla declares this as a bare
+           compClass, and naming a properties class that does not exist throws at
+           load and takes the WHOLE ThingDef with it - both suits vanished. -->
+      <li>
+        <compClass>CompColorable</compClass>
+      </li>
     </comps>
     <apparel>
       <!--
@@ -443,7 +448,7 @@ All of that is chemistry and springs rather than circuits, so it goes on working
       <Steel>40</Steel>
     </costList>
     <recipeMaker>
-      <researchPrerequisite>RR_Artificer</researchPrerequisite>
+      <researchPrerequisite>RR_RecoilPlating</researchPrerequisite>
       <unfinishedThingDef>UnfinishedTechArmor</unfinishedThingDef>
       <skillRequirements>
         <Crafting>7</Crafting>
@@ -457,7 +462,12 @@ All of that is chemistry and springs rather than circuits, so it goes on working
       <li>Armor</li>
     </tradeTags>
     <comps>
-      <li Class="CompProperties_Colorable" />
+      <!-- There is no CompProperties_Colorable. Vanilla declares this as a bare
+           compClass, and naming a properties class that does not exist throws at
+           load and takes the WHOLE ThingDef with it - both suits vanished. -->
+      <li>
+        <compClass>CompColorable</compClass>
+      </li>
     </comps>
     <apparel>
       <!-- NO head coverage, unlike pulseArmor. RecoilArmor is a suit rather than a

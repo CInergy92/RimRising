@@ -61,6 +61,29 @@
 
   <!-- =============================== branches ============================== -->
 
+  <!--
+    Recoil plating. Its own project because pulseArmor canonically IS recoilArmor
+    with a shield generator and limb motors bolted on, so the plate has to be
+    understood before the suit can be - RR_PulseArmor now requires it.
+
+    Previously recoilArmor pointed its researchPrerequisite at RR_Artificer, which
+    is the research TAB rather than a project. RimWorld reported that as an
+    unresolved cross-reference at load and the recipe simply never appeared.
+  -->
+  <ResearchProjectDef>
+    <defName>RR_RecoilPlating</defName>
+    <label>recoil plating</label>
+    <description>Interlocking plates that coil closed around the body, and around a wound. The trick is not the alloy, which is ordinary; it is the linkage, and the chemistry that fires a clamp and a dose of painkiller without a single circuit to be knocked out.
+
+Unlocks recoilArmor.</description>
+    <tab>RR_Artificer</tab>
+    <baseCost>3500</baseCost>
+    <techLevel>Spacer</techLevel>
+    <prerequisites>
+      <li>Fabrication</li>
+    </prerequisites>
+  </ResearchProjectDef>
+
   <ResearchProjectDef>
     <defName>RR_PulseArmor</defName>
     <label>pulse armor</label>
@@ -70,6 +93,7 @@
     <techLevel>Spacer</techLevel>
     <prerequisites>
       <li>RR_PulsePhysics</li>
+      <li>RR_RecoilPlating</li>
       <li>PoweredArmor</li>
     </prerequisites>
     <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>

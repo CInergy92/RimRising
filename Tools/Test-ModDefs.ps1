@@ -101,6 +101,11 @@ function Build-VanillaIndex {
     $hairColorGenes = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     # Tags a PawnKindDef can ask for. A kind requesting a tag no THING carries
     # spawns the pawn with no weapon or no clothes and logs absolutely nothing.
+    # TYPED sets. A flat name index cannot tell a ResearchProjectDef from a
+    # ResearchTabDef, and that gap let a researchPrerequisite point at the research
+    # TAB pass validation and then fail at load, silently taking the recipe with it.
+    $researchProjects = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    $weaponClasses    = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     $weaponTags  = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     $apparelTags = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     # PreceptDef -> the memes it REQUIRES. IdeoFoundation filters a precept out
@@ -142,6 +147,8 @@ function Build-VanillaIndex {
                     if ($node.SelectSingleNode('hairColorOverride')) { [void]$hairColorGenes.Add($name) }
                 }
                 if ($node.LocalName -eq 'GeneTemplateDef') { [void]$geneTemplates.Add($name) }
+                if ($node.LocalName -eq 'ResearchProjectDef') { [void]$researchProjects.Add($name) }
+                if ($node.LocalName -eq 'WeaponClassDef')     { [void]$weaponClasses.Add($name) }
             }
 
             # Tag vocabularies, taken from the things that CARRY the tags
@@ -218,6 +225,8 @@ function Build-VanillaIndex {
         NameAttrs     = @($nameAttrs)
         GeneDefs      = @($geneDefs)
         GeneTemplates = @($geneTemplates)
+        ResearchProjects = @($researchProjects)
+        WeaponClasses = @($weaponClasses)
         TexPaths      = @($vanillaTexPaths)
         HairColorGenes= @($hairColorGenes)
         WeaponTags    = @($weaponTags)
@@ -243,7 +252,7 @@ function Get-VanillaIndex {
 
     # Bumped whenever the cached shape changes, so an old cache is rebuilt rather
     # than read with missing fields.
-    $cacheSchema = 8
+    $cacheSchema = 9   # 9: typed ResearchProjects/WeaponClasses sets
 
     if (-not $Refresh -and (Test-Path $cacheFile)) {
         try {
@@ -253,6 +262,8 @@ function Get-VanillaIndex {
                 return [pscustomobject]@{
                     DefNames      = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.DefNames, [StringComparer]::Ordinal)
                     NameAttrs     = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.NameAttrs, [StringComparer]::Ordinal)
+                    ResearchProjects = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.ResearchProjects, [StringComparer]::Ordinal)
+                    WeaponClasses = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.WeaponClasses, [StringComparer]::Ordinal)
                     GeneDefs      = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.GeneDefs, [StringComparer]::Ordinal)
                     GeneTemplates = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.GeneTemplates, [StringComparer]::Ordinal)
                     TexPaths      = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.TexPaths, [StringComparer]::OrdinalIgnoreCase)
@@ -279,6 +290,8 @@ function Get-VanillaIndex {
         Version       = $version
         Schema        = $cacheSchema
         DefNames      = $idx.DefNames
+        ResearchProjects = $idx.ResearchProjects
+        WeaponClasses = $idx.WeaponClasses
         NameAttrs     = $idx.NameAttrs
         GeneDefs      = $idx.GeneDefs
         GeneTemplates = $idx.GeneTemplates
@@ -295,6 +308,8 @@ function Get-VanillaIndex {
 
     [pscustomobject]@{
         DefNames      = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.DefNames, [StringComparer]::Ordinal)
+        ResearchProjects = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.ResearchProjects, [StringComparer]::Ordinal)
+        WeaponClasses = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.WeaponClasses, [StringComparer]::Ordinal)
         NameAttrs     = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.NameAttrs, [StringComparer]::Ordinal)
         GeneDefs      = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.GeneDefs, [StringComparer]::Ordinal)
         GeneTemplates = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.GeneTemplates, [StringComparer]::Ordinal)
@@ -840,6 +855,11 @@ $recipeRefs = [System.Collections.Generic.List[object]]::new()
 # Research a def says it depends on. Unresolvable ones are reported by RimWorld as
 # "Could not resolve cross-reference" and then the dependent def never unlocks.
 $researchRefs = [System.Collections.Generic.List[object]]::new()
+# Mod-side TYPED indexes, so a reference can be checked against the right kind of
+# def rather than against every name in the game.
+$modResearchProjects = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+$modWeaponClasses    = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+$weaponClassRefs     = [System.Collections.Generic.List[object]]::new()
 $abstractRecipeUsers = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 
 # Every xenotype we define, and every xenotype some PawnKindDef can actually
@@ -904,6 +924,8 @@ foreach ($file in $xmlFiles) {
                 } else {
                     $seenDefNames[$dupKey] = $rel
                     [void]$modDefNames.Add($dn)
+                    if ($node.LocalName -eq 'ResearchProjectDef') { [void]$modResearchProjects.Add($dn) }
+                    if ($node.LocalName -eq 'WeaponClassDef')     { [void]$modWeaponClasses.Add($dn) }
                 }
 
                 if ($vanilla.DefNames.Contains($dn)) {
@@ -937,6 +959,14 @@ foreach ($file in $xmlFiles) {
                 foreach ($rp in $node.SelectNodes('.//researchPrerequisites/li')) {
                     if ($rp.InnerText -and -not $rp.Attributes['MayRequire']) {
                         $researchRefs.Add([pscustomobject]@{ File=$rel; Def=$dnNode.InnerText.Trim(); Ref=$rp.InnerText.Trim() })
+                    }
+                }
+            }
+
+            if ($dnNode) {
+                foreach ($wc in $node.SelectNodes('weaponClasses/li')) {
+                    if ($wc.InnerText -and -not $wc.Attributes['MayRequire']) {
+                        $weaponClassRefs.Add([pscustomobject]@{ File=$rel; Def=$dnNode.InnerText.Trim(); Ref=$wc.InnerText.Trim() })
                     }
                 }
             }
@@ -1606,14 +1636,40 @@ if ($allCoreDefs.Count -gt 0) {
 # That is exactly how fifteen carving surgeries stayed invisible: RR_Carving listed
 # a prerequisite called GeneticEngineering, which is not a real def. Biotech's gene
 # research is Xenogermination.
+# TYPE MATTERS, not just existence. RR_Artificer is this mod's research TAB, and
+# pointing a researchPrerequisite at it passed a name-only check while RimWorld
+# reported "Could not resolve cross-reference to ResearchProjectDef" at load and
+# dropped the recipe. Checking the name alone is how that shipped.
 foreach ($ref in $researchRefs) {
-    if ($modDefNames -and $modDefNames.Contains($ref.Ref)) { continue }
-    if ($vanilla.DefNames.Contains($ref.Ref))              { continue }
+    if ($modResearchProjects -and $modResearchProjects.Contains($ref.Ref)) { continue }
+    if ($vanilla.ResearchProjects -and $vanilla.ResearchProjects.Contains($ref.Ref)) { continue }
     if ($allCoreDefs -and $allCoreDefs.Contains($ref.Ref))  { continue }
     if ($allPatchDefs -and $allPatchDefs.Contains($ref.Ref)) { continue }
 
-    Add-Problem -Severity ERROR -Check 'UnknownResearchRef' -File $ref.File `
-        -Message ("'{0}' requires research '{1}', which is not a def anywhere. The project will never unlock and everything gated behind it is unreachable." -f $ref.Def, $ref.Ref)
+    $known = ($modDefNames -and $modDefNames.Contains($ref.Ref)) -or $vanilla.DefNames.Contains($ref.Ref)
+    if ($known) {
+        Add-Problem -Severity ERROR -Check 'ResearchRefWrongType' -File $ref.File `
+            -Message ("'{0}' requires research '{1}'. A def by that name exists, but it is NOT a ResearchProjectDef - most likely a ResearchTabDef. RimWorld drops the cross-reference at load and the recipe never appears." -f $ref.Def, $ref.Ref)
+    }
+    else {
+        Add-Problem -Severity ERROR -Check 'UnknownResearchRef' -File $ref.File `
+            -Message ("'{0}' requires research '{1}', which is not a def anywhere. The project will never unlock and everything gated behind it is unreachable." -f $ref.Def, $ref.Ref)
+    }
+}
+
+# --- weaponClasses resolution -------------------------------------------------
+#
+# Same failure, quieter: an unknown WeaponClassDef logs one cross-reference warning
+# and is then simply absent, so any balance or AI behaviour keyed on the class does
+# nothing. MeleeSharp looks entirely plausible and does not exist; the real one is
+# MeleePiercer.
+foreach ($ref in $weaponClassRefs) {
+    if ($vanilla.WeaponClasses -and $vanilla.WeaponClasses.Contains($ref.Ref)) { continue }
+    if ($modWeaponClasses -and $modWeaponClasses.Contains($ref.Ref)) { continue }
+    if ($allCoreDefs -and $allCoreDefs.Contains($ref.Ref)) { continue }
+
+    Add-Problem -Severity ERROR -Check 'UnknownWeaponClass' -File $ref.File `
+        -Message ("'{0}' lists weaponClass '{1}', which is not a WeaponClassDef anywhere. It resolves to nothing at load." -f $ref.Def, $ref.Ref)
 }
 
 # --- vehicle def/build pair resolution ----------------------------------------
