@@ -51,7 +51,7 @@
     </apparelTags>
     <apparelDisallowTags>
       <li>Western</li>
-      <li>Tribal</li>
+      <li>Neolithic</li>
     </apparelDisallowTags>
   </PawnKindDef>
 
@@ -65,6 +65,10 @@
     <apparelColor>(120,126,133)</apparelColor>
     <apparelMoney>900~1800</apparelMoney>
     <weaponMoney>800~1700</weaponMoney>
+    <apparelTags>
+      <!-- Rank-and-file Gray. Had NO apparelTags at all, so it could generate any apparel in the game including recoil plate. -->
+      <li>IndustrialMilitaryBasic</li>
+    </apparelTags>
     <weaponTags>
       <li>IndustrialGunAdvanced</li>
       <li>SpacerGun</li>
@@ -88,6 +92,10 @@
     <apparelMoney>1400~2600</apparelMoney>
     <weaponMoney>1500~2800</weaponMoney>
     <itemQuality>Good</itemQuality>
+    <apparelTags>
+      <!-- As the Legionary. -->
+      <li>IndustrialMilitaryBasic</li>
+    </apparelTags>
     <weaponTags>
       <li>SpacerGun</li>
       <li>IndustrialGunAdvanced</li>
@@ -111,6 +119,10 @@
     <apparelColor>(46,44,52)</apparelColor>
     <apparelMoney>1200~2400</apparelMoney>
     <weaponMoney>1200~2600</weaponMoney>
+    <apparelTags>
+      <!-- The trusted Obsidian: this kind IS the Praetorian case the armour rule describes. -->
+      <li>SpacerMilitary</li>
+    </apparelTags>
     <weaponTags>
       <li>MedievalMeleeAdvanced</li>
       <li>UltratechMelee</li>
@@ -135,6 +147,10 @@
     <apparelMoney>1800~3200</apparelMoney>
     <weaponMoney>1800~3400</weaponMoney>
     <itemQuality>Good</itemQuality>
+    <apparelTags>
+      <!-- Bronzie counts as ruling caste - see IsRulingCaste. -->
+      <li>SpacerMilitary</li>
+    </apparelTags>
     <weaponTags>
       <li>SpacerGun</li>
       <li>UltratechMelee</li>
@@ -163,6 +179,10 @@
     <weaponMoney>3000~5500</weaponMoney>
     <itemQuality>Excellent</itemQuality>
     <apparelAllowHeadgearChance>0.5</apparelAllowHeadgearChance>
+    <apparelTags>
+      <!-- Gold. The rule exists for him. -->
+      <li>SpacerMilitary</li>
+    </apparelTags>
     <weaponTags>
       <li>UltratechMelee</li>
       <li>SpacerGun</li>
@@ -241,9 +261,10 @@
     <apparelMoney>1200~2400</apparelMoney>
     <weaponMoney>250~600</weaponMoney>
     <apparelTags>
+      <!-- No SpacerMilitary. That tag now draws recoil and pulse plate,
+           which this kind has no business generating in. -->
       <li>IndustrialBasic</li>
       <li>IndustrialAdvanced</li>
-      <li>SpacerMilitary</li>
     </apparelTags>
     <weaponTags>
       <li>Revolver</li>
@@ -518,7 +539,7 @@
     <itemQuality>Normal</itemQuality>
     <apparelAllowHeadgearChance>0.35</apparelAllowHeadgearChance>
     <apparelTags>
-      <li>Tribal</li>
+      <li>Neolithic</li>
       <li>Neolithic</li>
     </apparelTags>
     <apparelDisallowTags>
@@ -535,6 +556,10 @@
     <apparelColor>(60,58,68)</apparelColor>
     <apparelMoney>200~700</apparelMoney>
     <weaponMoney>200~600</weaponMoney>
+    <apparelTags>
+      <!-- Neolithic faction, and 'Neolithic' rather than 'Tribal' - the latter is a -->
+      <li>Neolithic</li>
+    </apparelTags>
     <weaponTags>
       <li>NeolithicMeleeAdvanced</li>
       <li>NeolithicRangedDecent</li>
@@ -557,6 +582,10 @@
     <apparelMoney>400~1100</apparelMoney>
     <weaponMoney>500~1400</weaponMoney>
     <itemQuality>Good</itemQuality>
+    <apparelTags>
+      <!-- HEADGEAR-only tag that no body apparel carries. With no apparelTags at all the -->
+      <li>Neolithic</li>
+    </apparelTags>
     <weaponTags>
       <li>NeolithicMeleeAdvanced</li>
       <li>MedievalMeleeAdvanced</li>
@@ -579,7 +608,7 @@
     <apparelAllowHeadgearChance>0.6</apparelAllowHeadgearChance>
     <apparelTags>
       <li>IndustrialMilitaryBasic</li>
-      <li>Tribal</li>
+      <li>Neolithic</li>
     </apparelTags>
   </PawnKindDef>
 
@@ -590,6 +619,10 @@
     <apparelColor>(64,60,74)</apparelColor>
     <apparelMoney>500~1400</apparelMoney>
     <weaponMoney>700~1800</weaponMoney>
+    <apparelTags>
+      <!-- generator skips the tag filter entirely (PawnApparelGenerator.CanUsePair), so -->
+      <li>IndustrialMilitaryBasic</li>
+    </apparelTags>
     <weaponTags>
       <li>MedievalMeleeAdvanced</li>
       <li>IndustrialGunAdvanced</li>
@@ -613,6 +646,10 @@
     <apparelMoney>1200~2600</apparelMoney>
     <weaponMoney>1600~3200</weaponMoney>
     <itemQuality>Good</itemQuality>
+    <apparelTags>
+      <!-- these could spawn wearing Society recoil plate. Industrial raiders: salvage. -->
+      <li>IndustrialMilitaryBasic</li>
+    </apparelTags>
     <weaponTags>
       <li>UltratechMelee</li>
       <li>MedievalMeleeAdvanced</li>
@@ -645,9 +682,10 @@
     <apparelMoney>1800~3400</apparelMoney>
     <weaponMoney>400~900</weaponMoney>
     <apparelTags>
+      <!-- No SpacerMilitary. That tag now draws recoil and pulse plate,
+           which this kind has no business generating in. -->
       <li>IndustrialBasic</li>
       <li>IndustrialAdvanced</li>
-      <li>SpacerMilitary</li>
     </apparelTags>
     <weaponTags>
       <li>Revolver</li>
@@ -702,9 +740,10 @@
     <apparelMoney>1600~3200</apparelMoney>
     <weaponMoney>300~800</weaponMoney>
     <apparelTags>
+      <!-- No SpacerMilitary. That tag now draws recoil and pulse plate,
+           which this kind has no business generating in. -->
       <li>IndustrialBasic</li>
       <li>IndustrialAdvanced</li>
-      <li>SpacerMilitary</li>
     </apparelTags>
     <weaponTags>
       <li>Revolver</li>
@@ -825,8 +864,9 @@
     <apparelMoney>900~1900</apparelMoney>
     <weaponMoney>200~500</weaponMoney>
     <apparelTags>
+      <!-- No SpacerMilitary. That tag now draws recoil and pulse plate,
+           which this kind has no business generating in. -->
       <li>IndustrialAdvanced</li>
-      <li>SpacerMilitary</li>
     </apparelTags>
     <weaponTags>
       <li>Autopistol</li>
@@ -911,7 +951,8 @@
     <weaponMoney>600~1400</weaponMoney>
     <apparelTags>
       <li>IndustrialAdvanced</li>
-      <li>SpacerMilitary</li>
+      <!-- A combat Green is still not Gold and still holds no title. -->
+      <li>IndustrialMilitaryBasic</li>
     </apparelTags>
     <weaponTags>
       <li>SimpleGun</li>
