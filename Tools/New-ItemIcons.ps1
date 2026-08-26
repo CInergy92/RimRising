@@ -204,6 +204,29 @@ function Stroke-Dot {
     try { Draw-Disc $g $b $S $cx $cy $r } finally { $b.Dispose() }
 }
 
+<#
+    A FACETED PLATE - an arbitrary filled polygon with the standard dark outline.
+
+    Everything else here is built from round-capped capsules, because that is
+    RimWorld's idiom. Red Rising armour is the opposite: hard-edged, bevelled,
+    angular plate. Capsules cannot express that at any size, so armour gets
+    polygons and the softness comes from the thick outline instead.
+#>
+function Stroke-Plate {
+    param($g, [single]$S, [array]$Pts, [System.Drawing.Color]$Color, [switch]$NoOutline)
+    $arr = @()
+    foreach ($p in $Pts) {
+        $arr += New-Object System.Drawing.PointF([single]($p[0] * $S), [single]($p[1] * $S))
+    }
+    $poly = [System.Drawing.PointF[]]$arr
+    if (-not $NoOutline) {
+        $pen = New-Pen $script:Outline ([single]($S * 0.055))
+        try { $g.DrawPolygon($pen, $poly) } finally { $pen.Dispose() }
+    }
+    $b = New-Object System.Drawing.SolidBrush($Color)
+    try { $g.FillPolygon($b, $poly) } finally { $b.Dispose() }
+}
+
 <# An oval - Stroke-Dot only makes circles, and an aegis is specifically oval. #>
 function Stroke-Oval {
     param($g, [single]$S, [single]$cx, [single]$cy, [single]$rx, [single]$ry, [System.Drawing.Color]$Color)
@@ -251,6 +274,10 @@ $Flesh   = [System.Drawing.Color]::FromArgb(255, 150,  96, 112)
 $Teal    = [System.Drawing.Color]::FromArgb(255,  96, 142, 136)
 $Amber   = [System.Drawing.Color]::FromArgb(255, 198, 150,  66)
 $Olive   = [System.Drawing.Color]::FromArgb(255, 150, 162, 132)   # pale service green
+# Red Rising's armour palette, taken from the concept turnaround: deep red over
+# black with gold trim, not the grey-blue steel everything else here uses.
+$Crimson   = [System.Drawing.Color]::FromArgb(255, 146,  40,  38)
+$CrimsonDk = [System.Drawing.Color]::FromArgb(255,  92,  26,  26)
 
 # ------------------------------------------------------------------- the razor
 #
@@ -386,15 +413,28 @@ Write-Sprite 'Things/Pawn/Humanlike/Apparel/RR_DuroArmor/RR_DuroArmor' 128 {
 # distinguishable side by side in a stockpile at 64px.
 Write-Sprite 'Things/Pawn/Humanlike/Apparel/RR_RecoilArmor/RR_RecoilArmor' 128 {
     param($g, $S)
-    Stroke-Form $g $S @(@(0.50,0.34), @(0.50,0.72)) 0.44 (Shade $Steel 0.82)
-    Stroke-Form $g $S @(@(0.235,0.365), @(0.235,0.465)) 0.195 (Shade $Steel 0.82)
-    Stroke-Form $g $S @(@(0.765,0.365), @(0.765,0.465)) 0.195 (Shade $Steel 0.82)
-    # The coiled bands. Drawn after the shell so they are not buried, and inset
-    # from its edges so each one reads as a plate rather than a scratch.
-    foreach ($y in @(0.415, 0.495, 0.575, 0.655)) {
-        Stroke-Form $g $S @(@(0.315,$y), @(0.685,$y)) 0.048 $Steel
+    # The skirt of hanging tassets, drawn first so the cuirass overlaps them.
+    foreach ($sx in @(0.375, 0.500, 0.625)) {
+        $l = $sx - 0.052; $r = $sx + 0.052
+        Stroke-Plate $g $S @(@($l,0.660), @($r,0.660), @(($r - 0.014),0.815), @(($l + 0.014),0.815)) $CrimsonDk
     }
-    Stroke-Dot $g $S 0.500 0.352 0.052 $Ion    # the collar emitter
+    # PAULDRONS FIRST AND BIGGEST. They are the whole silhouette - a layered
+    # angular wing jutting up and outboard of the shoulder. Without them this is
+    # just another breastplate.
+    Stroke-Plate $g $S @(@(0.320,0.395), @(0.075,0.300), @(0.030,0.415), @(0.115,0.505), @(0.320,0.500)) $Crimson
+    Stroke-Plate $g $S @(@(0.680,0.395), @(0.925,0.300), @(0.970,0.415), @(0.885,0.505), @(0.680,0.500)) $Crimson
+    # Gold trim along the leading edge of each pauldron.
+    Stroke-Form $g $S @(@(0.310,0.392), @(0.080,0.303)) 0.030 $Brass -NoHighlight
+    Stroke-Form $g $S @(@(0.690,0.392), @(0.920,0.303)) 0.030 $Brass -NoHighlight
+
+    # The cuirass: a sculpted plastron, faceted rather than domed.
+    Stroke-Plate $g $S @(@(0.500,0.290), @(0.665,0.360), @(0.690,0.500), @(0.640,0.640),
+                         @(0.500,0.710), @(0.360,0.640), @(0.310,0.500), @(0.335,0.360)) $Crimson
+    # Raised sternum ridge running down the centre.
+    Stroke-Plate $g $S @(@(0.500,0.345), @(0.556,0.455), @(0.500,0.665), @(0.444,0.455)) (Shade $Crimson 1.22)
+    # Gold collar throat plate, and the amber vent below it.
+    Stroke-Plate $g $S @(@(0.500,0.286), @(0.575,0.330), @(0.500,0.372), @(0.425,0.330)) $Brass
+    Stroke-Dot   $g $S 0.500 0.560 0.042 $Amber
 }
 
 # ------------------------------------------------------------------ projectiles

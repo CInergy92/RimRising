@@ -95,10 +95,12 @@ $items = @(
     }
     [pscustomobject]@{
         Path = 'Things/Pawn/Humanlike/Apparel/RR_RecoilArmor/RR_RecoilArmor'; Size = 128
-        Subject = 'A recoilArmor cuirass seen face on: a dark steel torso shell built from ' +
-                  'four stacked overlapping horizontal armour bands like segmented plate, with ' +
-                  'two shoulder caps and a small pale blue collar emitter. Sleek layered ' +
-                  'high-technology armour, worn but well kept.'
+        Subject = 'A suit of recoilArmor seen face on: deep crimson red ANGULAR FACETED ' +
+                  'armour plate with hard bevelled edges, sharp gold trim along the leading ' +
+                  'edges, and large layered wing-like pauldrons jutting up and outward from ' +
+                  'each shoulder. A sculpted plastron with a raised central sternum ridge, a ' +
+                  'gold throat collar, a glowing amber vent, and a skirt of hanging angular ' +
+                  'tassets below. Sleek high-technology powered armour, red over black.'
     }
     [pscustomobject]@{
         Path = 'Things/Pawn/Humanlike/Apparel/RR_DuroArmor/RR_DuroArmor'; Size = 128
