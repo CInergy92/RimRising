@@ -373,6 +373,10 @@
     <apparelColor>(184,64,64)</apparelColor>
     <apparelMoney>350~950</apparelMoney>
     <weaponMoney>450~1200</weaponMoney>
+    <apparelTags>
+        <!-- Rank and file: duroSteel, like almost everyone on both sides. -->
+      <li>IndustrialMilitaryBasic</li>
+    </apparelTags>
     <weaponTags>
       <li>RR_RisingWeapon</li>
       <li>SimpleGun</li>
@@ -398,6 +402,10 @@
     <apparelColor>(227,138,56)</apparelColor>
     <apparelMoney>500~1200</apparelMoney>
     <weaponMoney>600~1500</weaponMoney>
+    <apparelTags>
+        <!-- Rank and file: duroSteel, like almost everyone on both sides. -->
+      <li>IndustrialMilitaryBasic</li>
+    </apparelTags>
     <weaponTags>
       <li>RR_RisingWeapon</li>
       <li>IndustrialGunAdvanced</li>
@@ -423,6 +431,11 @@
     <apparelColor>(120,126,133)</apparelColor>
     <apparelMoney>700~1600</apparelMoney>
     <weaponMoney>900~2000</weaponMoney>
+    <apparelTags>
+        <!-- Elite: the Rising has no caste rule, but it has very little
+             plate, so the good armour goes to the few who have earned it. -->
+      <li>SpacerMilitary</li>
+    </apparelTags>
     <weaponTags>
       <li>RR_RisingWeapon</li>
       <li>IndustrialGunAdvanced</li>
@@ -446,6 +459,11 @@
     <apparelColor>(52,50,58)</apparelColor>
     <apparelMoney>500~1400</apparelMoney>
     <weaponMoney>800~2000</weaponMoney>
+    <apparelTags>
+        <!-- Elite: the Rising has no caste rule, but it has very little
+             plate, so the good armour goes to the few who have earned it. -->
+      <li>SpacerMilitary</li>
+    </apparelTags>
     <weaponTags>
       <li>RR_RisingWeapon</li>
       <li>MedievalMeleeAdvanced</li>
@@ -471,6 +489,11 @@
     <apparelMoney>1500~3000</apparelMoney>
     <weaponMoney>2000~4000</weaponMoney>
     <itemQuality>Good</itemQuality>
+    <apparelTags>
+        <!-- Elite: the Rising has no caste rule, but it has very little
+             plate, so the good armour goes to the few who have earned it. -->
+      <li>SpacerMilitary</li>
+    </apparelTags>
     <weaponTags>
       <li>RR_RisingWeapon</li>
       <li>UltratechMelee</li>

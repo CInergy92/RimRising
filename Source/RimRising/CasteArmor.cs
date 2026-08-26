@@ -89,11 +89,32 @@ namespace RimRising
             return false;
         }
 
+        /// <summary>Title tag that confers the right to wear recoil plate.</summary>
+        public const string PlateBearerTag = "RR_PlateBearer";
+
+        /// <summary>
+        /// Does this pawn hold a title the Society considers plate-worthy?
+        ///
+        /// NOT "any title". The service ladder has two rungs and only the upper one
+        /// - Praetorian - carries RR_PlateBearer; a Legionnaire has standing without
+        /// having armour. Checking for any title at all would collapse that
+        /// distinction and make the lower rung meaningless.
+        /// </summary>
         private static bool HasSocietyTitle(Pawn pawn)
         {
             // royalty is null on a game without the DLC active, and on most pawns
             // even with it, so this has to be defensive rather than assume.
-            return pawn?.royalty != null && pawn.royalty.AllTitlesInEffectForReading.Count > 0;
+            if (pawn?.royalty == null) { return false; }
+
+            List<RoyalTitle> titles = pawn.royalty.AllTitlesInEffectForReading;
+            if (titles == null) { return false; }
+
+            for (int i = 0; i < titles.Count; i++)
+            {
+                RoyalTitleDef def = titles[i]?.def;
+                if (def?.tags != null && def.tags.Contains(PlateBearerTag)) { return true; }
+            }
+            return false;
         }
 
         /// <summary>
@@ -222,6 +243,39 @@ namespace RimRising
         public static void Postfix(Pawn_ApparelTracker __instance, Apparel newApparel)
         {
             RR_CasteArmor.ApplyCasteColor(newApparel, __instance?.pawn);
+        }
+    }
+
+    /// <summary>
+    /// The mirror of the Gold-title gate in GoldTitlePatches.cs. That one refuses
+    /// RR_GoldTitle to anyone who is not of the ruling caste; this one refuses the
+    /// service ladder to anyone who IS. A Gold is not made a Praetorian - the whole
+    /// point of the rank is that it is what the Society offers to the people it will
+    /// never make Gold.
+    ///
+    /// Same shape as its counterpart: stripping a title is always allowed, and only
+    /// our own tagged titles are touched, so Empire titles and other mods' are
+    /// unaffected.
+    /// </summary>
+    [HarmonyPatch(typeof(Pawn_RoyaltyTracker), nameof(Pawn_RoyaltyTracker.SetTitle))]
+    public static class Patch_Pawn_RoyaltyTracker_SetServiceTitle
+    {
+        public const string ServiceTitleTag = "RR_ServiceTitle";
+
+        public static bool Prefix(Pawn_RoyaltyTracker __instance, RoyalTitleDef title)
+        {
+            if (title == null) { return true; }
+            if (title.tags == null || !title.tags.Contains(ServiceTitleTag)) { return true; }
+
+            Pawn pawn = __instance?.pawn;
+            if (pawn == null) { return true; }
+            if (!RR_XenotypeUtility.IsRulingCaste(pawn)) { return true; }
+
+            Messages.Message(
+                "RR_CannotHoldServiceTitle".Translate(pawn.Named("PAWN"), title.GetLabelCapFor(pawn).Named("TITLE")),
+                pawn, MessageTypeDefOf.RejectInput, historical: false);
+
+            return false;
         }
     }
 

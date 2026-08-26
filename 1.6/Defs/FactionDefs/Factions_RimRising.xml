@@ -49,6 +49,9 @@
     <royalFavorIconPath>UI/Icons/RoyalFavor</royalFavorIconPath>
     <royalTitleTags>
       <li>RR_GoldTitle</li>
+      <!-- The service ladder Obsidians and Grays climb; see
+           Defs/RoyalTitles/RoyalTitles_Service.xml. -->
+      <li>RR_ServiceTitle</li>
     </royalTitleTags>
     <royalTitleInheritanceWorkerClass>RoyalTitleInheritanceWorker</royalTitleInheritanceWorkerClass>    <techLevel>Spacer</techLevel>
     <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>
@@ -238,6 +241,9 @@
     <royalFavorIconPath>UI/Icons/RoyalFavor</royalFavorIconPath>
     <royalTitleTags>
       <li>RR_GoldTitle</li>
+      <!-- The service ladder Obsidians and Grays climb; see
+           Defs/RoyalTitles/RoyalTitles_Service.xml. -->
+      <li>RR_ServiceTitle</li>
     </royalTitleTags>
     <royalTitleInheritanceWorkerClass>RoyalTitleInheritanceWorker</royalTitleInheritanceWorkerClass>    <techLevel>Spacer</techLevel>
     <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>

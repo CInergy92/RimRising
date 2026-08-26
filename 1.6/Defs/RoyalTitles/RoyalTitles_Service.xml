@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The service ladder: what an Obsidian or a Gray can actually be.
+
+  WHY THIS EXISTS. The armour restriction in Source/RimRising/CasteArmor.cs lets
+  Obsidians and Grays wear recoil plate if they hold a title - the Society arming
+  the few it has decided to trust. That branch was unreachable when it was written:
+  the only titles in the mod were tagged RR_GoldTitle, and
+  Patch_Pawn_RoyaltyTracker_SetTitle actively REFUSES to grant those to anyone who
+  is not of the ruling caste. So the rule described a path that no pawn could walk.
+
+  These are that path. Deliberately short - two rungs against the Gold ladder's
+  three - because that is the shape of the thing: a Gray can be promoted, and a
+  Gray cannot become a Gold.
+
+  RR_PlateBearer IS THE TAG THAT MATTERS. Holding a title is not by itself enough;
+  the armour check looks for that tag specifically, so the lower rung confers
+  standing without conferring plate. A Legionnaire is issued duroSteel like
+  everybody else.
+
+  Structure mirrored from RoyalTitles_Gold.xml, which mirrors
+  Royalty/Defs/RoyalTitles/RoyalTitles_Empire.xml.
+-->
+<Defs>
+
+  <RoyalTitleDef Abstract="True" Name="RR_ServiceTitleBase">
+    <tags>
+      <li>RR_ServiceTitle</li>
+    </tags>
+    <awardThought>GainedTitle</awardThought>
+    <lostThought>LostTitle</lostThought>
+    <awardWorkerClass>RoyalTitleAwardWorker_Instant</awardWorkerClass>
+  </RoyalTitleDef>
+
+  <!-- ============================= Legionnaire ============================ -->
+
+  <RoyalTitleDef ParentName="RR_ServiceTitleBase">
+    <defName>RR_Title_Legionnaire</defName>
+    <label>Legionnaire</label>
+    <description>Enrolled, uniformed, and on the rolls by name rather than by number. It is not much. Measured against being on no roll at all, it is a great deal, and the Society has always understood exactly how much work that difference will do.</description>
+    <seniority>0</seniority>
+    <favorCost>2</favorCost>
+    <changeHeirQuestPoints>0</changeHeirQuestPoints>
+  </RoyalTitleDef>
+
+  <!-- ============================== Praetorian ============================ -->
+
+  <RoyalTitleDef ParentName="RR_ServiceTitleBase">
+    <defName>RR_Title_Praetorian</defName>
+    <label>Praetorian</label>
+    <!-- The rung that confers plate. -->
+    <tags Inherit="False">
+      <li>RR_ServiceTitle</li>
+      <li>RR_PlateBearer</li>
+    </tags>
+    <description>Attached to a household, and trusted with the plate that goes with standing close to a Gold while armed. Praetorians are chosen for loyalty demonstrated at cost, which in practice means loyalty demonstrated to somebody who was watching.\n\nThe Society does not pretend this makes them equals. It does concede, in armour, that it would rather they lived.</description>
+    <seniority>300</seniority>
+    <favorCost>8</favorCost>
+    <changeHeirQuestPoints>0</changeHeirQuestPoints>
+    <requiredMinimumApparelQuality>Normal</requiredMinimumApparelQuality>
+  </RoyalTitleDef>
+
+</Defs>
