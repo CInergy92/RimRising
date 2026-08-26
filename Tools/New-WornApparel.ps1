@@ -190,11 +190,22 @@ function Draw-DuroArmor {
     }
 }
 
+# Dot-sourced AFTER the helpers above, because the piece routines call Plate, Bar
+# and the shared palette. Split out purely for size.
+. (Join-Path $PSScriptRoot 'WornPieces.ps1')
+
 $Pieces = @{
-    'RR_DuroArmor' = @{
-        Path = 'Things/Pawn/Humanlike/Apparel/RR_DuroArmor/RR_DuroArmor'
-        Draw = ${function:Draw-DuroArmor}
-    }
+    'RR_DuroArmor'   = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_DuroArmor/RR_DuroArmor';     Draw = ${function:Draw-DuroArmor} }
+    'RR_RecoilArmor' = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_RecoilArmor/RR_RecoilArmor'; Draw = ${function:Draw-RecoilArmor} }
+    'RR_PulseArmor'  = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_PulseArmor/RR_PulseArmor';   Draw = ${function:Draw-PulseArmor} }
+    'RR_ScarabSkin'  = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_ScarabSkin/RR_ScarabSkin';   Draw = ${function:Draw-ScarabSkin} }
+    'RR_GhostCloak'  = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_GhostCloak/RR_GhostCloak';   Draw = ${function:Draw-GhostCloak} }
+}
+
+# Headgear is a different shape of problem: one texture per FACING, no body-type
+# variants at all, and it registers against the head rather than the torso.
+$Headgear = @{
+    'RR_DemonHelm' = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_DemonHelm/RR_DemonHelm'; Draw = ${function:Draw-DemonHelm} }
 }
 
 $made = 0
@@ -216,5 +227,19 @@ foreach ($name in $Pieces.Keys) {
     Write-Host ("  + {0}  ({1} variants)" -f $name, ($Bodies.Count * 3)) -ForegroundColor Green
 }
 
+foreach ($name in $Headgear.Keys) {
+    if ($Only -and $name -notlike "*$Only*") { continue }
+    $piece = $Headgear[$name]
+    foreach ($facing in @('north', 'east', 'south')) {
+        $c = New-Canvas 256
+        try {
+            & $piece.Draw $c.G $c.S $script:HeadBox $facing
+            Save-Worn $c.Bmp ("{0}_{1}" -f $piece.Path, $facing)
+            $made++
+        } finally { $c.G.Dispose(); $c.Bmp.Dispose() }
+    }
+    Write-Host ("  + {0}  (3 facings, headgear - no body types)" -f $name) -ForegroundColor Green
+}
+
 Write-Host ''
-Write-Host ("{0} worn sprites written. Body boxes are MEASURED; Child is interpolated." -f $made)
+Write-Host ("{0} worn sprites written. Body and head boxes are MEASURED; Child is interpolated." -f $made)
