@@ -366,5 +366,107 @@ Against anything a Gold is carrying it is a formality. Everyone wearing one know
       <useDeflectMetalEffect>true</useDeflectMetalEffect>
     </apparel>
   </ThingDef>
+  <!-- ============================= recoilArmor ==============================
+
+    The missing middle. duroArmor is what Grays are issued; pulseArmor is what a
+    Gold wears; recoilArmor is the good suit underneath the good suit - canonically
+    pulseArmor IS recoilArmor with a shield generator and limb motors added, which
+    is why our pulseArmor description already calls itself recoil plating.
+
+    Canon gives it one distinction worth building around: it is the only protection
+    that guards against both pulse weapons AND razors. So its sharp rating is set
+    just under the razor's 0.95 armour penetration - a razor still gets through, but
+    it is the first thing in the mod that makes a Gold work for it.
+
+    THE WOUND SEALING IS APPROXIMATED, and deliberately so. The plates close around
+    a penetration, compress the wound and dose the wearer with painkillers. RimWorld
+    has no bleed-rate stat to offset - bleeding lives on the injury hediff - so
+    stopping bleeding literally would need C#. InjuryHealingFactor and
+    PainShockThreshold both exist and are offsettable from apparel (vanilla's
+    cultist mask offsets the latter), so the suit heals faster and hurts less
+    instead. That is a fair reading, not the literal mechanic, and it is written
+    down here so nobody later mistakes it for one.
+
+    It carries no shield, which means an EMP does nothing to it. That is emergent
+    rather than authored, and it happens to be exactly right: the plates work by
+    chemistry and mechanics, not electronics.
+  -->
+  <ThingDef ParentName="ArmorMachineableBase">
+    <defName>RR_Apparel_RecoilArmor</defName>
+    <label>recoilArmor</label>
+    <description>Interlocking plates that coil around the body when you put them on, closer to a liquid settling than a suit fastening. It takes a railgun round and gives back a dent. When something does get through, the plates clamp over the hole, squeeze it shut and push a dose of something kind into the wearer - which stops them bleeding out, and does nothing at all about the hole.
+
+All of that is chemistry and springs rather than circuits, so it goes on working after everything electronic in the room has died. Bolt a shield generator and limb motors onto one and you have pulseArmor, which is precisely how pulseArmor is made.</description>
+    <techLevel>Spacer</techLevel>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/RR_RecoilArmor/RR_RecoilArmor</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <statBases>
+      <MaxHitPoints>320</MaxHitPoints>
+      <Mass>12</Mass>
+      <WorkToMake>42000</WorkToMake>
+      <Flammability>0.2</Flammability>
+      <EquipDelay>6</EquipDelay>
+      <!-- Just under the razor's 0.95 penetration: a razor still wins, but not
+           for free. Well above duroArmor's 0.42, well below pulseArmor's 1.24. -->
+      <ArmorRating_Sharp>0.92</ArmorRating_Sharp>
+      <ArmorRating_Blunt>0.52</ArmorRating_Blunt>
+      <ArmorRating_Heat>0.55</ArmorRating_Heat>
+      <Insulation_Cold>16</Insulation_Cold>
+      <Insulation_Heat>8</Insulation_Heat>
+    </statBases>
+    <equippedStatOffsets>
+      <!-- The plates clamping over a wound, standing in for a bleed mechanic that
+           does not exist as a stat. See the note above. -->
+      <InjuryHealingFactor>0.35</InjuryHealingFactor>
+      <PainShockThreshold>0.15</PainShockThreshold>
+      <!-- It coils rather than clanks; no vanilla power-armour movement penalty. -->
+      <MoveSpeed>-0.04</MoveSpeed>
+    </equippedStatOffsets>
+    <costList>
+      <Plasteel>110</Plasteel>
+      <ComponentSpacer>4</ComponentSpacer>
+      <Steel>40</Steel>
+    </costList>
+    <recipeMaker>
+      <researchPrerequisite>RR_Artificer</researchPrerequisite>
+      <unfinishedThingDef>UnfinishedTechArmor</unfinishedThingDef>
+      <skillRequirements>
+        <Crafting>7</Crafting>
+      </skillRequirements>
+      <displayPriority>195</displayPriority>
+    </recipeMaker>
+    <thingCategories>
+      <li>ApparelArmor</li>
+    </thingCategories>
+    <tradeTags>
+      <li>Armor</li>
+    </tradeTags>
+    <apparel>
+      <!-- NO head coverage, unlike pulseArmor. RecoilArmor is a suit rather than a
+           sealed system, so it pairs with a demonHelm - which is the combination
+           the scarabSkin-wearing units actually use. -->
+      <bodyPartGroups>
+        <li>Torso</li>
+        <li>Neck</li>
+        <li>Shoulders</li>
+        <li>Arms</li>
+        <li>Legs</li>
+      </bodyPartGroups>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/RR_RecoilArmor/RR_RecoilArmor</wornGraphicPath>
+      <layers>
+        <li>Middle</li>
+        <li>Shell</li>
+      </layers>
+      <tags>
+        <li>SpacerMilitary</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+      <useDeflectMetalEffect>true</useDeflectMetalEffect>
+    </apparel>
+  </ThingDef>
 
 </Defs>

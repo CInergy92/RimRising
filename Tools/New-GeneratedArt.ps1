@@ -94,6 +94,13 @@ $items = @(
                   'mass-issue military hardware, scuffed and unremarkable, no ornament.'
     }
     [pscustomobject]@{
+        Path = 'Things/Pawn/Humanlike/Apparel/RR_RecoilArmor/RR_RecoilArmor'; Size = 128
+        Subject = 'A recoilArmor cuirass seen face on: a dark steel torso shell built from ' +
+                  'four stacked overlapping horizontal armour bands like segmented plate, with ' +
+                  'two shoulder caps and a small pale blue collar emitter. Sleek layered ' +
+                  'high-technology armour, worn but well kept.'
+    }
+    [pscustomobject]@{
         Path = 'Things/Pawn/Humanlike/Apparel/RR_DuroArmor/RR_DuroArmor'; Size = 128
         Subject = 'A duroArmor cuirass seen face on: a plain stamped dull steel breastplate ' +
                   'with two shoulder caps, a dark leather centre strap and a small brass ' +

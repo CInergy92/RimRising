@@ -378,6 +378,25 @@ Write-Sprite 'Things/Pawn/Humanlike/Apparel/RR_DuroArmor/RR_DuroArmor' 128 {
     Stroke-Dot  $g $S 0.500 0.430 0.045 $Brass                       # collar stud
 }
 
+# ----------------------------------------------------------------- recoilArmor
+#
+# Interlocking plates that coil around the wearer. The banding is the whole
+# identity of the thing, so the icon is a cuirass built from stacked overlapping
+# bands rather than the single stamped shell duroArmor gets - the two have to be
+# distinguishable side by side in a stockpile at 64px.
+Write-Sprite 'Things/Pawn/Humanlike/Apparel/RR_RecoilArmor/RR_RecoilArmor' 128 {
+    param($g, $S)
+    Stroke-Form $g $S @(@(0.50,0.34), @(0.50,0.72)) 0.44 (Shade $Steel 0.82)
+    Stroke-Form $g $S @(@(0.235,0.365), @(0.235,0.465)) 0.195 (Shade $Steel 0.82)
+    Stroke-Form $g $S @(@(0.765,0.365), @(0.765,0.465)) 0.195 (Shade $Steel 0.82)
+    # The coiled bands. Drawn after the shell so they are not buried, and inset
+    # from its edges so each one reads as a plate rather than a scratch.
+    foreach ($y in @(0.415, 0.495, 0.575, 0.655)) {
+        Stroke-Form $g $S @(@(0.315,$y), @(0.685,$y)) 0.048 $Steel
+    }
+    Stroke-Dot $g $S 0.500 0.352 0.052 $Ion    # the collar emitter
+}
+
 # ------------------------------------------------------------------ projectiles
 
 Write-Sprite 'Things/Projectile/RR_PulseWave' 64 {
