@@ -439,9 +439,18 @@ how good the painting is, it is judged on whether it sits on the body. ControlNe
 moves edges by a few pixels - invisible on an item icon, fatal on a sprite that has
 to register with a shoulder.
 
-The body boxes above are confirmed in play for the adult types, tint included. **Child
-remains the one unverified row** - it was interpolated from Thin rather than measured,
-because the sample garment shipped no child variant.
+The body boxes above are confirmed in play for the adult types, tint included.
+
+**The Child row is unreachable, so it never needs measuring.**
+`ApparelProperties.developmentalStageFilter` defaults to `DevelopmentalStage.Adult` in
+C# - it is a field default, not something a def has to opt into - and nothing in this
+mod nor any of its parent defs (`ArmorMachineableBase`, `ApparelMakeableBase`,
+`ApparelBase`) overrides it. Every garment here is adult-only for free.
+
+That row was interpolated from Thin rather than measured, because the sample garment
+shipped no child variant. The 15 `*_Child_*` textures under `Textures/` are therefore
+dead weight, kept only because they cost 68K and would be needed the moment any def
+opted a garment in.
 
 ---
 
