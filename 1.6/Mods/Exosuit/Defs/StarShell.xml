@@ -115,6 +115,38 @@
         <muzzleFlashScale>14</muzzleFlashScale>
       </li>
     </verbs>
+    <!--
+      WITHOUT THIS THE SAVE THROWS ON EVERY LOAD.
+
+      Exosuit.CompModuleWeapon.Weapon, decompiled, only ever builds its weapon
+      when Props.weapon.HasComp<CompApparelForcedWeapon>() - and returns NULL if
+      it does not. PostExposeData then does
+
+          Weapon.GetComp<CompApparelForcedWeapon>().ParentComp = this;
+
+      on PostLoadInit and dereferences that null, which surfaced in game as
+
+          Could not do PostLoadInit on RR_Apparel_StarShellCannonArm:
+          System.NullReferenceException
+            at Exosuit.CompModuleWeapon.PostExposeData
+
+      and again every frame the wearer's gizmos were drawn. Nothing in either
+      trace names this def - only the module apparel that points at it.
+
+      Bare compClass with no properties class, mirroring Dead Man's Switch's
+      DMS_Dragoon_LMG, which is the worked example the rest of this file follows.
+    -->
+    <comps>
+      <li>
+        <compClass>Exosuit.CompApparelForcedWeapon</compClass>
+      </li>
+    </comps>
+    <!-- The module's gun, not a thing to be traded, looted or held as a relic.
+         Same set the reference module weapon carries. -->
+    <destroyOnDrop>true</destroyOnDrop>
+    <tradeability>None</tradeability>
+    <generateCommonality>0</generateCommonality>
+    <relicChance>0</relicChance>
   </ThingDef>
 
   <ThingDef ParentName="BaseBullet">

@@ -118,6 +118,18 @@ function Build-VanillaIndex {
     # this produced confident false positives on two working defs.
     $recipeUserAbstracts = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 
+    # Vanilla defs AND Name= abstracts that declare <tools> - 190 of them.
+    #
+    # CHECKED, AND THE OBVIOUS GUESS WAS WRONG: BaseWeapon, BaseGun and
+    # BaseHumanMakeableGun do NOT declare tools, so a plain gun of ours inherits
+    # none. (The first attempt at this concluded they did, because the regex used
+    # to test it matched ParentName="BaseGun" as though it were Name="BaseGun".)
+    #
+    # The set is kept anyway because inheritance is still reachable: 190 vanilla
+    # defs do carry tools, and one of ours parenting from any of them would
+    # inherit plain Tool entries that CE casts to ToolCE and crashes on.
+    $toolBearers = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+
     # Abstract (Name=) defs and the list-valued fields they declare, so a child can
     # be checked for re-declaring something it already inherits. RimWorld APPENDS
     # list fields on inherit rather than replacing them, so a duplicate entry is
@@ -170,6 +182,14 @@ function Build-VanillaIndex {
                     if ($li.InnerText) { $rm += $li.InnerText.Trim() }
                 }
                 $preceptReqMemes[$dn.InnerText.Trim()] = $rm
+            }
+
+            if ($node.LocalName -eq 'ThingDef' -and $node.SelectSingleNode('tools')) {
+                # Recorded under BOTH its defName and its Name= attribute, because a
+                # child can inherit from either.
+                if ($dn -and $dn.InnerText) { [void]$toolBearers.Add($dn.InnerText.Trim()) }
+                $na = $node.Attributes['Name']
+                if ($na -and $na.Value) { [void]$toolBearers.Add($na.Value.Trim()) }
             }
 
             if ($node.LocalName -eq 'ThingDef') {
@@ -233,6 +253,7 @@ function Build-VanillaIndex {
         ApparelTags   = @($apparelTags)
         PreceptReqMemes = $preceptReqMemes
         RecipeUserAbstracts = @($recipeUserAbstracts)
+        ToolBearers   = @($toolBearers)
         Abstracts     = $abstracts
     }
 }
@@ -252,7 +273,7 @@ function Get-VanillaIndex {
 
     # Bumped whenever the cached shape changes, so an old cache is rebuilt rather
     # than read with missing fields.
-    $cacheSchema = 9   # 9: typed ResearchProjects/WeaponClasses sets
+    $cacheSchema = 10  # 10: ToolBearers, for CE inherited-tool detection
 
     if (-not $Refresh -and (Test-Path $cacheFile)) {
         try {
@@ -272,6 +293,7 @@ function Get-VanillaIndex {
                     ApparelTags   = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.ApparelTags, [StringComparer]::Ordinal)
                     PreceptReqMemes = $cached.PreceptReqMemes
                     RecipeUserAbstracts = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.RecipeUserAbstracts, [StringComparer]::Ordinal)
+                    ToolBearers   = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.ToolBearers, [StringComparer]::Ordinal)
                     Abstracts     = $cached.Abstracts
                     Version       = $version
                 }
@@ -301,6 +323,7 @@ function Get-VanillaIndex {
         ApparelTags   = $idx.ApparelTags
         PreceptReqMemes = $idx.PreceptReqMemes
         RecipeUserAbstracts = $idx.RecipeUserAbstracts
+        ToolBearers   = $idx.ToolBearers
         Abstracts     = $idx.Abstracts
     } | ConvertTo-Json -Depth 8 -Compress | Set-Content -Path $cacheFile -Encoding UTF8
 
@@ -319,6 +342,7 @@ function Get-VanillaIndex {
         ApparelTags   = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.ApparelTags, [StringComparer]::Ordinal)
         PreceptReqMemes = $idx.PreceptReqMemes
         RecipeUserAbstracts = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.RecipeUserAbstracts, [StringComparer]::Ordinal)
+        ToolBearers   = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.ToolBearers, [StringComparer]::Ordinal)
         Abstracts     = $idx.Abstracts
         Version       = $version
     }
@@ -860,7 +884,7 @@ $researchRefs = [System.Collections.Generic.List[object]]::new()
 $modResearchProjects = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 $modWeaponClasses    = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 $weaponClassRefs     = [System.Collections.Generic.List[object]]::new()
-$toolDefs            = @{}   # defName -> file + whether it already declares CE tools
+$ourThings           = @{}   # our ThingDefs: parent, own tools, CE tools - for inheritance walking
 $maskedApparel       = @{}   # defName -> file + wornGraphicPath, for mask checking
 $abstractRecipeUsers = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 
@@ -980,10 +1004,20 @@ foreach ($file in $xmlFiles) {
             # Any def with melee tools. Collected here rather than filtered to
             # weapons, because apparel and buildings can carry tools too and CE
             # casts them all the same way.
-            if ($dnNode -and $node.SelectSingleNode('tools')) {
-                $toolDefs[$dnNode.InnerText.Trim()] = [pscustomobject]@{
-                    File     = $rel
-                    InlineCE = [bool]$node.SelectSingleNode('tools/li[@Class="CombatExtended.ToolCE"]')
+            if ($node.LocalName -eq 'ThingDef') {
+                $pnAttr = $node.Attributes['ParentName']
+                $nmAttr = $node.Attributes['Name']
+                $key = if ($dnNode -and $dnNode.InnerText) { $dnNode.InnerText.Trim() }
+                       elseif ($nmAttr -and $nmAttr.Value) { $nmAttr.Value.Trim() }
+                       else { $null }
+                if ($key) {
+                    $ourThings[$key] = [pscustomobject]@{
+                        File     = $rel
+                        Parent   = if ($pnAttr) { $pnAttr.Value.Trim() } else { $null }
+                        OwnTools = [bool]$node.SelectSingleNode('tools')
+                        InlineCE = [bool]$node.SelectSingleNode('tools/li[@Class="CombatExtended.ToolCE"]')
+                        Concrete = [bool]($dnNode -and $dnNode.InnerText)
+                    }
                 }
             }
 
@@ -1721,17 +1755,39 @@ if (Test-Path $ceToolsDir) {
     $cePatchText = (Get-ChildItem $ceToolsDir -Filter '*.xml' -Recurse |
                     ForEach-Object { Get-Content $_.FullName -Raw }) -join "`n"
 
-    foreach ($dName in $toolDefs.Keys) {
-        $info = $toolDefs[$dName]
-        # A def that already declares CE tools inline needs no patch, though
-        # nothing in this mod does that - it would make CE a hard dependency.
+    # INHERITED TOOLS COUNT. RimWorld inherits <tools> like any other field, so a
+    # def of ours can hand CE a set of plain Tool entries without declaring one.
+    # The weapon BASE abstracts turn out not to carry tools - that was checked, not
+    # assumed - but 190 other vanilla defs do, and CE patches tools by defName only,
+    # so anything of ours descending from one of those is exposed.
+    function Test-HasTools {
+        param([string] $Name)
+        $seen = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+        $cur = $Name
+        while ($cur -and $seen.Add($cur)) {
+            if ($vanilla.ToolBearers -and $vanilla.ToolBearers.Contains($cur)) { return $true }
+            if ($ourThings.ContainsKey($cur)) {
+                if ($ourThings[$cur].OwnTools) { return $true }
+                $cur = $ourThings[$cur].Parent
+                continue
+            }
+            break
+        }
+        return $false
+    }
+
+    foreach ($dName in $ourThings.Keys) {
+        $info = $ourThings[$dName]
+        if (-not $info.Concrete) { continue }
         if ($info.InlineCE) { continue }
+        if (-not (Test-HasTools $dName)) { continue }
 
         $pattern = 'defName="' + [regex]::Escape($dName) + '"\]/tools'
         if ($cePatchText -match $pattern) { continue }
 
+        $how = if ($info.OwnTools) { 'has <tools>' } else { "inherits <tools> from '$($info.Parent)'" }
         Add-Problem -Severity ERROR -Check 'CEToolsUnpatched' -File $info.File `
-            -Message ("'{0}' has <tools> but no PatchOperationReplace on its /tools in 1.6\mods\CombatExtended\Patches. Under CE, Verb_MeleeAttackCE casts every tool to ToolCE, so a vanilla tool throws a NullReferenceException on every melee swing - and the stack trace names only CE. Guns need this too: PatchOperationMakeGunCECompatible does not touch tools." -f $dName)
+            -Message ("'{0}' {1} but has no PatchOperationReplace on its /tools in 1.6\mods\CombatExtended\Patches. Under CE, Verb_MeleeAttackCE casts every tool to ToolCE, so a vanilla Tool throws a NullReferenceException on every melee swing - and the stack trace names only CE. Guns need this too: PatchOperationMakeGunCECompatible does not touch tools." -f $dName, $how)
     }
 }
 
