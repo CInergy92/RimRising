@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--
+    ============== the automated medical suite in pulse and recoil armour =======
+
+    Both suits carry a trauma package in the books: they seal punctures, compress
+    wounds, stop bleeding and push combat stims when the wearer is badly hurt.
+    Neither one heals anybody. Recovery in that setting is bio-gel, a Carver and
+    a lot of time, so nothing here restores tissue - these defs stabilise a
+    casualty and manage pain, and that is all.
+
+    WHY THIS IS TWO SEAL DEFS AND NOT ONE. HediffSet.CalculateBleedRate, decompiled,
+    multiplies every stage's totalBleedFactor together. Two defs therefore stack
+    correctly and independently if a pawn somehow wears both, and each comp only
+    ever has to manage its own def. One shared def with the comp setting severity
+    would have to reconcile two writers against a single hediff instance, which is
+    the kind of thing that survives testing and then breaks on a load.
+
+    RECOIL SEALS BETTER THAN PULSE, DELIBERATELY. The recoil-plates are described
+    as mechanically coiling around a wound to compress the tissue, which is a
+    better description of haemostasis than anything pulse armour does; pulse
+    armour's advantage is its response suite, so it carries more stim doses and a
+    faster resupply. That gives the cheaper suit one axis it genuinely wins on. It
+    is a design call rather than a fact - flip the two numbers if the flagship
+    should simply be better at everything.
+  -->
+
+  <HediffDef>
+    <defName>RR_TraumaSeal_Recoil</defName>
+    <label>recoil-plate seal</label>
+    <labelNoun>a recoil-plate seal</labelNoun>
+    <description>The plating has closed on this person's wounds. Mechanical-chemical plates coil inward against torn tissue and hold it compressed while clotting agents go in behind them. It will not mend anything - it stops them emptying out while somebody who can mend it is found.</description>
+    <defaultLabelColor>(0.55, 0.75, 0.85)</defaultLabelColor>
+    <isBad>false</isBad>
+    <scenarioCanAdd>false</scenarioCanAdd>
+    <maxSeverity>1.0</maxSeverity>
+    <stages>
+      <li>
+        <!--
+          Precedent: Royalty's Coagulator implant, one stage, totalBleedFactor 0.5.
+          The armour is considerably better than a coagulator and is also the
+          reason a Peerless Scarred survives a razor fight, so 0.15 - bleeding
+          continues, but slowly enough that a casualty can be dragged out.
+        -->
+        <totalBleedFactor>0.15</totalBleedFactor>
+        <painFactor>0.85</painFactor>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <HediffDef>
+    <defName>RR_TraumaSeal_Pulse</defName>
+    <label>pulse-suit seal</label>
+    <labelNoun>a pulse-suit seal</labelNoun>
+    <description>The suit is treating this person without being asked. Punctures are sealed as they are made and clotting agents are pushed into the wound channel. It buys time, nothing more - the suit has no way to give back what has already been lost.</description>
+    <defaultLabelColor>(0.55, 0.75, 0.85)</defaultLabelColor>
+    <isBad>false</isBad>
+    <scenarioCanAdd>false</scenarioCanAdd>
+    <maxSeverity>1.0</maxSeverity>
+    <stages>
+      <li>
+        <totalBleedFactor>0.30</totalBleedFactor>
+        <painFactor>0.85</painFactor>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <!--
+    The stim itself. Modelled on GoJuiceHigh - same shape, same fields, weaker,
+    and shorter: severityPerDay -6 burns a full dose off in four hours.
+
+    No addiction and no ChemicalDef. Vanilla couples those through a ChemicalDef
+    and a Need, and a suit that quietly addicted its wearer would need a whole
+    withdrawal design behind it. The cost here is that doses are finite and the
+    suit takes a long time to make more.
+  -->
+  <HediffDef>
+    <defName>RR_CombatStim</defName>
+    <hediffClass>Hediff_High</hediffClass>
+    <label>combat stim</label>
+    <labelNoun>a combat stim</labelNoun>
+    <description>A dose of battlefield stimulant, injected by armour that decided its wearer needed it. Pain goes distant and the body does what it is told for a while longer.</description>
+    <defaultLabelColor>(1, 0.4, 0.4)</defaultLabelColor>
+    <isBad>false</isBad>
+    <scenarioCanAdd>false</scenarioCanAdd>
+    <maxSeverity>1.0</maxSeverity>
+    <!--
+      Explicit rather than left to the default. A full dose burning off at
+      -6 severity per day lasts four hours; taking whatever the default happened
+      to be would have made the stim's duration an accident.
+    -->
+    <initialSeverity>1</initialSeverity>
+    <comps>
+      <li Class="HediffCompProperties_SeverityPerDay">
+        <severityPerDay>-6</severityPerDay>
+        <showHoursToRecover>true</showHoursToRecover>
+      </li>
+    </comps>
+    <stages>
+      <li>
+        <painFactor>0.2</painFactor>
+        <capMods>
+          <li>
+            <capacity>Consciousness</capacity>
+            <offset>0.15</offset>
+          </li>
+          <li>
+            <capacity>Moving</capacity>
+            <offset>0.25</offset>
+          </li>
+        </capMods>
+      </li>
+    </stages>
+  </HediffDef>
+
+</Defs>

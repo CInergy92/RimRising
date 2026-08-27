@@ -37,5 +37,13 @@
   <RR_GravLaunchDowned>Cannot launch while down.</RR_GravLaunchDowned>
   <!-- Posted when the flight sets down. Vanilla's equivalent says "transport pods arrived". -->
   <RR_GravFlightArrived>The grav flight has come down.</RR_GravFlightArrived>
+  <!-- The automated medical suite in pulse and recoil armour. -->
+  <RR_TraumaSuiteStim>{ARMOR} injects {PAWN} with a combat stim.</RR_TraumaSuiteStim>
+  <RR_TraumaSuiteDoses>Combat stims: {0} / {1}</RR_TraumaSuiteDoses>
+  <RR_TraumaSuiteRecharging>next in {0}</RR_TraumaSuiteRecharging>
+  <RR_StatTraumaSuite>Combat stims carried</RR_StatTraumaSuite>
+  <RR_StatTraumaSuiteDesc>The suit injects a stimulant on its own when the wearer starts bleeding badly or is in serious pain, and will not dose again until the last one wears off. It synthesises a replacement dose every {0}.
+
+The suit also seals wounds continuously while worn, which is a separate effect and does not run out.</RR_StatTraumaSuiteDesc>
 
 </LanguageData>

@@ -23,6 +23,7 @@
     <label>pulse armor</label>
     <description>Layered recoil plating over a servo harness, with a shield generator riding the spine. It stops what the plates can stop and shrugs off most of what they cannot, and underneath all that it is quietly multiplying the person inside - a suited Gold moves faster and hits harder than an unsuited one, which is the entire point of the design.\n\nIt is enormously expensive, drinks helium-3, and will overheat if the shield takes sustained punishment. None of that has ever discouraged anybody who was allowed to own one.</description>
     <techLevel>Spacer</techLevel>
+    <tickerType>Normal</tickerType>
     <recipeMaker>
       <unfinishedThingDef>UnfinishedTechArmor</unfinishedThingDef>
       <researchPrerequisite>RR_PulseArmor</researchPrerequisite>
@@ -87,6 +88,20 @@
            load and takes the WHOLE ThingDef with it - both suits vanished. -->
       <li>
         <compClass>CompColorable</compClass>
+      </li>
+      <!--
+        The automated trauma package: a passive wound seal and a few combat stims
+        the suit injects on its own. REQUIRES tickerType Normal above. Worn
+        apparel is not ticked by Pawn_ApparelTracker - it is reached by
+        Thing.DoTick recursing into child holders, and that recursion only calls
+        Tick() when tickerType is Normal. Without it the comp attaches, loads
+        clean, and silently never runs.
+      -->
+      <li Class="RimRising.CompProperties_TraumaSuite">
+        <sealHediff>RR_TraumaSeal_Pulse</sealHediff>
+        <stimHediff>RR_CombatStim</stimHediff>
+        <stimDoses>4</stimDoses>
+        <doseRechargeTicks>45000</doseRechargeTicks>
       </li>
     </comps>
     <apparel>
@@ -444,6 +459,7 @@ Against anything a Gold is carrying it is a formality. Everyone wearing one know
 
 All of that is chemistry and springs rather than circuits, so it goes on working after everything electronic in the room has died. Bolt a shield generator and limb motors onto one and you have pulseArmor, which is precisely how pulseArmor is made.</description>
     <techLevel>Spacer</techLevel>
+    <tickerType>Normal</tickerType>
     <graphicData>
       <texPath>Things/Pawn/Humanlike/Apparel/RR_RecoilArmor/RR_RecoilArmor</texPath>
       <graphicClass>Graphic_Single</graphicClass>
@@ -495,6 +511,20 @@ All of that is chemistry and springs rather than circuits, so it goes on working
            load and takes the WHOLE ThingDef with it - both suits vanished. -->
       <li>
         <compClass>CompColorable</compClass>
+      </li>
+      <!--
+        The automated trauma package: a passive wound seal and a few combat stims
+        the suit injects on its own. REQUIRES tickerType Normal above. Worn
+        apparel is not ticked by Pawn_ApparelTracker - it is reached by
+        Thing.DoTick recursing into child holders, and that recursion only calls
+        Tick() when tickerType is Normal. Without it the comp attaches, loads
+        clean, and silently never runs.
+      -->
+      <li Class="RimRising.CompProperties_TraumaSuite">
+        <sealHediff>RR_TraumaSeal_Recoil</sealHediff>
+        <stimHediff>RR_CombatStim</stimHediff>
+        <stimDoses>2</stimDoses>
+        <doseRechargeTicks>90000</doseRechargeTicks>
       </li>
     </comps>
     <apparel>
@@ -595,6 +625,12 @@ Given room to climb they will carry the wearer clean off the map and set them do
       <Mass>18</Mass>
       <WorkToMake>26000</WorkToMake>
       <Flammability>0.2</Flammability>
+      <!-- Plasteel over the shin. Small, but Combat Extended logs an error for
+           apparel whose armour values are all zero, and boots made of plasteel
+           should stop something. -->
+      <ArmorRating_Sharp>0.35</ArmorRating_Sharp>
+      <ArmorRating_Blunt>0.22</ArmorRating_Blunt>
+      <ArmorRating_Heat>0.20</ArmorRating_Heat>
       <EquipDelay>3</EquipDelay>
       <!-- Vanilla's jump pack is 23.9. These fly rather than hop. -->
       <JumpRange>34.9</JumpRange>
@@ -743,6 +779,12 @@ Given room to climb they will carry the wearer clean off the map and set them do
       <Mass>4.5</Mass>
       <WorkToMake>19000</WorkToMake>
       <Flammability>0.2</Flammability>
+      <!-- Plasteel over the shin. Small, but Combat Extended logs an error for
+           apparel whose armour values are all zero, and boots made of plasteel
+           should stop something. -->
+      <ArmorRating_Sharp>0.22</ArmorRating_Sharp>
+      <ArmorRating_Blunt>0.14</ArmorRating_Blunt>
+      <ArmorRating_Heat>0.12</ArmorRating_Heat>
       <EquipDelay>2</EquipDelay>
       <!-- Greater HORIZONTAL reach than the gravBoots' 34.9, which is the
            canonical difference between the two. Vanilla's jump pack is 23.9. -->
