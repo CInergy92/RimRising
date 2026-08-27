@@ -91,21 +91,117 @@ function Save-Worn {
 }
 
 <# A filled polygon with the standard dark outline, in canvas fractions. #>
+<#
+    A rounded, outlined, shaded armour panel, in canvas fractions.
+
+    WHY THIS IS NOT JUST FillPolygon. The first version outlined and filled the
+    polygon directly, which produces exactly what it sounds like - flat shapes
+    with sharp corners. Next to the ControlNet item icons it read as boxes, and
+    that was the complaint.
+
+    CLAUDE.md already records what RimWorld's own art does, measured off a vanilla
+    sprite, and none of it was being followed here:
+
+      - forms are ROUNDED; no sharp polygon corners anywhere
+      - the outline is a thick dark warm grey, never black
+      - shading is ONE lighter band along the upper-left edge, not a gradient
+
+    So the panel is built in four passes:
+
+      1. the silhouette, stroked with a wide round-JOINED pen in the outline
+         colour. Stroking rather than filling is what rounds the corners - a
+         round join cannot produce a sharp vertex.
+      2. the body colour, stroked at a narrower width so it sits just inside the
+         outline, then filled to cover the interior.
+      3. a lighter band along the upper-left. Done by clipping to the panel and
+         stroking the same path offset up and left: the offset stroke lands
+         inside the shape on the upper-left edges and outside it - so clipped
+         away - on the lower-right. One band, one line of intent.
+      4. the same trick offset down-right in a darker tone, which gives the panel
+         a lip rather than a painted gradient.
+
+    MASK MODE TAKES NONE OF IT. A mask needs flat regions, and a highlight is a
+    different RGB that MaskOf would classify on its own - a lighter brass is not
+    brass, so the gold trim's highlight would have taken the caste dye while the
+    trim itself did not. In mask mode this draws one flat shape and returns.
+#>
 function Plate {
     param($g, [int]$S, [array]$Pts, [System.Drawing.Color]$Color, [single]$OutlineW = 0.024)
+
     $arr = @()
     foreach ($p in $Pts) { $arr += New-Object System.Drawing.PointF([single]($p[0] * $S), [single]($p[1] * $S)) }
     $poly = [System.Drawing.PointF[]]$arr
-    $pen = New-Object System.Drawing.Pen((Ink $script:Outline), [single]($S * $OutlineW))
-    $pen.LineJoin = [System.Drawing.Drawing2D.LineJoin]::Round
-    try { $g.DrawPolygon($pen, $poly) } finally { $pen.Dispose() }
-    $b = New-Object System.Drawing.SolidBrush((Ink $Color))
-    try { $g.FillPolygon($b, $poly) } finally { $b.Dispose() }
+
+    $path = New-Object System.Drawing.Drawing2D.GraphicsPath
+    try {
+        $path.AddPolygon($poly)
+
+        if ($script:MaskMode) {
+            $mp = New-Object System.Drawing.Pen((Ink $Color), [single]($S * $OutlineW * 1.6))
+            $mp.LineJoin = [System.Drawing.Drawing2D.LineJoin]::Round
+            try { $g.DrawPath($mp, $path) } finally { $mp.Dispose() }
+            $mb = New-Object System.Drawing.SolidBrush((Ink $Color))
+            try { $g.FillPath($mb, $path) } finally { $mb.Dispose() }
+            return
+        }
+
+        $round = $S * $OutlineW * 0.85
+
+        # 1 - outline
+        $pen = New-Object System.Drawing.Pen($script:Outline, [single](($S * $OutlineW) + $round))
+        $pen.LineJoin  = [System.Drawing.Drawing2D.LineJoin]::Round
+        $pen.StartCap  = [System.Drawing.Drawing2D.LineCap]::Round
+        $pen.EndCap    = [System.Drawing.Drawing2D.LineCap]::Round
+        try { $g.DrawPath($pen, $path) } finally { $pen.Dispose() }
+
+        # 2 - body
+        $bodyPen = New-Object System.Drawing.Pen($Color, [single]$round)
+        $bodyPen.LineJoin = [System.Drawing.Drawing2D.LineJoin]::Round
+        try { $g.DrawPath($bodyPen, $path) } finally { $bodyPen.Dispose() }
+        $b = New-Object System.Drawing.SolidBrush($Color)
+        try { $g.FillPath($b, $path) } finally { $b.Dispose() }
+
+        # 3 and 4 - the shading bands, clipped to the panel
+        $saved = $g.Save()
+        try {
+            $g.SetClip($path, [System.Drawing.Drawing2D.CombineMode]::Replace)
+            $d = $S * 0.016
+
+            $hi = New-Object System.Drawing.Pen((Shade $Color 1.22), [single]($S * 0.020))
+            $hi.LineJoin = [System.Drawing.Drawing2D.LineJoin]::Round
+            try {
+                $m = New-Object System.Drawing.Drawing2D.Matrix
+                try { $m.Translate([single]$d, [single]$d); $p2 = $path.Clone(); $p2.Transform($m); $g.DrawPath($hi, $p2); $p2.Dispose() }
+                finally { $m.Dispose() }
+            } finally { $hi.Dispose() }
+
+            $lo = New-Object System.Drawing.Pen((Shade $Color 0.78), [single]($S * 0.018))
+            $lo.LineJoin = [System.Drawing.Drawing2D.LineJoin]::Round
+            try {
+                $m = New-Object System.Drawing.Drawing2D.Matrix
+                try { $m.Translate([single](-$d), [single](-$d)); $p3 = $path.Clone(); $p3.Transform($m); $g.DrawPath($lo, $p3); $p3.Dispose() }
+                finally { $m.Dispose() }
+            } finally { $lo.Dispose() }
+        } finally { $g.Restore($saved) }
+    } finally { $path.Dispose() }
+}
+
+<# Scale a colour's channels, clamped. Used for the shading bands. #>
+function Shade {
+    param([System.Drawing.Color] $C, [double] $F)
+    $r = [int][math]::Max(0, [math]::Min(255, [math]::Round($C.R * $F)))
+    $gg = [int][math]::Max(0, [math]::Min(255, [math]::Round($C.G * $F)))
+    $bb = [int][math]::Max(0, [math]::Min(255, [math]::Round($C.B * $F)))
+    return [System.Drawing.Color]::FromArgb($C.A, $r, $gg, $bb)
 }
 
 function Bar {
     param($g, [int]$S, [single]$x1, [single]$y1, [single]$x2, [single]$y2, [single]$w, [System.Drawing.Color]$Color)
-    $pen = New-Object System.Drawing.Pen($Color, [single]($w * $S))
+    # Ink, not $Color. Bar draws the gold trim, and without this the mask came out
+    # with brass-coloured streaks across the pauldrons instead of black - so the
+    # trim drawn as a bar would have taken the caste dye while the trim drawn as a
+    # plate did not. Every primitive has to route through Ink or the mask lies.
+    $pen = New-Object System.Drawing.Pen((Ink $Color), [single]($w * $S))
     $pen.StartCap = [System.Drawing.Drawing2D.LineCap]::Round
     $pen.EndCap   = [System.Drawing.Drawing2D.LineCap]::Round
     try { $g.DrawLine($pen, [single]($x1*$S), [single]($y1*$S), [single]($x2*$S), [single]($y2*$S)) } finally { $pen.Dispose() }
