@@ -38,6 +38,17 @@
     <graphicData>
       <texPath>Things/Pawn/Humanlike/Apparel/RR_PulseArmor/RR_PulseArmor</texPath>
       <graphicClass>Graphic_Single</graphicClass>
+      <!--
+        The ITEM icon is tinted by CompColorable too, so it needs the same mask
+        treatment the worn sprites got - but an item has no useWornGraphicMask
+        flag to swap its shader, so the shader is named here directly.
+
+        Graphic_Single looks for the mask at <texPath>_m (MaskSuffix, decompiled),
+        which is NOT the suffix Graphic_Multi uses for the worn sprites. It is
+        loaded with reportFailure false, so a wrong name would silently dye the
+        whole icon. Written by Tools/Convert-TintableIcon.ps1.
+      -->
+      <shaderType>CutoutComplex</shaderType>
     </graphicData>
     <generateCommonality>0.5</generateCommonality>
     <statBases>
@@ -475,6 +486,17 @@ All of that is chemistry and springs rather than circuits, so it goes on working
     <graphicData>
       <texPath>Things/Pawn/Humanlike/Apparel/RR_RecoilArmor/RR_RecoilArmor</texPath>
       <graphicClass>Graphic_Single</graphicClass>
+      <!--
+        The ITEM icon is tinted by CompColorable too, so it needs the same mask
+        treatment the worn sprites got - but an item has no useWornGraphicMask
+        flag to swap its shader, so the shader is named here directly.
+
+        Graphic_Single looks for the mask at <texPath>_m (MaskSuffix, decompiled),
+        which is NOT the suffix Graphic_Multi uses for the worn sprites. It is
+        loaded with reportFailure false, so a wrong name would silently dye the
+        whole icon. Written by Tools/Convert-TintableIcon.ps1.
+      -->
+      <shaderType>CutoutComplex</shaderType>
     </graphicData>
     <statBases>
       <MaxHitPoints>320</MaxHitPoints>
