@@ -1224,10 +1224,11 @@ four facings.
 
 ### Still to do
 
-- Worn apparel: all drawn, and the caste tint is confirmed in play. Alignment is
-  still unverified for the Child body type (that row is interpolated from Thin and
-  was never measured) and for the starShell, which is gated behind the exosuit
-  framework.
+- Worn apparel: all drawn, and the caste tint is confirmed in play. The only
+  alignment still unverified is the starShell, which is gated behind the exosuit
+  framework. The Child body type is CLOSED, not deferred - apparel is adult-only
+  by default and nothing here opts in, so that row can never be reached. See
+  CLAUDE.md.
 - Storyteller portrait and `About/Preview.png`.
 
 ---
