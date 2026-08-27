@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--
+    The world map half of a gravBoot launch. Vanilla's TravellingTransporters is
+    labelled "transport pods" and drawn with a pod icon, so a Gold crossing the
+    planet on their own boots showed up on the world map as freight.
+
+    worldObjectClass is vanilla's TravellingTransporters unchanged - the flight
+    logic, arrival and save/load are all correct, and only the label and the icon
+    were ever wrong. Fields mirror vanilla's def one for one.
+
+    The caravan icon is the right art for this and already exists: vanilla's own
+    ShuttleWorldObjectBase does the same thing, pairing worldObjectClass
+    TravellingTransporters with World/WorldObjects/Caravan.
+  -->
+  <WorldObjectDef>
+    <defName>RR_GravFlight</defName>
+    <label>grav flight</label>
+    <description>Someone crossing the planet on gravBoots.</description>
+    <worldObjectClass>TravellingTransporters</worldObjectClass>
+    <texture>World/WorldObjects/Caravan</texture>
+    <useDynamicDrawer>true</useDynamicDrawer>
+    <expandingIcon>true</expandingIcon>
+    <expandingIconTexture>World/WorldObjects/Expanding/Caravan</expandingIconTexture>
+    <expandingIconPriority>60</expandingIconPriority>
+    <expandMore>true</expandMore>
+    <allowCaravanIncidentsWhichGenerateMap>true</allowCaravanIncidentsWhichGenerateMap>
+    <fullyExpandedInSpace>true</fullyExpandedInSpace>
+    <validLaunchTarget>false</validLaunchTarget>
+  </WorldObjectDef>
+
+</Defs>

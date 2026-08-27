@@ -200,21 +200,39 @@ namespace RimRising
                 return;
             }
 
-            ActiveTransporter transporter = (ActiveTransporter)ThingMaker.MakeThing(ThingDefOf.ActiveDropPod);
+            // Our own defs rather than the vanilla pod ones. These are the three
+            // places the drop pod was visible: the container, the departure
+            // skyfaller, and the world map object. Nothing about the flight
+            // changes - the classes are all still vanilla's.
+            ActiveTransporter transporter =
+                (ActiveTransporter)ThingMaker.MakeThing(RR_GravDefOf.RR_ActiveGravAscent);
             transporter.Contents = contents;
 
             FlyShipLeaving leaving = (FlyShipLeaving)SkyfallerMaker.MakeSkyfaller(
-                ThingDefOf.DropPodLeaving, transporter);
+                RR_GravDefOf.RR_GravAscentLeaving, transporter);
             leaving.groupID = Find.UniqueIDsManager.GetNextTransporterGroupID();
             leaving.destinationTile = destinationTile;
-            leaving.arrivalAction = new TransportersArrivalAction_FormCaravan("MessageTransportPodsArrived");
-            leaving.worldObjectDef = WorldObjectDefOf.TravellingTransporters;
+            leaving.arrivalAction = new TransportersArrivalAction_FormCaravan("RR_GravFlightArrived");
+            leaving.worldObjectDef = RR_GravDefOf.RR_GravFlight;
 
             GenSpawn.Spawn(leaving, pos, map);
 
             Props.soundLaunch?.PlayOneShot(new TargetInfo(pos, map));
             lastLaunchTick = Find.TickManager.TicksGame;
             CameraJumper.TryHideWorld();
+        }
+    }
+
+    [DefOf]
+    public static class RR_GravDefOf
+    {
+        public static ThingDef RR_ActiveGravAscent;
+        public static ThingDef RR_GravAscentLeaving;
+        public static WorldObjectDef RR_GravFlight;
+
+        static RR_GravDefOf()
+        {
+            DefOfHelper.EnsureInitializedInCtor(typeof(RR_GravDefOf));
         }
     }
 }

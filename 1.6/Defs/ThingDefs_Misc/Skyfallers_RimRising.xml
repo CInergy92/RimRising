@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--
+    ================== what a pawn looks like leaving on gravBoots =============
+
+    The launch itself was built on vanilla's transport pod primitives, because
+    those are the only ones that fly a container to another world tile. The side
+    effect was that a Gold lifting off on grav boots was drawn as a drop pod
+    rocketing off the map, which is wrong in the obvious way.
+
+    None of the pod is in the C#. Skyfaller.GetThingForGraphic - decompiled -
+    returns the skyfaller itself whenever its def carries graphicData, and only
+    falls back to the first thing in its container when it does not. So the
+    sprite is entirely a def question, and these three defs replace all three
+    places a pod was visible: the departure skyfaller, the container, and the
+    world map icon (that one lives in WorldObjectDefs/WorldObjects_RimRising.xml).
+  -->
+
+  <ThingDef ParentName="SkyfallerBase">
+    <defName>RR_GravAscentLeaving</defName>
+    <label>ascent</label>
+    <thingClass>FlyShipLeaving</thingClass>
+    <graphicData>
+      <texPath>Things/Special/RR_GravAscent</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <!--
+        Transparent, NOT CutoutFlying as the drop pod uses. Cutout shaders alpha
+        TEST rather than alpha blend: every pixel is either fully drawn or
+        discarded on a threshold. The field bloom and the plume under the boots
+        are soft by design, and under a cutout shader they would come back as a
+        hard-edged blob - which is to say, as an object, which is the whole thing
+        being avoided here. 71 vanilla defs use Transparent.
+      -->
+      <shaderType>Transparent</shaderType>
+      <drawSize>1.4</drawSize>
+    </graphicData>
+    <skyfaller>
+      <movementType>Decelerate</movementType>
+      <reversed>true</reversed>
+      <!--
+        A person-sized shadow. The drop pod's own shadow is the same texture at
+        (2, 2), which at this scale would be a pod-shaped smudge underneath a
+        figure a third its size.
+      -->
+      <shadow>Things/Skyfaller/SkyfallerShadowDropPod</shadow>
+      <shadowSize>(0.8, 0.8)</shadowSize>
+      <anticipationSound>Longjump_Jump</anticipationSound>
+      <anticipationSoundTicks>-10</anticipationSoundTicks>
+      <ticksToImpactRange><min>-40</min><max>-15</max></ticksToImpactRange>
+    </skyfaller>
+  </ThingDef>
+
+  <!--
+    The container the wearer actually rides in. With the caravan arrival this mod
+    uses it is never spawned on a map, so its graphic is not normally seen - but
+    it inherits a label as well as a texture, and "drop pod" turning up in an
+    inspect string would undo the point of the def above.
+  -->
+  <ThingDef ParentName="ActiveDropPod">
+    <defName>RR_ActiveGravAscent</defName>
+    <label>grav flight</label>
+    <graphicData>
+      <texPath>Things/Special/RR_GravAscent</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>1.4</drawSize>
+    </graphicData>
+    <soundOpen>Longjump_Land</soundOpen>
+  </ThingDef>
+
+</Defs>
