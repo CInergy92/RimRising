@@ -1221,8 +1221,8 @@ four facings are derived by rotating a single position:
 
 ### Still to do
 
-- Worn apparel for recoilArmor, pulseArmor, scarabSkin, ghostCloak, starShell.
-  duroArmor is done and is the proof of approach.
+- Worn apparel: all drawn. Alignment still unverified in play for the Child body
+  type (interpolated from Thin, never measured) and for the starShell.
 - Storyteller portrait and `About/Preview.png`.
 
 ---
@@ -1267,6 +1267,56 @@ fixed:
   generated bare.
 - `PawnApparelGenerator.CanUsePair` SKIPS the tag filter entirely when apparelTags is
   empty, so five military kinds could generate anything in the game.
+
+## Milestone 10 — gravBoot flight and the armour trauma suite
+
+Both **verified in play**.
+
+### gravBoots launch like transport pods
+
+`Source/RimRising/GravLaunch.cs`. Hand-rolled: `CompLaunchable.TryLaunch` is welded to
+`CompTransporter` groups, a fuel port and a spawned building, and even its public
+static `ChoseWorldTarget` demands a `CompLaunchable` instance. The flight is built from
+the same primitives vanilla flies on — `ActiveTransporterInfo`, `ActiveTransporter`,
+`FlyShipLeaving`, `TravellingTransporters`.
+
+- **`ThingOwner.TryAdd` does NOT despawn.** It only refuses things that already have a
+  `holdingOwner`, so the pawn is despawned first or ends up half on the map and half in
+  a pod. The container-failure branch respawns rather than deleting the pawn.
+- **Arrival always forms a caravan**, deliberately. Landing into a settlement comes from
+  `CompLaunchable.GetOptionsForTile`, which wants a list of pods to inspect, and the only
+  holder here is built at the instant of launch.
+- **The pod was three defs, not one.** `Skyfaller.GetThingForGraphic` returns the
+  skyfaller whenever its def has `graphicData`, so the sprite was purely a def question:
+  `RR_GravAscentLeaving`, `RR_ActiveGravAscent` (for its label) and `RR_GravFlight`.
+- Shader is `Transparent`, not the pod's `CutoutFlying` — cutout shaders alpha *test*,
+  so the soft bloom and plume would have returned as a hard-edged blob.
+- The sprite's first version drew the wearer from directly above, matching the pod, and
+  read as a car. **RimWorld never draws people from above.** Redrawn front-on like a pawn.
+
+### The trauma suite in pulse and recoil armour
+
+`Source/RimRising/TraumaSuite.cs`. A passive wound seal plus finite auto-injected stims.
+Neither heals — recovery in that setting is bio-gel and a Carver.
+
+- **`HediffStage.totalBleedFactor`** is the lever; `HediffSet.CalculateBleedRate`
+  multiplies every stage's together. Royalty's `Coagulator` is the vanilla precedent.
+- **Nothing in vanilla grants a hediff from worn apparel.** The full `ApparelProperties`
+  field list was checked; every hediff-granting comp in the game is an ability comp.
+- **`tickerType Normal` is REQUIRED.** Worn apparel is not ticked by
+  `Pawn_ApparelTracker` — `Thing.DoTick` recurses into child holders and only calls
+  `Tick()` when tickerType is Normal. Without it the comp attaches, loads clean and
+  silently never runs.
+- Recoil seals better (0.15 vs 0.30) because its plates mechanically compress the wound;
+  pulse carries more doses at faster resupply. A design call, easily flipped.
+
+### The CE melee crash
+
+Fought with the Reaper's razor and got an NRE storm naming only CE. See the CLAUDE.md
+entry — every `<tools>` entry must be a `ToolCE`, guns included, and
+`Test-ModDefs.ps1` now enforces it (`CEToolsUnpatched`).
+
+---
 
 ## Known errors
 
