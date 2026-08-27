@@ -153,5 +153,230 @@
     </weaponTags>
     <researchPrerequisite>RR_PulsePhysics</researchPrerequisite>
   </Operation>
+  <!-- ========================== the Reaper's razor =========================
+
+    THIS ONE CRASHED THE GAME, and the way it crashed is worth recording. The
+    Reaper's razor was added after this file was written and nobody came back to
+    it, so it kept its vanilla <li> tools. Under CE that is not a balance
+    oversight - Verb_MeleeAttackCE.DamageInfosToApply casts every tool to ToolCE
+    and reads armour penetration straight off it, so a plain Tool dereferences
+    null and throws on EVERY SWING. The log shows it as an NRE inside CE with
+    nothing naming this mod:
+
+      Exception ticking <pawn>: System.NullReferenceException
+        at CombatExtended.Verb_MeleeAttackCE+<DamageInfosToApply>d__38.MoveNext
+
+    Test-ModDefs.ps1 now fails on any of our melee weapons whose tools are not
+    replaced here, so the next weapon cannot repeat it.
+
+    Same weapon as the razor above, held in a different shape, so the numbers are
+    the razor's redistributed rather than a new scale: a sickle cuts better than a
+    straight blade and thrusts far worse.
+  -->
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Weapon_ReaperRazor"]/tools</xpath>
+    <value>
+      <tools>
+        <li Class="CombatExtended.ToolCE">
+          <label>haft</label>
+          <capacities>
+            <li>Blunt</li>
+          </capacities>
+          <power>8</power>
+          <cooldownTime>1.30</cooldownTime>
+          <chanceFactor>0.1</chanceFactor>
+          <armorPenetrationBlunt>1.10</armorPenetrationBlunt>
+          <linkedBodyPartsGroup>Handle</linkedBodyPartsGroup>
+        </li>
+        <li Class="CombatExtended.ToolCE">
+          <!-- The inside of the curve. Better than the straight razor's 26.50,
+               which is the whole reason Darrow sets his blade this way. -->
+          <label>edge</label>
+          <capacities>
+            <li>Cut</li>
+          </capacities>
+          <power>46</power>
+          <cooldownTime>0.75</cooldownTime>
+          <armorPenetrationBlunt>4.20</armorPenetrationBlunt>
+          <armorPenetrationSharp>28.50</armorPenetrationSharp>
+          <linkedBodyPartsGroup>Edge</linkedBodyPartsGroup>
+        </li>
+        <li Class="CombatExtended.ToolCE">
+          <!-- A hooked blade is a poor thrusting weapon. The straight razor
+               reaches 34.00 here; this gives up half of that. -->
+          <label>hook</label>
+          <capacities>
+            <li>Stab</li>
+          </capacities>
+          <power>16</power>
+          <cooldownTime>1.05</cooldownTime>
+          <armorPenetrationBlunt>1.00</armorPenetrationBlunt>
+          <armorPenetrationSharp>18.00</armorPenetrationSharp>
+        </li>
+        <li Class="CombatExtended.ToolCE">
+          <label>lash</label>
+          <capacities>
+            <li>Cut</li>
+          </capacities>
+          <power>26</power>
+          <cooldownTime>0.58</cooldownTime>
+          <armorPenetrationBlunt>1.05</armorPenetrationBlunt>
+          <armorPenetrationSharp>9.00</armorPenetrationSharp>
+          <linkedBodyPartsGroup>Edge</linkedBodyPartsGroup>
+        </li>
+      </tools>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/ThingDef[defName="RR_Weapon_ReaperRazor"]/statBases</xpath>
+    <value>
+      <Bulk>3.8</Bulk>
+      <MeleeCounterParryBonus>0.60</MeleeCounterParryBonus>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/ThingDef[defName="RR_Weapon_ReaperRazor"]</xpath>
+    <value>
+      <equippedStatOffsets>
+        <MeleeCritChance>1.25</MeleeCritChance>
+        <MeleeParryChance>0.60</MeleeParryChance>
+        <MeleeDodgeChance>0.45</MeleeDodgeChance>
+      </equippedStatOffsets>
+    </value>
+  </Operation>
+
+  <!-- ===================== gun tools: scorcher + pulseFist =================
+
+    NOT OPTIONAL, AND NOT COVERED BY THE GUN OPERATION ABOVE.
+    PatchOperationMakeGunCECompatible was decompiled to check: it rewrites
+    statBases, costList, verb properties, comps, weapon classes, tags and the
+    research prereq, and it never touches <tools>. CE patches every vanilla gun's
+    tools in a SEPARATE PatchOperationReplace for exactly this reason.
+
+    That matters because a plain Tool is not a balance problem under CE, it is a
+    crash: Verb_MeleeAttackCE.DamageInfosToApply casts each tool to ToolCE and
+    reads armour penetration off it, so bashing someone with an unconverted gun
+    throws a NullReferenceException every swing.
+
+    Values are CE's own rifle numbers from
+    Patches/Core/ThingDefs_Misc/Weapons_Guns.xml, not invented. The pulseFist is
+    a powered gauntlet rather than a rifle, so it has no stock or muzzle - it
+    punches, and hits harder than a rifle butt.
+  -->
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Weapon_Scorcher"]/tools</xpath>
+    <value>
+      <tools>
+        <li Class="CombatExtended.ToolCE">
+          <label>stock</label>
+          <capacities>
+            <li>Blunt</li>
+          </capacities>
+          <power>8</power>
+          <cooldownTime>1.55</cooldownTime>
+          <chanceFactor>1.5</chanceFactor>
+          <armorPenetrationBlunt>2.755</armorPenetrationBlunt>
+          <linkedBodyPartsGroup>Stock</linkedBodyPartsGroup>
+        </li>
+        <li Class="CombatExtended.ToolCE">
+          <label>barrel</label>
+          <capacities>
+            <li>Blunt</li>
+          </capacities>
+          <power>5</power>
+          <cooldownTime>2.02</cooldownTime>
+          <armorPenetrationBlunt>1.630</armorPenetrationBlunt>
+          <linkedBodyPartsGroup>Barrel</linkedBodyPartsGroup>
+        </li>
+      </tools>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Weapon_PulseFist"]/tools</xpath>
+    <value>
+      <tools>
+        <li Class="CombatExtended.ToolCE">
+          <label>fist</label>
+          <capacities>
+            <li>Blunt</li>
+          </capacities>
+          <power>14</power>
+          <cooldownTime>1.40</cooldownTime>
+          <chanceFactor>1.5</chanceFactor>
+          <armorPenetrationBlunt>4.200</armorPenetrationBlunt>
+          <linkedBodyPartsGroup>Grip</linkedBodyPartsGroup>
+        </li>
+      </tools>
+    </value>
+  </Operation>
+
+  <!-- ============================== scorcher ===============================
+
+    The basic-kit energy carbine, so it takes the same treatment the pulseFist
+    got. it shares AmmoSet_6x24mmCharged with it, so both of this mod's
+    energy weapons draw on one supply line rather than two. CE's own
+    AmmoSet_ChargedRifle fires the same projectiles but is a separate ammo ITEM
+    line - the two sets are marked similarTo each other - and picking it would
+    have meant stocking two things that do the same job.
+
+    Both sets live in CE's own Defs tree rather than under ModPatches, which
+    matters: CE's ModPatches ammo only exists for players running some third mod.
+
+    The projectile name was worth checking rather than assuming. The obvious
+    guess, Bullet_RifleCharged, does not exist - AmmoSet_ChargedRifle maps to
+    Bullet_6x24mmCharged, and a made-up projectile name here would have thrown
+    at load.
+
+    Deliberately mediocre. This is what somebody carries who cannot afford a
+    pulseFist or is not allowed one, and CE is where that gap can actually be
+    expressed: worse sights, more sway, a slower cycle.
+  -->
+  <Operation Class="CombatExtended.PatchOperationMakeGunCECompatible">
+    <defName>RR_Weapon_Scorcher</defName>
+    <statBases>
+      <Mass>3.2</Mass>
+      <RangedWeapon_Cooldown>0.40</RangedWeapon_Cooldown>
+      <SightsEfficiency>0.85</SightsEfficiency>
+      <ShotSpread>0.19</ShotSpread>
+      <SwayFactor>1.15</SwayFactor>
+      <Bulk>6.00</Bulk>
+      <WorkToMake>16000</WorkToMake>
+    </statBases>
+    <costList>
+      <Steel>45</Steel>
+      <ComponentIndustrial>4</ComponentIndustrial>
+    </costList>
+    <Properties>
+      <recoilAmount>0.85</recoilAmount>
+      <verbClass>CombatExtended.Verb_ShootCE</verbClass>
+      <hasStandardCommand>true</hasStandardCommand>
+      <defaultProjectile>Bullet_6x24mmCharged</defaultProjectile>
+      <warmupTime>1.1</warmupTime>
+      <range>42</range>
+      <ticksBetweenBurstShots>7</ticksBetweenBurstShots>
+      <burstShotCount>3</burstShotCount>
+      <soundCast>Shot_ChargeRifle</soundCast>
+      <soundCastTail>GunTail_Medium</soundCastTail>
+      <muzzleFlashScale>9</muzzleFlashScale>
+    </Properties>
+    <AmmoUser>
+      <magazineSize>24</magazineSize>
+      <reloadTime>4</reloadTime>
+      <ammoSet>AmmoSet_6x24mmCharged</ammoSet>
+    </AmmoUser>
+    <FireModes>
+      <aimedBurstShotCount>2</aimedBurstShotCount>
+      <aiUseBurstMode>TRUE</aiUseBurstMode>
+      <aiAimMode>AimedShot</aiAimMode>
+    </FireModes>
+    <weaponTags>
+      <li>CE_AI_AR</li>
+    </weaponTags>
+  </Operation>
 
 </Patch>

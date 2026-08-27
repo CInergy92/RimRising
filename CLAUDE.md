@@ -585,6 +585,37 @@ declared the health tab throws on open. Parent from the framework's `BaseVehicle
 not from Vanilla Vehicles Expanded's `VehiclePawn_Armored` — VVE's chain adds its own
 comps and would make VVE a second requirement.
 
+### Under Combat Extended, EVERY `<tools>` entry must be a `ToolCE`
+
+**This crashed the game and named nobody.** `Verb_MeleeAttackCE.DamageInfosToApply`
+casts each tool on the weapon to `CombatExtended.ToolCE` and reads armour penetration
+off the result, so a weapon left with vanilla `<li>` tools throws a
+`NullReferenceException` on **every swing**. The log shows:
+
+```
+Exception ticking <pawn>: System.NullReferenceException
+  at CombatExtended.Verb_MeleeAttackCE+<DamageInfosToApply>d__38.MoveNext
+```
+
+Not one frame names this mod. The fault is entirely inside CE, caused by our data.
+
+**Guns are not exempt.** `PatchOperationMakeGunCECompatible` was decompiled to check:
+it rewrites `statBases`, `costList`, verb properties, comps, weapon classes, tags and
+the research prereq, and **never touches `<tools>`**. CE patches every vanilla gun's
+tools in a separate `PatchOperationReplace` for exactly this reason, so a stock or
+grip bash crashes the same way a sword does.
+
+Weapon part groups — `Handle`, `Edge`, `Grip`, `Stock`, `Barrel`, `Muzzle` — are
+**CE's own** `BodyPartGroupDef`s (`CE/Defs/Bodies/BodyPartGroups.xml`), not vanilla.
+They are only nameable from inside the CE-gated patch folder.
+
+`Test-ModDefs.ps1` now fails on any def with `<tools>` that has no
+`PatchOperationReplace` on its `/tools` (`CEToolsUnpatched`), negative-tested.
+
+Calibration lives in CE's own `Patches/Core/ThingDefs_Misc/Weapons_Guns.xml` — copy
+those numbers rather than converting vanilla ones. CE's `armorPenetrationSharp` is in
+millimetres of steel, not a 0..1 fraction.
+
 ### Under Combat Extended, vehicle turrets need CE projectiles AND a CE extension
 
 `VehicleTurret` forks its fire path on whether CE is loaded. With CE it calls

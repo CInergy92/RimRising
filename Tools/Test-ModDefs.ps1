@@ -860,6 +860,7 @@ $researchRefs = [System.Collections.Generic.List[object]]::new()
 $modResearchProjects = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 $modWeaponClasses    = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 $weaponClassRefs     = [System.Collections.Generic.List[object]]::new()
+$toolDefs            = @{}   # defName -> file + whether it already declares CE tools
 $abstractRecipeUsers = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 
 # Every xenotype we define, and every xenotype some PawnKindDef can actually
@@ -960,6 +961,16 @@ foreach ($file in $xmlFiles) {
                     if ($rp.InnerText -and -not $rp.Attributes['MayRequire']) {
                         $researchRefs.Add([pscustomobject]@{ File=$rel; Def=$dnNode.InnerText.Trim(); Ref=$rp.InnerText.Trim() })
                     }
+                }
+            }
+
+            # Any def with melee tools. Collected here rather than filtered to
+            # weapons, because apparel and buildings can carry tools too and CE
+            # casts them all the same way.
+            if ($dnNode -and $node.SelectSingleNode('tools')) {
+                $toolDefs[$dnNode.InnerText.Trim()] = [pscustomobject]@{
+                    File     = $rel
+                    InlineCE = [bool]$node.SelectSingleNode('tools/li[@Class="CombatExtended.ToolCE"]')
                 }
             }
 
@@ -1671,6 +1682,46 @@ foreach ($ref in $weaponClassRefs) {
     Add-Problem -Severity ERROR -Check 'UnknownWeaponClass' -File $ref.File `
         -Message ("'{0}' lists weaponClass '{1}', which is not a WeaponClassDef anywhere. It resolves to nothing at load." -f $ref.Def, $ref.Ref)
 }
+
+# --- Combat Extended: every melee tool must be replaced with a ToolCE ----------
+#
+# THIS ONE CRASHED THE GAME AND NAMED NOBODY. Under CE,
+# Verb_MeleeAttackCE.DamageInfosToApply casts every tool on the weapon to
+# CombatExtended.ToolCE and reads armour penetration straight off the result, so a
+# weapon left with vanilla <li> tools throws a NullReferenceException on EVERY
+# SWING. What the player sees is:
+#
+#   Exception ticking <pawn>: System.NullReferenceException
+#     at CombatExtended.Verb_MeleeAttackCE+<DamageInfosToApply>d__38.MoveNext
+#
+# with no frame naming this mod - the fault is entirely inside CE, caused by data
+# we shipped. The Reaper's razor was added months after the CE patch file and
+# nobody went back to it.
+#
+# GUNS ARE NOT EXEMPT. PatchOperationMakeGunCECompatible was decompiled to be
+# sure: it rewrites statBases, costList, verb properties, comps, weapon classes,
+# tags and research, and never touches <tools>. CE patches every vanilla gun's
+# tools in a separate PatchOperationReplace for that reason, so a gun's stock or
+# grip bash crashes exactly the same way.
+$ceToolsDir = Join-Path $ModRoot '1.6\mods\CombatExtended\Patches'
+if (Test-Path $ceToolsDir) {
+    $cePatchText = (Get-ChildItem $ceToolsDir -Filter '*.xml' -Recurse |
+                    ForEach-Object { Get-Content $_.FullName -Raw }) -join "`n"
+
+    foreach ($dName in $toolDefs.Keys) {
+        $info = $toolDefs[$dName]
+        # A def that already declares CE tools inline needs no patch, though
+        # nothing in this mod does that - it would make CE a hard dependency.
+        if ($info.InlineCE) { continue }
+
+        $pattern = 'defName="' + [regex]::Escape($dName) + '"\]/tools'
+        if ($cePatchText -match $pattern) { continue }
+
+        Add-Problem -Severity ERROR -Check 'CEToolsUnpatched' -File $info.File `
+            -Message ("'{0}' has <tools> but no PatchOperationReplace on its /tools in 1.6\mods\CombatExtended\Patches. Under CE, Verb_MeleeAttackCE casts every tool to ToolCE, so a vanilla tool throws a NullReferenceException on every melee swing - and the stack trace names only CE. Guns need this too: PatchOperationMakeGunCECompatible does not touch tools." -f $dName)
+    }
+}
+
 
 # --- vehicle def/build pair resolution ----------------------------------------
 #
