@@ -46,6 +46,21 @@ $script:PlateHi   = [System.Drawing.Color]::FromArgb(255, 232, 229, 222)
 # The emitter teal from the comic panel. Kept out of the dye by the mask below.
 $script:PlateGlow = [System.Drawing.Color]::FromArgb(255, 104, 206, 200)
 
+# ------------------------------------------------------------- the starShell ---
+#
+# The comic panel is a SHELL-class suit rather than a plate suit: bulbous helmet,
+# segmented tan-grey plating, gunmetal joints, and teal emitter pads at the boots
+# and knees. So the shell takes its palette straight from that reference rather
+# than from the crimson it started with.
+#
+# NOT tintable, and no mask. The shell is a machine with a fixed livery, not
+# caste-coloured apparel - it carries neither RR_CasteColored nor
+# useWornGraphicMask - so unlike the plate suits its base colour is free to be
+# whatever reads best.
+$script:ShellBase = [System.Drawing.Color]::FromArgb(255, 168, 156, 138)
+$script:ShellDark = [System.Drawing.Color]::FromArgb(255, 104,  98,  90)
+$script:ShellHi   = [System.Drawing.Color]::FromArgb(255, 202, 191, 170)
+
 # ---------------------------------------------------------------- mask mode ---
 #
 # CompColorable multiplies the WHOLE texture by one dye, so without a mask the
@@ -373,7 +388,7 @@ function Draw-StarShellCore {
         $lx = $mid + ($w * 0.20 * $side)
         Plate $g $S @(
             @(($lx - ($w * 0.11)), $waist), @(($lx + ($w * 0.11)), $waist),
-            @(($lx + ($w * 0.13)), $y1), @(($lx - ($w * 0.13)), $y1)) $script:CrimsonDk
+            @(($lx + ($w * 0.13)), $y1), @(($lx - ($w * 0.13)), $y1)) $script:ShellDark
     }
     # Torso block.
     Plate $g $S @(
@@ -383,15 +398,15 @@ function Draw-StarShellCore {
         @(($x1 - ($w * 0.16)), $waist),
         @(($x0 + ($w * 0.16)), $waist),
         @(($x0 + ($w * 0.06)), ($y0 + ($h * 0.44))),
-        @(($x0 + ($w * 0.10)), ($y0 + ($h * 0.20)))) $script:Crimson
+        @(($x0 + ($w * 0.10)), ($y0 + ($h * 0.20)))) $script:ShellBase
 
     if ($Facing -eq 'east') {
         Plate $g $S @(
             @(($x0 - ($w * 0.02)), ($y0 + ($h * 0.14))),
             @(($x0 + ($w * 0.44)), ($y0 + ($h * 0.06))),
             @(($x0 + ($w * 0.48)), ($y0 + ($h * 0.26))),
-            @(($x0 + ($w * 0.02)), ($y0 + ($h * 0.30)))) $script:CrimsonDk
-        Dot $g $S ($mid + ($w * 0.12)) ($y0 + ($h * 0.34)) ($w * 0.09) $script:Glow
+            @(($x0 + ($w * 0.02)), ($y0 + ($h * 0.30)))) $script:ShellDark
+        Dot $g $S ($mid + ($w * 0.12)) ($y0 + ($h * 0.34)) ($w * 0.09) $script:PlateGlow
         return
     }
     # Shoulder blocks, squared off - this is a machine, not a cuirass.
@@ -401,15 +416,15 @@ function Draw-StarShellCore {
             @(($ex + ($w * 0.06 * $side)), ($y0 + ($h * 0.12))),
             @(($ex - ($w * 0.14 * $side)), ($y0 + ($h * 0.06))),
             @(($ex - ($w * 0.16 * $side)), ($y0 + ($h * 0.30))),
-            @(($ex + ($w * 0.04 * $side)), ($y0 + ($h * 0.34)))) $script:CrimsonDk
+            @(($ex + ($w * 0.04 * $side)), ($y0 + ($h * 0.34)))) $script:ShellDark
         Bar $g $S ($ex + ($w * 0.06 * $side)) ($y0 + ($h * 0.115)) ($ex - ($w * 0.14 * $side)) ($y0 + ($h * 0.055)) ($h * 0.020) $Brass
     }
     if ($Facing -eq 'south') {
-        Dot  $g $S $mid ($y0 + ($h * 0.32)) ($w * 0.11) $script:Glow
-        Bar  $g $S $mid ($y0 + ($h * 0.44)) $mid ($waist - ($h * 0.02)) ($w * 0.08) $script:CrimsonHi
+        Dot  $g $S $mid ($y0 + ($h * 0.32)) ($w * 0.11) $script:PlateGlow
+        Bar  $g $S $mid ($y0 + ($h * 0.44)) $mid ($waist - ($h * 0.02)) ($w * 0.08) $script:ShellHi
     }
     else {
-        Bar $g $S $mid ($y0 + ($h * 0.12)) $mid ($waist - ($h * 0.02)) ($w * 0.09) $script:CrimsonDk
+        Bar $g $S $mid ($y0 + ($h * 0.12)) $mid ($waist - ($h * 0.02)) ($w * 0.09) $script:ShellDark
         foreach ($f in @(0.24, 0.40)) {
             Bar $g $S ($x0 + ($w * 0.14)) ($y0 + ($h * $f)) ($x1 - ($w * 0.14)) ($y0 + ($h * $f)) ($h * 0.022) $Brass
         }
@@ -427,23 +442,23 @@ function Draw-StarShellHead {
         @(($mid + ($w * 0.16)), ($top + (($bot - $top) * 0.30))),
         @(($mid + ($w * 0.13)), $bot),
         @(($mid - ($w * 0.13)), $bot),
-        @(($mid - ($w * 0.16)), ($top + (($bot - $top) * 0.30)))) $script:Crimson
+        @(($mid - ($w * 0.16)), ($top + (($bot - $top) * 0.30)))) $script:ShellBase
     if ($Facing -eq 'south') {
         Plate $g $S @(
             @(($mid - ($w * 0.10)), ($top + (($bot - $top) * 0.46))),
             @(($mid + ($w * 0.10)), ($top + (($bot - $top) * 0.46))),
             @(($mid + ($w * 0.07)), ($top + (($bot - $top) * 0.72))),
-            @(($mid - ($w * 0.07)), ($top + (($bot - $top) * 0.72)))) $script:Glow
+            @(($mid - ($w * 0.07)), ($top + (($bot - $top) * 0.72)))) $script:PlateGlow
     }
     elseif ($Facing -eq 'east') {
         Plate $g $S @(
             @(($mid + ($w * 0.02)), ($top + (($bot - $top) * 0.44))),
             @(($mid + ($w * 0.15)), ($top + (($bot - $top) * 0.40))),
             @(($mid + ($w * 0.14)), ($top + (($bot - $top) * 0.70))),
-            @(($mid + ($w * 0.02)), ($top + (($bot - $top) * 0.72)))) $script:Glow
+            @(($mid + ($w * 0.02)), ($top + (($bot - $top) * 0.72)))) $script:PlateGlow
     }
     else {
-        Bar $g $S $mid ($top + (($bot - $top) * 0.30)) $mid $bot ($w * 0.06) $script:CrimsonDk
+        Bar $g $S $mid ($top + (($bot - $top) * 0.30)) $mid $bot ($w * 0.06) $script:ShellDark
     }
 }
 
@@ -457,12 +472,12 @@ function Draw-StarShellCannonArm {
         @(($ax - ($w * 0.10)), ($y0 + ($h * 0.12))),
         @(($ax + ($w * 0.12)), ($y0 + ($h * 0.08))),
         @(($ax + ($w * 0.14)), ($y0 + ($h * 0.34))),
-        @(($ax - ($w * 0.08)), ($y0 + ($h * 0.36)))) $script:CrimsonDk
+        @(($ax - ($w * 0.08)), ($y0 + ($h * 0.36)))) $script:ShellDark
     Plate $g $S @(
         @(($ax - ($w * 0.05)), ($y0 + ($h * 0.32))),
         @(($ax + ($w * 0.09)), ($y0 + ($h * 0.32))),
         @(($ax + ($w * 0.07)), ($y0 + ($h * 0.74))),
-        @(($ax - ($w * 0.03)), ($y0 + ($h * 0.74)))) $script:Crimson
+        @(($ax - ($w * 0.03)), ($y0 + ($h * 0.74)))) $script:ShellBase
     Bar $g $S ($ax + ($w * 0.02)) ($y0 + ($h * 0.70)) ($ax + ($w * 0.02)) ($y0 + ($h * 0.92)) ($w * 0.07) $script:BlackHi
-    if ($Facing -ne 'north') { Dot $g $S ($ax + ($w * 0.02)) ($y0 + ($h * 0.46)) ($w * 0.06) $script:Glow }
+    if ($Facing -ne 'north') { Dot $g $S ($ax + ($w * 0.02)) ($y0 + ($h * 0.46)) ($w * 0.06) $script:PlateGlow }
 }
