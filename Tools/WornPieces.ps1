@@ -43,23 +43,69 @@ $script:Glow      = [System.Drawing.Color]::FromArgb(255, 122, 168, 190)
 $script:PlateBase = [System.Drawing.Color]::FromArgb(255, 206, 202, 194)
 $script:PlateDark = [System.Drawing.Color]::FromArgb(255, 148, 146, 141)
 $script:PlateHi   = [System.Drawing.Color]::FromArgb(255, 232, 229, 222)
-# The emitter teal from the comic panel. It tints along with everything else -
-# keeping it a fixed colour needs useWornGraphicMask and a mask texture per
-# facing, which is a separate job.
+# The emitter teal from the comic panel. Kept out of the dye by the mask below.
 $script:PlateGlow = [System.Drawing.Color]::FromArgb(255, 104, 206, 200)
+
+# ---------------------------------------------------------------- mask mode ---
+#
+# CompColorable multiplies the WHOLE texture by one dye, so without a mask the
+# gold trim and the teal emitters take the caste colour along with the plating
+# and a Gold's suit comes out gold-on-gold.
+#
+# RimWorld's answer is useWornGraphicMask, which swaps the shader to
+# CutoutComplex and looks for a second texture beside the first. Both halves were
+# verified rather than recalled:
+#
+#   naming  - Graphic_Multi.Init, decompiled: with no explicit maskPath it loads
+#             <path>_<facing> + "m", so RR_PulseArmor_Male_southm.png.
+#   channel - read out of a shipped mask (Kurin's ChildDress): the file is almost
+#             entirely (255,0,0) with black detail. Red is the dyed channel;
+#             black keeps the texture's own colour.
+#
+# So the mask is the same drawing again with every colour flattened to one of two
+# values. FixedColours lists what must NOT take the dye; everything else does.
+$script:MaskMode = $false
+$script:MaskDyed  = [System.Drawing.Color]::FromArgb(255, 255,   0,   0)
+$script:MaskFixed = [System.Drawing.Color]::FromArgb(255,   0,   0,   0)
+
+<#
+    Translate a drawing colour into its mask value. Called by every primitive, so
+    a piece's mask can never drift out of step with the piece - the mask is
+    generated from the same code path rather than maintained alongside it.
+#>
+function MaskOf {
+    param([System.Drawing.Color] $Color)
+    foreach ($fixed in $script:FixedColours) {
+        if ($Color.R -eq $fixed.R -and $Color.G -eq $fixed.G -and $Color.B -eq $fixed.B) {
+            return $script:MaskFixed
+        }
+    }
+    return $script:MaskDyed
+}
+
+<# Every primitive routes its fill and its outline through this. #>
+function Ink {
+    param([System.Drawing.Color] $Color)
+    if ($script:MaskMode) { return (MaskOf $Color) }
+    return $Color
+}
 $script:Black     = [System.Drawing.Color]::FromArgb(255,  30,  31,  35)
 $script:BlackHi   = [System.Drawing.Color]::FromArgb(255,  52,  54,  60)
 $script:Cloth     = [System.Drawing.Color]::FromArgb(255,  96, 102,  98)
 $script:ClothDk   = [System.Drawing.Color]::FromArgb(255,  68,  73,  71)
 $script:EyeAmber  = [System.Drawing.Color]::FromArgb(255, 198, 122,  58)
 
+# Colours that keep their own hue under a caste dye: the emitter teal and the
+# gold trim. Brass is defined by the caller, so it is added there.
+$script:FixedColours = @($script:PlateGlow)
+
 <# A filled circle, in canvas fractions. #>
 function Dot {
     param($g, [int]$S, [single]$cx, [single]$cy, [single]$r, [System.Drawing.Color]$Color)
-    $pen = New-Object System.Drawing.Pen($script:Outline, [single]($S * 0.020))
+    $pen = New-Object System.Drawing.Pen((Ink $script:Outline), [single]($S * 0.020))
     try { $g.DrawEllipse($pen, (($cx - $r) * $S), (($cy - $r) * $S), ($r * 2 * $S), ($r * 2 * $S)) }
     finally { $pen.Dispose() }
-    $b = New-Object System.Drawing.SolidBrush($Color)
+    $b = New-Object System.Drawing.SolidBrush((Ink $Color))
     try { $g.FillEllipse($b, (($cx - $r) * $S), (($cy - $r) * $S), ($r * 2 * $S), ($r * 2 * $S)) }
     finally { $b.Dispose() }
 }

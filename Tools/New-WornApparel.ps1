@@ -96,10 +96,10 @@ function Plate {
     $arr = @()
     foreach ($p in $Pts) { $arr += New-Object System.Drawing.PointF([single]($p[0] * $S), [single]($p[1] * $S)) }
     $poly = [System.Drawing.PointF[]]$arr
-    $pen = New-Object System.Drawing.Pen($script:Outline, [single]($S * $OutlineW))
+    $pen = New-Object System.Drawing.Pen((Ink $script:Outline), [single]($S * $OutlineW))
     $pen.LineJoin = [System.Drawing.Drawing2D.LineJoin]::Round
     try { $g.DrawPolygon($pen, $poly) } finally { $pen.Dispose() }
-    $b = New-Object System.Drawing.SolidBrush($Color)
+    $b = New-Object System.Drawing.SolidBrush((Ink $Color))
     try { $g.FillPolygon($b, $poly) } finally { $b.Dispose() }
 }
 
@@ -194,10 +194,16 @@ function Draw-DuroArmor {
 # and the shared palette. Split out purely for size.
 . (Join-Path $PSScriptRoot 'WornPieces.ps1')
 
+# Gold trim keeps its own colour under a caste dye, same as the emitter teal.
+# MUST come after WornPieces is sourced - $PlateGlow is defined there, and
+# building the list earlier silently produced a one-element array under
+# StrictMode's less strict moods and a hard error under this one.
+$script:FixedColours = @($script:PlateGlow, $Brass)
+
 $Pieces = @{
     'RR_DuroArmor'   = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_DuroArmor/RR_DuroArmor';     Draw = ${function:Draw-DuroArmor} }
-    'RR_RecoilArmor' = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_RecoilArmor/RR_RecoilArmor'; Draw = ${function:Draw-RecoilArmor} }
-    'RR_PulseArmor'  = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_PulseArmor/RR_PulseArmor';   Draw = ${function:Draw-PulseArmor} }
+    'RR_RecoilArmor' = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_RecoilArmor/RR_RecoilArmor'; Draw = ${function:Draw-RecoilArmor}; Masked = $true }
+    'RR_PulseArmor'  = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_PulseArmor/RR_PulseArmor';   Draw = ${function:Draw-PulseArmor}; Masked = $true }
     'RR_ScarabSkin'  = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_ScarabSkin/RR_ScarabSkin';   Draw = ${function:Draw-ScarabSkin} }
     'RR_GhostCloak'  = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_GhostCloak/RR_GhostCloak';   Draw = ${function:Draw-GhostCloak} }
 }
@@ -231,6 +237,20 @@ foreach ($name in $Pieces.Keys) {
                 Save-Worn $c.Bmp ("{0}_{1}_{2}" -f $piece.Path, $body, $facing)
                 $made++
             } finally { $c.G.Dispose(); $c.Bmp.Dispose() }
+
+            # The mask is the SAME drawing with every colour flattened to dyed or
+            # fixed, so it cannot drift out of register with the sprite - which is
+            # the failure a hand-painted mask invites. Named <sprite>m, which is
+            # what Graphic_Multi.Init looks for when no maskPath is given.
+            if ($piece.ContainsKey('Masked') -and $piece.Masked) {
+                $script:MaskMode = $true
+                $m = New-Canvas 256
+                try {
+                    & $piece.Draw $m.G $m.S $box $facing
+                    Save-Worn $m.Bmp ("{0}_{1}_{2}m" -f $piece.Path, $body, $facing)
+                    $made++
+                } finally { $m.G.Dispose(); $m.Bmp.Dispose(); $script:MaskMode = $false }
+            }
         }
     }
     Write-Host ("  + {0}  ({1} variants)" -f $name, ($Bodies.Count * 3)) -ForegroundColor Green
