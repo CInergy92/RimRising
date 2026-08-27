@@ -1219,10 +1219,15 @@ four facings are derived by rotating a single position:
 
     north (r, f)   east (f, -r)   south (-r, -f)   west (-f, r)
 
+**Verified in play** — the derived offsets put the turrets where they belong on all
+four facings.
+
 ### Still to do
 
-- Worn apparel: all drawn. Alignment still unverified in play for the Child body
-  type (interpolated from Thin, never measured) and for the starShell.
+- Worn apparel: all drawn, and the caste tint is confirmed in play. Alignment is
+  still unverified for the Child body type (that row is interpolated from Thin and
+  was never measured) and for the starShell, which is gated behind the exosuit
+  framework.
 - Storyteller portrait and `About/Preview.png`.
 
 ---

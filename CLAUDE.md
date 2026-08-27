@@ -439,7 +439,9 @@ how good the painting is, it is judged on whether it sits on the body. ControlNe
 moves edges by a few pixels - invisible on an item icon, fatal on a sprite that has
 to register with a shoulder.
 
-Apparel and pawn-worn sizes are still unverified. Measure at Milestone 4.
+The body boxes above are confirmed in play for the adult types, tint included. **Child
+remains the one unverified row** - it was interpolated from Thin rather than measured,
+because the sample garment shipped no child variant.
 
 ---
 
