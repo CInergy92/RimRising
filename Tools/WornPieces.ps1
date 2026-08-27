@@ -20,6 +20,33 @@ $script:Crimson   = [System.Drawing.Color]::FromArgb(255, 146,  40,  38)
 $script:CrimsonDk = [System.Drawing.Color]::FromArgb(255,  92,  26,  26)
 $script:CrimsonHi = [System.Drawing.Color]::FromArgb(255, 178,  56,  50)
 $script:Glow      = [System.Drawing.Color]::FromArgb(255, 122, 168, 190)
+
+# PLATE ARMOUR IS TINTED, SO ITS BASE MUST BE NEARLY UNCOLOURED.
+#
+# This is the reason a caste-coloured suit came out as a dark red slab in game.
+# CompColorable does not replace the texture's colour, it MULTIPLIES: the cutout
+# shader takes texture x drawColor per channel. A crimson base of (146,40,38)
+# multiplied by a caste dye can only ever get darker and redder, so a Gold's
+# plate went muddy brown, every Color looked like every other Color, and the
+# panel detail disappeared into the dark.
+#
+# A light neutral base fixes it arithmetically: (206,202,194) x a gold dye IS
+# gold, x a blue dye IS blue. This is why vanilla's dyeable apparel textures are
+# near-white.
+#
+# The comic reference points the same way - the suit there is tan-grey plating
+# with teal emitters, not a red suit.
+#
+# NOT shared with the starShell, which keeps $Crimson: it is a fixed-livery
+# machine rather than caste-coloured apparel, so a saturated base is correct
+# there.
+$script:PlateBase = [System.Drawing.Color]::FromArgb(255, 206, 202, 194)
+$script:PlateDark = [System.Drawing.Color]::FromArgb(255, 148, 146, 141)
+$script:PlateHi   = [System.Drawing.Color]::FromArgb(255, 232, 229, 222)
+# The emitter teal from the comic panel. It tints along with everything else -
+# keeping it a fixed colour needs useWornGraphicMask and a mask texture per
+# facing, which is a separate job.
+$script:PlateGlow = [System.Drawing.Color]::FromArgb(255, 104, 206, 200)
 $script:Black     = [System.Drawing.Color]::FromArgb(255,  30,  31,  35)
 $script:BlackHi   = [System.Drawing.Color]::FromArgb(255,  52,  54,  60)
 $script:Cloth     = [System.Drawing.Color]::FromArgb(255,  96, 102,  98)
@@ -60,10 +87,10 @@ function Draw-RecoilPlate {
     $legIn = $w * 0.10
     Plate $g $S @(
         @(($x0 + $legIn), $waist), @(($mid - ($w * 0.04)), $waist),
-        @(($mid - ($w * 0.05)), $y1), @(($x0 + $legIn - ($w * 0.01)), $y1)) $script:CrimsonDk
+        @(($mid - ($w * 0.05)), $y1), @(($x0 + $legIn - ($w * 0.01)), $y1)) $script:PlateDark
     Plate $g $S @(
         @(($mid + ($w * 0.04)), $waist), @(($x1 - $legIn), $waist),
-        @(($x1 - $legIn + ($w * 0.01)), $y1), @(($mid + ($w * 0.05)), $y1)) $script:CrimsonDk
+        @(($x1 - $legIn + ($w * 0.01)), $y1), @(($mid + ($w * 0.05)), $y1)) $script:PlateDark
 
     Plate $g $S @(
         @($mid, ($y0 + ($h * 0.05))),
@@ -73,7 +100,7 @@ function Draw-RecoilPlate {
         @($mid, ($waist + ($h * 0.06))),
         @(($x0 + ($w * 0.10)), $waist),
         @(($x0 + ($w * 0.02)), ($y0 + ($h * 0.34))),
-        @(($x0 + ($w * 0.06)), ($y0 + ($h * 0.14)))) $script:Crimson
+        @(($x0 + ($w * 0.06)), ($y0 + ($h * 0.14)))) $script:PlateBase
 
     if ($Facing -eq 'east') {
         # One pauldron and a plain flank. No centre ridge - you would not see it,
@@ -82,9 +109,9 @@ function Draw-RecoilPlate {
             @(($x0 - ($w * 0.06)), ($y0 + ($h * 0.10))),
             @(($x0 + ($w * 0.46)), ($y0 + ($h * 0.01))),
             @(($x0 + ($w * 0.50)), ($y0 + ($h * 0.22))),
-            @(($x0 - ($w * 0.02)), ($y0 + ($h * 0.26)))) $script:CrimsonDk
+            @(($x0 - ($w * 0.02)), ($y0 + ($h * 0.26)))) $script:PlateDark
         Bar $g $S ($x0 + ($w * 0.12)) ($y0 + ($h * 0.36)) ($x1 - ($w * 0.10)) ($y0 + ($h * 0.36)) ($h * 0.030) $Brass
-        if ($Pulse) { Dot $g $S ($mid + ($w * 0.10)) ($y0 + ($h * 0.30)) ($w * 0.10) $script:Glow }
+        if ($Pulse) { Dot $g $S ($mid + ($w * 0.10)) ($y0 + ($h * 0.30)) ($w * 0.10) $script:PlateGlow }
         return
     }
 
@@ -92,13 +119,21 @@ function Draw-RecoilPlate {
     # sides; without them this is just another breastplate.
     foreach ($side in @(-1, 1)) {
         $ex = if ($side -lt 0) { $x0 } else { $x1 }
-        $o = $w * 0.13 * $side
+        # MEASURED, NOT GUESSED. At 0.13 the pauldrons put ink 0.06 of the canvas
+        # outside the body box on a Male and 0.09 on a Fat or Hulk, making the
+        # suit 31% wider than the pawn wearing it - which is what read as blocks
+        # floating beside the body rather than armour on it. duroArmor, which
+        # looks right in game, overhangs by 0.03. Matching that.
+        #
+        # The pauldrons stay the silhouette; they now get their presence from
+        # rising higher off the shoulder instead of jutting sideways.
+        $o = $w * 0.075 * $side
         Plate $g $S @(
             @(($ex + $o), ($y0 + ($h * 0.12))),
-            @(($ex - ($o * 0.35)), ($y0 - ($h * 0.01))),
+            @(($ex - ($o * 0.35)), ($y0 - ($h * 0.045))),
             @(($ex - ($o * 0.75)), ($y0 + ($h * 0.20))),
-            @(($ex + ($o * 0.55)), ($y0 + ($h * 0.26)))) $script:CrimsonDk
-        Bar $g $S ($ex + $o) ($y0 + ($h * 0.115)) ($ex - ($o * 0.35)) ($y0 - ($h * 0.005)) ($h * 0.020) $Brass
+            @(($ex + ($o * 0.55)), ($y0 + ($h * 0.26)))) $script:PlateDark
+        Bar $g $S ($ex + $o) ($y0 + ($h * 0.115)) ($ex - ($o * 0.35)) ($y0 - ($h * 0.040)) ($h * 0.020) $Brass
     }
 
     if ($Pulse) {
@@ -110,7 +145,7 @@ function Draw-RecoilPlate {
                 @(($sx - ($w * 0.05)), ($y0 + ($h * 0.16))),
                 @(($sx + ($w * 0.05)), ($y0 + ($h * 0.16))),
                 @(($sx + ($w * 0.05)), ($y0 + ($h * 0.30))),
-                @(($sx - ($w * 0.05)), ($y0 + ($h * 0.30)))) $script:CrimsonDk
+                @(($sx - ($w * 0.05)), ($y0 + ($h * 0.30)))) $script:PlateDark
         }
     }
 
@@ -119,30 +154,30 @@ function Draw-RecoilPlate {
             @($mid, ($y0 + ($h * 0.10))),
             @(($mid + ($w * 0.09)), ($y0 + ($h * 0.26))),
             @($mid, $waist),
-            @(($mid - ($w * 0.09)), ($y0 + ($h * 0.26)))) $script:CrimsonHi
+            @(($mid - ($w * 0.09)), ($y0 + ($h * 0.26)))) $script:PlateHi
         Plate $g $S @(
             @($mid, ($y0 + ($h * 0.02))),
             @(($mid + ($w * 0.11)), ($y0 + ($h * 0.09))),
             @($mid, ($y0 + ($h * 0.15))),
             @(($mid - ($w * 0.11)), ($y0 + ($h * 0.09)))) $Brass
-        if ($Pulse) { Dot $g $S $mid ($y0 + ($h * 0.30)) ($w * 0.11) $script:Glow }
+        if ($Pulse) { Dot $g $S $mid ($y0 + ($h * 0.30)) ($w * 0.11) $script:PlateGlow }
         foreach ($f in @(-0.18, 0.0, 0.18)) {
             $tx = $mid + ($w * $f)
             Plate $g $S @(
                 @(($tx - ($w * 0.07)), ($waist - ($h * 0.01))),
                 @(($tx + ($w * 0.07)), ($waist - ($h * 0.01))),
                 @(($tx + ($w * 0.05)), ($waist + ($h * 0.13))),
-                @(($tx - ($w * 0.05)), ($waist + ($h * 0.13)))) $script:CrimsonDk
+                @(($tx - ($w * 0.05)), ($waist + ($h * 0.13)))) $script:PlateDark
         }
     }
     else {
         # Back: spine rib and two fastening bands, deliberately plainer. That is
         # how you tell at a glance which way a pawn is facing.
-        Bar $g $S $mid ($y0 + ($h * 0.06)) $mid ($waist + ($h * 0.02)) ($w * 0.07) $script:CrimsonDk
+        Bar $g $S $mid ($y0 + ($h * 0.06)) $mid ($waist + ($h * 0.02)) ($w * 0.07) $script:PlateDark
         foreach ($f in @(0.22, 0.38)) {
             Bar $g $S ($x0 + ($w * 0.10)) ($y0 + ($h * $f)) ($x1 - ($w * 0.10)) ($y0 + ($h * $f)) ($h * 0.024) $Brass
         }
-        if ($Pulse) { Dot $g $S $mid ($y0 + ($h * 0.30)) ($w * 0.09) $script:Glow }
+        if ($Pulse) { Dot $g $S $mid ($y0 + ($h * 0.30)) ($w * 0.09) $script:PlateGlow }
     }
 }
 
