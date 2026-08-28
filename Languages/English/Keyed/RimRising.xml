@@ -45,5 +45,8 @@
   <RR_StatTraumaSuiteDesc>The suit injects a stimulant on its own when the wearer starts bleeding badly or is in serious pain, and will not dose again until the last one wears off. It synthesises a replacement dose every {0}.
 
 The suit also seals wounds continuously while worn, which is a separate effect and does not run out.</RR_StatTraumaSuiteDesc>
+  <!-- The Carver's ordinary trade: restoration rather than crossing a Color. -->
+  <RR_CarverRegrewPart>{PAWN}'s {PART} has been regrown.</RR_CarverRegrewPart>
+  <RR_CarverRepairedScar>{PAWN}'s {INJURY} has been carved away.</RR_CarverRepairedScar>
 
 </LanguageData>

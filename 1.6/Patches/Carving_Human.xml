@@ -21,6 +21,12 @@
     <success>Always</success>
     <xpath>/Defs/ThingDef[defName="Human"]/recipes</xpath>
     <value>
+      <!--
+        Restoration first: it is the Carver's ordinary trade and the one a player
+        will reach for far more often than crossing a Color.
+      -->
+      <li>RR_RegrowBodyPart</li>
+      <li>RR_RepairScarring</li>
       <li>RR_Carve_Gold</li>
       <li>RR_Carve_Bronzie</li>
       <li>RR_Carve_Silver</li>

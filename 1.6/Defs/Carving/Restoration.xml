@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--
+    ==================== the Carver's ORDINARY trade ==========================
+
+    Carving in this mod started as one thing: change someone's Color. That
+    inverts the source. The wiki is explicit that crossing Colors is the rare
+    extreme, and that what a Carver actually does all day is restoration -
+    "regrowing or reattaching lost body parts, as well as cosmetic alterations
+    and surgeries" - gated by being "prohibitively expensive to all colors
+    except Gold". Expense, not rarity.
+
+    That gap mattered because the armour now works: a pulse or recoil suit keeps
+    its wearer alive through a fight and hands you back somebody extremely
+    wounded and possibly missing pieces. Yellows patch them up. Violet Carvers
+    make them whole again. Only the first half existed.
+
+    CARVERS ARE VIOLETS, NOT YELLOWS. Worth stating because it is easy to assume
+    otherwise: Yellows are the Society's physicians, and every Carver named in
+    the source is a Violet - the caste engineered for artistry, working in flesh
+    instead of stone. Enforced by RR_CarverWork below, which is checked in
+    Bill.PawnAllowedToStartAnew.
+  -->
+
+  <!-- =============================== resFlesh ============================== -->
+  <!--
+    "A medicinal substance applied to the site of a wound to stop bleeding and
+    help repair damaged tissue... a sprayable material made of microorganisms
+    that scramble onto pores and tighten to make a flesh-like antibacterial
+    coating."
+
+    So it is a TENDING material, not a healing serum - which is the useful
+    correction, because the obvious assumption is that it removes scars. It does
+    not. It sits between industrial medicine (potency 1.00) and glitterworld
+    (1.60) and is the thing a field medic sprays on somebody the armour just
+    saved.
+  -->
+  <ThingDef ParentName="MedicineBase">
+    <defName>RR_ResFlesh</defName>
+    <label>resFlesh</label>
+    <description>A canister of resFlesh. The contents are alive in the way a culture is alive - a suspension of engineered microorganisms that, sprayed across an open wound, crawl into the pores at its edges and lock together into a sealed antibacterial skin.
+
+It closes a wound and keeps it closed, and it will not let anything grow in there. What it will not do is put back what was taken out. For that you need a Carver, and a Carver's fee.</description>
+    <possessionCount>3</possessionCount>
+    <techLevel>Spacer</techLevel>
+    <graphicData>
+      <texPath>Things/Item/Resource/RR_ResFlesh</texPath>
+      <graphicClass>Graphic_StackCount</graphicClass>
+      <drawSize>0.85</drawSize>
+    </graphicData>
+    <statBases>
+      <MarketValue>32</MarketValue>
+      <Mass>0.35</Mass>
+      <Flammability>0.4</Flammability>
+      <!-- Between industrial 1.00 and glitterworld 1.60. Better at closing a
+           wound than a suture kit, well short of an archotech nanite gel. -->
+      <MedicalPotency>1.30</MedicalPotency>
+      <MedicalQualityMax>1.15</MedicalQualityMax>
+      <DeteriorationRate>2</DeteriorationRate>
+      <WorkToMake>900</WorkToMake>
+    </statBases>
+    <costList>
+      <MedicineIndustrial>1</MedicineIndustrial>
+      <Neutroamine>2</Neutroamine>
+    </costList>
+    <recipeMaker>
+      <workSpeedStat>DrugSynthesisSpeed</workSpeedStat>
+      <workSkill>Intellectual</workSkill>
+      <recipeUsers>
+        <li>DrugLab</li>
+      </recipeUsers>
+      <researchPrerequisite>RR_Carving</researchPrerequisite>
+      <skillRequirements>
+        <Crafting>6</Crafting>
+        <Intellectual>6</Intellectual>
+      </skillRequirements>
+      <bulkRecipeCount>4</bulkRecipeCount>
+      <displayPriority>2100</displayPriority>
+    </recipeMaker>
+    <tradeTags>
+      <li>ExoticMisc</li>
+    </tradeTags>
+  </ThingDef>
+
+  <!-- ========================= restoration surgery ========================= -->
+  <!--
+    Both of these are Violet-only, both consume a Carver's kit, and both are
+    expensive rather than dangerous - the opposite balance to a Color carving,
+    which is cheap in materials and likely to kill you. That is the distinction
+    the source draws and it is worth preserving in the numbers.
+  -->
+
+  <RecipeDef Abstract="True" Name="RR_RestoreBase" ParentName="SurgeryFlesh">
+    <workAmount>18000</workAmount>
+    <hideBodyPartNames>true</hideBodyPartNames>
+    <anesthetize>true</anesthetize>
+    <researchPrerequisite>RR_Carving</researchPrerequisite>
+    <!-- Ordinary work for a Carver, so far safer than crossing a Color. -->
+    <surgerySuccessChanceFactor>0.92</surgerySuccessChanceFactor>
+    <deathOnFailedSurgeryChance>0.02</deathOnFailedSurgeryChance>
+    <skillRequirements>
+      <Medicine>10</Medicine>
+    </skillRequirements>
+    <modExtensions>
+      <li Class="RimRising.RR_CarverWork" />
+    </modExtensions>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_RestoreBase">
+    <defName>RR_RegrowBodyPart</defName>
+    <label>regrow body part</label>
+    <description>Grow a replacement for a part this person has lost, from their own tissue, and attach it. Slow, ruinously expensive, and the reason a Gold who loses a hand in the morning has one again by the end of the month.</description>
+    <jobString>Regrowing body part.</jobString>
+    <workerClass>RimRising.Recipe_RegrowPart</workerClass>
+    <targetsBodyPart>true</targetsBodyPart>
+    <successfullyRemovedHediffMessage>{0} has regrown {1}'s {2}.</successfullyRemovedHediffMessage>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>RR_CarvingKit</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>RR_ResFlesh</li>
+          </thingDefs>
+        </filter>
+        <count>4</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>RR_CarvingKit</li>
+        <li>RR_ResFlesh</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_RestoreBase">
+    <defName>RR_RepairScarring</defName>
+    <label>repair scarring</label>
+    <description>Cut out an old injury and rebuild the tissue around it so that nothing shows. A Peerless does not carry the record of a fight they won, and this is how that is arranged.</description>
+    <jobString>Repairing scarring.</jobString>
+    <workerClass>RimRising.Recipe_RepairScar</workerClass>
+    <targetsBodyPart>false</targetsBodyPart>
+    <workAmount>12000</workAmount>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>RR_CarvingKit</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>RR_ResFlesh</li>
+          </thingDefs>
+        </filter>
+        <count>2</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>RR_CarvingKit</li>
+        <li>RR_ResFlesh</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+  </RecipeDef>
+
+</Defs>

@@ -156,6 +156,15 @@
     <skillRequirements>
       <Medicine>12</Medicine>
     </skillRequirements>
+    <!--
+      Violet-only, same as the restoration surgeries. Every Carver named in the
+      source is a Violet, and Bill.PawnAllowedToStartAnew is where that is
+      enforced - see Source/RimRising/CarverRestoration.cs. A colony with no
+      Violet simply cannot carve, which is the intended wall.
+    -->
+    <modExtensions>
+      <li Class="RimRising.RR_CarverWork" />
+    </modExtensions>
     <ingredients>
       <li>
         <filter>
