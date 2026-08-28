@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--
+    ============================== Carvelings ==============================
+
+    "Carvers are also capable of cloning new tissue from an existing source, and
+    are able to use this technology to create new lifeforms by combining DNA
+    from multiple donors. Many Golds commission Carvers to develop new creatures
+    for them, which are colloquially known as Carvelings."
+
+    OPTIONAL AND NEVER REQUIRED. This whole folder is loaded only when Alpha
+    Animals is active, via IfModActive="sarg.alphaanimals" in LoadFolders.xml.
+    Alpha Animals is deliberately NOT a modDependency: it would be an eighth
+    required subscription, and Carvelings are flavour on top of a mod that works
+    without them.
+
+    ADDITIVE ONLY - NOTHING HERE TOUCHES ALPHA ANIMALS' OWN DEFS.
+
+    The tempting version of this feature is to re-describe a handful of its
+    creatures as Society-made Carvelings. That would be wrong for the same reason
+    patching a vanilla precept is wrong: it rewrites another mod's content for
+    the player's ENTIRE game, including factions, biomes and events that have
+    nothing to do with RimRising. A player would find "commissioned by a Gold
+    house" written on an animal wandering a map where no Gold has ever existed.
+
+    So instead a Carver GROWS one. The creature that comes out is Alpha Animals'
+    own, unmodified and still theirs everywhere else; what RimRising adds is a
+    route to it that only a Violet can walk.
+  -->
+
+  <!--
+    A growth vat is an ordinary hatcher. That is not a shortcut - a vat that
+    ticks down and produces one creature is exactly the CompHatcher contract, and
+    reusing it means the thing saves, loads, can be hauled, sold and destroyed
+    with no new code at all.
+
+    Three of them rather than one random pick, because choosing what to grow is
+    the interesting decision. A Gold commissions a specific thing.
+  -->
+  <ThingDef Name="RR_CarvelingVatBase" Abstract="True" ParentName="ResourceBase">
+    <thingClass>ThingWithComps</thingClass>
+    <description>A sealed growth vat. Inside, tissue cloned from several donors is being persuaded into a shape that never existed before. Somebody with a great deal of money asked for this.</description>
+    <techLevel>Spacer</techLevel>
+    <tickerType>Rare</tickerType>
+    <stackLimit>5</stackLimit>
+    <graphicData>
+      <texPath>Things/Item/Resource/RR_CarvelingVat</texPath>
+      <graphicClass>Graphic_StackCount</graphicClass>
+      <drawSize>0.90</drawSize>
+    </graphicData>
+    <statBases>
+      <MaxHitPoints>60</MaxHitPoints>
+      <Mass>8</Mass>
+      <Flammability>0.6</Flammability>
+      <DeteriorationRate>4</DeteriorationRate>
+      <MarketValue>420</MarketValue>
+    </statBases>
+    <thingCategories>
+      <li>ResourcesRaw</li>
+    </thingCategories>
+    <tradeTags>
+      <li>ExoticMisc</li>
+    </tradeTags>
+    <comps>
+      <li Class="CompProperties_Forbiddable" />
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="RR_CarvelingVatBase">
+    <defName>RR_CarvelingVat_Sylph</defName>
+    <label>carveling vat (sylph)</label>
+    <comps>
+      <li Class="CompProperties_Hatcher">
+        <hatcherDaystoHatch>8</hatcherDaystoHatch>
+        <hatcherPawn>AA_AuroraSylph</hatcherPawn>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="RR_CarvelingVatBase">
+    <defName>RR_CarvelingVat_Lion</defName>
+    <label>carveling vat (lion)</label>
+    <comps>
+      <li Class="CompProperties_Hatcher">
+        <hatcherDaystoHatch>10</hatcherDaystoHatch>
+        <hatcherPawn>AA_ArcticLion</hatcherPawn>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="RR_CarvelingVatBase">
+    <defName>RR_CarvelingVat_Animalisk</defName>
+    <label>carveling vat (animalisk)</label>
+    <comps>
+      <li Class="CompProperties_Hatcher">
+        <hatcherDaystoHatch>14</hatcherDaystoHatch>
+        <hatcherPawn>AA_Animalisk</hatcherPawn>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <!--
+    Growing one is Carver's work like any other, so it carries RR_CarverWork and
+    a Violet has to do it. It is a BENCH recipe rather than a surgery, so the
+    gate runs through the same Bill.PawnAllowedToStartAnew hook - which is what
+    makes that hook the right one: it covers production bills and medical bills
+    alike, and nothing had to be written twice.
+  -->
+  <RecipeDef Abstract="True" Name="RR_GrowCarvelingBase">
+    <workSpeedStat>DrugSynthesisSpeed</workSpeedStat>
+    <workSkill>Intellectual</workSkill>
+    <effectWorking>Cook</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <researchPrerequisite>RR_Carving</researchPrerequisite>
+    <recipeUsers>
+      <li>FabricationBench</li>
+    </recipeUsers>
+    <skillRequirements>
+      <Intellectual>10</Intellectual>
+      <Crafting>8</Crafting>
+    </skillRequirements>
+    <modExtensions>
+      <li Class="RimRising.RR_CarverWork" />
+    </modExtensions>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_GrowCarvelingBase">
+    <defName>RR_GrowCarveling_Sylph</defName>
+    <label>grow carveling (sylph)</label>
+    <description>Splice a decorative creature out of donor tissue and seal it in a vat to finish. It will be beautiful and useless, which is the point of it.</description>
+    <jobString>Growing a carveling.</jobString>
+    <workAmount>14000</workAmount>
+    <ingredients>
+      <li>
+        <filter><thingDefs><li>RR_CarvingKit</li></thingDefs></filter>
+        <count>1</count>
+      </li>
+      <li>
+        <filter><thingDefs><li>RR_ResFlesh</li></thingDefs></filter>
+        <count>6</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>RR_CarvingKit</li>
+        <li>RR_ResFlesh</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <products>
+      <RR_CarvelingVat_Sylph>1</RR_CarvelingVat_Sylph>
+    </products>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_GrowCarvelingBase">
+    <defName>RR_GrowCarveling_Lion</defName>
+    <label>grow carveling (lion)</label>
+    <description>Splice a large predator out of donor tissue and seal it in a vat to finish. Commissioned by houses who want something at the door that a rival will recognise as deliberate.</description>
+    <jobString>Growing a carveling.</jobString>
+    <workAmount>20000</workAmount>
+    <ingredients>
+      <li>
+        <filter><thingDefs><li>RR_CarvingKit</li></thingDefs></filter>
+        <count>1</count>
+      </li>
+      <li>
+        <filter><thingDefs><li>RR_ResFlesh</li></thingDefs></filter>
+        <count>10</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>RR_CarvingKit</li>
+        <li>RR_ResFlesh</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <products>
+      <RR_CarvelingVat_Lion>1</RR_CarvelingVat_Lion>
+    </products>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_GrowCarvelingBase">
+    <defName>RR_GrowCarveling_Animalisk</defName>
+    <label>grow carveling (animalisk)</label>
+    <description>Splice something that should not exist out of donor tissue and seal it in a vat to finish. The Carver who takes this commission does not ask what it is for, and is paid partly for not asking.</description>
+    <jobString>Growing a carveling.</jobString>
+    <workAmount>28000</workAmount>
+    <ingredients>
+      <li>
+        <filter><thingDefs><li>RR_CarvingKit</li></thingDefs></filter>
+        <count>2</count>
+      </li>
+      <li>
+        <filter><thingDefs><li>RR_ResFlesh</li></thingDefs></filter>
+        <count>14</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>RR_CarvingKit</li>
+        <li>RR_ResFlesh</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <products>
+      <RR_CarvelingVat_Animalisk>1</RR_CarvelingVat_Animalisk>
+    </products>
+  </RecipeDef>
+
+</Defs>
