@@ -32,9 +32,35 @@ namespace RimRising
 
             if (!RR_CasteUtility.AreDifferentColors(first, second)) { return; }
 
+            // A Carver's work overrides the engineering. "While illegal under The
+            // Society, carvers can also modify clients' reproductive systems to
+            // facilitate cross-color reproduction" - so this block is a statement
+            // about untouched bodies, not a law of nature.
+            //
+            // EITHER partner is enough. The surgery makes one body compatible with
+            // the other; it does not need doing twice.
+            if (HasCarvedFertility(first) || HasCarvedFertility(second)) { return; }
+
             __result = "RR_CannotConceiveAcrossColors".Translate(
                 first.Named("PAWN1"),
                 second.Named("PAWN2"));
+        }
+
+        private static bool HasCarvedFertility(Pawn p)
+        {
+            return p?.health?.hediffSet?.GetFirstHediffOfDef(
+                RR_FertilityDefOf.RR_CrossColorFertility) != null;
+        }
+    }
+
+    [DefOf]
+    public static class RR_FertilityDefOf
+    {
+        public static HediffDef RR_CrossColorFertility;
+
+        static RR_FertilityDefOf()
+        {
+            DefOfHelper.EnsureInitializedInCtor(typeof(RR_FertilityDefOf));
         }
     }
 

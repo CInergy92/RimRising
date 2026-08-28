@@ -175,4 +175,85 @@ It closes a wound and keeps it closed, and it will not let anything grow in ther
     </fixedIngredientFilter>
   </RecipeDef>
 
+  <!-- ================== the illegal one: crossing Colors =================== -->
+  <!--
+    "While illegal under The Society, carvers can also modify clients'
+    reproductive systems to facilitate cross-color reproduction."
+
+    This is the one Carver service the Society executes people over, and it is
+    the counterpart to the global conception block in
+    Source/RimRising/CasteRelationsPatches.cs - whose own comment already said
+    that getting a child out of a mixed pairing takes a Carver, not permission.
+    This is that Carver.
+
+    EITHER partner having it is enough; the surgery makes one body compatible
+    with the other rather than meeting in the middle.
+  -->
+  <HediffDef>
+    <defName>RR_CrossColorFertility</defName>
+    <label>carved fertility</label>
+    <labelNoun>carved fertility</labelNoun>
+    <description>This person's reproductive system has been rebuilt by a Carver so that it will accept another Color. It is meticulous work and undetectable without looking for it, which is fortunate, because the Society's penalty for having had it done is death.</description>
+    <defaultLabelColor>(0.72, 0.60, 0.82)</defaultLabelColor>
+    <isBad>false</isBad>
+    <scenarioCanAdd>false</scenarioCanAdd>
+    <maxSeverity>1.0</maxSeverity>
+    <initialSeverity>1</initialSeverity>
+    <everCurableByItem>false</everCurableByItem>
+  </HediffDef>
+
+  <RecipeDef ParentName="RR_RestoreBase">
+    <defName>RR_CarveReproduction</defName>
+    <label>carve reproduction</label>
+    <description>Rebuild a patient's reproductive system so that it will accept a different Color. The Society treats this as a capital crime, on the grounds that the Colors staying separate is the entire architecture, and anyone bridging it is attacking the architecture.</description>
+    <jobString>Carving reproduction.</jobString>
+    <workerClass>Recipe_AddHediff</workerClass>
+    <addsHediff>RR_CrossColorFertility</addsHediff>
+    <targetsBodyPart>false</targetsBodyPart>
+    <workAmount>20000</workAmount>
+    <!-- A capital crime in the setting, so it should read as one to any
+         ideoligion that cares. -->
+    <isViolation>true</isViolation>
+    <!--
+      EIGHTEEN, not vanilla's thirteen.
+
+      Vanilla's own sterilisation surgeries sit at minAllowedAge 13, so the
+      obvious move is to copy that number across. It is the wrong number here:
+      this mod's standing rule is that nothing sexual is applied to anyone under
+      18, and a reproductive modification is squarely inside that.
+
+      This does NOT contradict docs/DESIGN.md 8e, which says COLOR carving has
+      deliberately no age gate because the reference's central carving is
+      performed on a teenager. Different surgery, different subject.
+    -->
+    <minAllowedAge>18</minAllowedAge>
+    <incompatibleWithHediffTags>
+      <li>Sterilized</li>
+    </incompatibleWithHediffTags>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>RR_CarvingKit</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>RR_ResFlesh</li>
+          </thingDefs>
+        </filter>
+        <count>3</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>RR_CarvingKit</li>
+        <li>RR_ResFlesh</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+  </RecipeDef>
+
 </Defs>
