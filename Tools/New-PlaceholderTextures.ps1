@@ -39,6 +39,10 @@
 [CmdletBinding(SupportsShouldProcess)]
 param(
     [string] $ModRoot,
+    # DESTRUCTIVE. Rewrites placeholders over files that already exist. Every
+    # path in $GeneratedArtPrefixes is exempt even here, and that exemption is
+    # the only thing standing between this switch and the whole art set - keep it
+    # current when adding a generator.
     [switch] $Force,
     [switch] $IncludeModArt
 )
@@ -67,11 +71,31 @@ $texturesRoot = Join-Path $ModRoot 'Textures'
 $script:GeneratedArtPrefixes = @(
     'UI/Icons/Xenotypes'
     'UI/Icons/Genes'
+    # World/Biomes is owned by New-BiomeTextures.ps1 and must never take a
+    # placeholder. BiomeDef.texture is TILED across the planet by
+    # BiomeDef.DrawMaterial, so a labelled square with an outline and a
+    # transparent border does not read as "art missing" - it reads as black
+    # banding across whole regions of the world map, which is exactly how this
+    # got shipped once already.
+    'World/Biomes'
+    # Drug icons: Graphic_StackCount folders drawn by New-DrugIcons.ps1.
+    'Things/Item/Drug'
     'Things/Item/Equipment'
     'Things/Item/Health'
     'Things/Item/Resource/RR_Ionsteel'
     'Things/Projectile'
     'Things/Weapons'
+    # THE LIST WAS INCOMPLETE AND -Force ATE 135 FILES. Everything below owns
+    # real art too and was missing: the 138 worn sprites and their masks from
+    # New-WornApparel.ps1 plus the ControlNet item icons beside them, the
+    # Drachenjaeger's generated art, the gravBoot ascent sprite from
+    # New-GravAscent.ps1, and the storyteller portraits. A denylist that has to
+    # be remembered is a denylist that will be forgotten, so anything a
+    # generator or the art pipeline writes goes here on the day it is created.
+    'Things/Pawn/Humanlike/Apparel'
+    'Things/Vehicles'
+    'Things/Special'
+    'UI/HeroArt'
 )
 
 $script:SizeRules = @(
