@@ -76,6 +76,14 @@ namespace RimRising
             base.PostExposeData();
             Scribe_Values.Look(ref dosesRemaining, "RR_traumaDoses", -1);
             Scribe_Values.Look(ref rechargeProgress, "RR_traumaRecharge", 0);
+            // ticksToCheck is deliberately NOT scribed - but left at zero after a
+            // load, every suit in the colony evaluated on the same tick and then
+            // stayed in phase forever. A random phase spreads a squad's checks
+            // across the interval.
+            if (Scribe.mode == LoadSaveMode.PostLoadInit)
+            {
+                ticksToCheck = Rand.Range(1, CheckIntervalTicks);
+            }
         }
 
         public override void Notify_Equipped(Pawn pawn)

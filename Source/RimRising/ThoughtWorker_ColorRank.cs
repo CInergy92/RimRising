@@ -33,8 +33,10 @@ namespace RimRising
     /// </summary>
     public class ThoughtWorker_ColorRank : ThoughtWorker_Precept_Social
     {
-        // displayPriority points per rung of the ladder.
-        private const float PointsPerRung = 10f;
+        // displayPriority points per rung of the ladder. Internal because the
+        // equality worker below encodes the SAME ladder scale - a bare 10f there
+        // desynchronised silently the moment this constant moved.
+        internal const float PointsPerRung = 10f;
 
         // How far apart two Colors have to be, in rungs, to move up a magnitude
         // band. Distance only - the direction is applied separately below.
@@ -157,7 +159,7 @@ namespace RimRising
         {
             XenotypeDef xeno = RR_CasteIdentity.ColorOf(pawn);
             if (xeno == null) { return null; }
-            return xeno.displayPriority / 10f;
+            return xeno.displayPriority / ThoughtWorker_ColorRank.PointsPerRung;
         }
     }
 }

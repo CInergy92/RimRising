@@ -1,4 +1,3 @@
-using System.Linq;
 using HarmonyLib;
 using RimWorld;
 using Verse;
@@ -6,7 +5,18 @@ using Verse;
 namespace RimRising
 {
     /// <summary>
-    /// Keeps the Society's standing ladder to the caste that is allowed to climb it.
+    /// Keeps both of the Society's ladders to the castes allowed to climb them:
+    /// titles tagged RR_GoldTitle are refused to anyone who is not of the ruling
+    /// caste, and titles tagged RR_ServiceTitle are refused to anyone who IS. A
+    /// Gold is not made a Praetorian - the rank exists precisely as what the
+    /// Society offers the people it will never make Gold.
+    ///
+    /// ONE PREFIX FOR BOTH GATES, deliberately. These used to be two Harmony
+    /// prefix classes on the same method, each able to return false, with
+    /// nothing but reflection ordering deciding which ran first. The conditions
+    /// were mutually exclusive so it happened to work, but an ordering hazard
+    /// that happens to work is still an ordering hazard - merged, there is no
+    /// ordering to depend on.
     ///
     /// WHY HARMONY, WHEN A WORKER EXISTS
     ///
@@ -18,9 +28,9 @@ namespace RimRising
     ///
     /// WHAT THIS DOES NOT DO
     ///
-    /// It does not touch vanilla Empire titles, or any title from another mod. Only
-    /// titles tagged RR_GoldTitle - ours, from Defs/RoyalTitles - are gated, so an
-    /// Empire knighthood still works exactly as it always did for anyone.
+    /// It does not touch vanilla Empire titles, or any title from another mod.
+    /// Only titles carrying our two tags are gated, so an Empire knighthood still
+    /// works exactly as it always did for anyone.
     ///
     /// Removing a title is always allowed. Only granting one is checked.
     /// </summary>
@@ -28,24 +38,50 @@ namespace RimRising
     public static class Patch_Pawn_RoyaltyTracker_SetTitle
     {
         public const string GoldTitleTag = "RR_GoldTitle";
+        public const string ServiceTitleTag = "RR_ServiceTitle";
 
         public static bool Prefix(Pawn_RoyaltyTracker __instance, Faction faction, RoyalTitleDef title)
         {
             // Null means the title is being STRIPPED. Never block that - a Gold can
             // always be shamed out of a rank, and blocking removal would strand a
             // title on a pawn who has just lost it.
-            if (title == null) { return true; }
-            if (title.tags == null || !title.tags.Contains(GoldTitleTag)) { return true; }
+            if (title == null || title.tags == null) { return true; }
 
             Pawn pawn = __instance?.pawn;
             if (pawn == null) { return true; }
-            if (RR_XenotypeUtility.IsRulingCaste(pawn)) { return true; }
 
-            // Refuse, and say so. A silent skip here would look like the game had
-            // eaten a quest reward.
-            Messages.Message(
-                "RR_CannotHoldGoldTitle".Translate(pawn.Named("PAWN"), title.GetLabelCapFor(pawn).Named("TITLE")),
-                pawn, MessageTypeDefOf.RejectInput, historical: false);
+            bool refuse;
+            string messageKey;
+            if (title.tags.Contains(GoldTitleTag))
+            {
+                refuse = !RR_XenotypeUtility.IsRulingCaste(pawn);
+                messageKey = "RR_CannotHoldGoldTitle";
+            }
+            else if (title.tags.Contains(ServiceTitleTag))
+            {
+                refuse = RR_XenotypeUtility.IsRulingCaste(pawn);
+                messageKey = "RR_CannotHoldServiceTitle";
+            }
+            else
+            {
+                return true;
+            }
+
+            if (!refuse) { return true; }
+
+            // Refuse, and say so - a silent skip would look like the game had
+            // eaten a quest reward. NegativeEvent rather than RejectInput so the
+            // refusal survives in the message log, the faction is named so the
+            // player can tell WHICH reward was refused, and nothing is shown at
+            // all outside play: royal titles are also assigned during pawn
+            // generation, long before there is a screen to message.
+            if (Current.ProgramState == ProgramState.Playing)
+            {
+                Messages.Message(
+                    messageKey.Translate(pawn.Named("PAWN"), title.GetLabelCapFor(pawn).Named("TITLE"))
+                        + " (" + (faction?.Name ?? "?") + ")",
+                    pawn, MessageTypeDefOf.NegativeEvent, historical: false);
+            }
 
             return false;
         }

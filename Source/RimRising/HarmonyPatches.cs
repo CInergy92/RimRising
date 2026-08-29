@@ -16,7 +16,7 @@ namespace RimRising
         {
             var harmony = new Harmony("cinergy92.rimrising");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
-            Log.Message("[RimRising] Harmony patches applied.");
+            if (Prefs.DevMode) Log.Message("[RimRising] Harmony patches applied.");
         }
     }
 
@@ -97,7 +97,11 @@ namespace RimRising
         }
     }
 
-    /// <summary>Shared xenotype test, so both patches agree on who counts as Gold.</summary>
+    /// <summary>
+    /// Compatibility shim only: call sites across three files predate
+    /// RR_CasteIdentity and go through this name. It adds no behaviour, and new
+    /// code should call RR_CasteIdentity.IsRulingCaste directly.
+    /// </summary>
     public static class RR_XenotypeUtility
     {
         public static bool IsRulingCaste(Pawn pawn)

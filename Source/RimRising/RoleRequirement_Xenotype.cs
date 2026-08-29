@@ -73,13 +73,15 @@ namespace RimRising
                 return base.GetLabel(role);
             }
 
+            // Through the keyed strings, not hardcoded English - these were the
+            // only two user-facing strings in the mod that bypassed Languages/.
             if (xenotypes == null || xenotypes.Count == 0)
             {
-                return "Must be of a specific Color";
+                return "RR_RoleRequirement_AnyColor".Translate();
             }
 
             string names = string.Join(" or ", xenotypes.Where(x => x != null).Select(x => x.LabelCap.ToString()));
-            return "Must be " + names;
+            return "RR_RoleRequirement_Color".Translate(names.Named("COLORS"));
         }
     }
 }

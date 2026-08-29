@@ -23,7 +23,9 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <SteamLibrary>D:\SteamLibrary\steamapps</SteamLibrary>
+    <!-- Overridable so another machine or a CI runner can point at its own
+         library: dotnet build -p:SteamLibrary=... or an environment variable. -->
+    <SteamLibrary Condition="'$(SteamLibrary)' == ''">D:\SteamLibrary\steamapps</SteamLibrary>
     <RimWorldManaged>$(SteamLibrary)\common\RimWorld\RimWorldWin64_Data\Managed</RimWorldManaged>
     <!--
       Harmony ships with the Harmony mod rather than with the game. "Current" is

@@ -45,6 +45,25 @@ namespace RimRising
         // ordered most-specific first so a sub-strain wins over its parent.
         private static List<KeyValuePair<XenotypeDef, HashSet<GeneDef>>> colorGenes;
 
+        // The pack our own defs load from, resolved from a def we certainly own.
+        // Reference identity, so no string comparison and no casing question.
+        private static ModContentPack ownPack;
+        private static bool ownPackResolved;
+
+        /// <summary>
+        /// Drops every cached def reference. Defensive: a def-database reload in
+        /// the same process (dev mode, some frameworks' restart-free reloads)
+        /// replaces the def INSTANCES, and a cache holding the old ones makes
+        /// every reference comparison silently fail - which would switch off the
+        /// razor lock, the armour lock and the title gates all at once.
+        /// </summary>
+        public static void ResetCache()
+        {
+            colorGenes = null;
+            ownPack = null;
+            ownPackResolved = false;
+        }
+
         private static void EnsureBuilt()
         {
             if (colorGenes != null) { return; }
@@ -63,10 +82,22 @@ namespace RimRising
             colorGenes.Sort((a, b) => b.Value.Count.CompareTo(a.Value.Count));
         }
 
-        /// <summary>A Color is one of ours, keyed on the defName prefix.</summary>
+        /// <summary>
+        /// A Color is one of ours - meaning a xenotype THIS MOD loaded, tested by
+        /// which ModContentPack the def came from. The old test was a defName
+        /// prefix match on "RR_", which silently enrolled any other mod shipping
+        /// an RR_-prefixed xenotype into the Society's caste ladder, razor lock
+        /// and all. Two letters are not a namespace.
+        /// </summary>
         public static bool IsColor(XenotypeDef x)
         {
-            return x != null && x.defName != null && x.defName.StartsWith("RR_");
+            if (x == null) { return false; }
+            if (!ownPackResolved)
+            {
+                ownPack = RR_DefOf.RR_Gold?.modContentPack;
+                ownPackResolved = ownPack != null;
+            }
+            return ownPack != null && x.modContentPack == ownPack;
         }
 
         /// <summary>
@@ -102,7 +133,12 @@ namespace RimRising
             List<Gene> held = pawn.genes.GenesListForReading;
             if (held == null || held.Count == 0) { return null; }
 
-            HashSet<GeneDef> have = new HashSet<GeneDef>();
+            // One reusable set, not a fresh allocation: this runs inside
+            // SecondaryRomanceChanceFactor and the social thought workers, which
+            // the game calls constantly, and RimWorld's main sim is
+            // single-threaded so reuse is safe.
+            scratch.Clear();
+            HashSet<GeneDef> have = scratch;
             for (int i = 0; i < held.Count; i++)
             {
                 if (held[i]?.def != null) { have.Add(held[i].def); }
@@ -114,6 +150,8 @@ namespace RimRising
             }
             return null;
         }
+
+        private static readonly HashSet<GeneDef> scratch = new HashSet<GeneDef>();
 
         /// <summary>
         /// Whether this pawn passes as Gold - by birth or by carving.

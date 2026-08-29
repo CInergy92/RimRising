@@ -48,5 +48,11 @@ The suit also seals wounds continuously while worn, which is a separate effect a
   <!-- The Carver's ordinary trade: restoration rather than crossing a Color. -->
   <RR_CarverRegrewPart>{PAWN}'s {PART} has been regrown.</RR_CarverRegrewPart>
   <RR_CarverRepairedScar>{PAWN}'s {INJURY} has been carved away.</RR_CarverRepairedScar>
+  <!-- Role requirements, previously hardcoded English in RoleRequirement_Xenotype. -->
+  <RR_RoleRequirement_AnyColor>Must be of a specific Color</RR_RoleRequirement_AnyColor>
+  <RR_RoleRequirement_Color>Must be {COLORS}</RR_RoleRequirement_Color>
+
+  <RR_Setting_WidenFloor>Widen the xenogerm metabolism floor</RR_Setting_WidenFloor>
+  <RR_Setting_WidenFloorTip>Lowers the minimum total metabolism a xenogerm may have from -5 to -10, which several Colors need to be assemblable at all. This is a global tuning change: every gene assembler dialog in your game sees the new floor, including other mods'. Turn it off to restore the vanilla -5; takes effect immediately.</RR_Setting_WidenFloorTip>
 
 </LanguageData>

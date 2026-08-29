@@ -179,6 +179,17 @@ namespace RimRising
                 { "RR_Pink",     new Color(0.72f, 0.48f, 0.54f) },
                 { "RR_Red",      new Color(0.57f, 0.16f, 0.16f) },
                 { "RR_White",    new Color(0.80f, 0.80f, 0.78f) },
+                // Sub-strains dye as their parent Color. RR_CasteIdentity sorts
+                // sub-strains AHEAD of their parents on purpose, so a Lurcher
+                // resolves as RR_Gray_Lurcher, not RR_Gray - and without these
+                // entries the lookup missed and a Lurcher's plate went undyed
+                // while the Gray beside him coloured correctly.
+                { "RR_Green_FulgurBellator", new Color(0.34f, 0.50f, 0.34f) },
+                { "RR_Gray_Lurcher",         new Color(0.45f, 0.46f, 0.48f) },
+                { "RR_Obsidian_Stained",     new Color(0.20f, 0.20f, 0.23f) },
+                { "RR_Obsidian_Ascomanni",   new Color(0.20f, 0.20f, 0.23f) },
+                { "RR_Pink_Rose",            new Color(0.72f, 0.48f, 0.54f) },
+                { "RR_Red_Ultraheavy",       new Color(0.57f, 0.16f, 0.16f) },
             };
 
         public static Color? For(XenotypeDef color)
@@ -246,38 +257,11 @@ namespace RimRising
         }
     }
 
-    /// <summary>
-    /// The mirror of the Gold-title gate in GoldTitlePatches.cs. That one refuses
-    /// RR_GoldTitle to anyone who is not of the ruling caste; this one refuses the
-    /// service ladder to anyone who IS. A Gold is not made a Praetorian - the whole
-    /// point of the rank is that it is what the Society offers to the people it will
-    /// never make Gold.
-    ///
-    /// Same shape as its counterpart: stripping a title is always allowed, and only
-    /// our own tagged titles are touched, so Empire titles and other mods' are
-    /// unaffected.
-    /// </summary>
-    [HarmonyPatch(typeof(Pawn_RoyaltyTracker), nameof(Pawn_RoyaltyTracker.SetTitle))]
-    public static class Patch_Pawn_RoyaltyTracker_SetServiceTitle
-    {
-        public const string ServiceTitleTag = "RR_ServiceTitle";
-
-        public static bool Prefix(Pawn_RoyaltyTracker __instance, RoyalTitleDef title)
-        {
-            if (title == null) { return true; }
-            if (title.tags == null || !title.tags.Contains(ServiceTitleTag)) { return true; }
-
-            Pawn pawn = __instance?.pawn;
-            if (pawn == null) { return true; }
-            if (!RR_XenotypeUtility.IsRulingCaste(pawn)) { return true; }
-
-            Messages.Message(
-                "RR_CannotHoldServiceTitle".Translate(pawn.Named("PAWN"), title.GetLabelCapFor(pawn).Named("TITLE")),
-                pawn, MessageTypeDefOf.RejectInput, historical: false);
-
-            return false;
-        }
-    }
+    // The service-ladder gate used to live here as a SECOND Harmony prefix on
+    // Pawn_RoyaltyTracker.SetTitle, mirroring the Gold gate in
+    // GoldTitlePatches.cs. Two prefixes on one method that can each return
+    // false is an ordering hazard with nothing recording the dependency, so
+    // both gates were merged into the single prefix in GoldTitlePatches.cs.
 
     [DefOf]
     public static class RR_ArmorDefOf

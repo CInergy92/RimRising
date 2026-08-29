@@ -163,15 +163,31 @@ namespace RimRising
             return true;
         }
 
-        private static readonly AccessTools.FieldRef<Pawn_RelationsTracker, Pawn> PawnField =
-            AccessTools.FieldRefAccess<Pawn_RelationsTracker, Pawn>("pawn");
+        // LAZY, not a static readonly initialiser. FieldRefAccess throws when the
+        // field is missing, and a static initialiser runs outside any try - an
+        // upstream rename would have poisoned the whole type with a
+        // TypeInitializationException, taking CanRaiseHistoryEvent down with it.
+        private static AccessTools.FieldRef<Pawn_RelationsTracker, Pawn> pawnField;
+        private static bool pawnFieldFailed;
 
         /// <summary>The tracker's owning pawn; the field is private, hence the ref.</summary>
         public static Pawn GetTrackerPawn(Pawn_RelationsTracker tracker)
         {
-            if (tracker == null) { return null; }
-            try { return PawnField(tracker); }
-            catch { return null; }
+            if (tracker == null || pawnFieldFailed) { return null; }
+            try
+            {
+                if (pawnField == null)
+                {
+                    pawnField = AccessTools.FieldRefAccess<Pawn_RelationsTracker, Pawn>("pawn");
+                }
+                return pawnField(tracker);
+            }
+            catch
+            {
+                // Once is enough; a missing field will not appear later.
+                pawnFieldFailed = true;
+                return null;
+            }
         }
 
         /// <summary>True only when both pawns are RimRising Colors and the Colors differ.</summary>
@@ -182,14 +198,9 @@ namespace RimRising
             return RR_CasteIdentity.AreDifferentColors(a, b);
         }
 
-        /// <summary>
-        /// A Color is one of ours. Keyed on the defName prefix rather than a hard
-        /// list so sub-tiers and any future Colors are covered automatically.
-        /// </summary>
-        public static bool IsColor(XenotypeDef x)
-        {
-            return x != null && x.defName != null && x.defName.StartsWith("RR_");
-        }
+        // No IsColor here. There was an unused prefix-match copy of it; the one
+        // implementation lives in RR_CasteIdentity, which tests def ownership
+        // rather than a two-letter defName prefix.
 
         public static bool HoldsHierarchy(Pawn pawn)
         {

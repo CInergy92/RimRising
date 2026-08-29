@@ -119,6 +119,10 @@ namespace RimRising
             Capture();
 
             RimRisingSettings s = RimRisingMod.Settings;
+            // Null if the Mod constructor threw (e.g. a corrupt settings file).
+            // Without the guard this static constructor NREs and RimWorld reports
+            // it without naming the real cause. Same guard Recipe_CarveColor uses.
+            if (s == null) { return; }
 
             foreach (KeyValuePair<XenotypeDef, float> kv in xenotypeOriginals)
             {
@@ -197,7 +201,7 @@ namespace RimRising
                 CaptureSet(def.xenotypeSet);
             }
 
-            Log.Message(string.Format(
+            if (Prefs.DevMode) Log.Message(string.Format(
                 "[RimRising] vanilla suppression: {0} xenotype(s), {1} faction(s) and {2} xenotypeSet entr(ies) resolved and captured.",
                 xenotypeOriginals.Count, factionOriginals.Count, xenotypeChanceOriginals.Count));
         }
@@ -225,12 +229,17 @@ namespace RimRising
         // way, so switching this off removes a shortcut rather than a capability.
         public bool allowCarverSurgery       = true;
 
+        // The widened xenogerm metabolism floor is a PROCESS-GLOBAL change other
+        // mods' assembler dialogs see too, so a player gets to switch it off.
+        public bool widenMetabolismFloor = true;
+
         public override void ExposeData()
         {
             base.ExposeData();
             Scribe_Values.Look(ref suppressVanillaXenotypes, "suppressVanillaXenotypes", true);
             Scribe_Values.Look(ref suppressVanillaFactions,  "suppressVanillaFactions",  true);
             Scribe_Values.Look(ref allowCarverSurgery,       "allowCarverSurgery",       true);
+            Scribe_Values.Look(ref widenMetabolismFloor,     "widenMetabolismFloor",     true);
         }
     }
 
@@ -273,6 +282,13 @@ namespace RimRising
                 ref Settings.allowCarverSurgery,
                 "RR_Setting_AllowCarvingTip".Translate());
 
+            list.Gap();
+
+            list.CheckboxLabeled(
+                "RR_Setting_WidenFloor".Translate(),
+                ref Settings.widenMetabolismFloor,
+                "RR_Setting_WidenFloorTip".Translate());
+
             list.Gap(24f);
             list.Label("RR_Setting_SuppressNote".Translate());
 
@@ -286,6 +302,8 @@ namespace RimRising
             // these fields when a world is created, so a change taken now is picked
             // up by the next new world - which is the only place it can matter.
             VanillaSuppression.Apply();
+            BiostatRangePatch.Apply();
+            RR_CasteIdentity.ResetCache();
         }
     }
 }

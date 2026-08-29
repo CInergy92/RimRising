@@ -56,7 +56,22 @@ namespace RimRising
         /// <summary>New minimum metabolic efficiency for xenogerm assembly.</summary>
         public const int MinMetabolism = -10;
 
+        // The value the game shipped with, captured before the first overwrite so
+        // the setting below can put it back without a restart.
+        private static IntRange? original;
+
         static BiostatRangePatch()
+        {
+            Apply();
+        }
+
+        /// <summary>
+        /// Brings the tuning constant in line with the current setting. Safe to
+        /// call repeatedly - WriteSettings does, so a player can opt out of the
+        /// widened floor without restarting. The original range is captured
+        /// exactly once, before anything is overwritten.
+        /// </summary>
+        public static void Apply()
         {
             try
             {
@@ -71,26 +86,39 @@ namespace RimRising
                     return;
                 }
 
-                IntRange current = (IntRange)field.GetValue(null);
-                IntRange widened = new IntRange(MinMetabolism, current.TrueMax);
+                if (original == null)
+                {
+                    original = (IntRange)field.GetValue(null);
+                }
 
-                field.SetValue(null, widened);
+                // Settings may be null if the Mod constructor threw; default to
+                // widened, which is what the mod's own Colors need.
+                bool widen = RimRisingMod.Settings == null || RimRisingMod.Settings.widenMetabolismFloor;
+
+                IntRange target = widen
+                    ? new IntRange(MinMetabolism, original.Value.TrueMax)
+                    : original.Value;
+
+                field.SetValue(null, target);
 
                 IntRange applied = (IntRange)field.GetValue(null);
-                if (applied.TrueMin != MinMetabolism)
+                if (applied.TrueMin != target.TrueMin)
                 {
-                    Log.Error("[RimRising] Failed to widen GeneTuning.BiostatRange. "
+                    Log.Error("[RimRising] Failed to set GeneTuning.BiostatRange. "
                             + "It still reads min " + applied.TrueMin + ".");
                     return;
                 }
 
-                Log.Message("[RimRising] Xenogerm metabolism floor widened from "
-                          + current.TrueMin + " to " + applied.TrueMin
-                          + ". Max unchanged at " + applied.TrueMax + ".");
+                if (Prefs.DevMode)
+                {
+                    Log.Message("[RimRising] Xenogerm metabolism floor now "
+                              + applied.TrueMin + " (shipped " + original.Value.TrueMin
+                              + "). Max unchanged at " + applied.TrueMax + ".");
+                }
             }
             catch (Exception ex)
             {
-                Log.Error("[RimRising] Could not widen GeneTuning.BiostatRange: " + ex);
+                Log.Error("[RimRising] Could not set GeneTuning.BiostatRange: " + ex);
             }
         }
     }

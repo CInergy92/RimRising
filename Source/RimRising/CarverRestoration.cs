@@ -119,7 +119,14 @@ namespace RimRising
             foreach (Hediff h in pawn.health.hediffSet.hediffs)
             {
                 if (!h.IsPermanent()) { continue; }
-                if (h.Severity <= worstSeverity && worst != null) { continue; }
+                if (worst != null)
+                {
+                    if (h.Severity < worstSeverity) { continue; }
+                    // Equal severities tie-break on loadID - the oldest injury -
+                    // so which scar the Carver removes is stable across loads
+                    // rather than falling to hediff list ordering.
+                    if (h.Severity == worstSeverity && h.loadID >= worst.loadID) { continue; }
+                }
                 worst = h;
                 worstSeverity = h.Severity;
             }

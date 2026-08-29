@@ -124,7 +124,7 @@ namespace RimRising
                 }
             }
 
-            if (wasBorn != null && wasBorn != target)
+            if (Prefs.DevMode && wasBorn != null && wasBorn != target)
             {
                 Log.Message(string.Format(
                     "[RimRising] {0} carved from {1} to {2}.",
