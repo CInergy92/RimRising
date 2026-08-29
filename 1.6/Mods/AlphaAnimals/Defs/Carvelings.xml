@@ -42,7 +42,13 @@
     <thingClass>ThingWithComps</thingClass>
     <description>A sealed growth vat. Inside, tissue cloned from several donors is being persuaded into a shape that never existed before. Somebody with a great deal of money asked for this.</description>
     <techLevel>Spacer</techLevel>
-    <tickerType>Rare</tickerType>
+    <!--
+      Normal, NOT Rare, and this is load-bearing: CompHatcher counts gestation in
+      CompTick, which Thing.DoTick only calls when tickerType is Normal. Vanilla
+      agrees - EggBase is Rare but EggFertBase, the one that actually hatches,
+      overrides to Normal. At Rare the vat sits inert forever and nothing logs why.
+    -->
+    <tickerType>Normal</tickerType>
     <stackLimit>5</stackLimit>
     <graphicData>
       <texPath>Things/Item/Resource/RR_CarvelingVat</texPath>
@@ -62,9 +68,14 @@
     <tradeTags>
       <li>ExoticMisc</li>
     </tradeTags>
-    <comps>
-      <li Class="CompProperties_Forbiddable" />
-    </comps>
+    <!--
+      NO comps block here, deliberately. ResourceBase already declares
+      CompProperties_Forbiddable, and RimWorld's inheritance APPENDS list items
+      rather than replacing them - redeclaring it gave every vat two
+      CompForbiddable instances, two forbid gizmos, and two comps writing the
+      same "forbidden" node into a save. The children's own <comps> blocks merge
+      their hatcher onto the inherited forbiddable correctly.
+    -->
   </ThingDef>
 
   <ThingDef ParentName="RR_CarvelingVatBase">
@@ -72,6 +83,7 @@
     <label>carveling vat (sylph)</label>
     <comps>
       <li Class="CompProperties_Hatcher">
+        <compClass>RimRising.CompCarvelingHatcher</compClass>
         <hatcherDaystoHatch>8</hatcherDaystoHatch>
         <hatcherPawn>AA_AuroraSylph</hatcherPawn>
       </li>
@@ -83,6 +95,7 @@
     <label>carveling vat (lion)</label>
     <comps>
       <li Class="CompProperties_Hatcher">
+        <compClass>RimRising.CompCarvelingHatcher</compClass>
         <hatcherDaystoHatch>10</hatcherDaystoHatch>
         <hatcherPawn>AA_ArcticLion</hatcherPawn>
       </li>
@@ -94,6 +107,7 @@
     <label>carveling vat (animalisk)</label>
     <comps>
       <li Class="CompProperties_Hatcher">
+        <compClass>RimRising.CompCarvelingHatcher</compClass>
         <hatcherDaystoHatch>14</hatcherDaystoHatch>
         <hatcherPawn>AA_Animalisk</hatcherPawn>
       </li>

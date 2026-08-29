@@ -152,6 +152,29 @@ namespace RimRising
         }
     }
 
+    /// <summary>
+    /// CompHatcher for a CRAFTED thing rather than a laid one.
+    ///
+    /// Vanilla CompHatcher gets its hatcheeFaction from the hen that laid the egg
+    /// or from the trade that delivered it; a vat built at a fabrication bench has
+    /// neither, so hatcheeFaction stays null and the creature hatches WILD - an
+    /// animalisk the colony paid fourteen resFlesh for would emerge as a hostile
+    /// stranger in the middle of the workshop. A crafted vat belongs to the
+    /// player, so the field is claimed on first tick if nothing else set it
+    /// (trade paths still overwrite it, exactly as vanilla intends).
+    /// </summary>
+    public class CompCarvelingHatcher : CompHatcher
+    {
+        public override void CompTick()
+        {
+            if (hatcheeFaction == null)
+            {
+                hatcheeFaction = Faction.OfPlayerSilentFail;
+            }
+            base.CompTick();
+        }
+    }
+
     [DefOf]
     public static class RR_CarverDefOf
     {

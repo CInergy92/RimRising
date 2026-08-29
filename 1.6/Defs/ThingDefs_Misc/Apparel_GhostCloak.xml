@@ -132,7 +132,9 @@
     </graphicData>
     <recipeMaker>
       <researchPrerequisite>RR_OpticalCamouflage</researchPrerequisite>
-      <recipeUsers>
+      <!-- Inherit False, or ApparelMakeableBase's tailoring benches merge in
+           and a refractive stealth lattice becomes sewable by hand. -->
+      <recipeUsers Inherit="False">
         <li>FabricationBench</li>
       </recipeUsers>
       <skillRequirements>

@@ -50,14 +50,14 @@
 
   <!-- ============================ disagreement ============================ -->
 
-  <GoodwillSituationDef>
-    <defName>RR_ColorOrder_Disagreement</defName>
-    <label>Color hierarchy disagreement</label>
-    <workerClass>GoodwillSituationWorker_MemeCompatibility</workerClass>
-    <meme>RR_ColorHierarchy</meme>
-    <otherMeme>RR_ColorEquality</otherMeme>
-    <naturalGoodwillOffset>-40</naturalGoodwillOffset>
-  </GoodwillSituationDef>
+  <!--
+    ONE def per meme pairing, never two mirrored ones. The worker is symmetric:
+    GoodwillSituationWorker.Applies(other) tries (player, other) and then
+    (other, player) itself, so a def written in each direction fires TWICE and
+    the offsets SUM. A -40 def alongside the -100 below made the real penalty
+    -140, sailing 65 points past the -75 permanent-hostility floor the -100
+    comment reasons about. The mirrored def was deleted for that reason.
+  -->
 
   <!--
     Rejecting the hierarchy while the other party holds it is not a disagreement

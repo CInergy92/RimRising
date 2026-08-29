@@ -417,6 +417,8 @@ Against anything a Gold is carrying it is a formality. Everyone wearing one know
       <ComponentIndustrial>2</ComponentIndustrial>
     </costList>
     <recipeMaker>
+      <!-- recipeUsers deliberately inherited: ArmorMachineableBase's machining
+           bench is the right home for the poor man's plate. -->
       <skillRequirements>
         <Crafting>3</Crafting>
       </skillRequirements>
@@ -528,6 +530,12 @@ All of that is chemistry and springs rather than circuits, so it goes on working
     <recipeMaker>
       <researchPrerequisite>RR_RecoilPlating</researchPrerequisite>
       <unfinishedThingDef>UnfinishedTechArmor</unfinishedThingDef>
+      <!-- Explicit and Inherit False, matching pulseArmor: without it the
+           machining bench merges in from ArmorMachineableBase, and the suit the
+           Society restricts to its ruling caste is the easiest one to build. -->
+      <recipeUsers Inherit="False">
+        <li>FabricationBench</li>
+      </recipeUsers>
       <skillRequirements>
         <Crafting>7</Crafting>
       </skillRequirements>

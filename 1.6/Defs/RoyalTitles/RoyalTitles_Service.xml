@@ -38,7 +38,10 @@
     <defName>RR_Title_Legionnaire</defName>
     <label>Legionnaire</label>
     <description>Enrolled, uniformed, and on the rolls by name rather than by number. It is not much. Measured against being on no roll at all, it is a great deal, and the Society has always understood exactly how much work that difference will do.</description>
-    <seniority>0</seniority>
+    <!-- 100, not 0: RR_Title_Shamed already holds seniority 0, and with both
+         ladders on one faction the merged chain sorts by seniority, so a tie is
+         resolved by def order rather than by anyone's decision. -->
+    <seniority>100</seniority>
     <favorCost>2</favorCost>
     <changeHeirQuestPoints>0</changeHeirQuestPoints>
   </RoyalTitleDef>

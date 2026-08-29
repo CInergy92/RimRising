@@ -114,6 +114,13 @@ It closes a wound and keeps it closed, and it will not let anything grow in ther
     <jobString>Regrowing body part.</jobString>
     <workerClass>RimRising.Recipe_RegrowPart</workerClass>
     <targetsBodyPart>true</targetsBodyPart>
+    <!--
+      Overrides the base's hideBodyPartNames. This recipe offers one entry per
+      MISSING PART, and HealthCardUtility.GenerateSurgeryOption only appends
+      " (left arm)" when hideBodyPartNames is false - inherited true, a pawn
+      missing three parts showed three identical "regrow body part" entries.
+    -->
+    <hideBodyPartNames>false</hideBodyPartNames>
     <successfullyRemovedHediffMessage>{0} has regrown {1}'s {2}.</successfullyRemovedHediffMessage>
     <ingredients>
       <li>

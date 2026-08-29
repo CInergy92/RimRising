@@ -53,7 +53,8 @@
            Defs/RoyalTitles/RoyalTitles_Service.xml. -->
       <li>RR_ServiceTitle</li>
     </royalTitleTags>
-    <royalTitleInheritanceWorkerClass>RoyalTitleInheritanceWorker</royalTitleInheritanceWorkerClass>    <techLevel>Spacer</techLevel>
+    <royalTitleInheritanceWorkerClass>RoyalTitleInheritanceWorker</royalTitleInheritanceWorkerClass>
+    <techLevel>Spacer</techLevel>
     <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>
     <!-- The Society takes the good ground first and always has. Temperate tiles, and it concedes the extremes to everyone else. -->
     <minSettlementTemperatureChanceCurve>
@@ -129,7 +130,8 @@
           <li>Outlander</li>
         </categories>
       </li>
-    </backstoryFilters>    <pawnGroupMakers>
+    </backstoryFilters>
+    <pawnGroupMakers>
       <li>
         <kindDef>Combat</kindDef>
         <commonality>100</commonality>
@@ -245,7 +247,8 @@
            Defs/RoyalTitles/RoyalTitles_Service.xml. -->
       <li>RR_ServiceTitle</li>
     </royalTitleTags>
-    <royalTitleInheritanceWorkerClass>RoyalTitleInheritanceWorker</royalTitleInheritanceWorkerClass>    <techLevel>Spacer</techLevel>
+    <royalTitleInheritanceWorkerClass>RoyalTitleInheritanceWorker</royalTitleInheritanceWorkerClass>
+    <techLevel>Spacer</techLevel>
     <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>
     <!-- The Rim holds the cold moons. Cool and harsh, but short of polar. -->
     <minSettlementTemperatureChanceCurve>
@@ -646,6 +649,25 @@
         </options>
       </li>
       <li>
+        <!--
+          Without this the three caravanTraderKinds below were dead config:
+          IncidentWorker_NeutralGroup.FactionCanBeGroupSource requires a Trader
+          pawn group maker before the trade-caravan incident will pick a faction,
+          so the tribes advertised caravans they could never send. Muffalo
+          carriers to match the neolithic trade.
+        -->
+        <kindDef>Trader</kindDef>
+        <traders>
+          <RR_Tribe_Obsidian_Stained>1</RR_Tribe_Obsidian_Stained>
+        </traders>
+        <carriers>
+          <Muffalo>6</Muffalo>
+        </carriers>
+        <guards>
+          <RR_Tribe_Obsidian_Warrior>10</RR_Tribe_Obsidian_Warrior>
+        </guards>
+      </li>
+      <li>
         <kindDef>Peaceful</kindDef>
         <options>
           <RR_Tribe_Obsidian_Warrior>10</RR_Tribe_Obsidian_Warrior>
@@ -781,13 +803,13 @@
         </options>
       </li>
     </pawnGroupMakers>
-    <!-- They fence what they raid and nothing else. No visitors, and you go to them. -->
-    <caravanTraderKinds>
-      <li>Caravan_Outlander_PirateMerchant</li>
-    </caravanTraderKinds>
-    <baseTraderKinds>
-      <li>Base_Outlander_Standard</li>
-    </baseTraderKinds>
+    <!--
+      NO trader kinds, deliberately. A permanentEnemy faction can never be
+      selected for a trade caravan (FactionCanBeGroupSource refuses hostiles, and
+      there is no Trader group maker anyway) and its settlements cannot be traded
+      at, so caravanTraderKinds and baseTraderKinds here were dead configuration
+      promising a fence that could never open shop.
+    -->
     <!--
       Without this the faction generates with NO LEADER and the log fills with
       "Faction leader for <name> is null" - all seven of ours did.

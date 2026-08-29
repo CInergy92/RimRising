@@ -82,6 +82,10 @@ Unlocks recoilArmor.</description>
     <prerequisites>
       <li>Fabrication</li>
     </prerequisites>
+    <!-- researchViewX/Y default to (1,1) when omitted, so projects that skip
+         them pile up at the same spot. Feeds RR_PulseArmor at (3,2). -->
+    <researchViewX>1.00</researchViewX>
+    <researchViewY>3.50</researchViewY>
   </ResearchProjectDef>
 
   <ResearchProjectDef>
@@ -162,6 +166,8 @@ Unlocks gravBoots.</description>
     <prerequisites>
       <li>Fabrication</li>
     </prerequisites>
+    <researchViewX>1.00</researchViewX>
+    <researchViewY>5.00</researchViewY>
   </ResearchProjectDef>
 
 </Defs>

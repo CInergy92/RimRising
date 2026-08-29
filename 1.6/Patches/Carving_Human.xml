@@ -12,13 +12,15 @@
   lever here: it works for production recipes at a bench (which is how the Carver's
   kit is made) but not for operations on a pawn.
 
-  Guarded with success Always so that a future rename upstream degrades quietly
-  rather than spamming red at load, per this project's patch convention.
+  NO success Always here, deliberately, against this project's usual patch
+  convention. That guard is for optional cross-mod compatibility, where a rename
+  upstream should degrade quietly. This single operation is what attaches every
+  carving and restoration surgery to humans - the mod's central mechanic - and
+  if it ever stops matching, it must say so in red rather than vanish silently.
 -->
 <Patch>
 
   <Operation Class="PatchOperationAdd">
-    <success>Always</success>
     <xpath>/Defs/ThingDef[defName="Human"]/recipes</xpath>
     <value>
       <!--

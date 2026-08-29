@@ -46,7 +46,14 @@
     <baseCost>9000</baseCost>
     <techLevel>Spacer</techLevel>
     <prerequisites>
-      <li>RR_StarShellFrame</li>
+      <!--
+        MayRequire, because this def lives in the Vehicles folder while the
+        prerequisite lives in the Exosuit folder, and the two gates are
+        independent. A player running Vehicle Framework without the Exosuit
+        Framework would otherwise get an unresolvable cross-reference at every
+        load and lose one of the project's two gates.
+      -->
+      <li MayRequire="Aoba.Exosuit.Framework">RR_StarShellFrame</li>
       <li>RR_NeuralInterface</li>
     </prerequisites>
     <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
@@ -116,14 +123,14 @@
       <li>
         <shotsPerBurst>3</shotsPerBurst>
         <ticksBetweenBursts>14</ticksBetweenBursts>
-        <spreadRadius>1.2</spreadRadius>
+        <forcedMissRadius>1.2</forcedMissRadius>
         <label>Burst</label>
         <texPath>UI/Gizmos/FireRate_Burst</texPath>
       </li>
       <li>
         <shotsPerBurst>1</shotsPerBurst>
         <ticksBetweenBursts>1</ticksBetweenBursts>
-        <spreadRadius>0.4</spreadRadius>
+        <forcedMissRadius>0.4</forcedMissRadius>
         <label>Single</label>
         <texPath>UI/Gizmos/FireRate_Single</texPath>
       </li>
@@ -168,7 +175,7 @@
       <li>
         <shotsPerBurst>1</shotsPerBurst>
         <ticksBetweenBursts>1</ticksBetweenBursts>
-        <spreadRadius>2.4</spreadRadius>
+        <forcedMissRadius>2.4</forcedMissRadius>
         <label>Launch</label>
         <texPath>UI/Gizmos/FireRate_Single</texPath>
       </li>
@@ -212,7 +219,7 @@
     <size>(4,6)</size>
     <vehicleCategory>Combat</vehicleCategory>
     <techLevel>Spacer</techLevel>
-    <vehicleType>Land</vehicleType>
+    <type>Land</type>
     <statBases>
       <ArmorRating_Blunt>0.85</ArmorRating_Blunt>
       <ArmorRating_Sharp>1.20</ArmorRating_Sharp>
@@ -226,7 +233,10 @@
       <MoveSpeed>4.2</MoveSpeed>
       <CargoCapacity>120</CargoCapacity>
       <RepairRate>0.3</RepairRate>
-      <AccelerationRate>0.02</AccelerationRate>
+      <!-- No acceleration stat: Vehicle Framework 1.6 models exactly eight
+           VehicleStatDefs and acceleration is not one of them. A name here is
+           resolved as a VehicleStatDef defName, so an invented one is a red
+           cross-reference error and a null statDef in the list. -->
     </vehicleStats>
     <race>
       <baseBodySize>12</baseBodySize>
@@ -239,7 +249,13 @@
       <diagonalRotation>true</diagonalRotation>
       <manhunterTargetsVehicle>false</manhunterTargetsVehicle>
       <worldSpeedMultiplier>0.8</worldSpeedMultiplier>
-      <winterSpeedMultiplier>1</winterSpeedMultiplier>
+      <!--
+        winterCost, not the old winterSpeedMultiplier alias - and the semantics
+        flip with the name: this is a movement COST multiplier in snow, default
+        2, so 1 means HALF the usual winter penalty. Correct for a walker that
+        steps over drifts, and worth knowing before anyone "fixes" it upward.
+      -->
+      <winterCost>1</winterCost>
       <roles>
         <li>
           <key>pilot</key>
@@ -323,7 +339,7 @@
           <li Class="Vehicles.Reactor_Explosive">
             <indicator>VF_Explosive</indicator>
             <chance>0.35</chance>
-            <maxHealth>0.2</maxHealth>
+            <healthPercent>0.2</healthPercent>
             <radius>8</radius>
             <damageDef>Bomb</damageDef>
           </li>
@@ -390,7 +406,7 @@
           <li Class="Vehicles.Reactor_Explosive">
             <indicator>VF_Explosive</indicator>
             <chance>0.5</chance>
-            <maxHealth>0.25</maxHealth>
+            <healthPercent>0.25</healthPercent>
             <radius>6</radius>
             <damageDef>Bomb</damageDef>
           </li>
@@ -425,7 +441,7 @@
       <li Class="Vehicles.CompProperties_VehicleTurrets">
         <turrets>
           <li>
-            <turretDef>RR_Drachenjager_ParticleCannon</turretDef>
+            <def>RR_Drachenjager_ParticleCannon</def>
             <key>particleCannon</key>
             <parentKey></parentKey>
             <!--
@@ -462,7 +478,7 @@
             </renderProperties>
           </li>
           <li>
-            <turretDef>RR_Drachenjager_WarheadRack</turretDef>
+            <def>RR_Drachenjager_WarheadRack</def>
             <key>warheadRack</key>
             <parentKey></parentKey>
             <!--
