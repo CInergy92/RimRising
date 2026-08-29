@@ -1,0 +1,716 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--
+    =========================== drugs and medicines ==========================
+
+    Five of the compendium's drugs, chosen because each maps onto a RimWorld
+    mechanic that already exists rather than needing one invented.
+
+    ONLY ZOLADONE IS ADDICTIVE. The source calls exactly one of these "highly
+    addictive with severe withdrawal symptoms", so exactly one gets the full
+    machinery - ChemicalDef, NeedDef, addiction hediff, tolerance hediff and two
+    ThoughtDefs. The rest use CompProperties_Drug with no <chemical>, which is
+    what vanilla's Penoxycyline does and is why they need none of that.
+
+    TWO TECH TIERS. Zoladone, Mjolnir-6 and Nazopran are synthesised at a drug
+    lab. God's Bread and Fever Cloud are dried mushrooms the Obsidian tribes
+    prepare at a crafting spot, out of Core's own RawFungus - a tribe kept
+    deliberately pre-industrial should not need a lab to get its warriors high.
+
+    resFlesh is NOT here; it lives in Defs/Carving/Restoration.xml with the
+    Carver's trade, because it is tending material rather than a drug.
+  -->
+
+  <!-- ============================== Zoladone ============================== -->
+  <!--
+    "Increases dopamine while suppressing empathy and emotional response...
+    highly addictive... severe withdrawal symptoms. For these reasons, the drug
+    is highly illegal. Despite the ban, Zoladone was popular with Republic
+    special ops teams."
+
+    The empathy half is the interesting one to model. Dopamine up is a mood
+    thought, which is easy. "Suppressing emotional response" is
+    MentalBreakThreshold: a pawn on Zoladone is markedly harder to break, which
+    is exactly why a special ops team would take it and exactly why it ruins
+    them. SocialImpact carries the empathy cost outward.
+  -->
+  <ThingDef ParentName="MakeableDrugBase">
+    <defName>RR_Zoladone</defName>
+    <label>zoladone</label>
+    <description>A grey lozenge that dissolves under the tongue. It floods the reward pathways and closes the ones that answer to other people, so the user feels excellent and feels nothing about anybody.\n\nIt is banned everywhere and issued anyway, because a soldier who cannot be horrified is worth a great deal for as long as they last. The coming down is reportedly worse than anything they were sent to do.</description>
+    <descriptionHyperlinks>
+      <HediffDef>RR_ZoladoneHigh</HediffDef>
+      <HediffDef>RR_ZoladoneAddiction</HediffDef>
+    </descriptionHyperlinks>
+    <graphicData>
+      <texPath>Things/Item/Drug/RR_Zoladone</texPath>
+      <graphicClass>Graphic_StackCount</graphicClass>
+    </graphicData>
+    <rotatable>false</rotatable>
+    <statBases>
+      <WorkToMake>900</WorkToMake>
+      <MarketValue>62</MarketValue>
+      <Mass>0.05</Mass>
+    </statBases>
+    <techLevel>Spacer</techLevel>
+    <ingestible>
+      <joyKind>Chemical</joyKind>
+      <joy>0.55</joy>
+      <drugCategory>Hard</drugCategory>
+      <foodType>Processed</foodType>
+      <baseIngestTicks>100</baseIngestTicks>
+      <ingestSound>Ingest_Pill</ingestSound>
+      <ingestCommandString>Take {0}</ingestCommandString>
+      <ingestReportString>Taking {0}.</ingestReportString>
+      <useEatingSpeedStat>false</useEatingSpeedStat>
+      <chairSearchRadius>0</chairSearchRadius>
+      <outcomeDoers>
+        <li Class="IngestionOutcomeDoer_GiveHediff">
+          <hediffDef>RR_ZoladoneHigh</hediffDef>
+          <severity>0.5</severity>
+          <toleranceChemical>RR_Zoladone</toleranceChemical>
+        </li>
+      </outcomeDoers>
+    </ingestible>
+    <recipeMaker>
+      <researchPrerequisite>GoJuiceProduction</researchPrerequisite>
+      <recipeUsers>
+        <li>DrugLab</li>
+      </recipeUsers>
+      <soundWorking>Recipe_Drug</soundWorking>
+      <skillRequirements>
+        <Intellectual>7</Intellectual>
+      </skillRequirements>
+      <displayPriority>1600</displayPriority>
+    </recipeMaker>
+    <costList>
+      <Neutroamine>3</Neutroamine>
+    </costList>
+    <comps>
+      <li Class="CompProperties_Drug">
+        <chemical>RR_Zoladone</chemical>
+        <!-- Nearly double go-juice's 0.026. The source's one stated fact about
+             this drug is how hard it grips. -->
+        <addictiveness>0.048</addictiveness>
+        <existingAddictionSeverityOffset>0.25</existingAddictionSeverityOffset>
+        <needLevelOffset>0.9</needLevelOffset>
+        <listOrder>210</listOrder>
+        <overdoseSeverityOffset>0.20~0.40</overdoseSeverityOffset>
+        <largeOverdoseChance>0.01</largeOverdoseChance>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <HediffDef>
+    <defName>RR_ZoladoneHigh</defName>
+    <hediffClass>Hediff_High</hediffClass>
+    <label>high on zoladone</label>
+    <labelNoun>a zoladone high</labelNoun>
+    <description>Zoladone in the bloodstream. Everything is fine and nothing matters, in that order.</description>
+    <defaultLabelColor>(0.6, 0.6, 0.7)</defaultLabelColor>
+    <scenarioCanAdd>true</scenarioCanAdd>
+    <maxSeverity>1.0</maxSeverity>
+    <isBad>false</isBad>
+    <comps>
+      <li Class="HediffCompProperties_SeverityPerDay">
+        <severityPerDay>-1.0</severityPerDay>
+        <showHoursToRecover>true</showHoursToRecover>
+      </li>
+    </comps>
+    <stages>
+      <li>
+        <statOffsets>
+          <!-- The emotional flattening, in the one stat that measures it: a pawn
+               on zoladone is much harder to break, which is the entire military
+               appeal and the entire problem. -->
+          <MentalBreakThreshold>-0.14</MentalBreakThreshold>
+          <SocialImpact>-0.35</SocialImpact>
+        </statOffsets>
+        <capMods>
+          <li>
+            <capacity>Consciousness</capacity>
+            <offset>0.10</offset>
+          </li>
+        </capMods>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <ThoughtDef>
+    <defName>RR_ZoladoneHigh</defName>
+    <workerClass>ThoughtWorker_Hediff</workerClass>
+    <hediff>RR_ZoladoneHigh</hediff>
+    <validWhileDespawned>true</validWhileDespawned>
+    <developmentalStageFilter>Baby, Child, Adult</developmentalStageFilter>
+    <stages>
+      <li>
+        <label>high on zoladone</label>
+        <description>I am in a very good mood and I could not tell you why, and I find I do not care to work it out.</description>
+        <baseMoodEffect>12</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ChemicalDef>
+    <defName>RR_Zoladone</defName>
+    <label>zoladone</label>
+    <addictionHediff>RR_ZoladoneAddiction</addictionHediff>
+    <geneOverdoseChanceFactorResist>0.5</geneOverdoseChanceFactorResist>
+    <geneOverdoseChanceFactorImmune>0</geneOverdoseChanceFactorImmune>
+  </ChemicalDef>
+
+  <NeedDef ParentName="DrugAddictionNeedBase">
+    <defName>Chemical_RR_Zoladone</defName>
+    <needClass>Need_Chemical</needClass>
+    <label>zoladone</label>
+    <description>Because of a zoladone addiction, this person needs regular doses to avoid withdrawal.</description>
+    <fallPerDay>0.4</fallPerDay>
+    <listPriority>44</listPriority>
+  </NeedDef>
+
+  <HediffDef ParentName="AddictionBase">
+    <defName>RR_ZoladoneAddiction</defName>
+    <label>zoladone addiction</label>
+    <description>A chemical dependency on zoladone. The reward pathways it drove have stopped producing anything on their own, and until they relearn how, the world is grey and loud and unbearable.</description>
+    <hediffClass>Hediff_Addiction</hediffClass>
+    <chemicalNeed>Chemical_RR_Zoladone</chemicalNeed>
+    <comps>
+      <li Class="HediffCompProperties_SeverityPerDay">
+        <!-- Slower to shake than go-juice's -0.045. -->
+        <severityPerDay>-0.03</severityPerDay>
+        <showDaysToRecover>true</showDaysToRecover>
+      </li>
+    </comps>
+    <stages>
+      <li></li>
+      <li>
+        <label>withdrawal</label>
+        <painFactor>2.5</painFactor>
+        <statOffsets>
+          <!-- The mirror of the high: everything the drug suppressed comes back
+               at once, so the pawn breaks far more easily than baseline. -->
+          <MentalBreakThreshold>0.18</MentalBreakThreshold>
+          <RestFallRateFactor>0.4</RestFallRateFactor>
+        </statOffsets>
+        <capMods>
+          <li>
+            <capacity>Consciousness</capacity>
+            <offset>-0.25</offset>
+          </li>
+          <li>
+            <capacity>Moving</capacity>
+            <offset>-0.30</offset>
+          </li>
+        </capMods>
+        <mentalStateGivers>
+          <li>
+            <mentalState>Binging_DrugExtreme</mentalState>
+            <mtbDays>25</mtbDays>
+          </li>
+          <li>
+            <mentalState>Wander_Psychotic</mentalState>
+            <mtbDays>8</mtbDays>
+          </li>
+        </mentalStateGivers>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <ThoughtDef>
+    <defName>RR_ZoladoneWithdrawal</defName>
+    <workerClass>ThoughtWorker_Hediff</workerClass>
+    <hediff>RR_ZoladoneAddiction</hediff>
+    <validWhileDespawned>true</validWhileDespawned>
+    <developmentalStageFilter>Baby, Child, Adult</developmentalStageFilter>
+    <stages>
+      <li>
+        <visible>false</visible>
+      </li>
+      <li>
+        <label>zoladone withdrawal</label>
+        <description>Everything I stopped feeling is arriving all at once and it will not stop. I need another one. I am aware that I need another one and it does not help.</description>
+        <baseMoodEffect>-28</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <HediffDef ParentName="DrugToleranceBase">
+    <defName>RR_ZoladoneTolerance</defName>
+    <label>zoladone tolerance</label>
+    <description>A built-up tolerance to zoladone. The more severe it is, the more the drug it takes to feel anything.</description>
+    <comps>
+      <li Class="HediffCompProperties_SeverityPerDay">
+        <severityPerDay>-0.012</severityPerDay>
+      </li>
+      <li Class="HediffCompProperties_DrugEffectFactor">
+        <chemical>RR_Zoladone</chemical>
+      </li>
+    </comps>
+    <hediffGivers>
+      <li Class="HediffGiver_RandomDrugEffect">
+        <hediff>ChemicalDamageModerate</hediff>
+        <severityToMtbDaysCurve>
+          <points>
+            <li>(0.35, 99999)</li>
+            <li>(0.5, 90)</li>
+            <li>(1, 60)</li>
+          </points>
+        </severityToMtbDaysCurve>
+        <partsToAffect>
+          <li>Brain</li>
+        </partsToAffect>
+      </li>
+    </hediffGivers>
+  </HediffDef>
+
+  <!-- ============================== Mjolnir-6 ============================= -->
+  <!--
+    "A mixture of multiple combat stimulants... the Republic's best emergency
+    combat cocktail, but has the side effect of blunting the user's empathy."
+
+    EMERGENCY is the design word. It is stronger than the armour's own stim and
+    burns off in four hours, so it is what you take when the fight has already
+    gone wrong - not something a squad walks around on.
+  -->
+  <ThingDef ParentName="MakeableDrugBase">
+    <defName>RR_Mjolnir6</defName>
+    <label>mjolnir-6</label>
+    <description>Six stimulants in one ampoule, argued into working together by somebody who was running out of time. It does not so much treat exhaustion as overrule it.\n\nThe Republic considers it the best thing it has for keeping people upright when a line is breaking. It also leaves the user unable to care much what happens to the person beside them, which the Republic has decided it can live with.</description>
+    <descriptionHyperlinks>
+      <HediffDef>RR_Mjolnir6High</HediffDef>
+    </descriptionHyperlinks>
+    <graphicData>
+      <texPath>Things/Item/Drug/RR_Mjolnir6</texPath>
+      <graphicClass>Graphic_StackCount</graphicClass>
+    </graphicData>
+    <rotatable>false</rotatable>
+    <statBases>
+      <WorkToMake>800</WorkToMake>
+      <MarketValue>58</MarketValue>
+      <Mass>0.1</Mass>
+    </statBases>
+    <techLevel>Spacer</techLevel>
+    <ingestible>
+      <joyKind>Chemical</joyKind>
+      <joy>0.15</joy>
+      <drugCategory>Hard</drugCategory>
+      <foodType>Processed, Fluid</foodType>
+      <baseIngestTicks>80</baseIngestTicks>
+      <ingestSound>Ingest_Inject</ingestSound>
+      <ingestCommandString>Inject {0}</ingestCommandString>
+      <ingestReportString>Injecting {0}.</ingestReportString>
+      <useEatingSpeedStat>false</useEatingSpeedStat>
+      <chairSearchRadius>0</chairSearchRadius>
+      <outcomeDoers>
+        <li Class="IngestionOutcomeDoer_GiveHediff">
+          <hediffDef>RR_Mjolnir6High</hediffDef>
+          <severity>1.0</severity>
+        </li>
+        <li Class="IngestionOutcomeDoer_OffsetNeed">
+          <need>Rest</need>
+          <offset>0.5</offset>
+        </li>
+      </outcomeDoers>
+    </ingestible>
+    <recipeMaker>
+      <researchPrerequisite>GoJuiceProduction</researchPrerequisite>
+      <recipeUsers>
+        <li>DrugLab</li>
+      </recipeUsers>
+      <soundWorking>Recipe_Drug</soundWorking>
+      <skillRequirements>
+        <Intellectual>6</Intellectual>
+      </skillRequirements>
+      <displayPriority>1610</displayPriority>
+    </recipeMaker>
+    <costList>
+      <Neutroamine>2</Neutroamine>
+      <MedicineIndustrial>1</MedicineIndustrial>
+    </costList>
+    <comps>
+      <li Class="CompProperties_Drug">
+        <!-- No <chemical>, so no addiction and no tolerance - the source does not
+             call this one addictive, and vanilla's Penoxycyline shows a drug comp
+             is perfectly happy without one. -->
+        <isCombatEnhancingDrug>true</isCombatEnhancingDrug>
+        <listOrder>220</listOrder>
+        <overdoseSeverityOffset>0.15~0.30</overdoseSeverityOffset>
+        <largeOverdoseChance>0.008</largeOverdoseChance>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <HediffDef>
+    <defName>RR_Mjolnir6High</defName>
+    <hediffClass>Hediff_High</hediffClass>
+    <label>mjolnir-6</label>
+    <labelNoun>a mjolnir-6 dose</labelNoun>
+    <description>Six stimulants at once. The body has been told it is not tired and not hurt, and for the next few hours it will believe both.</description>
+    <defaultLabelColor>(1, 0.5, 0.35)</defaultLabelColor>
+    <scenarioCanAdd>false</scenarioCanAdd>
+    <maxSeverity>1.0</maxSeverity>
+    <initialSeverity>1</initialSeverity>
+    <isBad>false</isBad>
+    <comps>
+      <li Class="HediffCompProperties_SeverityPerDay">
+        <!-- Four hours from a full dose. -->
+        <severityPerDay>-6</severityPerDay>
+        <showHoursToRecover>true</showHoursToRecover>
+      </li>
+    </comps>
+    <stages>
+      <li>
+        <painFactor>0.15</painFactor>
+        <statOffsets>
+          <!-- The blunted empathy, and the reason this is not simply better than
+               everything else in the cabinet. -->
+          <SocialImpact>-0.50</SocialImpact>
+          <RestFallRateFactor>-0.3</RestFallRateFactor>
+        </statOffsets>
+        <capMods>
+          <li>
+            <capacity>Consciousness</capacity>
+            <offset>0.20</offset>
+          </li>
+          <li>
+            <capacity>Moving</capacity>
+            <offset>0.35</offset>
+          </li>
+          <li>
+            <capacity>Manipulation</capacity>
+            <offset>0.15</offset>
+          </li>
+        </capMods>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <!-- =============================== Nazopran ============================= -->
+  <!--
+    "A combat stimulant used to help soldiers stay awake. It was heavily used by
+    the Free Legions on Mercury in the weeks following the Battle of Caliban."
+
+    Weeks, not minutes - so this is the cheap one a whole army is on, and it does
+    one job: it keeps people upright. Modelled on vanilla's wake-up rather than
+    on go-juice.
+  -->
+  <ThingDef ParentName="MakeableDrugBase">
+    <defName>RR_Nazopran</defName>
+    <label>nazopran</label>
+    <description>A flat white tablet issued by the sheet. It does nothing for pain, nothing for fear and nothing for morale; it only makes sleep optional, which after a fortnight in the line is the thing everybody wants most.\n\nArmies run on it. The medics who hand it out are careful not to say how long that can go on for.</description>
+    <descriptionHyperlinks>
+      <HediffDef>RR_NazopranHigh</HediffDef>
+    </descriptionHyperlinks>
+    <graphicData>
+      <texPath>Things/Item/Drug/RR_Nazopran</texPath>
+      <graphicClass>Graphic_StackCount</graphicClass>
+    </graphicData>
+    <rotatable>false</rotatable>
+    <statBases>
+      <WorkToMake>350</WorkToMake>
+      <MarketValue>18</MarketValue>
+      <Mass>0.03</Mass>
+    </statBases>
+    <techLevel>Industrial</techLevel>
+    <ingestible>
+      <joyKind>Chemical</joyKind>
+      <joy>0.10</joy>
+      <drugCategory>Hard</drugCategory>
+      <foodType>Processed</foodType>
+      <baseIngestTicks>60</baseIngestTicks>
+      <ingestSound>Ingest_Pill</ingestSound>
+      <ingestCommandString>Take {0}</ingestCommandString>
+      <ingestReportString>Taking {0}.</ingestReportString>
+      <useEatingSpeedStat>false</useEatingSpeedStat>
+      <chairSearchRadius>0</chairSearchRadius>
+      <outcomeDoers>
+        <li Class="IngestionOutcomeDoer_GiveHediff">
+          <hediffDef>RR_NazopranHigh</hediffDef>
+          <severity>1.0</severity>
+        </li>
+        <li Class="IngestionOutcomeDoer_OffsetNeed">
+          <need>Rest</need>
+          <offset>0.85</offset>
+        </li>
+      </outcomeDoers>
+    </ingestible>
+    <recipeMaker>
+      <researchPrerequisite>DrugProduction</researchPrerequisite>
+      <recipeUsers>
+        <li>DrugLab</li>
+      </recipeUsers>
+      <soundWorking>Recipe_Drug</soundWorking>
+      <bulkRecipeCount>4</bulkRecipeCount>
+      <displayPriority>1620</displayPriority>
+    </recipeMaker>
+    <costList>
+      <Neutroamine>1</Neutroamine>
+    </costList>
+    <comps>
+      <li Class="CompProperties_Drug">
+        <listOrder>230</listOrder>
+        <overdoseSeverityOffset>0.10~0.18</overdoseSeverityOffset>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <HediffDef>
+    <defName>RR_NazopranHigh</defName>
+    <hediffClass>Hediff_High</hediffClass>
+    <label>nazopran</label>
+    <labelNoun>a nazopran dose</labelNoun>
+    <description>Awake, and staying that way. The tiredness has not gone anywhere; it is simply not being listened to.</description>
+    <defaultLabelColor>(0.85, 0.85, 0.9)</defaultLabelColor>
+    <scenarioCanAdd>false</scenarioCanAdd>
+    <maxSeverity>1.0</maxSeverity>
+    <initialSeverity>1</initialSeverity>
+    <isBad>false</isBad>
+    <comps>
+      <li Class="HediffCompProperties_SeverityPerDay">
+        <!-- A full day, which is the point of it. -->
+        <severityPerDay>-1</severityPerDay>
+        <showHoursToRecover>true</showHoursToRecover>
+      </li>
+    </comps>
+    <stages>
+      <li>
+        <statFactors>
+          <RestFallRateFactor>0.55</RestFallRateFactor>
+        </statFactors>
+        <capMods>
+          <li>
+            <capacity>Consciousness</capacity>
+            <offset>0.08</offset>
+          </li>
+        </capMods>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <!-- ============================= God's Bread ============================ -->
+  <!--
+    "A drug made from dried mushrooms used by Obsidian warriors before going into
+    battle. It is said to fill warriors with the heat of the gods, and is used to
+    dull the pain of any injuries the user sustains... it also has hallucinogenic
+    properties."
+
+    Neolithic on purpose: prepared at a crafting spot from Core's RawFungus. The
+    Obsidian tribes were kept pre-industrial by the Society and their drugs
+    should say so.
+  -->
+  <ThingDef ParentName="MakeableDrugBase">
+    <defName>RR_GodsBread</defName>
+    <label>god's bread</label>
+    <description>Cave fungus dried on hot stones and pressed into a dark cake. Eaten before a fight, on an empty stomach, by men who intend to be somebody else for the next few hours.\n\nIt takes the pain out of a wound entirely, which is not the same as taking the wound out of the man. The visions are considered part of the point.</description>
+    <descriptionHyperlinks>
+      <HediffDef>RR_GodsBreadHigh</HediffDef>
+    </descriptionHyperlinks>
+    <graphicData>
+      <texPath>Things/Item/Drug/RR_GodsBread</texPath>
+      <graphicClass>Graphic_StackCount</graphicClass>
+    </graphicData>
+    <rotatable>false</rotatable>
+    <statBases>
+      <WorkToMake>400</WorkToMake>
+      <MarketValue>22</MarketValue>
+      <Mass>0.05</Mass>
+    </statBases>
+    <techLevel>Neolithic</techLevel>
+    <ingestible>
+      <joyKind>Chemical</joyKind>
+      <joy>0.30</joy>
+      <drugCategory>Hard</drugCategory>
+      <foodType>Processed</foodType>
+      <baseIngestTicks>140</baseIngestTicks>
+      <ingestCommandString>Eat {0}</ingestCommandString>
+      <ingestReportString>Eating {0}.</ingestReportString>
+      <chairSearchRadius>0</chairSearchRadius>
+      <outcomeDoers>
+        <li Class="IngestionOutcomeDoer_GiveHediff">
+          <hediffDef>RR_GodsBreadHigh</hediffDef>
+          <severity>1.0</severity>
+        </li>
+      </outcomeDoers>
+    </ingestible>
+    <recipeMaker>
+      <!-- No research and no lab: a crafting spot and a handful of fungus. -->
+      <recipeUsers Inherit="False">
+        <li>CraftingSpot</li>
+        <li>DrugLab</li>
+      </recipeUsers>
+      <bulkRecipeCount>4</bulkRecipeCount>
+      <displayPriority>1630</displayPriority>
+    </recipeMaker>
+    <costList>
+      <RawFungus>12</RawFungus>
+    </costList>
+    <comps>
+      <li Class="CompProperties_Drug">
+        <isCombatEnhancingDrug>true</isCombatEnhancingDrug>
+        <listOrder>240</listOrder>
+        <overdoseSeverityOffset>0.12~0.22</overdoseSeverityOffset>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <HediffDef>
+    <defName>RR_GodsBreadHigh</defName>
+    <hediffClass>Hediff_High</hediffClass>
+    <label>god's bread</label>
+    <labelNoun>the heat of the gods</labelNoun>
+    <description>The heat of the gods, as the shamans have it. Pain has become a rumour about somebody else, and the edges of things have begun to move.</description>
+    <defaultLabelColor>(0.9, 0.65, 0.3)</defaultLabelColor>
+    <scenarioCanAdd>false</scenarioCanAdd>
+    <maxSeverity>1.0</maxSeverity>
+    <initialSeverity>1</initialSeverity>
+    <isBad>false</isBad>
+    <comps>
+      <li Class="HediffCompProperties_SeverityPerDay">
+        <severityPerDay>-4</severityPerDay>
+        <showHoursToRecover>true</showHoursToRecover>
+      </li>
+    </comps>
+    <stages>
+      <li>
+        <!-- "Used to dull the pain of any injuries the user sustains" - the
+             strongest painFactor in the mod, and the reason a wounded Obsidian
+             keeps coming. -->
+        <painFactor>0.1</painFactor>
+        <statOffsets>
+          <MeleeDamageFactor>0.20</MeleeDamageFactor>
+          <PainShockThreshold>0.25</PainShockThreshold>
+          <!-- The hallucinations, priced: anything needing a steady eye suffers. -->
+          <ShootingAccuracyPawn>-3</ShootingAccuracyPawn>
+        </statOffsets>
+        <capMods>
+          <li>
+            <capacity>Consciousness</capacity>
+            <offset>0.10</offset>
+          </li>
+          <li>
+            <capacity>Sight</capacity>
+            <offset>-0.15</offset>
+          </li>
+        </capMods>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <!-- ============================= Fever Cloud ============================ -->
+  <!--
+    "A drug made from mushrooms used by Obsidian berserkers. Sefi refers to it as
+    making men into savages."
+
+    So this one is NOT simply a stronger god's bread. It is the one with a real
+    chance of turning on you: the mentalStateGivers below can drop the user into
+    Berserk while the high lasts, which is what "making men into savages" has to
+    mean if it means anything mechanically.
+  -->
+  <ThingDef ParentName="MakeableDrugBase">
+    <defName>RR_FeverCloud</defName>
+    <label>fever cloud</label>
+    <description>A coarse grey powder, burned rather than eaten, and breathed in from a bowl by warriors who have already decided how the day ends. The name is for the haze it leaves over the camp, and for what it does to the men inside it.\n\nSefi calls it the thing that makes men into savages. She does not mean it as praise, and she has not banned it.</description>
+    <descriptionHyperlinks>
+      <HediffDef>RR_FeverCloudHigh</HediffDef>
+    </descriptionHyperlinks>
+    <graphicData>
+      <texPath>Things/Item/Drug/RR_FeverCloud</texPath>
+      <graphicClass>Graphic_StackCount</graphicClass>
+    </graphicData>
+    <rotatable>false</rotatable>
+    <statBases>
+      <WorkToMake>450</WorkToMake>
+      <MarketValue>28</MarketValue>
+      <Mass>0.05</Mass>
+    </statBases>
+    <techLevel>Neolithic</techLevel>
+    <ingestible>
+      <joyKind>Chemical</joyKind>
+      <joy>0.25</joy>
+      <drugCategory>Hard</drugCategory>
+      <foodType>Processed</foodType>
+      <baseIngestTicks>140</baseIngestTicks>
+      <ingestCommandString>Breathe {0}</ingestCommandString>
+      <ingestReportString>Breathing {0}.</ingestReportString>
+      <chairSearchRadius>0</chairSearchRadius>
+      <outcomeDoers>
+        <li Class="IngestionOutcomeDoer_GiveHediff">
+          <hediffDef>RR_FeverCloudHigh</hediffDef>
+          <severity>1.0</severity>
+        </li>
+      </outcomeDoers>
+    </ingestible>
+    <recipeMaker>
+      <recipeUsers Inherit="False">
+        <li>CraftingSpot</li>
+        <li>DrugLab</li>
+      </recipeUsers>
+      <bulkRecipeCount>4</bulkRecipeCount>
+      <displayPriority>1640</displayPriority>
+    </recipeMaker>
+    <costList>
+      <RawFungus>16</RawFungus>
+    </costList>
+    <comps>
+      <li Class="CompProperties_Drug">
+        <isCombatEnhancingDrug>true</isCombatEnhancingDrug>
+        <listOrder>250</listOrder>
+        <overdoseSeverityOffset>0.18~0.32</overdoseSeverityOffset>
+        <largeOverdoseChance>0.01</largeOverdoseChance>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <HediffDef>
+    <defName>RR_FeverCloudHigh</defName>
+    <hediffClass>Hediff_High</hediffClass>
+    <label>fever cloud</label>
+    <labelNoun>the fever</labelNoun>
+    <description>The fever. Whatever normally stands between this person and violence has been taken away, and it will not come back until the smoke clears.</description>
+    <defaultLabelColor>(0.85, 0.3, 0.25)</defaultLabelColor>
+    <scenarioCanAdd>false</scenarioCanAdd>
+    <maxSeverity>1.0</maxSeverity>
+    <initialSeverity>1</initialSeverity>
+    <isBad>false</isBad>
+    <comps>
+      <li Class="HediffCompProperties_SeverityPerDay">
+        <severityPerDay>-4</severityPerDay>
+        <showHoursToRecover>true</showHoursToRecover>
+      </li>
+    </comps>
+    <stages>
+      <li>
+        <painFactor>0.05</painFactor>
+        <statOffsets>
+          <MeleeDamageFactor>0.45</MeleeDamageFactor>
+          <MeleeHitChance>2</MeleeHitChance>
+          <PainShockThreshold>0.35</PainShockThreshold>
+          <!-- Useless with a gun, and worse than useless with people. -->
+          <ShootingAccuracyPawn>-6</ShootingAccuracyPawn>
+          <SocialImpact>-0.60</SocialImpact>
+        </statOffsets>
+        <capMods>
+          <li>
+            <capacity>Consciousness</capacity>
+            <offset>0.15</offset>
+          </li>
+        </capMods>
+        <!--
+          THE COST, AND THE WHOLE POINT. A berserk colonist attacks whoever is
+          nearest, including their own side. mtbDays 2 over a six-hour high is
+          roughly a one-in-eight chance per dose - high enough that using this on
+          your own people is a real decision, low enough that it is not simply a
+          trap.
+        -->
+        <mentalStateGivers>
+          <li>
+            <mentalState>Berserk</mentalState>
+            <mtbDays>2</mtbDays>
+          </li>
+        </mentalStateGivers>
+      </li>
+    </stages>
+  </HediffDef>
+
+</Defs>
