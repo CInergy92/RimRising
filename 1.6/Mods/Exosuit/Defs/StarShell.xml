@@ -232,6 +232,15 @@
       <WorkSpeedGlobal>-0.55</WorkSpeedGlobal>
       <SocialImpact>-0.40</SocialImpact>
     </equippedStatOffsets>
+    <!--
+      Exosuit modules still need a category or apparel policies cannot allow
+      them. The reference mod gives its modules custom categories of its own;
+      ApparelArmor is the vanilla equivalent and avoids shipping category defs
+      for four items.
+    -->
+    <thingCategories>
+      <li>ApparelArmor</li>
+    </thingCategories>
     <apparel>
       <wornGraphicPath>Things/Pawn/Humanlike/Apparel/RR_StarShell/RR_StarShellCore</wornGraphicPath>
       <drawData>
@@ -303,6 +312,15 @@
       <ShootingAccuracyPawn>4</ShootingAccuracyPawn>
       <AimingDelayFactor>-0.25</AimingDelayFactor>
     </equippedStatOffsets>
+    <!--
+      Exosuit modules still need a category or apparel policies cannot allow
+      them. The reference mod gives its modules custom categories of its own;
+      ApparelArmor is the vanilla equivalent and avoids shipping category defs
+      for four items.
+    -->
+    <thingCategories>
+      <li>ApparelArmor</li>
+    </thingCategories>
     <apparel>
       <wornGraphicPath>Things/Pawn/Humanlike/Apparel/RR_StarShell/RR_StarShellHead</wornGraphicPath>
       <drawData>
@@ -401,6 +419,14 @@
         <li>RR_StarShell</li>
       </tags>
     </apparel>
+    <!--
+      Category, or apparel policies cannot allow this and colonists strip it
+      off. This def has no <apparel> node of its own - it inherits one from
+      ModuleApparelArmRight - so the category sits beside the comps.
+    -->
+    <thingCategories>
+      <li>ApparelArmor</li>
+    </thingCategories>
     <comps>
       <li Class="Exosuit.CompProperties_ExosuitModule">
         <ItemDef>RR_Module_StarShellCannonArm</ItemDef>

@@ -130,6 +130,18 @@ function Build-VanillaIndex {
     # inherit plain Tool entries that CE casts to ToolCE and crashes on.
     $toolBearers = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 
+    # Vanilla defs and Name= abstracts that supply <thingCategories>, so a child
+    # of theirs can be checked for INHERITING one.
+    #
+    # This matters because the absence is completely silent. An apparel ThingDef
+    # with no category - its own or inherited - never appears in the
+    # apparel-policy filter tree, so it cannot be allowed and colonists strip it
+    # straight back off; it is missing from stockpile filters too. Nothing is
+    # logged. ArmorMachineableBase and ApparelMakeableBase supply NONE, while
+    # ArmorHelmetMakeableBase supplies ArmorHeadgear, so "it has an armour
+    # parent" is not the same as "it has a category".
+    $categoryBearers = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+
     # Abstract (Name=) defs and the list-valued fields they declare, so a child can
     # be checked for re-declaring something it already inherits. RimWorld APPENDS
     # list fields on inherit rather than replacing them, so a duplicate entry is
@@ -182,6 +194,12 @@ function Build-VanillaIndex {
                     if ($li.InnerText) { $rm += $li.InnerText.Trim() }
                 }
                 $preceptReqMemes[$dn.InnerText.Trim()] = $rm
+            }
+
+            if ($node.LocalName -eq 'ThingDef' -and $node.SelectSingleNode('thingCategories')) {
+                if ($dn -and $dn.InnerText) { [void]$categoryBearers.Add($dn.InnerText.Trim()) }
+                $nc = $node.Attributes['Name']
+                if ($nc -and $nc.Value) { [void]$categoryBearers.Add($nc.Value.Trim()) }
             }
 
             if ($node.LocalName -eq 'ThingDef' -and $node.SelectSingleNode('tools')) {
@@ -254,6 +272,7 @@ function Build-VanillaIndex {
         PreceptReqMemes = $preceptReqMemes
         RecipeUserAbstracts = @($recipeUserAbstracts)
         ToolBearers   = @($toolBearers)
+        CategoryBearers = @($categoryBearers)
         Abstracts     = $abstracts
     }
 }
@@ -273,7 +292,7 @@ function Get-VanillaIndex {
 
     # Bumped whenever the cached shape changes, so an old cache is rebuilt rather
     # than read with missing fields.
-    $cacheSchema = 10  # 10: ToolBearers, for CE inherited-tool detection
+    $cacheSchema = 11  # 11: CategoryBearers, for apparel filter-tree detection
 
     if (-not $Refresh -and (Test-Path $cacheFile)) {
         try {
@@ -294,6 +313,7 @@ function Get-VanillaIndex {
                     PreceptReqMemes = $cached.PreceptReqMemes
                     RecipeUserAbstracts = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.RecipeUserAbstracts, [StringComparer]::Ordinal)
                     ToolBearers   = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.ToolBearers, [StringComparer]::Ordinal)
+                    CategoryBearers = [System.Collections.Generic.HashSet[string]]::new([string[]]$cached.CategoryBearers, [StringComparer]::Ordinal)
                     Abstracts     = $cached.Abstracts
                     Version       = $version
                 }
@@ -324,6 +344,7 @@ function Get-VanillaIndex {
         PreceptReqMemes = $idx.PreceptReqMemes
         RecipeUserAbstracts = $idx.RecipeUserAbstracts
         ToolBearers   = $idx.ToolBearers
+        CategoryBearers = $idx.CategoryBearers
         Abstracts     = $idx.Abstracts
     } | ConvertTo-Json -Depth 8 -Compress | Set-Content -Path $cacheFile -Encoding UTF8
 
@@ -343,6 +364,7 @@ function Get-VanillaIndex {
         PreceptReqMemes = $idx.PreceptReqMemes
         RecipeUserAbstracts = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.RecipeUserAbstracts, [StringComparer]::Ordinal)
         ToolBearers   = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.ToolBearers, [StringComparer]::Ordinal)
+        CategoryBearers = [System.Collections.Generic.HashSet[string]]::new([string[]]$idx.CategoryBearers, [StringComparer]::Ordinal)
         Abstracts     = $idx.Abstracts
         Version       = $version
     }
@@ -885,6 +907,7 @@ $modResearchProjects = [System.Collections.Generic.HashSet[string]]::new([String
 $modWeaponClasses    = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 $weaponClassRefs     = [System.Collections.Generic.List[object]]::new()
 $ourThings           = @{}   # our ThingDefs: parent, own tools, CE tools - for inheritance walking
+$ourApparel          = @{}   # our apparel: parent + whether it declares thingCategories
 $maskedApparel       = @{}   # defName -> file + wornGraphicPath, for mask checking
 $abstractRecipeUsers = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 
@@ -1004,6 +1027,22 @@ foreach ($file in $xmlFiles) {
             # Any def with melee tools. Collected here rather than filtered to
             # weapons, because apparel and buildings can carry tools too and CE
             # casts them all the same way.
+            # Apparel of ours, for the filter-tree check. <apparel> must be a
+            # DIRECT child: descriptionHyperlinks contains <ThingDef> elements,
+            # and a descendant search there would misread the def entirely.
+            if ($node.LocalName -eq 'ThingDef' -and $dnNode) {
+                $pn0 = $node.Attributes['ParentName']
+                $isApparel = [bool]$node.SelectSingleNode('apparel') -or
+                             ($pn0 -and $pn0.Value -like '*Apparel*')
+                if ($isApparel) {
+                    $ourApparel[$dnNode.InnerText.Trim()] = [pscustomobject]@{
+                        File    = $rel
+                        Parent  = if ($pn0) { $pn0.Value.Trim() } else { $null }
+                        OwnCats = [bool]$node.SelectSingleNode('thingCategories')
+                    }
+                }
+            }
+
             if ($node.LocalName -eq 'ThingDef') {
                 $pnAttr = $node.Attributes['ParentName']
                 $nmAttr = $node.Attributes['Name']
@@ -1789,6 +1828,43 @@ if (Test-Path $ceToolsDir) {
         Add-Problem -Severity ERROR -Check 'CEToolsUnpatched' -File $info.File `
             -Message ("'{0}' {1} but has no PatchOperationReplace on its /tools in 1.6\mods\CombatExtended\Patches. Under CE, Verb_MeleeAttackCE casts every tool to ToolCE, so a vanilla Tool throws a NullReferenceException on every melee swing - and the stack trace names only CE. Guns need this too: PatchOperationMakeGunCECompatible does not touch tools." -f $dName, $how)
     }
+}
+
+# --- apparel must be reachable in the apparel-policy filter tree ---------------
+#
+# THIS SHIPPED AND WAS FOUND IN PLAY: pulse armour could not be allowed in any
+# apparel policy, so colonists took it straight back off. Searching the policy
+# filter for it returned nothing at all - it was not disallowed, it was absent.
+#
+# The cause is that ThingFilter builds its tree from thingCategories. An apparel
+# def with no category, its own or inherited, is invisible to apparel policies
+# AND to stockpile filters, and nothing is logged either way.
+#
+# Inheritance is real here and cuts both ways, which is why this walks the chain
+# rather than checking for a declaration: ArmorHelmetMakeableBase DOES supply
+# ArmorHeadgear, so the demon helm was always fine, while ArmorMachineableBase
+# and ApparelMakeableBase supply nothing at all.
+foreach ($aName in $ourApparel.Keys) {
+    $info = $ourApparel[$aName]
+    if ($info.OwnCats) { continue }
+
+    $seen = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    $cur  = $info.Parent
+    $found = $false
+    while ($cur -and $seen.Add($cur)) {
+        if ($vanilla.CategoryBearers -and $vanilla.CategoryBearers.Contains($cur)) { $found = $true; break }
+        if ($optionalAbstracts -and $optionalAbstracts.ContainsKey($cur)) { $cur = $optionalAbstracts[$cur]; continue }
+        if ($ourApparel.ContainsKey($cur)) {
+            if ($ourApparel[$cur].OwnCats) { $found = $true; break }
+            $cur = $ourApparel[$cur].Parent
+            continue
+        }
+        break
+    }
+    if ($found) { continue }
+
+    Add-Problem -Severity ERROR -Check 'ApparelNotFilterable' -File $info.File `
+        -Message ("apparel '{0}' declares no <thingCategories> and inherits none from '{1}'. ThingFilter builds the apparel-policy tree from categories, so it can never be allowed in a policy and colonists will strip it off - and it is missing from stockpile filters too. Nothing is logged. Add a category such as ApparelArmor or ApparelUtility." -f $aName, $info.Parent)
 }
 
 # --- worn graphic masks must actually exist -----------------------------------

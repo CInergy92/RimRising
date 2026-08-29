@@ -441,6 +441,14 @@
       </recipeUsers>
       <displayPriority>215</displayPriority>
     </recipeMaker>
+    <!--
+      ApparelUtility, matching vanilla's Apparel_ShieldBelt, which this is the
+      analogue of. Without a category it is invisible to apparel policies and
+      gets stripped off - see the note on pulse armour.
+    -->
+    <thingCategories>
+      <li>ApparelUtility</li>
+    </thingCategories>
     <apparel>
       <countsAsClothingForNudity>false</countsAsClothingForNudity>
       <careIfWornByCorpse>false</careIfWornByCorpse>

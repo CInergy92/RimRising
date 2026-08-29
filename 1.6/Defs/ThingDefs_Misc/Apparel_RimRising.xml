@@ -115,6 +115,16 @@
         <doseRechargeTicks>45000</doseRechargeTicks>
       </li>
     </comps>
+    <!--
+      REQUIRED, and its absence is silent. ArmorMachineableBase supplies NO
+      thingCategories, and an apparel ThingDef with no category never appears in
+      the apparel-policy filter tree at all - so it cannot be allowed, and
+      colonists strip it back off. It is missing from stockpile filters for the
+      same reason. Nothing is logged either way.
+    -->
+    <thingCategories>
+      <li>ApparelArmor</li>
+    </thingCategories>
     <apparel>
       <!--
         THE HELMET IS BUILT IN. PulseArmor is a sealed suit in the books, not a
@@ -257,6 +267,16 @@
       <Plasteel>60</Plasteel>
       <Hyperweave>20</Hyperweave>
     </costList>
+    <!--
+      REQUIRED, and its absence is silent. ArmorMachineableBase supplies NO
+      thingCategories, and an apparel ThingDef with no category never appears in
+      the apparel-policy filter tree at all - so it cannot be allowed, and
+      colonists strip it back off. It is missing from stockpile filters for the
+      same reason. Nothing is logged either way.
+    -->
+    <thingCategories>
+      <li>ApparelArmor</li>
+    </thingCategories>
     <apparel>
       <bodyPartGroups>
         <li>Torso</li>
