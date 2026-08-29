@@ -410,12 +410,59 @@ Write-Sprite 'Things/Item/Equipment/WeaponRanged/RR_PulseFist' 128 {
     Stroke-Dot  $g $S 0.78 0.42 0.050 $Amber
 }
 
+# THE SAME MISTAKE THE SCORCHER MADE, and fixed the same way. The first version
+# was four capsules in a line - stock, body, muzzle, glow strip - which is a
+# shape rather than a weapon, and ControlNet rendered exactly that: a pale tube
+# with a ring on the end. Canny cannot invent gun anatomy that is not in the
+# silhouette, so the anatomy has to be drawn.
+#
+# Heavier than the scorcher because it is shoulder-braced and fires something
+# that folds walls: a deep angled SHOULDER PLATE at the back, a boxy RECEIVER, a
+# raked GRIP with a closed TRIGGER GUARD, a FORE-GRIP the second hand takes, and
+# a long thick BARREL running well past everything with a flared EMITTER at its
+# mouth. Order is back to front, so nothing swallows what came before it.
 Write-Sprite 'Things/Weapons/RR_PulseCannon' 128 {
     param($g, $S)
-    Stroke-Form $g $S @(@(0.14,0.70), @(0.40,0.58)) 0.19 $Leather
-    Stroke-Form $g $S @(@(0.36,0.60), @(0.78,0.36)) 0.145 $Steel
-    Stroke-Form $g $S @(@(0.74,0.38), @(0.90,0.29)) 0.185 $Brass
-    Stroke-Form $g $S @(@(0.46,0.50), @(0.66,0.39)) 0.036 $Amber
+
+    # Shoulder plate: broad and angled, the brace this thing needs to be fired at
+    # all. Drawn as a plate rather than a capsule so it reads as a flat surface
+    # against the body.
+    Stroke-Plate $g $S @(@(0.055,0.700), @(0.190,0.628), @(0.250,0.716), @(0.115,0.792)) $Leather
+
+    # Receiver: the boxy middle, and the widest part of the gun.
+    Stroke-Form $g $S @(@(0.215,0.672), @(0.520,0.510)) 0.185 $Steel
+
+    # Grip, raked down and BACK from under the receiver, and the trigger guard as
+    # a loop attached at both ends - a floating arc is the razor's pommel mistake.
+    Stroke-Form $g $S @(@(0.330,0.632), @(0.286,0.792)) 0.072 $Leather
+    Stroke-Form $g $S @(@(0.318,0.700), @(0.392,0.766), @(0.452,0.678)) 0.034 $Steel
+    Stroke-Form $g $S @(@(0.360,0.686), @(0.372,0.736)) 0.028 $Steel
+
+    # Fore-grip: the second hand. Its own vertical mass low on the barrel line is
+    # a large part of what says "two-handed heavy weapon" at a glance.
+    Stroke-Form $g $S @(@(0.556,0.560), @(0.528,0.700)) 0.066 $Leather
+
+    # Capacitor housing over the receiver - the bulk that makes it a PULSE cannon
+    # rather than a rifle, and interior edges for Canny to hold.
+    Stroke-Form $g $S @(@(0.300,0.560), @(0.560,0.428)) 0.145 (Shade $Steel 0.80)
+    $ax = 0.560 - 0.300; $ay = 0.428 - 0.560
+    $al = [Math]::Sqrt(($ax * $ax) + ($ay * $ay))
+    $nx = -$ay / $al; $ny = $ax / $al
+    foreach ($tt in @(0.18, 0.42, 0.66, 0.90)) {
+        $cx = 0.300 + ($ax * $tt)
+        $cy = 0.560 + ($ay * $tt)
+        Stroke-Form $g $S @(
+            @(($cx - ($nx * 0.056)), ($cy - ($ny * 0.056))),
+            @(($cx + ($nx * 0.056)), ($cy + ($ny * 0.056)))) 0.024 (Shade $Steel 0.55) -NoHighlight
+    }
+
+    # Barrel last and longest, below the housing centreline and running well past
+    # the front face. This is the single line that makes it a gun.
+    Stroke-Form $g $S @(@(0.545,0.512), @(0.930,0.302)) 0.088 (Shade $Steel 0.58)
+    # Flared emitter at the mouth, wider than the barrel.
+    Stroke-Form $g $S @(@(0.885,0.328), @(0.955,0.290)) 0.135 $Brass
+    Stroke-Dot  $g $S 0.932 0.306 0.052 $Amber      # the aperture
+    Stroke-Dot  $g $S 0.404 0.512 0.030 $Amber      # charge light on the housing
 }
 
 # -------------------------------------------------------------------- scorcher

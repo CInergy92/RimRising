@@ -4,11 +4,22 @@
   <author>cinergy92</author>
   <packageId>cinergy92.rimrising</packageId>
   <modIconPath>UI/RimRisingModIcon</modIconPath>
+  <modVersion>0.9.0</modVersion>
   <description>A total conversion built around an engineered caste hierarchy: fourteen Colors, each a xenotype with its own capabilities and its own costs, bound together by a social order that gives the hierarchy real mechanical weight.
 
-Requires Biotech for the Color system and Ideology for the caste hierarchy.
+WHAT IT ADDS
+- Fourteen Colors as inheritable xenotypes, plus Bronzies and six sub-strains, ranked by a ladder the game actually enforces.
+- Carving: a Violet Carver can regrow a lost limb, cut away scarring, rebuild someone's fertility so they can cross Colors, or rebuild a person into another Color entirely. Only a Violet may do any of it.
+- Razors, pulse and recoil armour with an automated trauma suite, gravBoots that launch across the world map, and an aegis.
+- Six factions, two ideoligion memes, two title ladders, and a storyteller.
+- Drugs from the source: zoladone, mjolnir-6, nazopran, god's bread and fever cloud.
 
-This mod is a work in progress.</description>
+REQUIREMENTS
+Royalty, Ideology and Biotech are all required - Biotech for the Colors, Ideology for the hierarchy memes and precepts, Royalty for the Society's title ladders. Several mods are required too; RimWorld will list them all if any are missing, and the mod will not load without them.
+
+OPTIONAL EXTRAS, each loaded only if you already run it: Combat Extended, the Exosuit Framework (starShell), Vehicle Framework (Drachenjaeger) and Alpha Animals (Carvelings). None is required and nothing else changes if you have none of them.
+
+This mod is a work in progress. Art is placeholder in places.</description>
 
   <supportedVersions>
     <li>1.6</li>
