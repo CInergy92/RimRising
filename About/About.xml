@@ -3,7 +3,7 @@
   <name>RimRising</name>
   <author>cinergy92</author>
   <packageId>cinergy92.rimrising</packageId>
-  <modIconPath IgnoreIfNoMatchingField="True">UI/RimRisingModIcon</modIconPath>
+  <modIconPath>UI/RimRisingModIcon</modIconPath>
   <description>A total conversion built around an engineered caste hierarchy: fourteen Colors, each a xenotype with its own capabilities and its own costs, bound together by a social order that gives the hierarchy real mechanical weight.
 
 Requires Biotech for the Color system and Ideology for the caste hierarchy.

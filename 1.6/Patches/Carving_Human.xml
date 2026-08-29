@@ -21,7 +21,7 @@
 <Patch>
 
   <Operation Class="PatchOperationAdd">
-    <xpath>/Defs/ThingDef[defName="Human"]/recipes</xpath>
+    <xpath>Defs/ThingDef[defName="Human"]/recipes</xpath>
     <value>
       <!--
         Restoration first: it is the Carver's ordinary trade and the one a player
