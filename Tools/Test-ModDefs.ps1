@@ -1830,6 +1830,30 @@ if (Test-Path $ceToolsDir) {
     }
 }
 
+# --- ThingDef defNames must not end in a digit ---------------------------------
+#
+# ThingDef.ConfigErrors rejects this outright:
+#
+#     if (char.IsNumber(defName[defName.Length - 1]))
+#         yield return "ends with a numerical digit, which is not allowed on ThingDefs.";
+#
+# The reason shows up in any log: Thing IDs are defName + a number, so a def
+# called RR_Mjolnir6 produces IDs like RR_Mjolnir6123, which cannot be told apart
+# from RR_Mjolnir + 6123. RR_Mjolnir6 shipped exactly that way and the config
+# error was buried among a thousand unrelated lines from other mods.
+#
+# ThingDefs only - the rule does not apply to hediffs, recipes or anything else,
+# so RR_Mjolnir6High is fine and must not be flagged.
+foreach ($tName in $ourThings.Keys) {
+    $tInfo = $ourThings[$tName]
+    if (-not $tInfo.Concrete) { continue }
+    if ($tName.Length -eq 0) { continue }
+    if (-not [char]::IsDigit($tName[$tName.Length - 1])) { continue }
+
+    Add-Problem -Severity ERROR -Check 'ThingDefNameEndsInDigit' -File $tInfo.File `
+        -Message ("ThingDef '{0}' ends in a numerical digit. ThingDef.ConfigErrors rejects this, because Thing IDs are defName plus a number and the two run together ambiguously. Rename it - spell the digit, as RR_MjolnirSix does, and keep the numeral in the <label>." -f $tName)
+}
+
 # --- apparel must be reachable in the apparel-policy filter tree ---------------
 #
 # THIS SHIPPED AND WAS FOUND IN PLAY: pulse armour could not be allowed in any

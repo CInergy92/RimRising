@@ -273,15 +273,28 @@
     burns off in four hours, so it is what you take when the fight has already
     gone wrong - not something a squad walks around on.
   -->
+  <!--
+    DEFNAME IS RR_MjolnirSix, NOT RR_Mjolnir6, and the label carries the digit
+    instead. ThingDef.ConfigErrors rejects any defName ending in a numerical
+    digit outright:
+
+        if (char.IsNumber(defName[defName.Length - 1]))
+            yield return "ends with a numerical digit, which is not allowed on ThingDefs.";
+
+    The reason is visible in any log: Thing IDs are defName + a number, so
+    "RR_Mjolnir6" + 123 gives RR_Mjolnir6123, which cannot be told from
+    "RR_Mjolnir" + 6123. Only ThingDefs are affected - the hediff below keeps its
+    six because it does not end on one.
+  -->
   <ThingDef ParentName="MakeableDrugBase">
-    <defName>RR_Mjolnir6</defName>
+    <defName>RR_MjolnirSix</defName>
     <label>mjolnir-6</label>
     <description>Six stimulants in one ampoule, argued into working together by somebody who was running out of time. It does not so much treat exhaustion as overrule it.\n\nThe Republic considers it the best thing it has for keeping people upright when a line is breaking. It also leaves the user unable to care much what happens to the person beside them, which the Republic has decided it can live with.</description>
     <descriptionHyperlinks>
       <HediffDef>RR_Mjolnir6High</HediffDef>
     </descriptionHyperlinks>
     <graphicData>
-      <texPath>Things/Item/Drug/RR_Mjolnir6</texPath>
+      <texPath>Things/Item/Drug/RR_MjolnirSix</texPath>
       <graphicClass>Graphic_StackCount</graphicClass>
     </graphicData>
     <rotatable>false</rotatable>
