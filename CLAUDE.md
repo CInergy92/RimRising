@@ -697,7 +697,16 @@ Checked both ways: reconstructing `BladeEnd` for the long blade gives 0.661 agai
 hair inside the last antialiased pixel. Do the same.
 
 `MeleeWeaponType` is the flags enum `Long_Blunt 1, Long_Sharp 2, Long_Stab 4, Short_Blunt 8,
-Short_Sharp 16, Short_Stab 32`; a sword is 6, a curved cutting weapon 2. `HandsMode` serialises as
+Short_Sharp 16, Short_Stab 32`; a sword is 6, a curved cutting weapon 2.
+
+**Both razors are 6, and the Reaper's razor is deliberately not the 2 its sprite suggests.** The
+type decides which executions the weapon qualifies for, and the difference is large: 6 matches
+fifteen of them, 2 matches five once the two behead animations are discounted for shipping at
+`relativeProbability 0`. Classifying the Reaper's razor by its drawn sickle would have been reading
+the sprite instead of the setting — a razor holds whatever shape its bearer sets it to, so it is
+only a sickle while Darrow wants one. Do not "correct" this back on the strength of the artwork.
+
+`HandsMode` serialises as
 an integer — `1` is main-hand-only, and 536 of the 3,107 shipped files use it. Size is not authored:
 `IdleClassifier` derives it from `max(BladeLength, |BladeEnd|)`, Tiny at ≤0.63 and Colossal at ≥1.37.
 
