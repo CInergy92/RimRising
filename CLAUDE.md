@@ -639,6 +639,77 @@ millimetres of steel, not a 0..1 fraction.
 Only name ammo sets from CE's own `Defs/` tree. CE defines hundreds more under
 `ModPatches/<Some Mod>/` which exist only for players running that third mod.
 
+### Melee Animation animates nothing it has no tweak data for
+
+Reported from play as "the razors don't work with the melee animations mod", with **nothing in the
+log** — from Melee Animation's side nothing went wrong, it simply has no data for the weapon.
+
+Decompiled from `zAnimationMod.dll` (workshop `2944488802`, `co.uk.epicguru.meleeanimation`).
+Everything is keyed on a per-weapon JSON. With none registered, `ReqInput` comes out empty:
+
+```csharp
+TypeFlags = td?.MeleeWeaponType ?? 0;
+(SizeFlags, CategoryFlags) = td?.GetCategory() ?? (0, 0);
+```
+
+Every `AnimDef` requirement is then unsatisfiable, so the weapon falls back to vanilla's static
+equipped sprite: no idle, no attack, no duel, no execution. `IdleControllerComp` says it outright —
+`if (val != null && def.IsMeleeWeapon() && TryGetTweakData() != null)`.
+
+**No patch to their mod is needed.** `TweakDataManager.MakeOverrideTweakDataFileMap` walks every
+*active* mod's own `WeaponTweakData/` folder and indexes the JSON by bare file name, so a file we
+ship wins the lookup. The name is fixed by `ItemTweakData.MakeFileName`:
+
+```
+<defName>_<packageId>.json          # _steam / _local / _copy suffixes stripped
+```
+
+So ours live in `WeaponTweakData/` at the repo root — **not** under `1.6/` — and ship because
+`Publish-Mod.ps1` excludes only `Source`, `docs`, `Tools`, `Art`, `obj`, `bin`. A
+`<packageId>.txt` holding the mod's display name sits beside them; the in-game tweak editor writes
+one and uses it to label the group.
+
+#### Deriving the numbers without the in-game editor
+
+The author hand-tunes these in a visual editor (`ItemTweakData`'s def constructor sets
+`Rotation = 0` and derives nothing), so there is no oracle in the code. The convention was
+recovered by measuring four reference sprites against their shipped JSON:
+
+| weapon | sprite principal axis | `Rotation` in the JSON |
+|---|---|---|
+| `AG_ForsakenLongBlade` | 39.9° | 40 |
+| `AG_ForsakenSpear` | 45.6° | 45 |
+| `AG_ForsakenBulkSword` | 47.6° | 45 |
+| `AG_ForsakenBattleAxe` | 66.8° | 65 |
+
+`Rotation` is the sprite's own principal axis, CCW from +X with +Y up. The rest is one frame:
+**origin at the canvas centre, units of canvas widths** (equal to world units while `drawSize` is 1),
+projected onto that axis.
+
+```
+OffX       = -(t of the grip point)
+BladeStart = OffX + (t where the blade begins)
+BladeEnd   = OffX + (t of the far end of the sprite)
+```
+
+Checked both ways: reconstructing `BladeEnd` for the long blade gives 0.661 against the shipped
+0.641, and for the spear 0.691 against 0.679 — inside 2%, which is the author nudging the tip a
+hair inside the last antialiased pixel. Do the same.
+
+`MeleeWeaponType` is the flags enum `Long_Blunt 1, Long_Sharp 2, Long_Stab 4, Short_Blunt 8,
+Short_Sharp 16, Short_Stab 32`; a sword is 6, a curved cutting weapon 2. `HandsMode` serialises as
+an integer — `1` is main-hand-only, and 536 of the 3,107 shipped files use it. Size is not authored:
+`IdleClassifier` derives it from `max(BladeLength, |BladeEnd|)`, Tiny at ≤0.63 and Colossal at ≥1.37.
+
+`Tools/Test-ModDefs.ps1` checks this (`MeleeAnimTweakDataMissing`, WARN — Melee Animation is not a
+declared dependency). It counts a def as melee when it has or inherits `<tools>` and declares no
+`verbs/li/defaultProjectile`, which mirrors `IsWeapon && !IsRangedWeapon`.
+
+**Not our fault, in the same log:** `[MeleeAnim] Failed: failed to spawn flyer.` is the *lasso*.
+`GrappleFlyer.MakeGrappleFlyer` returns null when the victim is already standing on the target cell
+or has despawned. `[MeleeAnim] <pawn> has bad job: Wait_Combat. Cancelling animation.` is
+`AnimRenderer` dropping an animation whose pawn got re-tasked. Neither involves weapon data.
+
 ### Persisted state does not retroactively update
 
 A def fix does not repair things already created from the old def. Faction leaders are

@@ -1,0 +1,13 @@
+{
+  "TextureModID": "cinergy92.rimrising",
+  "ItemDefName": "RR_Weapon_Razor",
+  "ItemType": "ThingDef",
+  "ItemTypeNamespace": "Verse",
+  "OffX": 0.4243,
+  "OffY": 0.0071,
+  "Rotation": 45.0,
+  "HandsMode": 1,
+  "BladeStart": 0.1485,
+  "BladeEnd": 1.075,
+  "MeleeWeaponType": 6
+}

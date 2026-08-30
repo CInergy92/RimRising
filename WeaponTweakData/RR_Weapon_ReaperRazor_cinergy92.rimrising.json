@@ -1,0 +1,13 @@
+{
+  "TextureModID": "cinergy92.rimrising",
+  "ItemDefName": "RR_Weapon_ReaperRazor",
+  "ItemType": "ThingDef",
+  "ItemTypeNamespace": "Verse",
+  "OffX": 0.4322,
+  "OffY": 0.0217,
+  "Rotation": 42.5,
+  "HandsMode": 1,
+  "BladeStart": 0.1308,
+  "BladeEnd": 0.915,
+  "MeleeWeaponType": 2
+}

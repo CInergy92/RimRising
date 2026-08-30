@@ -1055,6 +1055,9 @@ foreach ($file in $xmlFiles) {
                         Parent   = if ($pnAttr) { $pnAttr.Value.Trim() } else { $null }
                         OwnTools = [bool]$node.SelectSingleNode('tools')
                         InlineCE = [bool]$node.SelectSingleNode('tools/li[@Class="CombatExtended.ToolCE"]')
+                        # A launcher verb is what separates a gun from a melee
+                        # weapon; ThingDef.IsMeleeWeapon is IsWeapon && !IsRangedWeapon.
+                        OwnRanged = [bool]$node.SelectSingleNode('verbs/li[defaultProjectile]')
                         Concrete = [bool]($dnNode -and $dnNode.InnerText)
                     }
                 }
@@ -1852,6 +1855,67 @@ foreach ($tName in $ourThings.Keys) {
 
     Add-Problem -Severity ERROR -Check 'ThingDefNameEndsInDigit' -File $tInfo.File `
         -Message ("ThingDef '{0}' ends in a numerical digit. ThingDef.ConfigErrors rejects this, because Thing IDs are defName plus a number and the two run together ambiguously. Rename it - spell the digit, as RR_MjolnirSix does, and keep the numeral in the <label>." -f $tName)
+}
+
+# --- melee weapons need Melee Animation tweak data -----------------------------
+#
+# ANOTHER SILENT ONE, reported from play as "the razors don't work with the melee
+# animations mod". Nothing is logged, because from Melee Animation's point of view
+# nothing went wrong - it simply has no data for the weapon.
+#
+# Decompiled from zAnimationMod.dll. TweakDataManager keys everything on a per
+# weapon json, and with none registered ReqInput comes out as:
+#
+#     TypeFlags = td?.MeleeWeaponType ?? 0;
+#     (SizeFlags, CategoryFlags) = td?.GetCategory() ?? (0, 0);
+#
+# Every AnimDef requirement is then unsatisfiable, so the weapon draws with
+# vanilla's static equipped sprite and gets no idle, no attack, no duel and no
+# execution. IdleControllerComp makes it explicit:
+#
+#     if (val != null && def.IsMeleeWeapon() && TryGetTweakData() != null)
+#
+# THE FIX NEEDS NO PATCH TO THEIR MOD. TweakDataManager.MakeOverrideTweakDataFileMap
+# walks every ACTIVE mod's own WeaponTweakData folder and indexes the json files by
+# bare file name, so a file we ship overrides the lookup. The name is fixed by
+# ItemTweakData.MakeFileName:
+#
+#     defName + "_" + PackageId + ".json"
+#
+# with _steam / _local / _copy suffixes stripped from the package id.
+#
+# WARN, not ERROR: Melee Animation is not one of our declared dependencies, and the
+# weapons are perfectly playable without it.
+$tweakDir = Join-Path $ModRoot 'WeaponTweakData'
+$ourPackageId = 'cinergy92.rimrising'
+
+function Test-InheritsTools {
+    param([string] $Name)
+    $seen = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    $cur = $Name
+    while ($cur -and $seen.Add($cur)) {
+        if ($vanilla.ToolBearers -and $vanilla.ToolBearers.Contains($cur)) { return $true }
+        if ($ourThings.ContainsKey($cur)) {
+            if ($ourThings[$cur].OwnTools) { return $true }
+            $cur = $ourThings[$cur].Parent
+            continue
+        }
+        break
+    }
+    return $false
+}
+
+foreach ($mName in $ourThings.Keys) {
+    $mInfo = $ourThings[$mName]
+    if (-not $mInfo.Concrete) { continue }
+    if ($mInfo.OwnRanged) { continue }              # a gun, not a melee weapon
+    if (-not (Test-InheritsTools $mName)) { continue }
+
+    $expected = '{0}_{1}.json' -f $mName, $ourPackageId
+    if (Test-Path (Join-Path $tweakDir $expected)) { continue }
+
+    Add-Problem -Severity WARN -Check 'MeleeAnimTweakDataMissing' -File $mInfo.File `
+        -Message ("Melee weapon '{0}' has no Melee Animation tweak data at WeaponTweakData\{1}, so under that mod it gets no idle, attack, duel or execution animation and nothing is logged. Derive the values the way the shipped ones were - see the Melee Animation section of CLAUDE.md - or open the in-game tweak editor and save from there." -f $mName, $expected)
 }
 
 # --- apparel must be reachable in the apparel-policy filter tree ---------------
