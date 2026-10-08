@@ -456,7 +456,10 @@ opted a garment in.
 
 ## Tooling
 
-All in `/Tools`, PowerShell 7. Run from the repo root.
+All in `/Tools`, run from the repo root. **Use whichever language suits the job** — the user's
+direction; PowerShell is not required. Most existing tooling is PowerShell 7, and the 3D apparel
+pipeline is Python run inside Blender (`Render-ApparelPasses.py`, `Compose-WornApparel.py`),
+because Blender ships its own Python and numpy and needs no extra installs.
 
 ```bash
 pwsh -File Tools/Test-ModDefs.ps1
