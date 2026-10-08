@@ -792,6 +792,11 @@ it, so the pawn's own clothes show; scarab is a near-black fitted skin with a di
 bulk; the cloak is a shoulder **mantle** over falling panels. A cloak without the mantle read as
 trousers from the front, and its item icon shows its back for the same reason (`ICON_FACING`).
 
+**Headgear** is a design too (`helm`, the demonHelm): it registers against the head, so it draws in
+the measured head box (0.29-0.70 x 0.26-0.70) with one texture per facing and no body types, scaled
+by `HELM_SCALE` 0.80 - drawn straight into the box it came out a third bigger than vanilla's marine
+helmet on the same heads, because the design pads past the box to cover hair.
+
 **Realistic Body variants** (`--rb`) exist for every design that covers the legs: plate greaves for
 the two plate suits, skin-tight legs for scarabSkin, a longer hem for the cloak. All five carry
 `THIGAPPE_IgnoreTag`. duroArmor is torso-only, so its base sprites serve everywhere.

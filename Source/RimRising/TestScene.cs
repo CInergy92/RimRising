@@ -38,11 +38,12 @@ namespace RimRising
             "RR_Apparel_DuroArmor",
             "RR_Apparel_ScarabSkin",
             "RR_Apparel_GhostCloak",
-            // ...against vanilla's two references for scale and line weight.
-            // (Alpha Genes, VAE and VFE Classical armour were compared earlier;
-            // see CLAUDE.md for what that showed.)
+            "RR_Apparel_DemonHelm",             // headgear, on its own
+            // ...against vanilla references for scale and line weight. (Alpha
+            // Genes, VAE, VFE Classical armour and Royalty's cataphract were
+            // compared earlier; see CLAUDE.md for what that showed.)
             "Apparel_PowerArmor",               // vanilla marine armour
-            "Apparel_ArmorCataphract",          // Royalty cataphract
+            "Apparel_PowerArmorHelmet",         // vanilla marine helmet
         };
 
         private static readonly Rot4[] Facings = { Rot4.South, Rot4.East, Rot4.North };

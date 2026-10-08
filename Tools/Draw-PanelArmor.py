@@ -70,7 +70,26 @@ TONE = {
     # ghostCloak: woven polyenne, a muted slate; the lining darker.
     "cloth": (np.array([0.44, 0.49, 0.48]), np.array([0.32, 0.36, 0.35])),
     "lining": (np.array([0.21, 0.23, 0.23]), np.array([0.16, 0.17, 0.17])),
+    # demonHelm: "pupil-black" - near-black, but with enough plane left to read.
+    "helm":  (np.array([0.22, 0.22, 0.24]), np.array([0.14, 0.14, 0.16])),
+    "mask":  (np.array([0.30, 0.29, 0.31]), np.array([0.20, 0.20, 0.22])),
+    "eyes":  (np.array([1.00, 0.64, 0.22]), np.array([0.88, 0.46, 0.14])),
+    "void":  (np.array([0.05, 0.05, 0.06]), np.array([0.05, 0.05, 0.06])),
 }
+
+# HEADGEAR registers against the HEAD, not the body: one texture per facing, no
+# body-type variants. Same measured head box as Tools/WornPieces.ps1.
+HEAD_BOX = (0.29, 0.70, 0.26, 0.70)
+# The helm design pads past the head box on every side (it has to cover hair), and
+# drawn straight into that box it came out about a third bigger than vanilla's
+# marine helmet on the same heads in the test scene. Scaled about the box centre.
+HELM_SCALE = 0.80
+
+
+def _scaled_box(box, s):
+    x0, x1, y0, y1 = box
+    cx, cy, hw, hh = (x0 + x1) / 2, (y0 + y1) / 2, (x1 - x0) / 2 * s, (y1 - y0) / 2 * s
+    return (cx - hw, cx + hw, cy - hh, cy + hh)
 DYED = {"plate"}
 
 # REALISTIC BODY LEGS. [NL] Realistic Body (nals.realisticbody) retextures only
@@ -492,6 +511,52 @@ def ghost_cloak(fr, facing, body_mask, legs=None):
     return P
 
 
+def demon_helm(fr, facing, body_mask=None, legs=None):
+    """demonHelm: "a pupil-black helm shaped, not quite subtly, like a screaming
+    face", whose wearer sees "spectrums a human eye cannot hold". A dark dome and
+    jaw; a face plate cut as a screaming mask - angled brows, slanted amber eye
+    lenses, an open mouth; a crest in profile, neck lames behind. Box units are
+    the HEAD box, padded so the helm covers hair."""
+    P = []
+
+    def add(mask, tone, side=None):
+        P.append((mask, tone, side if side is not None else np.zeros_like(mask)))
+
+    if facing == "south":
+        shell = ellipse(fr, 0.5, 0.40, 0.56, 0.50) | poly(fr, [(0.00, 0.40), (1.00, 0.40), (0.84, 0.98), (0.5, 1.06), (0.16, 0.98)], round_=0.05)
+        add(shell, "helm", plane_split(fr, shell, 1.0, 0.0, 0.60))
+        face = poly(fr, [(0.16, 0.30), (0.84, 0.30), (0.80, 0.70), (0.63, 0.98), (0.37, 0.98), (0.20, 0.70)], round_=0.04)
+        add(face, "mask", plane_split(fr, face, 1.0, 0.0, 0.56))
+        for s in (-1, 1):
+            # Slanted lenses, low at the outside: a furious face, not a calm one.
+            eye = poly(fr, [(0.5 + s * 0.07, 0.50), (0.5 + s * 0.30, 0.42), (0.5 + s * 0.30, 0.50), (0.5 + s * 0.08, 0.57)], round_=0.015)
+            add(eye, "eyes", plane_split(fr, eye, 0.0, 1.0, 0.53))
+            brow = poly(fr, [(0.5 + s * 0.04, 0.44), (0.5 + s * 0.34, 0.33), (0.5 + s * 0.35, 0.39), (0.5 + s * 0.06, 0.49)], round_=0.01)
+            add(brow, "helm")
+        mouth = poly(fr, [(0.40, 0.72), (0.60, 0.72), (0.57, 0.92), (0.5, 0.97), (0.43, 0.92)], round_=0.03)
+        add(mouth, "void")
+        add(line(fr, [(0.5, -0.06), (0.5, 0.30)], PANEL_LINE * 0.8), "ink")
+    elif facing == "east":
+        shell = ellipse(fr, 0.44, 0.40, 0.54, 0.50) | poly(fr, [(0.0, 0.40), (0.70, 0.40), (0.62, 1.00), (0.10, 0.96)], round_=0.05)
+        add(shell, "helm", plane_split(fr, shell, 0.0, 1.0, 0.55))
+        crest = poly(fr, [(0.14, -0.06), (0.64, -0.14), (0.78, -0.06), (0.30, 0.02)], round_=0.03)
+        add(crest, "mask", plane_split(fr, crest, 0.0, 1.0, -0.06))
+        face = poly(fr, [(0.58, 0.28), (0.96, 0.36), (1.04, 0.66), (0.88, 1.00), (0.60, 0.98)], round_=0.04)
+        add(face, "mask", plane_split(fr, face, 0.0, 1.0, 0.64))
+        add(poly(fr, [(0.80, 0.44), (1.00, 0.46), (0.99, 0.53), (0.80, 0.52)], round_=0.01), "eyes")
+        add(poly(fr, [(0.84, 0.38), (1.00, 0.40), (0.99, 0.44), (0.82, 0.43)], round_=0.01), "helm")
+        add(poly(fr, [(0.92, 0.72), (1.06, 0.74), (1.02, 0.90), (0.90, 0.88)], round_=0.02), "void")
+    else:
+        for i, v0 in enumerate((0.84, 0.74)):
+            lame = poly(fr, [(0.10 + i * 0.03, v0), (0.90 - i * 0.03, v0), (0.86 - i * 0.03, v0 + 0.16), (0.14 + i * 0.03, v0 + 0.16)], round_=0.03)
+            add(lame, "helm", plane_split(fr, lame, 1.0, 0.0, 0.60))
+        dome = ellipse(fr, 0.5, 0.40, 0.56, 0.50)
+        add(dome, "helm", plane_split(fr, dome, 1.0, 0.0, 0.62))
+        crest = poly(fr, [(0.45, -0.10), (0.55, -0.10), (0.55, 0.72), (0.45, 0.72)], round_=0.03)
+        add(crest, "mask", plane_split(fr, crest, 1.0, 0.0, 0.5))
+    return P
+
+
 # design -> (function, dyed?, which body types get a Realistic Body variant)
 #   dyed: writes tint masks (worn and icon); only caste-coloured plate is dyed.
 #   rb:   True when the design draws something on Realistic Body's legs.
@@ -501,7 +566,9 @@ DESIGNS = {
     "duro":   (duro_armor, False, False),
     "scarab": (scarab_skin, False, True),
     "cloak":  (ghost_cloak, False, True),
+    "helm":   (demon_helm, False, False),
 }
+HEADGEAR = {"helm"}
 
 
 # --------------------------------------------------------------------- draw
@@ -509,6 +576,8 @@ def draw(design, body, facing, box=None, rb=False):
     """box overrides the measured body box - the item icon uses it to draw the
     same front design scaled up to fill its own frame."""
     kind = "east" if facing == "east" else "ns"
+    if design in HEADGEAR and box is None:
+        box = _scaled_box(HEAD_BOX, HELM_SCALE)
     box = box or cw.BOXES[body][kind]
     fr = Frame(box, cw.BOXES["Male"][kind])
     n = CANVAS * SS
@@ -627,6 +696,12 @@ if __name__ == "__main__":
             d[nz, :3] = d[nz, :3] / d[nz, 3:4]
             cw.save_png(os.path.abspath(argv[3]), d)
             print("WROTE", argv[3], "(precept icon)")
+        sys.exit(0)
+    if design in HEADGEAR:
+        for facing in cw.FACINGS:
+            tex, msk = draw(design, "Male", facing)
+            cw.save_png(f"{prefix}_{facing}.png", tex)
+            print("WROTE", f"{prefix}_{facing}")
         sys.exit(0)
     for body in cw.BOXES:
         for facing in cw.FACINGS:

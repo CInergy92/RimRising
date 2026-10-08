@@ -309,7 +309,7 @@ $Pieces = @{
 # Headgear is a different shape of problem: one texture per FACING, no body-type
 # variants at all, and it registers against the head rather than the torso.
 $Headgear = @{
-    'RR_DemonHelm' = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_DemonHelm/RR_DemonHelm'; Draw = ${function:Draw-DemonHelm} }
+    # 'RR_DemonHelm' = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_DemonHelm/RR_DemonHelm'; Draw = ${function:Draw-DemonHelm} }   # now drawn by Tools/Draw-PanelArmor.py
 }
 
 # Exosuit modules: three facings like headgear, but drawn to the FRAMEWORK's own
