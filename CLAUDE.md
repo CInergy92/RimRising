@@ -560,7 +560,9 @@ between this and the first attempt was the difference between "RimWorld" and
 "infographic":
 
 - **Muted, desaturated** colour. Steel is grey-blue, brass is dull ochre.
-- The outline is a **dark warm grey** (~`#26221E`), never black, and thick.
+- The outline is **pure black**, and thick. (Corrected 2026-10-08: sampled from VAE, VTE and VFE
+  sprites, `(0,0,0)` is the most common outline colour in every one. An earlier note here said dark
+  warm grey, never black - measured from a single weapon, and wrong as a rule.)
 - Forms are **rounded** - no sharp polygon corners anywhere.
 - Shading is **one** lighter band along the upper-left edge. Not a gradient.
 - Silhouette runs **diagonally**, lower-left to upper-right, filling most of the canvas.

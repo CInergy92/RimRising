@@ -21,7 +21,13 @@ Art/Review/
 # in minutes by re-running the scene, and they had grown to 236 MB of history.
 Art/Tests/
 
+# Python bytecode from the Blender-run tools
+__pycache__/
+
 # OS noise
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Scratch left by an interrupted git filter-branch; never content.
+.git-rewrite/

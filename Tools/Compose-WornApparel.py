@@ -41,7 +41,11 @@ import numpy as np
 CANVAS = 256
 SS = 4                                  # supersampling factor; work at 4x, average down
 OUTLINE_PX = 3.0                        # outline thickness at final resolution
-INK = np.array([0x26, 0x22, 0x1E]) / 255.0
+# PURE BLACK. Sampled from the outline ring of VAE's heavy marine armour, VTE's
+# longsword and monosword, and VFE Classical's legionnaire armour: (0, 0, 0) is
+# the most common colour in every one. The earlier #26221E came from one mod's
+# weapon and was wrong as a rule.
+INK = np.array([0.0, 0.0, 0.0])
 
 # Measured body boxes (x0, x1, y0, y1), fractions of a 256 canvas, y DOWN.
 # Same table as New-WornApparel.ps1 and CLAUDE.md - keep the three in step.
@@ -137,14 +141,21 @@ def downsample(arr, f):
 
 
 def dilate(mask, r):
-    """Disc dilation by r pixels."""
+    """Disc dilation by r pixels.
+
+    PADDED, NOT ROLLED. np.roll wraps around the edges, so anything touching the
+    bottom of the canvas grew an outline at the TOP. Nothing reached the edge
+    until the Realistic Body greaves, whose feet sit at y=0.999 - and every one of
+    those sprites came out with a stray dark arc floating above the head."""
     r = int(round(r))
+    h, w = mask.shape
+    pad = np.pad(mask, r, mode="constant", constant_values=False)
     out = mask.copy()
     for dy in range(-r, r + 1):
         for dx in range(-r, r + 1):
             if dx * dx + dy * dy > r * r:
                 continue
-            out |= np.roll(np.roll(mask, dy, 0), dx, 1)
+            out |= pad[r + dy:r + dy + h, r + dx:r + dx + w]
     return out
 
 
