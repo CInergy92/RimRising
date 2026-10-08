@@ -30,7 +30,11 @@ updated or the scan is broken.
 
 ## Dependencies
 
-**Seven** third-party mods are hard dependencies, all confirmed installed and indexed:
+**Ten** third-party mods are declared in `About.xml`. Seven are used directly, all confirmed
+installed and indexed; the other three are declared so the mod list tells the truth: `brrainz.harmony`
+and `OskarPotocki.VanillaFactionsExpanded.Core` because Alpha Genes needs them and RimWorld does not
+resolve transitive dependencies, and `EBSG.Framework` because EBSG's own `LoadFolders.xml` gates
+`EBSG_FertilityShortening` behind it (see PROGRESS, "the fourth false green").
 
 | Mod | packageId | Workshop | What we use it for |
 |---|---|---|---|
@@ -38,13 +42,13 @@ updated or the scan is broken.
 | [BT] EyeGenes2 | `Oppey.EyeGenes2` | 2898151329 | 34 eye-color genes incl. `Eyes_Golden`. Caste-matched eyes for every Color. |
 | Expanded Biotech Style Genes AiO | `EBSG.AiO` | 3020821838 | `EBSG_FertilityShortening` for lowRed early reproduction |
 | Alpha Genes | `sarg.alphagenes` | 2891845502 | `AG_LargerBodySize`, `AG_SmallerBodySize` |
-| Expanded Archite Genes | `EBSG.Archite` | 3039936922 | `EBSG_ArchiteWoundHealing` — cpx 6, arc 2, **met 0** |
+| Expanded Archite Genes | `EBSG.Archite` | 3039936922 | `EBSG_ArchiteWoundHealing` — cpx 6, arc 2, **met 0**. The def itself carries `MayRequireAnyOf="MoreBiotechStyleGenes.Mod,MoreWoundHealingGenes.Mod"`, so it only exists when one of those is active; our `<li>` mirrors the gate and Gold loses it cleanly otherwise. |
 | Biotech Capacitor Genes | `Petre27.BiotechCapacitorGenes` | 2882220355 | `Capacity_Boost_Tier_N` — **+N met for +N cpx**, the Gold dial |
 | Lifespan Expectancy Genes | `BobnikTheIII.LifespanExpectancyGenes` | 3364691662 | `ExtremeLifespanExtension` (Gold), `ShortLifespan` (Red) |
 
 **The dependency surface is now large.** Every one is a required subscription for anyone else who
-runs this mod. That is the user's explicit direction and each earns its place, but do not add an
-eighth without asking.
+runs this mod. That is the user's explicit direction and each earns its place, but do not add
+another without asking.
 
 ### The xenogerm metabolism floor — decompiled, not guessed
 
@@ -71,7 +75,8 @@ Three consequences that drive real decisions:
 2. **Metabolism −5 is 2.25x food, and the curve ends there.** `SimpleCurve` clamps at its
    endpoints, so anything below −5 still costs 2.25x and no more. Lowering the floor buys design
    room without an unbounded food penalty.
-3. `BaseMaxComplexity` is 6; gene processors raise it. Gold at complexity 49 needs a serious
+3. `BaseMaxComplexity` is 6; gene processors raise it. Gold at complexity 49 (43 on a profile where
+   the gated `EBSG_ArchiteWoundHealing` is absent — see the dependency table) needs a serious
    assembler build-out.
 
 `Source/RimRising/BiostatRangePatch.cs` widens the floor to **−10** by reflection at startup. The
@@ -106,7 +111,8 @@ Three genes break that coupling:
 
 They let a xenotype pay in **complexity** instead of in hunger or weakness. For this mod that is
 free real estate, because complexity is the carving gate — spending there deepens the mechanic we
-want deep. Gold went from met −20/cpx 26 to met −4/cpx 49 with no capability change at all.
+want deep. Gold went from met −20/cpx 26 to met −4/cpx 49 with no capability change at all
+(cpx 43, arc 2 when `EBSG_ArchiteWoundHealing` is gated out).
 
 Optional, in `loadAfter` only: `Nals.FacialAnimationExperimentals` (1635901197's companion; the user
 commonly runs it, but the mod works without it).
@@ -230,7 +236,7 @@ project, which suits the setting but is worth knowing before promising it:
 
 | Requirement | Why |
 |---|---|
-| **22 gene processors** | `GeneticComplexityIncrease` is **2** each on a base of 6. Gold is complexity 49, so 6 + 2x22 = 50. |
+| **22 gene processors** | `GeneticComplexityIncrease` is **2** each on a base of 6. Gold is complexity 49, so 6 + 2x22 = 50 (19 processors at the gated-out 43). |
 | Archogenetics research + **archite capsules** | Gold carries `ArchiteMetabolism` (arc 2) and `EBSG_ArchiteWoundHealing` (arc 2). |
 | Archite genepacks **bought from traders** | The extractor scores any gene with `biostatArc > 0` at weight **zero**. Archite genes can never be extracted from a captured Gold, only traded for. |
 | Many extractions | `Building_GeneExtractor` takes a random weighted SUBSET per use, not the whole genome. |
@@ -472,13 +478,14 @@ pwsh -File Tools/Test-ModDefs.ps1
 
 | Script | Does |
 |---|---|
-| `Test-ModDefs.ps1` | Five checks: malformed XML, duplicate defName, vanilla collision, missing `RR_` texture, unresolvable `ParentName`. Exit 1 on any error. Caches the vanilla index under `Tools/.cache/`, keyed on `Version.txt`; pass `-RefreshVanillaCache` after a game update. |
+| `Test-ModDefs.ps1` | Started as five checks (malformed XML, duplicate defName, vanilla collision, missing `RR_` texture, unresolvable `ParentName`) and now runs about forty named checks — among them `CEToolsUnpatched`, `PreceptNotGuaranteed`, `RequireOneUnsatisfiable`, `VehiclePairBroken`, `MissingTextureCollection`, `MissingWornGraphicMask`, `MeleeAnimTweakDataMissing`, `XenotypeUnreachable`, `RecipeUnreachable`, `GatedGeneUnavailable`. The script's own `.DESCRIPTION` header still lists only the original five. Exit 1 on any error. Caches the vanilla index under `Tools/.cache/`, keyed on `Version.txt`; pass `-RefreshVanillaCache` after a game update. |
 | `New-PlaceholderTextures.ps1` | Writes flat colored labelled PNGs for referenced-but-missing `RR_*` paths. `-IncludeModArt` also does Preview/ModIcon. Color is a deterministic hash of the path, so it is stable between runs. |
-| `Publish-Mod.ps1` | robocopy `/MIR` into the Mods folder, excluding `Source`, `docs`, `Tools`, `.git`, `*.ps1`, `*.md`. Runs the validator first and refuses to publish on failure. |
+| `Publish-Mod.ps1` | robocopy `/MIR` into the Mods folder, excluding the directories `.git`, `.github`, `.vs`, `Source`, `docs`, `Tools`, `Art`, `obj`, `bin` and the files `*.ps1`, `*.md`, `*.sln`, `*.csproj`, `*.user`, `.gitignore`, `.gitattributes`. `WeaponTweakData/` and `Sounds/` ship. Runs the validator first and refuses to publish on failure. |
 | `Get-ModLoadErrors.ps1` | Splits `Player.log` into blocks, keeps error blocks naming our packageId / mod name / folder / `RR_` prefix. `-All` shows everyone's. Warns when the log is stale. |
 
 **Run `Test-ModDefs.ps1` before calling anything finished.** It has been negative-tested: a fixture
-with all five fault classes produced five errors and exit 1.
+with the original five fault classes produced five errors and exit 1, and later checks were
+negative-tested as they were added (see PROGRESS).
 
 ---
 
@@ -488,8 +495,8 @@ with all five fault classes produced five errors and exit 1.
 
 It exists and looks authoritative, but holds only **43 sample `.cs` files** Ludeon ships as modding
 examples. There is no `XenotypeDef.cs`, no `GeneDef.cs`. Field verification comes from vanilla XML,
-or from decompiling `RimWorldWin64_Data\Managed\Assembly-CSharp.dll`. No decompiler is installed;
-`dotnet tool install -g ilspycmd` if one becomes necessary.
+or from decompiling `RimWorldWin64_Data\Managed\Assembly-CSharp.dll` with `ilspycmd` — install and
+usage are under "Dependencies" above (the version must be pinned; the unpinned install fails).
 
 ### associatedMemes does not make a precept happen
 

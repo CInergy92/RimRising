@@ -2,9 +2,10 @@
 <!--
   Pawn kinds for the Colors.
 
-  Mirrored from Royalty/Defs/PawnKinds/PawnKinds_Empire.xml. Royalty-only fields
-  (minTitleRequired, royalTitle*) are deliberately not used - Royalty is not a
-  dependency.
+  Mirrored from Royalty/Defs/PawnKinds/PawnKinds_Empire.xml. Royalty is a dependency
+  since Milestone 5, but no kind here uses its title fields (minTitleRequired,
+  royalTitle*) yet - see docs/RimRising-Review-2026-10-08.md RV-03 for why the
+  Obsidian knight may need one.
 
   THE KEY FIELD
 
@@ -17,8 +18,8 @@
   bound to the Color that the Society breeds for it. Verified on
   Empire_Fighter_Trooper.
 
-  Weapon and apparel tags are all vanilla and all verified present. Milestone 4
-  adds RimRising's own equipment; these will be revisited then to use it.
+  Weapon and apparel tags are vanilla ones plus the mod's own: RR_BasicPlate and
+  RR_HeavyPlate for armour, RR_RisingWeapon for the resistance's weapons.
 
   combatPower drives raid arithmetic. Values are set relative to vanilla anchors
   (Empire trooper 65) so points-based raids are not wildly mis-sized.
@@ -590,7 +591,9 @@
     <apparelMoney>200~700</apparelMoney>
     <weaponMoney>200~600</weaponMoney>
     <apparelTags Inherit="False">
-      <!-- Neolithic faction, and 'Neolithic' rather than 'Tribal' - the latter is a -->
+      <!-- 'Neolithic' rather than 'Tribal': Tribal is a headgear-only tag that no body
+           apparel carries, and with no usable apparelTags at all the generator skips
+           the tag filter entirely (PawnApparelGenerator.CanUsePair). -->
       <li>Neolithic</li>
     </apparelTags>
     <weaponTags>
@@ -616,7 +619,7 @@
     <weaponMoney>500~1400</weaponMoney>
     <itemQuality>Good</itemQuality>
     <apparelTags Inherit="False">
-      <!-- HEADGEAR-only tag that no body apparel carries. With no apparelTags at all the -->
+      <!-- As the tribe warrior. -->
       <li>Neolithic</li>
     </apparelTags>
     <weaponTags>
@@ -653,7 +656,9 @@
     <apparelMoney>500~1400</apparelMoney>
     <weaponMoney>700~1800</weaponMoney>
     <apparelTags Inherit="False">
-      <!-- generator skips the tag filter entirely (PawnApparelGenerator.CanUsePair), so -->
+      <!-- Industrial raiders in salvage. Without Inherit="False" the base's tags merged
+           in, and with no tags at all the generator skips its filter entirely - either
+           way these could spawn wearing Society recoil plate. -->
       <li>IndustrialMilitaryBasic</li>
     </apparelTags>
     <weaponTags>
@@ -680,7 +685,7 @@
     <weaponMoney>1600~3200</weaponMoney>
     <itemQuality>Good</itemQuality>
     <apparelTags Inherit="False">
-      <!-- these could spawn wearing Society recoil plate. Industrial raiders: salvage. -->
+      <!-- As the raider. -->
       <li>IndustrialMilitaryBasic</li>
     </apparelTags>
     <weaponTags>

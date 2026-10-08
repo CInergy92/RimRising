@@ -6,8 +6,9 @@
   it always did and is untouched by any of this. But measured against the real defs
   it is a megaproject rather than a story beat:
 
-    Gold is complexity 49; a gene processor grants +2 on a base of 6, so twenty-two
-    of them, and the archite genes cannot be extracted from a captured Gold at all -
+    Gold is complexity 49 (43 when the gated EBSG_ArchiteWoundHealing is absent - see
+    CLAUDE.md); a gene processor grants +2 on a base of 6, so twenty-two of them
+    (nineteen at 43), and the archite genes cannot be extracted from a captured Gold at all -
     Building_GeneExtractor scores biostatArc > 0 at weight zero, so they must be
     bought as archite genepacks.
 
@@ -59,7 +60,7 @@
   <ThingDef ParentName="ResourceBase">
     <defName>RR_CarvingKit</defName>
     <label>Carver's kit</label>
-    <description>A sealed tray of shaped enzymes, marrow scaffolds and bone cement, keyed to one target Color and useless for any other. Assembling one is most of the work; the surgery itself is comparatively quick and entirely irreversible.\n\nCarvers are Yellows. The caste that makes the hierarchy transgressable is a midColor, which the Society has never found as funny as it is.</description>
+    <description>A sealed tray of shaped enzymes, marrow scaffolds and bone cement, keyed to one target Color and useless for any other. Assembling one is most of the work; the surgery itself is comparatively quick and entirely irreversible.\n\nCarvers are Violets. The caste that makes the hierarchy transgressable is the one bred for art, which the Society has never found as funny as it is.</description>
     <graphicData>
       <texPath>Things/Item/Health/RR_CarvingKit</texPath>
       <graphicClass>Graphic_Single</graphicClass>

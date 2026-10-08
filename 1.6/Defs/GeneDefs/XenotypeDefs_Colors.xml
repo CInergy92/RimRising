@@ -40,8 +40,10 @@
 
   Gold therefore pays for everything in COMPLEXITY rather than in weakness or in
   hunger. Complexity is the carving gate, so paying there is the point: a Gold
-  xenogerm needs a large gene-assembly setup and four archite capsules, while the
-  pawn itself eats only moderately above baseline and is bad at nothing.
+  xenogerm needs a large gene-assembly setup and four archite capsules (cpx 49,
+  arc 4), while the pawn itself eats only moderately above baseline and is bad at
+  nothing. EBSG_ArchiteWoundHealing is gated on two optional mods (see its MayRequireAnyOf
+  below); without them Gold is cpx 43, arc 2.
 -->
 <Defs>
 
@@ -115,7 +117,8 @@
 
     Mechanically this is the cheap Gold. No ArchiteMetabolism, no archite
     healing, no capacitor - so complexity 9 and archite 0 against true Gold's
-    47 and 4. That makes a Bronzie something a colony can actually assemble and
+    49 and 4 (43 and 2 without the gated healing gene). That makes a Bronzie
+    something a colony can actually assemble and
     carve early, and something a player can start with without the food economy
     of a true Gold.
 

@@ -14,9 +14,9 @@ endorsed by the author or his publishers. No text or artwork from the books is r
   cross-Color reproduction, or rebuild a person into another Color. Only a Violet may do any of it.
 - **Equipment** — razors (with a whip form), pulse and recoil armour with an automated trauma suite,
   gravBoots that launch across the world map, the aegis, pulseFist and scorcher.
-- **Society** — six factions, hierarchy memes and precepts, two caste-locked title ladders, a storyteller.
+- **Society** — seven factions, three ideoligion memes with their precepts, two caste-locked title ladders, a storyteller.
 - **Drugs** — zoladone, mjolnir-6, nazopran, god's bread and fever cloud.
-- **World** — two scenarios and two biomes.
+- **World** — three scenarios and two biomes.
 
 ## Requirements
 
@@ -31,7 +31,7 @@ Each is loaded only if you already run it; nothing else changes without it.
 
 | Mod | Adds |
 |---|---|
-| Combat Extended | CE stats for every weapon, armour piece and turret |
+| Combat Extended | CE stats for the weapons, the vehicle turrets, and pulse armour, demonHelm and scarabSkin (the remaining armour pieces are not yet CE-patched) |
 | Exosuit Framework | the starShell |
 | Vehicle Framework | the Drachenjäger |
 | Alpha Animals | Carvelings, grown in Carver vats |
@@ -51,7 +51,9 @@ large mod list belongs to someone else.
 
 ## Development
 
-All tooling is PowerShell 7, run from the repo root.
+Tooling lives in `Tools/` and runs from the repo root. Most of it is PowerShell 7; the worn-armour,
+weapon and tweak-data drawing scripts are Python (`Draw-PanelArmor.py`, `Draw-Weapons.py`,
+`Derive-MeleeTweak.py`, the two run inside Blender for its bundled numpy).
 
 ```powershell
 pwsh -File Tools/Test-ModDefs.ps1     # validate every def; exit 1 on any error
