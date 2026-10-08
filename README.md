@@ -65,6 +65,8 @@ the project relies on, `docs/DESIGN.md` the content design, and `docs/PROGRESS.m
 
 Built with Claude Code (Anthropic). Item, weapon and preview art generated locally with
 Z-Image-Turbo and a ControlNet in ComfyUI, guided by procedural silhouettes from `Tools/`;
-icons, worn apparel and terrain are drawn procedurally.
+icons, worn apparel and terrain are drawn procedurally. Sound effects generated with fal (fal.ai)
+using `fal-ai/elevenlabs/sound-effects/v2`; prompts and request ids are kept in
+`Art/Sounds/candidates/fal_manifest.jsonl`.
 
 Thanks to the authors of every required mod, and to Epicguru for Melee Animation.

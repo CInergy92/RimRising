@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  RimRising's own sounds.
+
+  Single-clip one-shots, mirrored from vanilla's WarpedObelisk_Impact
+  (Anomaly/Defs/SoundDefs/Buildings_Misc.xml): one AudioGrain_Clip, a volume
+  range and a pitch range on the subSound.
+
+  clipPath is relative to Sounds/ and has no extension. The clips are MP3, which
+  RimWorld loads natively - ModContentLoader.GetFormat maps .mp3 to
+  AudioFormat.mp3 for its bundled RuntimeAudioClipLoader - so no conversion step
+  is needed. Generated with fal (fal-ai/elevenlabs/sound-effects/v2); the
+  prompt and request id for every take are in Art/Sounds/candidates/fal_manifest.jsonl.
+-->
+<Defs>
+
+  <!--
+    The razor's whip form: the spine uncoils, hisses through the air and cracks.
+    Volume sits between a vanilla sharp melee hit (~26) and an ability launch
+    (30-60), because it is both. The pitch spread keeps a fight with several
+    Golds lashing from sounding like one clip on repeat.
+  -->
+  <SoundDef>
+    <defName>RR_RazorLash</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>2</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>Weapon/RR_RazorLash</clipPath>
+          </li>
+        </grains>
+        <volumeRange>35~40</volumeRange>
+        <pitchRange>0.94~1.06</pitchRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+</Defs>

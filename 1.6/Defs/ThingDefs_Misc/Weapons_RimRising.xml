@@ -246,6 +246,8 @@
       <verbClass>Verb_CastAbility</verbClass>
       <range>7.9</range>
       <warmupTime>0.6</warmupTime>
+      <!-- Ability cast sounds live on the verb, as Anomaly's spine launch does. -->
+      <soundCast>RR_RazorLash</soundCast>
       <requireLineOfSight>true</requireLineOfSight>
       <targetParams>
         <canTargetPawns>true</canTargetPawns>

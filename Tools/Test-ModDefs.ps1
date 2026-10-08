@@ -1955,6 +1955,73 @@ foreach ($aName in $ourApparel.Keys) {
         -Message ("apparel '{0}' declares no <thingCategories> and inherits none from '{1}'. ThingFilter builds the apparel-policy tree from categories, so it can never be allowed in a policy and colonists will strip it off - and it is missing from stockpile filters too. Nothing is logged. Add a category such as ApparelArmor or ApparelUtility." -f $aName, $info.Parent)
 }
 
+# --- our sounds must resolve: clips on disk, and every RR_ sound reference -----
+#
+# Same reasoning as the texture checks, applied to audio. A SoundDef whose clip
+# is missing, or a <soundCast> naming a SoundDef that does not exist, loads
+# without stopping anything - the event just plays nothing, and the only trace is
+# one line in a log that is otherwise a thousand lines of other mods.
+#
+# clipPath is relative to Sounds/ with no extension; clipFolderPath is a folder
+# of clips. The extensions are ModContentLoader.AcceptableExtensionsAudio,
+# decompiled - wav, mp3 and ogg are the ones anyone ships.
+#
+# Only RR_ leaves are checked. Vanilla's clips live in asset bundles, not on
+# disk, exactly as its textures do, so a non-RR_ path cannot be verified here.
+$soundsRoot = Join-Path $ModRoot 'Sounds'
+$audioExt   = @('.wav', '.mp3', '.ogg')
+$ourSoundDefs = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+$soundRefs    = [System.Collections.Generic.List[object]]::new()
+
+foreach ($sf in $xmlFiles) {
+    $sdoc = New-Object System.Xml.XmlDocument
+    try { $sdoc.Load($sf.FullName) } catch { continue }
+    $srel = Get-RelativePath $sf.FullName
+
+    foreach ($sd in $sdoc.SelectNodes('/Defs/SoundDef')) {
+        $sdn = $sd.SelectSingleNode('defName')
+        if ($sdn -and $sdn.InnerText) { [void]$ourSoundDefs.Add($sdn.InnerText.Trim()) }
+
+        foreach ($cp in $sd.SelectNodes('.//clipPath')) {
+            $p = $cp.InnerText.Trim()
+            if ((Split-Path -Leaf $p) -notlike 'RR_*') { continue }
+            $base = Join-Path $soundsRoot $p
+            $found = $false
+            foreach ($e in $audioExt) { if (Test-Path -LiteralPath ($base + $e)) { $found = $true; break } }
+            if (-not $found) {
+                Add-Problem -Severity ERROR -Check 'MissingSoundClip' -File $srel `
+                    -Message ("SoundDef '{0}' clipPath '{1}' has no Sounds\{1} with a .wav, .mp3 or .ogg extension. The sound will load and play nothing." -f $sdn.InnerText, $p)
+            }
+        }
+        foreach ($cf in $sd.SelectNodes('.//clipFolderPath')) {
+            $p = $cf.InnerText.Trim()
+            if ((Split-Path -Leaf $p) -notlike 'RR_*') { continue }
+            $dir = Join-Path $soundsRoot $p
+            $any = (Test-Path -LiteralPath $dir) -and
+                   @(Get-ChildItem -LiteralPath $dir -File | Where-Object { $audioExt -contains $_.Extension.ToLowerInvariant() }).Count -gt 0
+            if (-not $any) {
+                Add-Problem -Severity ERROR -Check 'MissingSoundClip' -File $srel `
+                    -Message ("SoundDef '{0}' clipFolderPath '{1}' is not a folder under Sounds\ holding any .wav, .mp3 or .ogg. AudioGrain_Folder resolves the path as a DIRECTORY, like a collection graphic does." -f $sdn.InnerText, $p)
+            }
+        }
+    }
+
+    # Any sound-slot field - soundCast, soundLanding, soundInteract and the rest -
+    # that names one of OUR sounds. Vanilla names are not checked here; the
+    # vanilla-collision and reference checks own those.
+    foreach ($n in $sdoc.SelectNodes('//*[starts-with(local-name(), "sound")]')) {
+        if ($n.HasChildNodes -and $n.FirstChild.NodeType -ne [System.Xml.XmlNodeType]::Text) { continue }
+        $v = $n.InnerText.Trim()
+        if ($v -like 'RR_*') { $soundRefs.Add([pscustomobject]@{ File = $srel; Field = $n.LocalName; Ref = $v }) }
+    }
+}
+
+foreach ($r in $soundRefs) {
+    if ($ourSoundDefs.Contains($r.Ref)) { continue }
+    Add-Problem -Severity ERROR -Check 'UnresolvedSoundRef' -File $r.File `
+        -Message ("<{0}> names SoundDef '{1}', which this mod does not define." -f $r.Field, $r.Ref)
+}
+
 # --- worn graphic masks must actually exist -----------------------------------
 #
 # useWornGraphicMask swaps the shader to CutoutComplex and makes Graphic_Multi
