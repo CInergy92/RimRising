@@ -3,13 +3,21 @@
     Validates every XML file under Defs/ and Patches/ before the mod is loaded by RimWorld.
 
 .DESCRIPTION
-    Runs five checks and returns a non-zero exit code if any of them fail:
+    Runs a set of named checks and returns a non-zero exit code if any of them fail.
+    The original five:
 
       1. Malformed XML.
       2. Duplicate defName values within this mod.
       3. defName values that collide with a vanilla (Core or DLC) def.
       4. Texture paths referenced by a def with no matching file under Textures/.
       5. ParentName references that resolve to no Name= def, in this mod or vanilla.
+
+    Since then roughly forty more have been added as mistakes were made once -
+    folder-gated and MayRequire-gated references, collection and directional
+    textures and worn masks, precept requireOne guarantees, Combat Extended tool
+    patches, Vehicle Framework pairs, Melee Animation tweak data, reachability of
+    xenotypes and recipes, and others. Each is identified by the Check name in
+    its report line; grep this file for "-Check '" to list them.
 
     The vanilla def index is expensive to build (thousands of files), so it is
     cached under Tools/.cache/ and keyed on the game's Version.txt. Use

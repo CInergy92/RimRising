@@ -19,10 +19,13 @@
   with throne-room construction to represent a school result would be tedious. So:
   expectations, apparel at the top, and a modest bedroom for the Peerless.
 
-  NOT GATED TO GOLD YET. RimWorld's title system has no xenotype condition, and
-  unlike RoleRequirement there is no clean abstract to subclass - titles are
-  awarded through quests and RoyalTitleAwardWorker, neither of which asks who the
-  pawn is. Gating this properly means patching the award path. See docs/PROGRESS.md.
+  GATED TO GOLD IN C#. RimWorld's title system has no xenotype condition, and
+  unlike RoleRequirement there is no clean abstract to subclass, so the award path
+  is patched: Source/RimRising/GoldTitlePatches.cs refuses RR_GoldTitle to anyone
+  outside the ruling caste (and RR_ServiceTitle to anyone inside it) on SetTitle,
+  and Source/RimRising/TitleLadders.cs walks the favour path so each caste only
+  sees its own rungs of the merged seniority chain. RR_Title_Legionnaire sits at
+  seniority 100 for that reason - see RoyalTitles_Service.xml.
 -->
 <Defs>
 

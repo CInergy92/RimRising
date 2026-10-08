@@ -6,16 +6,18 @@
   (MonoSword); ranged and projectile from Core/.../RangedSpacer.xml
   (Gun_ChargeRifle, Bullet_ChargeRifle).
 
-  Deliberately parented to CORE abstracts - BaseMeleeWeapon, BaseHumanMakeableGun,
-  BaseBullet - not to Royalty's MeleeWeaponUltratech, so Milestone 4 adds no new
-  DLC dependency. Royalty arrives at Milestone 5 for the Gold rank ladder; the
-  razor becomes a persona weapon then, which is what its fiction actually wants.
+  Parented to CORE abstracts - BaseMeleeWeapon, BaseHumanMakeableGun, BaseBullet -
+  not to Royalty's MeleeWeaponUltratech. Royalty is a dependency since Milestone 5
+  (the Gold rank ladder), but the razor is not a persona weapon; a bonded heirloom
+  variant is proposed in docs/RimRising-Suggestions.md 1.5.
 
   CASTE RESTRICTION IS NOT IMPLEMENTED HERE. A razor is forbidden to every Color
   but Gold, on pain of death, and that is a social rule rather than a property of
-  the object. It belongs in Milestone 5 as a precept reacting to a HistoryEvent.
-  Nothing in this file stops a Red picking one up - the Society's objection is
-  the point, and the Society is not built yet.
+  the object. It lives in Source/RimRising/HarmonyPatches.cs (an EquipmentUtility
+  .CanEquip postfix keyed on the RR_CasteRestricted weapon tag) and in
+  Defs/PreceptDefs/Precepts_RazorBearing.xml, and binds only pawns whose
+  ideoligion holds RR_RazorBearing_GoldOnly. Nothing in this file stops a Red
+  picking one up - the Society's objection is the point.
 -->
 <Defs>
 

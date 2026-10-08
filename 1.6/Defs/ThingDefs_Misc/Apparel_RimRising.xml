@@ -192,9 +192,10 @@
              who may wear it; RR_CasteColored makes it take the wearer Color. -->
         <li>RR_ArmorRestricted</li>
         <li>RR_CasteColored</li>
-        <!-- so a pawnkind asking for it drew vanilla plate as often as ours - Golds were
-           spawning in marine armour. RR_HeavyPlate is ours alone. -->
-      <li>RR_HeavyPlate</li>
+        <!-- NOT SpacerMilitary. That is a vanilla tag carried by marine and power
+             armour, so a pawn kind asking for it drew vanilla plate as often as ours -
+             Golds were spawning in marine armour. RR_HeavyPlate is ours alone. -->
+        <li>RR_HeavyPlate</li>
         <!--
           Opts out of THIGAPPE's automatic refitting (its 1.6/Patches/
           THIGAPPE_GlobalIgnores.xml skips any apparel carrying this tag). Its
@@ -493,14 +494,12 @@ Against anything a Gold is carrying it is a formality. Everyone wearing one know
     just under the razor's 0.95 armour penetration - a razor still gets through, but
     it is the first thing in the mod that makes a Gold work for it.
 
-    THE WOUND SEALING IS APPROXIMATED, and deliberately so. The plates close around
-    a penetration, compress the wound and dose the wearer with painkillers. RimWorld
-    has no bleed-rate stat to offset - bleeding lives on the injury hediff - so
-    stopping bleeding literally would need C#. InjuryHealingFactor and
-    PainShockThreshold both exist and are offsettable from apparel (vanilla's
-    cultist mask offsets the latter), so the suit heals faster and hurts less
-    instead. That is a fair reading, not the literal mechanic, and it is written
-    down here so nobody later mistakes it for one.
+    THE WOUND SEALING IS REAL NOW. The plates close around a penetration, compress
+    the wound and dose the wearer with painkillers: RR_TraumaSeal_Recoil (a
+    totalBleedFactor hediff) and the combat stims are applied by the trauma-suite
+    comp below - Source/RimRising/TraumaSuite.cs, Milestone 10. The
+    InjuryHealingFactor and PainShockThreshold offsets predate it and are kept as
+    the plates' passive contribution.
 
     It carries no shield, which means an EMP does nothing to it. That is emergent
     rather than authored, and it happens to be exactly right: the plates work by
@@ -647,9 +646,9 @@ All of that is chemistry and springs rather than circuits, so it goes on working
              who may wear it; RR_CasteColored makes it take the wearer Color. -->
         <li>RR_ArmorRestricted</li>
         <li>RR_CasteColored</li>
-        <!-- NOT SpacerMilitary. That is a VANILLA tag carried by marine and power armour,
-           spawning in marine armour. RR_HeavyPlate is ours alone. -->
-      <li>RR_HeavyPlate</li>
+        <!-- NOT SpacerMilitary, for the same reason as pulse armour above:
+             RR_HeavyPlate is ours alone. -->
+        <li>RR_HeavyPlate</li>
       </tags>
       <defaultOutfitTags>
         <li>Soldier</li>

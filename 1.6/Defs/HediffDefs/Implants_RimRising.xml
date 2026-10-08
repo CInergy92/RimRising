@@ -10,8 +10,9 @@
   Structure mirrored from that Joywire triad; statOffsets on the hediff stage
   mirrored from Royalty's Neurocalculator.
 
-  Parents are Core abstracts - BodyPartProstheticBase, SurgeryInstallImplantBase -
-  so no Royalty dependency is taken at Milestone 4.
+  Parents are Core abstracts - BodyPartProstheticBase, SurgeryInstallImplantBase.
+  (Royalty became a dependency at Milestone 5 for the title ladders; nothing here
+  needs it.)
 
   THE SYNAPTIC LATTICE is the best-attested implant in the setting. Blues fly by
   it, using the Synaptic Drift and the digiTats inked onto their shaved scalps;
