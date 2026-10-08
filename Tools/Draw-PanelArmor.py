@@ -301,6 +301,18 @@ if __name__ == "__main__":
     design, prefix = argv[0], os.path.abspath(argv[1])
     if len(argv) > 2 and argv[2] == "--icon":
         write_icon(design, prefix)
+        # Optional second target: the same icon, undyed, for a precept that is
+        # about this armour (pulse armour -> UI/Issues/RR_ArmorBearing). Masks
+        # are irrelevant there; precept icons are never tinted.
+        if len(argv) > 3:
+            tex, _ = draw(design, "Male", "south", box=ICON_BOX)
+            f = CANVAS // ICON_SIZE
+            prem = tex * np.dstack([tex[..., 3:4]] * 3 + [np.ones_like(tex[..., 3:4])])
+            d = cw.downsample(prem, f)
+            nz = d[..., 3] > 1e-4
+            d[nz, :3] = d[nz, :3] / d[nz, 3:4]
+            cw.save_png(os.path.abspath(argv[3]), d)
+            print("WROTE", argv[3], "(precept icon)")
         sys.exit(0)
     for body in cw.BOXES:
         for facing in cw.FACINGS:

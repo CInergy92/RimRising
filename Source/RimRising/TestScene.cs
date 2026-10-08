@@ -60,6 +60,7 @@ namespace RimRising
         private const float TargetOrtho = 2.7f;
         private const int RowGap = 5;            // cells between rows; one row per shot
         private int calibration;
+        private bool letTimeRun;
         private bool cameraPlus;
         private float zoomLo, zoomHi, zoomMid, bestRoot, bestOrtho;
         private string outDir;
@@ -88,6 +89,24 @@ namespace RimRising
                     // Let the quicktest map settle - colonists spawned, UI up.
                     if (frame < 180) { return; }
                     Build();
+                    if (letTimeRun)
+                    {
+                        // Melee Animation draws a drafted pawn's weapon through its
+                        // own idle animation, which only starts once game time runs;
+                        // paused at once, every held weapon - vanilla's too - was
+                        // simply absent. Run ~2.5 s at normal speed, then pause.
+                        Find.TickManager.CurTimeSpeed = TimeSpeed.Normal;
+                        stage = 5;
+                        wait = 150;
+                        return;
+                    }
+                    StartZoomSearch();
+                    stage = 4;
+                    wait = 30;
+                    return;
+
+                case 5:
+                    Find.TickManager.CurTimeSpeed = TimeSpeed.Paused;
                     StartZoomSearch();
                     stage = 4;
                     wait = 30;
@@ -169,6 +188,12 @@ namespace RimRising
             }
             Directory.CreateDirectory(outDir);
 
+            if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string mode) && mode == "weapons")
+            {
+                BuildWeapons();
+                return;
+            }
+
             var defs = new List<ThingDef>();
             foreach (string name in Armors)
             {
@@ -219,6 +244,88 @@ namespace RimRising
 
             Find.TickManager.CurTimeSpeed = TimeSpeed.Paused;
             Log.Message($"[RimRising] TESTSCENE built: {defs.Count} armours x {bodies.Length} bodies x {Facings.Length} facings at {area}; left to right: " + string.Join(", ", defs.Select(d => d.defName)));
+        }
+
+        private static readonly string[] Weapons =
+        {
+            "RR_Weapon_Razor",
+            "RR_Weapon_ReaperRazor",
+            "MeleeWeapon_LongSword",
+            "MeleeWeapon_MonoSword",
+            "MeleeWeapon_PlasmaSword",
+            "MeleeWeapon_Gladius",
+            "AG_ForsakenLongBlade",
+        };
+
+        /// <summary>
+        /// rrtestmode=weapons: each melee weapon LYING ON THE GROUND (its item
+        /// graphic, the same texture a player sees in a stockpile), then HELD by a
+        /// drafted pawn facing south and facing east. Drafted, because
+        /// PawnRenderUtility.CarryWeaponOpenly only shows a weapon for a drafted
+        /// pawn or a few job/duty cases - so these pawns must be the player's,
+        /// since only they have a drafter.
+        /// </summary>
+        private void BuildWeapons()
+        {
+            var defs = new List<ThingDef>();
+            foreach (string name in Weapons)
+            {
+                ThingDef d = DefDatabase<ThingDef>.GetNamedSilentFail(name);
+                if (d == null) { Log.Message("[RimRising] TESTSCENE skipping " + name + " (not loaded)"); }
+                else { defs.Add(d); }
+            }
+
+            int width = defs.Count;
+            int height = 2 * RowGap + 1;
+            IntVec3 c = map.Center;
+            area = new CellRect(c.x - width / 2, c.z - height / 2, width, height).ClipInsideMap(map);
+            Clear(area.ExpandedBy(3).ClipInsideMap(map));
+            SetNoon();
+
+            // Row 0: on the ground.
+            int z0 = area.maxZ;
+            for (int a = 0; a < defs.Count; a++)
+            {
+                ThingDef stuff = defs[a].MadeFromStuff ? GenStuff.DefaultStuffFor(defs[a]) : null;
+                Thing w = ThingMaker.MakeThing(defs[a], stuff);
+                // Not forbidden: the forbidden marker drew a red X over each one.
+                // The game runs only ~2.5 s before the shots, too short for anyone
+                // to walk over and haul them.
+                GenSpawn.Spawn(w, new IntVec3(area.minX + a, 0, z0), map);
+            }
+            shots.Add(("ground", new Vector3(area.minX + (defs.Count - 1) / 2f + 0.5f, 0f, z0 + 0.5f), 0f));
+
+            // Rows 1-2: held, drafted, facing south then east.
+            Rot4[] held = { Rot4.South, Rot4.East };
+            for (int r = 0; r < held.Length; r++)
+            {
+                int z = area.maxZ - (r + 1) * RowGap;
+                for (int a = 0; a < defs.Count; a++)
+                {
+                    var req = new PawnGenerationRequest(
+                        PawnKindDefOf.Colonist, Faction.OfPlayer,
+                        forceGenerateNewPawn: true, canGeneratePawnRelations: false,
+                        fixedGender: Gender.Male, forcedXenotype: XenotypeDefOf.Baseliner,
+                        forceNoIdeo: true, developmentalStages: DevelopmentalStage.Adult,
+                        dontGiveWeapon: true, forceNoGear: true);
+                    Pawn p = PawnGenerator.GeneratePawn(req);
+                    p.story.bodyType = BodyTypeDefOf.Male;
+                    ThingDef stuff = defs[a].MadeFromStuff ? GenStuff.DefaultStuffFor(defs[a]) : null;
+                    var eq = (ThingWithComps)ThingMaker.MakeThing(defs[a], stuff);
+                    p.equipment.DestroyAllEquipment();
+                    p.equipment.AddEquipment(eq);
+                    p.Name = new NameSingle(defs[a].label.CapitalizeFirst());
+                    GenSpawn.Spawn(p, new IntVec3(area.minX + a, 0, z), map, held[r]);
+                    p.drafter.Drafted = true;
+                    p.Rotation = held[r];
+                    p.Drawer?.renderer?.SetAllGraphicsDirty();
+                }
+                shots.Add(($"held_{held[r].ToStringHuman().ToLowerInvariant()}",
+                           new Vector3(area.minX + (defs.Count - 1) / 2f + 0.5f, 0f, z + 0.5f), 0f));
+            }
+
+            letTimeRun = true;
+            Log.Message($"[RimRising] TESTSCENE built weapons at {area}; left to right: " + string.Join(", ", defs.Select(d => d.defName)));
         }
 
         private Pawn MakePawn(BodyTypeDef body, ThingDef armor, Color gold)

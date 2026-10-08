@@ -775,6 +775,26 @@ Designs are coordinates in body-box units, so one design fits all five bodies. `
 item icon from the same front design, so icon and worn sprite cannot drift apart.
 `New-WornApparel.ps1` no longer draws pulse armour.
 
+### Weapons are drawn flat too - Tools/Draw-Weapons.py
+
+The razor family (both weapon sprites - which are also their ground and inventory icons - the
+whip-form ability icon, the lash projectile and the razor-bearing precept icon) is drawn by
+`Tools/Draw-Weapons.py` in vanilla's weapon idiom: a heavy dark outline, a two-tone blade split along
+its length, at most one accent. The ControlNet-painted razor it replaced was the one soft,
+thin-outlined object in the test scene's ground row beside vanilla's longsword, monosword, plasma
+sword and gladius. The ground row also settled orientation: our diagonal razors lie at the same
+angle as vanilla's own weapons.
+
+**Weapon geometry is load-bearing.** Melee Animation's tweak data is derived from where the hand
+closes on the sprite. After any redraw, re-derive with `Tools/Derive-MeleeTweak.py` - it was checked
+by reproducing the shipped values exactly from the old sprites before being trusted on new ones.
+The precept icon uses `razor(128, inset=0.07)`; the weapon sprite must keep `inset=0`.
+
+`TestScene.cs` has `rrtestmode=weapons`: each weapon on the ground, then held by drafted colonists.
+Melee Animation draws a drafted pawn's weapon through its idle animation, which only starts once game
+time runs - paused at once, every held weapon, vanilla's included, was absent - so that mode runs
+~2.5 s before pausing.
+
 ### THIGAPPE refits apparel it has no data for - opt out with THIGAPPE_IgnoreTag
 
 The user runs [NL] Realistic Body with Apparel Paper Pattern and **THIGAPPE**, which warps any
