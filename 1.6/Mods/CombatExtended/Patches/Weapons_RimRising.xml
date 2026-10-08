@@ -379,4 +379,21 @@
     </weaponTags>
   </Operation>
 
+  <!-- ========================== the razor's whip form ========================
+
+    RR_RazorWhip launches a vanilla Bullet (RR_Bullet_RazorLash). CE does not cast
+    it - vanilla Bullet impacts still resolve - but its armorPenetrationBase is
+    read in CE's millimetres, so the shipped 0.75 could not get through a shirt
+    while the same weapon's lash ToolCE above penetrates 9.50. Same number here,
+    until the whip is reworked away from a projectile
+    (docs/RimRising-Review-2026-10-08.md, "Whip rework").
+  -->
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Bullet_RazorLash"]/projectile/armorPenetrationBase</xpath>
+    <value>
+      <armorPenetrationBase>9.5</armorPenetrationBase>
+    </value>
+  </Operation>
+
 </Patch>

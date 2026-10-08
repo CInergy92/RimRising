@@ -134,4 +134,174 @@
     </value>
   </Operation>
 
+  <!-- ============================= recoil armor ============================
+
+    The six pieces below were added after this file was written and nobody came
+    back to it - the same lapse that left the Reaper's razor with vanilla tools.
+    Under CE their vanilla fractions were read as millimetres: recoil armour, the
+    Society's elite suit, stopped 0.92 mm of steel, and none of them had Bulk, so
+    they weighed nothing to carry.
+
+    Recoil sits one step under pulse (24/52): just under the razor's lash and
+    well under its point, which is the vanilla intent carried into CE units.
+  -->
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_RecoilArmor"]/statBases/ArmorRating_Sharp</xpath>
+    <value>
+      <ArmorRating_Sharp>19</ArmorRating_Sharp>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_RecoilArmor"]/statBases/ArmorRating_Blunt</xpath>
+    <value>
+      <ArmorRating_Blunt>44</ArmorRating_Blunt>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_RecoilArmor"]/statBases/Mass</xpath>
+    <value>
+      <Mass>40</Mass>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_RecoilArmor"]/statBases</xpath>
+    <value>
+      <Bulk>85</Bulk>
+      <WornBulk>12</WornBulk>
+    </value>
+  </Operation>
+
+  <!-- ============================== duroArmor ===============================
+
+    Stamped plate for Grays. CE's flak vest is Sharp 10 / Blunt 20 with no helmet;
+    duro sits there, which keeps the scorcher-versus-duro fight real and the
+    razor-versus-duro fight a formality, exactly as the vanilla numbers do.
+  -->
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_DuroArmor"]/statBases/ArmorRating_Sharp</xpath>
+    <value>
+      <ArmorRating_Sharp>10</ArmorRating_Sharp>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_DuroArmor"]/statBases/ArmorRating_Blunt</xpath>
+    <value>
+      <ArmorRating_Blunt>22</ArmorRating_Blunt>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_DuroArmor"]/statBases/Mass</xpath>
+    <value>
+      <Mass>12</Mass>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_DuroArmor"]/statBases</xpath>
+    <value>
+      <Bulk>30</Bulk>
+      <WornBulk>6</WornBulk>
+    </value>
+  </Operation>
+
+  <!-- ============================== ghostCloak ==============================
+
+    Almost no protection in vanilla (0.10 / 0.06) and the same here: cloth over
+    a lattice. Light, because a Howler moves.
+  -->
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_GhostCloak"]/statBases/ArmorRating_Sharp</xpath>
+    <value>
+      <ArmorRating_Sharp>2</ArmorRating_Sharp>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_GhostCloak"]/statBases/ArmorRating_Blunt</xpath>
+    <value>
+      <ArmorRating_Blunt>3</ArmorRating_Blunt>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_GhostCloak"]/statBases</xpath>
+    <value>
+      <Bulk>6</Bulk>
+      <WornBulk>1</WornBulk>
+    </value>
+  </Operation>
+
+  <!-- ============================ gravBoots / skipBoots =====================
+
+    Plasteel over the shin. The vanilla ratings exist only so CE does not log an
+    all-zero-armour error; in CE units they stay token. Mass is kept (eighteen
+    kilos is the gravBoots' whole drawback), Bulk is added so the weight is felt.
+  -->
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_GravBoots"]/statBases/ArmorRating_Sharp</xpath>
+    <value>
+      <ArmorRating_Sharp>5</ArmorRating_Sharp>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_GravBoots"]/statBases/ArmorRating_Blunt</xpath>
+    <value>
+      <ArmorRating_Blunt>8</ArmorRating_Blunt>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_GravBoots"]/statBases</xpath>
+    <value>
+      <Bulk>20</Bulk>
+      <WornBulk>4</WornBulk>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_SkipBoots"]/statBases/ArmorRating_Sharp</xpath>
+    <value>
+      <ArmorRating_Sharp>3</ArmorRating_Sharp>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_SkipBoots"]/statBases/ArmorRating_Blunt</xpath>
+    <value>
+      <ArmorRating_Blunt>5</ArmorRating_Blunt>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_SkipBoots"]/statBases</xpath>
+    <value>
+      <Bulk>8</Bulk>
+      <WornBulk>2</WornBulk>
+    </value>
+  </Operation>
+
+  <!-- ================================ aegis =================================
+
+    No armour ratings in vanilla - it parries and projects a field rather than
+    stopping anything itself - so there is nothing to rescale. Bulk only.
+  -->
+
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_Aegis"]/statBases</xpath>
+    <value>
+      <Bulk>5</Bulk>
+      <WornBulk>1</WornBulk>
+    </value>
+  </Operation>
+
 </Patch>
