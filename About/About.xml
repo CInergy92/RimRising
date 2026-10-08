@@ -17,9 +17,16 @@ WHAT IT ADDS
 REQUIREMENTS
 Royalty, Ideology and Biotech are all required - Biotech for the Colors, Ideology for the hierarchy memes and precepts, Royalty for the Society's title ladders. Several mods are required too; RimWorld will list them all if any are missing, and the mod will not load without them.
 
-OPTIONAL EXTRAS, each loaded only if you already run it: Combat Extended, the Exosuit Framework (starShell), Vehicle Framework (Drachenjaeger) and Alpha Animals (Carvelings). None is required and nothing else changes if you have none of them.
+OPTIONAL EXTRAS, each loaded only if you already run it: Combat Extended, the Exosuit Framework (starShell), Vehicle Framework (Drachenjaeger) and Alpha Animals (Carvelings). Melee Animation also animates both razors, including its executions. None is required and nothing else changes if you have none of them.
 
-This mod is a work in progress. Art is placeholder in places.</description>
+This mod is a work in progress. Worn apparel art is still being refined.
+
+CREDITS AND DISCLOSURE
+An unofficial fan work inspired by Pierce Brown's Red Rising novels. It is not affiliated with or endorsed by the author or his publishers, and no text or artwork from the books is reproduced; every description and every image is original.
+
+Built with Claude Code (Anthropic). Item, weapon and preview art was generated locally with Z-Image-Turbo and a ControlNet, guided by hand-built procedural silhouettes; icons, worn apparel and terrain are drawn procedurally.
+
+Thanks to the authors of every mod listed above as a requirement, and to Epicguru for Melee Animation, whose override folders made razor support possible without touching their mod.</description>
 
   <supportedVersions>
     <li>1.6</li>
