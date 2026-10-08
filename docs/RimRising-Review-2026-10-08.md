@@ -24,6 +24,12 @@ IDs here are `RV-nn` so they do not collide with the earlier audit's `RR-nn`.
 
 Plus a design section for the razor whip rework, which is the thing the user asked about and which touches RV-02.
 
+### Status after the cloud session's own fixes (branch `review/2026-10-08`)
+
+Fixed from the cloud, no game needed, all XML/text — **RV-01** (six CE armour blocks added; numbers are a first placement, judge them under CE), **RV-02** CE half only (whip projectile penetration patched to 9.5 mm; the rework itself is still open), **RV-04**, **RV-05** (kept the first weight, 3, in both lists), **RV-15**, **RV-17** (49/43 wording in CLAUDE.md, Carving.xml, XenotypeDefs; the C# comment in `Recipe_CarveColor.cs:343-345` is left for whoever next rebuilds the DLL), **RV-20** (all stale and garbled comments), plus the validator's own `.DESCRIPTION` header.
+
+Still open, needing a build or the game: RV-03, RV-06, RV-07, RV-08, RV-09, RV-10, RV-11, RV-12, RV-13, RV-14, RV-16, RV-18, RV-19 and the whip rework. No `.cs` file was touched, so `1.6/Assemblies/RimRising.dll` still matches `Source/`.
+
 ---
 
 ## MAJOR
