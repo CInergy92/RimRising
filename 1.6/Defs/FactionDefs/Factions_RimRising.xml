@@ -3,8 +3,9 @@
   Factions.
 
   Mirrored from Royalty/Defs/FactionDefs/Faction_Empire.xml and
-  Core/Defs/FactionDefs/Factions_Misc.xml. Royalty-only machinery (royalFavor*,
-  royalTitle*) is deliberately absent - Royalty is not a dependency.
+  Core/Defs/FactionDefs/Factions_Misc.xml. Royalty is a dependency since Milestone 5:
+  the Society and the Rim Dominion carry royalFavor* and royalTitleTags for the Gold
+  and service ladders in Defs/RoyalTitles.
 
   techLevel values verified against the TechLevel enum by decompiling
   Assembly-CSharp: Undefined, Animal, Neolithic, Medieval, Industrial, Spacer,
@@ -171,7 +172,6 @@
           <RR_Society_Pink_Companion>3</RR_Society_Pink_Companion>
           <RR_Society_Pink_Rose>0.4</RR_Society_Pink_Rose>
           <RR_Society_Copper_Official>3</RR_Society_Copper_Official>
-          <RR_Society_Copper_Official>6</RR_Society_Copper_Official>
           <RR_Society_Yellow_Medicus>4</RR_Society_Yellow_Medicus>
           <RR_Society_Silver_Factor>3</RR_Society_Silver_Factor>
           <RR_Society_Brown_Servant>6</RR_Society_Brown_Servant>
@@ -369,7 +369,6 @@
           <RR_Society_Violet_Artisan>2</RR_Society_Violet_Artisan>
           <RR_Society_Pink_Companion>3</RR_Society_Pink_Companion>
           <RR_Society_Copper_Official>3</RR_Society_Copper_Official>
-          <RR_Society_Copper_Official>5</RR_Society_Copper_Official>
           <RR_Society_Red_Laborer>8</RR_Society_Red_Laborer>
           <RR_Society_Brown_Servant>5</RR_Society_Brown_Servant>
           <RR_Society_Legionary>4</RR_Society_Legionary>
