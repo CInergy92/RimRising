@@ -753,6 +753,40 @@ plates, collars - which is what makes it read as armour. Fitting exactly to the 
 as a bodysuit. The user's bodies also show two legs at the bottom (their body/face mods); armour
 sprites follow that.
 
+### Worn armour is drawn as flat panels - Tools/Draw-PanelArmor.py
+
+After the 3D render was judged in game (mottled, skinny), pulse armour was redrawn the way every
+comparison armour is built, and that is the method for worn armour from here on:
+
+- **Each panel is its own shape with its own thick outline**, drawn back to front so plates overlap
+  and read as separate pieces. Outlines measured against the others in game: 6 px silhouette, 4 px
+  per panel at 256 - half that looked soft beside them.
+- **Shading is by plane**, light from the left: each panel's right face is the darker one. Not edge
+  bevels, not gradients.
+- **Armour extends past the body.** Measured overhang past the Male box, per side: VAE heavy marine
+  ~0.40, AG Forsaken ~0.45, VFE legionnaire ~0.27, VAE trooper ~0.10. Pulse armour sits near 0.3.
+- **Fixed-size features stay fixed size.** Pauldrons scaled with the box were enormous on Fat and
+  spindly on Thin; `Frame.k` converts a width given in Male box widths into each body's units.
+- **Define the waist and hips with dark suit showing between plates**, or the lower half reads as one
+  block - a tabard, not plate.
+- **The sprite stops at the hips.** Legs belong to the body, or to a leg mod.
+
+Designs are coordinates in body-box units, so one design fits all five bodies. `--icon` draws the
+item icon from the same front design, so icon and worn sprite cannot drift apart.
+`New-WornApparel.ps1` no longer draws pulse armour.
+
+### THIGAPPE refits apparel it has no data for - opt out with THIGAPPE_IgnoreTag
+
+The user runs [NL] Realistic Body with Apparel Paper Pattern and **THIGAPPE**, which warps any
+apparel lacking APP data onto Realistic Body's contours with a generic mask. In the test scene that
+gave pulse armour a bust and hips it was never drawn with, and pushed the pauldrons onto a faded,
+soft-edged side layer - the texture itself was verified fully opaque. Other armour mods look clean
+because they ship refit data.
+
+THIGAPPE's `1.6/Patches/THIGAPPE_GlobalIgnores.xml` skips any apparel whose `apparel/tags` has
+`THIGAPPE_IgnoreTag`. Pulse armour carries it; a plain string tag, inert without THIGAPPE. The cost:
+on Realistic Body, bare shins show below the hip plates. Real support would be APP fine-tune Defs.
+
 ### Persisted state does not retroactively update
 
 A def fix does not repair things already created from the old def. Faction leaders are

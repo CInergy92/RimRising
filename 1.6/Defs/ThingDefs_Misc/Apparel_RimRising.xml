@@ -195,6 +195,15 @@
         <!-- so a pawnkind asking for it drew vanilla plate as often as ours - Golds were
            spawning in marine armour. RR_HeavyPlate is ours alone. -->
       <li>RR_HeavyPlate</li>
+        <!--
+          Opts out of THIGAPPE's automatic refitting (its 1.6/Patches/
+          THIGAPPE_GlobalIgnores.xml skips any apparel carrying this tag). Its
+          generic armour mask, built for body-hugging suits, warped this flat-panel
+          sprite onto Realistic Body's contours and pushed the pauldrons onto a
+          faded side layer - seen in the in-game test scene. A plain string tag:
+          inert for anyone not running THIGAPPE.
+        -->
+        <li>THIGAPPE_IgnoreTag</li>
       </tags>
       <defaultOutfitTags>
         <li>Soldier</li>

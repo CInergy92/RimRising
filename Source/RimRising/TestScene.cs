@@ -229,6 +229,13 @@ namespace RimRising
                 canGeneratePawnRelations: false,
                 fixedGender: body == BodyTypeDefOf.Female ? Gender.Female : Gender.Male,
                 forcedXenotype: XenotypeDefOf.Baseliner,
+                // No ideoligion. Our own caste restriction refused pulse armour to
+                // these Baselines whenever quicktest's random ideoligion carried the
+                // hierarchy precept - the log said "tried to wear ... but is not
+                // allowed to" and the row came out naked. MayWearRestricted is
+                // permissive for a pawn with no belief, by design, so this passes
+                // the restriction without adding any test hook to the rule itself.
+                forceNoIdeo: true,
                 developmentalStages: DevelopmentalStage.Adult,
                 dontGiveWeapon: true,
                 forceNoGear: true);
