@@ -78,15 +78,30 @@ namespace RimRising
 
             // Obsidians and Grays who hold a title: the Society arms the ones it
             // has decided it can trust, and a title is how it says so.
+            // Sub-strains count as their parent Color. RR_CasteIdentity resolves a
+            // Stained Obsidian as RR_Obsidian_Stained, not RR_Obsidian, so a
+            // reference compare against the parent alone refused plate to every
+            // titled Stained knight and Lurcher - the same trap the dye table above
+            // fell into.
             XenotypeDef color = RR_CasteIdentity.ColorOf(pawn);
             if (color != null &&
-                (color == RR_ArmorDefOf.RR_Obsidian || color == RR_ArmorDefOf.RR_Gray) &&
+                (IsOrDescends(color, RR_ArmorDefOf.RR_Obsidian) || IsOrDescends(color, RR_ArmorDefOf.RR_Gray)) &&
                 HasSocietyTitle(pawn))
             {
                 return true;
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// The Color itself or one of its sub-strains, which are named
+        /// &lt;parent&gt;_&lt;strain&gt; (RR_Obsidian_Stained, RR_Gray_Lurcher).
+        /// </summary>
+        private static bool IsOrDescends(XenotypeDef color, XenotypeDef parent)
+        {
+            if (parent == null) { return false; }
+            return color == parent || color.defName.StartsWith(parent.defName + "_");
         }
 
         /// <summary>Title tag that confers the right to wear recoil plate.</summary>

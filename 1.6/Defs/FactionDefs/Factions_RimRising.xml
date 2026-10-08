@@ -55,6 +55,16 @@
       <li>RR_ServiceTitle</li>
     </royalTitleTags>
     <royalTitleInheritanceWorkerClass>RoyalTitleInheritanceWorker</royalTitleInheritanceWorkerClass>
+    <!-- REQUIRED alongside the worker class, not optional. Pawn_RoyaltyTracker.SetTitle
+         assigns an heir on every grant, and RoyalTitleInheritanceWorker.FindHeir walks
+         this list without a null check - vanilla only skips the search for the Empire.
+         Absent, every title the faction conferred threw a NullReferenceException.
+         Mirrored from Royalty's Empire FactionDef. -->
+    <royalTitleInheritanceRelations>
+      <li>Child</li>
+      <li>Grandchild</li>
+      <li>GreatGrandchild</li>
+    </royalTitleInheritanceRelations>
     <techLevel>Spacer</techLevel>
     <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>
     <!-- The Society takes the good ground first and always has. Temperate tiles, and it concedes the extremes to everyone else. -->
@@ -248,6 +258,16 @@
       <li>RR_ServiceTitle</li>
     </royalTitleTags>
     <royalTitleInheritanceWorkerClass>RoyalTitleInheritanceWorker</royalTitleInheritanceWorkerClass>
+    <!-- REQUIRED alongside the worker class, not optional. Pawn_RoyaltyTracker.SetTitle
+         assigns an heir on every grant, and RoyalTitleInheritanceWorker.FindHeir walks
+         this list without a null check - vanilla only skips the search for the Empire.
+         Absent, every title the faction conferred threw a NullReferenceException.
+         Mirrored from Royalty's Empire FactionDef. -->
+    <royalTitleInheritanceRelations>
+      <li>Child</li>
+      <li>Grandchild</li>
+      <li>GreatGrandchild</li>
+    </royalTitleInheritanceRelations>
     <techLevel>Spacer</techLevel>
     <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>
     <!-- The Rim holds the cold moons. Cool and harsh, but short of polar. -->

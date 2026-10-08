@@ -131,6 +131,15 @@
     <apparelColor>(46,44,52)</apparelColor>
     <apparelMoney>2800~4400</apparelMoney>
     <weaponMoney>1200~2600</weaponMoney>
+    <!--
+      The title is what makes the plate below wearable. PawnGenerator sets the
+      faction's ideoligion and the title before GenerateGearFor, and under a
+      hierarchy ideoligion an untitled Obsidian may not wear RR_ArmorRestricted
+      plate - so without this every knight came out in work clothes (0 of 10 in
+      the rrtestmode=kinds run, review RV-03). Titles go to the generating faction
+      when it has RR_ServiceTitle in its royalTitleTags, as the Society does.
+    -->
+    <titleRequired>RR_Title_Praetorian</titleRequired>
     <apparelTags Inherit="False">
       <!-- The trusted Obsidian: this kind IS the Praetorian case the armour rule describes. -->
       <li>RR_HeavyPlate</li>

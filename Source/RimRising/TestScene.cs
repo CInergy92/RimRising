@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RimWorld;
+using RimWorld.Planet;
 using UnityEngine;
 using Verse;
 
@@ -93,6 +94,15 @@ namespace RimRising
                 case 0:
                     // Let the quicktest map settle - colonists spawned, UI up.
                     if (frame < 180) { return; }
+                    if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string m0) && m0 == "kinds")
+                    {
+                        // No pictures: generation is judged from the log.
+                        GenerateKinds();
+                        Log.Message("[RimRising] TESTSCENE DONE (kinds)");
+                        stage = -1;
+                        if (GenCommandLine.CommandLineArgPassed("rrtestquit")) { Root.Shutdown(); }
+                        return;
+                    }
                     Build();
                     if (letTimeRun)
                     {
@@ -331,6 +341,52 @@ namespace RimRising
 
             letTimeRun = true;
             Log.Message($"[RimRising] TESTSCENE built weapons at {area}; left to right: " + string.Join(", ", defs.Select(d => d.defName)));
+        }
+
+        private static readonly string[] Kinds =
+        {
+            "RR_Society_Obsidian_Knight",
+            "RR_Society_Gold_Praetor",
+            "RR_Society_Bronzie_Officer",
+            "RR_Ascomanni_Warlord",
+            "RR_Julii_Enforcer",
+            "RR_Sun_Security",
+        };
+
+        /// <summary>
+        /// rrtestmode=kinds: generate each kind ten times for a faction that fields
+        /// it, the way a raid would, and log what each pawn came out holding and
+        /// wearing. For questions like "can a Society Obsidian Knight actually spawn
+        /// in the plate the kind lists" - which the caste restriction can refuse
+        /// during generation, silently but for a "tried to wear" log line.
+        /// </summary>
+        private void GenerateKinds()
+        {
+            foreach (string name in Kinds)
+            {
+                PawnKindDef kind = DefDatabase<PawnKindDef>.GetNamedSilentFail(name);
+                if (kind == null) { Log.Message("[RimRising] KINDS skipping " + name + " (not loaded)"); continue; }
+                Faction fac = Find.FactionManager.AllFactionsListForReading.FirstOrDefault(f =>
+                    f.def.pawnGroupMakers != null && f.def.pawnGroupMakers.Any(g =>
+                        (g.options != null && g.options.Any(o => o.kind == kind)) ||
+                        (g.traders != null && g.traders.Any(o => o.kind == kind)) ||
+                        (g.guards != null && g.guards.Any(o => o.kind == kind))));
+                if (fac == null) { Log.Message("[RimRising] KINDS " + name + ": no faction in this world fields it"); continue; }
+
+                int plate = 0;
+                for (int i = 0; i < 10; i++)
+                {
+                    Pawn p = PawnGenerator.GeneratePawn(new PawnGenerationRequest(kind, fac, forceGenerateNewPawn: true));
+                    string apparel = string.Join(", ", p.apparel?.WornApparel.Select(a => a.def.defName) ?? Enumerable.Empty<string>());
+                    string weapon = p.equipment?.Primary?.def.defName ?? "-";
+                    string titles = p.royalty == null ? "-" :
+                        string.Join(", ", p.royalty.AllTitlesForReading.Select(t => t.def.defName));
+                    if (p.apparel != null && p.apparel.WornApparel.Any(a => a.def.apparel?.tags?.Contains(RR_CasteArmor.RestrictedTag) == true)) { plate++; }
+                    Log.Message($"[RimRising] KINDS {name} #{i} ({fac.Name}) color={RR_CasteIdentity.ColorOf(p)?.defName ?? "-"} titles=[{titles}] weapon={weapon} apparel=[{apparel}]");
+                    Find.WorldPawns.PassToWorld(p, PawnDiscardDecideMode.Discard);
+                }
+                Log.Message($"[RimRising] KINDS {name}: {plate}/10 in restricted plate");
+            }
         }
 
         private Pawn MakePawn(BodyTypeDef body, ThingDef armor, Color gold)

@@ -1884,6 +1884,25 @@ foreach ($tName in $ourThings.Keys) {
         -Message ("ThingDef '{0}' ends in a numerical digit. ThingDef.ConfigErrors rejects this, because Thing IDs are defName plus a number and the two run together ambiguously. Rename it - spell the digit, as RR_MjolnirSix does, and keep the numeral in the <label>." -f $tName)
 }
 
+# --- a faction that confers titles needs inheritance relations -------------------
+#
+# Loads clean and throws on the first title. Pawn_RoyaltyTracker.SetTitle assigns
+# an heir on every grant, and RoyalTitleInheritanceWorker.FindHeir walks
+# faction.def.royalTitleInheritanceRelations with no null check - vanilla skips the
+# search only for the Empire. Both of our royal factions shipped without the list,
+# so every Society title, Gold or service, threw a NullReferenceException; it
+# surfaced when a pawn kind first used titleRequired and generation looped on it.
+foreach ($xf in $xmlFiles) {
+    if ($xf.FullName -notmatch '\\Defs\\') { continue }
+    try { $fdoc = [xml](Get-Content -LiteralPath $xf.FullName -Raw) } catch { continue }
+    foreach ($fd in $fdoc.SelectNodes('/Defs/FactionDef[royalTitleTags/li]')) {
+        if ($fd.SelectSingleNode('royalTitleInheritanceRelations/li')) { continue }
+        $fdn = $fd.SelectSingleNode('defName')
+        Add-Problem -Severity ERROR -Check 'RoyalFactionNoInheritance' -File ($xf.FullName.Substring($ModRoot.Length).TrimStart('\')) `
+            -Message ("FactionDef '{0}' has royalTitleTags but no royalTitleInheritanceRelations. RoyalTitleInheritanceWorker.FindHeir iterates that list unguarded on every title grant, so each title this faction confers throws a NullReferenceException. Copy the Empire's: Child, Grandchild, GreatGrandchild." -f $(if ($fdn) { $fdn.InnerText } else { '?' }))
+    }
+}
+
 # --- melee weapons need Melee Animation tweak data -----------------------------
 #
 # ANOTHER SILENT ONE, reported from play as "the razors don't work with the melee
