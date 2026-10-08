@@ -80,7 +80,8 @@ namespace RimRising
                 return "RR_RoleRequirement_AnyColor".Translate();
             }
 
-            string names = string.Join(" or ", xenotypes.Where(x => x != null).Select(x => x.LabelCap.ToString()));
+            // ToCommaListOr takes its "or" from vanilla's own keyed strings.
+            string names = xenotypes.Where(x => x != null).Select(x => x.LabelCap.ToString()).ToCommaListOr();
             return "RR_RoleRequirement_Color".Translate(names.Named("COLORS"));
         }
     }

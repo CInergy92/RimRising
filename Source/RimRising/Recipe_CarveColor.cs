@@ -21,8 +21,9 @@ namespace RimRising
     ///
     /// Vanilla xenogerm assembly already permits carving and is left completely
     /// intact. But measured against the actual defs it is a megaproject: Gold is
-    /// complexity 49, gene processors give +2 each on a base of 6, so twenty-two of
-    /// them - and the archite genes cannot be extracted from a captured Gold at all,
+    /// complexity 49 with Expanded Archite Genes loaded (43 without it), gene
+    /// processors give +2 each on a base of 6, so up to twenty-two of them - and
+    /// the archite genes cannot be extracted from a captured Gold at all,
     /// because Building_GeneExtractor scores biostatArc > 0 at weight zero. They
     /// have to be bought.
     ///
@@ -84,7 +85,9 @@ namespace RimRising
                                          List<Thing> ingredients, Bill bill)
         {
             if (!ModLister.CheckBiotech("Color carving")) { return; }
-            if (CheckSurgeryFail(billDoer, pawn, ingredients, part, bill)) { return; }
+            // billDoer is null on dev-mode and quest paths; guarded the same way as
+            // CarverRestoration and vanilla's own surgeries.
+            if (billDoer != null && CheckSurgeryFail(billDoer, pawn, ingredients, part, bill)) { return; }
 
             XenotypeDef target = TargetColor;
             if (target == null || pawn.genes == null) { return; }

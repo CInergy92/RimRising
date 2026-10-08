@@ -43,7 +43,18 @@ namespace RimRising
             if (!__instance.recipe.HasModExtension<RR_CarverWork>()) { return; }
 
             XenotypeDef color = RR_CasteIdentity.ColorOf(p);
-            if (color != RR_CarverDefOf.RR_Violet) { __result = false; }
+            if (color != RR_CarverDefOf.RR_Violet) { __result = false; return; }
+
+            // PreceptComp_UnwillingToDo is only a UI line until code asks: without
+            // this a Violet whose ideoligion says "won't carve someone into another
+            // Color" took the bill anyway. Colour carves only - restoration is not
+            // the act the precept names.
+            if (__instance.recipe.HasModExtension<CarveTargetExtension>() &&
+                RR_CarveDefOf.RR_ColorCarved != null &&
+                !IdeoUtility.DoerWillingToDo(RR_CarveDefOf.RR_ColorCarved, p))
+            {
+                __result = false;
+            }
         }
     }
 
