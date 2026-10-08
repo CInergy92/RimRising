@@ -22,44 +22,32 @@
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <!-- Overridable so another machine or a CI runner can point at its own
-         library: dotnet build -p:SteamLibrary=... or an environment variable. -->
-    <SteamLibrary Condition="'$(SteamLibrary)' == ''">D:\SteamLibrary\steamapps</SteamLibrary>
-    <RimWorldManaged>$(SteamLibrary)\common\RimWorld\RimWorldWin64_Data\Managed</RimWorldManaged>
-    <!--
-      Harmony ships with the Harmony mod rather than with the game. "Current" is
-      the folder Harmony keeps its live build in.
-    -->
-    <HarmonyManaged>$(SteamLibrary)\workshop\content\294100\2009463077\Current\Assemblies</HarmonyManaged>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
   </ItemGroup>
 
+  <!--
+    REFERENCE PACKAGES, NOT THE INSTALL. Compiling against the game's own DLLs
+    meant only a machine with RimWorld installed could build this - not a cloud
+    session, not CI. These packages carry the same public API as reference
+    assemblies, version-pinned to the exact game build:
+
+      Krafs.Rimworld.Ref 1.6.4871  = RimWorld 1.6.4871 (Version.txt), which also
+                                     carries the UnityEngine modules, including
+                                     ScreenCaptureModule for TestScene.cs
+      Lib.Harmony 2.4.1            = the Harmony mod's 0Harmony.dll
+
+    Both stay compile-time only. Krafs ships reference assemblies, which are
+    never copied; Lib.Harmony's runtime DLL is excluded, because the game
+    already loads Harmony and a second copy in the mod would be harmful.
+    Verified after the switch: 1.6/Assemblies still holds only RimRising.dll, and
+    its referenced assemblies are identical to the build against the install.
+
+    Bump both when the game or Harmony updates.
+  -->
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>$(RimWorldManaged)\Assembly-CSharp.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>$(RimWorldManaged)\UnityEngine.CoreModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <!-- TestScene.cs only: ScreenCapture.CaptureScreenshot. Ships with the game. -->
-    <Reference Include="UnityEngine.ScreenCaptureModule">
-      <HintPath>$(RimWorldManaged)\UnityEngine.ScreenCaptureModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <!--
-      Private=false matters here: the game already loads Harmony, and shipping a
-      second copy inside the mod would be actively harmful.
-    -->
-    <Reference Include="0Harmony">
-      <HintPath>$(HarmonyManaged)\0Harmony.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
+    <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.4871" />
+    <PackageReference Include="Lib.Harmony" Version="2.4.1" ExcludeAssets="runtime" />
   </ItemGroup>
 
 </Project>

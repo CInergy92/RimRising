@@ -80,6 +80,11 @@ reflection assigns it fine — no Harmony needed, since no method body is being 
 global change affecting other mods too, which is acceptable for a total conversion but is not a
 local tweak.
 
+**The C# builds without a game install.** References come from `Krafs.Rimworld.Ref` (pinned to the
+game build, 1.6.4871) and `Lib.Harmony` (pinned to the Harmony mod, 2.4.1, runtime excluded), not
+HintPaths into Steam - so cloud sessions can compile. Bump both when the game or Harmony updates.
+Decompiling still needs the real `Assembly-CSharp.dll`, which only exists on the user's machine.
+
 **To decompile anything else:** `ilspycmd -t <FullTypeName> <path-to-Assembly-CSharp.dll>`.
 Install with `dotnet tool install -g ilspycmd --version 8.2.0.7535 --add-source https://api.nuget.org/v3/index.json`
 — the unpinned latest fails to install, and this machine's global NuGet feed is offline-only.

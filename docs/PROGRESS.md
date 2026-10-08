@@ -314,6 +314,12 @@ machine's global NuGet feed is offline-only and lacks
 `Microsoft.NETFramework.ReferenceAssemblies`. `Publish-Mod.ps1` ships `1.6/Assemblies/RimRising.dll`
 and still excludes `Source/`.
 
+**2026-10-08: no game install needed to build.** The game and Harmony references now come from
+`Krafs.Rimworld.Ref 1.6.4871` and `Lib.Harmony 2.4.1` (runtime excluded) instead of HintPaths into
+the Steam folder, so a cloud session or CI can compile. Verified: the DLL's referenced assemblies
+are identical to the install-built one, `1.6/Assemblies` still holds only `RimRising.dll`, and in
+game the patches applied with no errors attributable to the mod.
+
 ### Revised budgets
 
 | Color | Cpx | Met |
