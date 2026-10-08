@@ -1066,6 +1066,7 @@ foreach ($file in $xmlFiles) {
                         # A launcher verb is what separates a gun from a melee
                         # weapon; ThingDef.IsMeleeWeapon is IsWeapon && !IsRangedWeapon.
                         OwnRanged = [bool]$node.SelectSingleNode('verbs/li[defaultProjectile]')
+                        OwnArmor  = [bool]$node.SelectSingleNode('statBases/ArmorRating_Sharp')
                         Concrete = [bool]($dnNode -and $dnNode.InnerText)
                     }
                 }
@@ -1838,6 +1839,24 @@ if (Test-Path $ceToolsDir) {
         $how = if ($info.OwnTools) { 'has <tools>' } else { "inherits <tools> from '$($info.Parent)'" }
         Add-Problem -Severity ERROR -Check 'CEToolsUnpatched' -File $info.File `
             -Message ("'{0}' {1} but has no PatchOperationReplace on its /tools in 1.6\mods\CombatExtended\Patches. Under CE, Verb_MeleeAttackCE casts every tool to ToolCE, so a vanilla Tool throws a NullReferenceException on every melee swing - and the stack trace names only CE. Guns need this too: PatchOperationMakeGunCECompatible does not touch tools." -f $dName, $how)
+    }
+
+    # --- CE reads armour ratings as millimetres -----------------------------
+    #
+    # Not a crash, a silent nerf: vanilla ArmorRating_Sharp is a 0..1 fraction
+    # and CE reads the same stat as mm of steel, so an unpatched 0.92 recoil
+    # armour stopped 0.92 mm under CE - nothing. Six armour pieces shipped like
+    # that because they were added after the CE file was written (review RV-01).
+    # Only 1.6\Defs is checked: defs in another mod's gated folder would need a
+    # CE patch gated on both mods, which is a separate decision.
+    foreach ($dName in $ourThings.Keys) {
+        $info = $ourThings[$dName]
+        if (-not $info.Concrete -or -not $info.OwnArmor) { continue }
+        if ($info.File -notlike '1.6\Defs\*') { continue }
+        $pattern = 'defName="' + [regex]::Escape($dName) + '"\]/statBases/ArmorRating_Sharp'
+        if ($cePatchText -match $pattern) { continue }
+        Add-Problem -Severity ERROR -Check 'CEArmorUnpatched' -File $info.File `
+            -Message ("'{0}' sets ArmorRating_Sharp but has no PatchOperationReplace on it in 1.6\mods\CombatExtended\Patches. CE reads the stat as millimetres of steel, so the vanilla fraction stops almost nothing. Add Sharp/Blunt replaces and Bulk/WornBulk." -f $dName)
     }
 }
 
