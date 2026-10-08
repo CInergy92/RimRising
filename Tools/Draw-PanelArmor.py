@@ -57,8 +57,42 @@ TONE = {
     "trim":  (np.array([0.62, 0.62, 0.63]), np.array([0.46, 0.46, 0.47])),
     "suit":  (np.array([0.26, 0.25, 0.24]), np.array([0.19, 0.18, 0.18])),
     "glow":  (np.array([0.42, 0.80, 0.82]), np.array([0.30, 0.62, 0.66])),
+    "ink":   (np.array([0x26, 0x22, 0x1E]) / 255.0, np.array([0x26, 0x22, 0x1E]) / 255.0),
 }
 DYED = {"plate"}
+
+# REALISTIC BODY LEGS. [NL] Realistic Body (nals.realisticbody) retextures only
+# Male, Female and Thin, and draws legs BELOW the vanilla body box, down to the
+# bottom of the canvas; Fat and Hulk keep vanilla's legless bodies. These are the
+# OUTER EDGES of its legs, measured from its body textures as canvas fractions
+# (y down) - a fit target for our own greaves, none of its pixels used. Each entry
+# is (y, x_left, x_right); a body with two separate legs lists both.
+RB_LEGS = {
+    ("Male", "ns"): [
+        [(0.790, 0.355, 0.497), (0.880, 0.357, 0.498), (0.940, 0.357, 0.496), (0.990, 0.369, 0.488), (0.999, 0.379, 0.480)],
+        [(0.790, 0.503, 0.645), (0.880, 0.502, 0.643), (0.940, 0.504, 0.643), (0.990, 0.512, 0.631), (0.999, 0.520, 0.621)],
+    ],
+    ("Male", "east"): [
+        [(0.780, 0.383, 0.561), (0.828, 0.369, 0.535), (0.883, 0.375, 0.523), (0.938, 0.383, 0.506), (0.992, 0.410, 0.498), (0.999, 0.422, 0.465)],
+    ],
+    # Female thighs meet below the hips, so it is drawn as one tapered column with
+    # a centre seam rather than two greaves with a gap that is not there.
+    ("Female", "ns"): [
+        [(0.760, 0.348, 0.652), (0.822, 0.371, 0.629), (0.873, 0.387, 0.611), (0.924, 0.398, 0.602), (0.975, 0.432, 0.568), (0.996, 0.459, 0.541)],
+    ],
+    ("Female", "east"): [
+        [(0.773, 0.359, 0.504), (0.828, 0.352, 0.490), (0.883, 0.361, 0.475), (0.938, 0.365, 0.461), (0.992, 0.395, 0.453)],
+    ],
+    ("Thin", "ns"): [
+        [(0.775, 0.402, 0.598), (0.826, 0.410, 0.590), (0.877, 0.416, 0.584), (0.928, 0.426, 0.574), (0.979, 0.445, 0.555), (0.996, 0.473, 0.527)],
+    ],
+    ("Thin", "east"): [
+        [(0.773, 0.357, 0.482), (0.826, 0.350, 0.467), (0.879, 0.354, 0.453), (0.932, 0.354, 0.432), (0.984, 0.381, 0.418)],
+    ],
+}
+RB_BODIES = ("Male", "Female", "Thin")
+GREAVE_PAD = 0.010     # canvas fractions the plate stands proud of the leg
+RB_FOLDER = "1.6/Mods/RealisticBody/Textures"
 
 
 # ---------------------------------------------------------------- primitives
@@ -77,6 +111,12 @@ class Frame:
         yy, xx = np.mgrid[0:n, 0:n].astype(np.float32) + 0.5
         self.u = (xx - self.ox) / self.bw
         self.v = (yy - self.oy) / self.bh
+        self.box = box
+
+    def from_canvas(self, x, y):
+        """A canvas-fraction point (y down) in this frame's box units."""
+        x0, x1, y0, y1 = self.box
+        return (x - x0) / (x1 - x0), (y - y0) / (y1 - y0)
 
     def px(self, length_u):
         return length_u * self.bw
@@ -126,8 +166,33 @@ def plane_split(fr, mask, a, b, c):
     return mask & (a * fr.u + b * fr.v > c)
 
 
+def greaves(fr, legs, add, profile=False):
+    """Plate over each measured leg, padded out a little so it reads as armour
+    over a limb, with a knee cop. Drawn BEFORE the torso panels, so the hip plates
+    overlap the top of the thighs the way they would on a real suit."""
+    for leg in legs:
+        pts_l = [fr.from_canvas(xl - GREAVE_PAD, y) for y, xl, xr in leg]
+        pts_r = [fr.from_canvas(xr + GREAVE_PAD, y) for y, xl, xr in leg]
+        shape = poly(fr, pts_l + pts_r[::-1], round_=0.03)
+        mid_u = np.mean([fr.from_canvas((xl + xr) / 2, y)[0] for y, xl, xr in leg])
+        add(shape, "plate", plane_split(fr, shape, 1.0, 0.0, mid_u))
+        # Knee cop: a short band two-fifths of the way down the leg.
+        y0, y1 = leg[0][0], leg[-1][0]
+        yk = y0 + (y1 - y0) * 0.40
+        row = min(leg, key=lambda r: abs(r[0] - yk))
+        a, b = fr.from_canvas(row[1] - GREAVE_PAD * 0.5, yk - 0.020), fr.from_canvas(row[2] + GREAVE_PAD * 0.5, yk + 0.020)
+        knee = poly(fr, [(a[0], a[1]), (b[0], a[1]), (b[0], b[1]), (a[0], b[1])], round_=0.03)
+        add(knee, "plate", plane_split(fr, knee, 1.0, 0.0, mid_u))
+    if len(legs) == 1 and not profile:
+        # One column for two legs (Female, Thin) seen from the front or back: a
+        # centre seam keeps them two legs. Not in profile, where the legs overlap.
+        top = fr.from_canvas(np.mean(legs[0][0][1:]), legs[0][0][0] + 0.02)
+        bot = fr.from_canvas(np.mean(legs[0][-1][1:]), legs[0][-1][0])
+        add(line(fr, [top, bot], PANEL_LINE * 0.8), "ink")
+
+
 # ------------------------------------------------------------------- designs
-def pulse_armor(fr, facing, body_mask):
+def pulse_armor(fr, facing, body_mask, legs=None):
     """Pulse armour: a sleek cuirass over a dark servo suit, flared pauldrons,
     a dark gorget the head sits in, a cinched waist over hip plates - and on the
     back, the shield generator that rides the spine.
@@ -140,6 +205,8 @@ def pulse_armor(fr, facing, body_mask):
 
     # The servo suit under everything: the body itself, dark.
     add(body_mask, "suit")
+    if legs:
+        greaves(fr, legs, add, profile=(facing == "east"))
 
     if facing in ("south", "north"):
         back = facing == "north"
@@ -219,7 +286,7 @@ DESIGNS = {"pulse": pulse_armor}
 
 
 # --------------------------------------------------------------------- draw
-def draw(design, body, facing, box=None):
+def draw(design, body, facing, box=None, rb=False):
     """box overrides the measured body box - the item icon uses it to draw the
     same front design scaled up to fill its own frame."""
     kind = "east" if facing == "east" else "ns"
@@ -233,7 +300,8 @@ def draw(design, body, facing, box=None):
     b = cw.bean(kind, bw * SS, bh * SS, body)
     body_mask[by * SS:by * SS + b.shape[0], bx * SS:bx * SS + b.shape[1]] = b
 
-    parts = DESIGNS[design](fr, facing, body_mask)
+    legs = RB_LEGS.get((body, kind)) if rb else None
+    parts = DESIGNS[design](fr, facing, body_mask, legs)
 
     rgb = np.zeros((n, n, 3), np.float32)
     alpha = np.zeros((n, n), bool)
@@ -299,6 +367,23 @@ def write_icon(design, path):
 if __name__ == "__main__":
     argv = sys.argv[sys.argv.index("--") + 1:]
     design, prefix = argv[0], os.path.abspath(argv[1])
+    if len(argv) > 2 and argv[2] == "--rb":
+        # Realistic Body variants: Male, Female, Thin only, with greaves, written
+        # under 1.6/Mods/RealisticBody/Textures at the SAME relative path as the
+        # base sprites. LoadFolders lists that folder last and gated on
+        # nals.realisticbody; the game keeps the first file it finds walking load
+        # folders last-to-first (ModContentPack.AddFolders / GetAllFilesForMod,
+        # decompiled), so these override the base sprites only for RB players.
+        repo = os.path.dirname(HERE)
+        rel = os.path.relpath(prefix, os.path.join(repo, "Textures"))
+        out = os.path.join(repo, *RB_FOLDER.split("/"), rel)
+        for body in RB_BODIES:
+            for facing in cw.FACINGS:
+                tex, msk = draw(design, body, facing, rb=True)
+                cw.save_png(f"{out}_{body}_{facing}.png", tex)
+                cw.save_png(f"{out}_{body}_{facing}m.png", msk)
+                print("WROTE", f"{out}_{body}_{facing}")
+        sys.exit(0)
     if len(argv) > 2 and argv[2] == "--icon":
         write_icon(design, prefix)
         # Optional second target: the same icon, undyed, for a precept that is

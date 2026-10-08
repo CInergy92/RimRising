@@ -65,5 +65,17 @@
       no matter how hard it is bent. This one belongs to Vehicle Framework.
     -->
     <li IfModActive="SmashPhil.VehicleFramework">1.6/Mods/Vehicles</li>
+    <!--
+      [NL] Realistic Body support. OPTIONAL AND NEVER REQUIRED. Holds only
+      textures: worn-armour sprites redrawn with greaves for the three body types
+      Realistic Body retextures (Male, Female, Thin), whose legs run below the
+      vanilla body box where our base sprites stop.
+
+      MUST STAY LAST. Decompiled: ModContentPack.AddFolders walks this list
+      backwards, and GetAllFilesForMod keeps the FIRST file it finds per path, so
+      the last-listed folder wins. Listed last, these override the base sprites
+      at the same paths - for Realistic Body players only.
+    -->
+    <li IfModActive="nals.realisticbody">1.6/Mods/RealisticBody</li>
   </v1.6>
 </loadFolders>
