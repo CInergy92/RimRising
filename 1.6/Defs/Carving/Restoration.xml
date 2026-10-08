@@ -207,6 +207,12 @@ It closes a wound and keeps it closed, and it will not let anything grow in ther
     <maxSeverity>1.0</maxSeverity>
     <initialSeverity>1</initialSeverity>
     <everCurableByItem>false</everCurableByItem>
+    <!-- Read by RR_CarveReproduction's incompatibleWithHediffTags, as vanilla's
+         Sterilized tag is read by the sterilisation surgeries, so the surgery
+         leaves the list once done instead of stacking a second copy. -->
+    <tags>
+      <li>RR_CarvedFertility</li>
+    </tags>
   </HediffDef>
 
   <RecipeDef ParentName="RR_RestoreBase">
@@ -236,6 +242,7 @@ It closes a wound and keeps it closed, and it will not let anything grow in ther
     <minAllowedAge>18</minAllowedAge>
     <incompatibleWithHediffTags>
       <li>Sterilized</li>
+      <li>RR_CarvedFertility</li>
     </incompatibleWithHediffTags>
     <ingredients>
       <li>

@@ -77,6 +77,13 @@
       <li>
         <compClass>CompQuality</compClass>
       </li>
+      <!-- Restated from BaseMeleeWeapon_Sharp_Quality, which Inherit="False" discards:
+           without it a masterwork razor never gets a name or an art description. -->
+      <li Class="CompProperties_Art">
+        <nameMaker>NamerArtWeaponMelee</nameMaker>
+        <descriptionMaker>ArtDescription_WeaponMelee</descriptionMaker>
+        <minQualityForArtistic>Excellent</minQualityForArtistic>
+      </li>
       <li Class="CompProperties_Biocodable"/>
     </comps>
     <smeltable>false</smeltable>
@@ -539,6 +546,13 @@ It cuts as well as any razor. It is worth rather more than that to the people wh
       <li Class="CompProperties_Styleable"/>
       <li>
         <compClass>CompQuality</compClass>
+      </li>
+      <!-- Restated from BaseMeleeWeapon_Sharp_Quality, which Inherit="False" discards:
+           without it a masterwork razor never gets a name or an art description. -->
+      <li Class="CompProperties_Art">
+        <nameMaker>NamerArtWeaponMelee</nameMaker>
+        <descriptionMaker>ArtDescription_WeaponMelee</descriptionMaker>
+        <minQualityForArtistic>Excellent</minQualityForArtistic>
       </li>
       <li Class="CompProperties_Biocodable"/>
     </comps>

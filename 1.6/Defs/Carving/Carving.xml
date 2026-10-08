@@ -72,8 +72,11 @@
       <DeteriorationRate>2</DeteriorationRate>
     </statBases>
     <stackLimit>10</stackLimit>
+    <!-- NOT Medicine. The carve recipes take "6 of category Medicine" as their
+         second ingredient, so a kit filed there could be spent as medicine -
+         six more 1400-silver kits - whenever kits lay closer than medicine. -->
     <thingCategories>
-      <li>Medicine</li>
+      <li>Manufactured</li>
     </thingCategories>
     <tradeTags>
       <li>ExoticMisc</li>
