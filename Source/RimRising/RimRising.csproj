@@ -47,6 +47,11 @@
       <HintPath>$(RimWorldManaged)\UnityEngine.CoreModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <!-- TestScene.cs only: ScreenCapture.CaptureScreenshot. Ships with the game. -->
+    <Reference Include="UnityEngine.ScreenCaptureModule">
+      <HintPath>$(RimWorldManaged)\UnityEngine.ScreenCaptureModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <!--
       Private=false matters here: the game already loads Harmony, and shipping a
       second copy inside the mod would be actively harmful.

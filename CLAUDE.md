@@ -722,6 +722,37 @@ declared dependency). It counts a def as melee when it has or inherits `<tools>`
 or has despawned. `[MeleeAnim] <pawn> has bad job: Wait_Combat. Cancelling animation.` is
 `AnimRenderer` dropping an animation whose pawn got re-tasked. Neither involves weapon data.
 
+### Judge worn art in game, beside other mods' armour - the scripted test scene
+
+`Source/RimRising/TestScene.cs` is a dormant `MapComponent` that only runs when the game is started
+with `-rrtestscene`. Run:
+
+```
+RimWorldWin64.exe -quicktest -rrtestscene rrtestout=<dir> -rrtestquit -screen-fullscreen 0 -screen-width 1920 -screen-height 1080
+```
+
+`-quicktest` is RimWorld's own flag (`Verse.QuickStarter`): a fresh map with the current mod list,
+so RimSort's list is never touched. The scene clears ground, sets noon, spawns factionless Baseliner
+pawns (one per body type, per facing, per armour, ours dyed gold), pauses, and writes one screenshot
+per **body type x facing** with all armours side by side, via `ScreenCapture`. It logs
+`[RimRising] TESTSCENE DONE` and exits. The armour list is at the top of the file; missing defs
+are skipped and named in the log.
+
+Three things it had to learn:
+- **Camera+ (`brrainz.cameraplus`) owns the zoom.** It maps `rootSize` from an input range of 11-60
+  onto its own curve, so `rootSize` is not cells, and below 11 that curve raises a negative to a
+  fractional power and the camera goes NaN (a blank shot of bare ground). The scene bisects
+  `rootSize` inside the valid range against `Camera.orthographicSize`, which Camera+ itself writes.
+- **The debug log auto-opens on any red error** and other mods log plenty; the scene closes every
+  window before each capture.
+- **Colonists fill the colonist bar** - the test pawns are factionless.
+
+What the first comparison showed (pulse armour, 3D pipeline, 2026-10-08): other mods' armour is a
+few big flat panels with heavy outlines, and it **extends beyond the body** - pauldrons, chest
+plates, collars - which is what makes it read as armour. Fitting exactly to the body outline reads
+as a bodysuit. The user's bodies also show two legs at the bottom (their body/face mods); armour
+sprites follow that.
+
 ### Persisted state does not retroactively update
 
 A def fix does not repair things already created from the old def. Faction leaders are
