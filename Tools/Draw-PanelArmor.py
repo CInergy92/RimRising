@@ -45,10 +45,13 @@ cw = importlib.machinery.SourceFileLoader(
 
 CANVAS, SS = cw.CANVAS, cw.SS
 INK = cw.INK
-# Measured in game against the comparison armours: at 3.2 / 2.2 px ours drew
-# about 7 px thick at close zoom where theirs drew about 14, and looked soft.
-OUTLINE = 6.0          # silhouette outline, final px
-PANEL_LINE = 4.0       # outline round each panel, final px
+# MEASURED IN THE SOURCE TEXTURES, not estimated from screenshots. The black run
+# at the silhouette edge is 7 px in VAE's heavy marine and 5 px in VFE's
+# legionnaire, at 256. The silhouette ring sits OUTSIDE each panel's own ring,
+# so the two stack at the edge: 6 + 4 measured 10 px here, twice theirs, which
+# read as heavy in game. 3 + 2.5 gives ~5.5 at the edge and 3 px panel lines.
+OUTLINE = 2.5          # silhouette outline, final px (added outside the panel rings)
+PANEL_LINE = 3.0       # outline round each panel, final px
 SEAM = 1.3             # internal seam lines, final px
 
 # Values: lit face, side face. Plate is near-white for the dye; suit stays dark.

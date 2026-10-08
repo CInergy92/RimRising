@@ -48,6 +48,9 @@ C = {
 class Canvas:
     def __init__(self, size):
         self.size = size
+        # Strokes are authored for a 256 canvas and scaled with it, so a 128
+        # icon is not drawn twice as heavy relative to its size.
+        self.k = size / 256.0
         n = size * SS
         yy, xx = np.mgrid[0:n, 0:n].astype(np.float32) + 0.5
         self.x, self.y = xx / n, yy / n           # canvas fractions
@@ -90,11 +93,11 @@ class Canvas:
             out |= d2 <= w * w
         return out
 
-    def part(self, mask, colour, dark=None, panel_px=3.0):
+    def part(self, mask, colour, dark=None, panel_px=2.0):
         """Draw one part: its own outline ring, then its lit face, then its dark
         face (a mask of where the darker plane falls)."""
         lit, shade = C[colour]
-        ring = cw.dilate(mask, panel_px * SS) & ~mask
+        ring = cw.dilate(mask, panel_px * self.k * SS) & ~mask
         self.rgb[ring] = INK
         self.rgb[mask] = lit
         if dark is not None:
@@ -102,12 +105,13 @@ class Canvas:
         self.alpha |= mask | ring
 
     def line(self, pts, width_px, colour=None):
-        m = self.ribbon(pts, self.px(width_px), self.px(width_px))
+        w = self.px(width_px * self.k)
+        m = self.ribbon(pts, w, w)
         self.rgb[m] = INK if colour is None else C[colour][0]
         self.alpha |= m
 
     def finish(self, outline_px):
-        sil = cw.dilate(self.alpha, outline_px * SS) & ~self.alpha
+        sil = cw.dilate(self.alpha, outline_px * self.k * SS) & ~self.alpha
         self.rgb[sil] = INK
         a = (self.alpha | sil).astype(np.float32)
         img = np.dstack([self.rgb * a[..., None], a])
@@ -180,7 +184,7 @@ def razor(size=256, inset=0.0):
     for ts in (0.45, 0.62, 0.78):                     # polyenne segment joints
         cv.line([ax.at(ts, 0.022), ax.at(ts + 0.012, -0.024)], 2.2)
     hilt(cv, ax, tg)
-    return cv.finish(4.0)
+    return cv.finish(1.0)
 
 
 def reaper_razor(size=256):
@@ -212,7 +216,7 @@ def reaper_razor(size=256):
         rx, ry = math.cos(ang), math.sin(ang)
         cv.line([(cx - rx * hw * 0.8, cy - ry * hw * 0.8), (cx + rx * hw * 0.8, cy + ry * hw * 0.8)], 2.2)
     hilt(cv, ax, 0.93, stud=True, stud_t=0.46)
-    return cv.finish(4.0)
+    return cv.finish(1.0)
 
 
 def whip_icon(size=128):
@@ -234,7 +238,7 @@ def whip_icon(size=128):
     for k, off in enumerate((0.07, 0.13)):            # motion lines
         arc = [(0.42 + 0.40 * f, 0.80 - 0.42 * f + off + 0.03 * math.sin(f * math.pi)) for f in np.linspace(0.15, 0.75, 12)]
         cv.line(arc, 2.6 - k * 0.6, "glow")
-    return cv.finish(2.6)
+    return cv.finish(1.0)
 
 
 def lash_projectile(size=64):
@@ -246,8 +250,8 @@ def lash_projectile(size=64):
     cv.rgb[trail] = C["glow"][1]
     cv.alpha |= trail
     blade = cv.ribbon(pts[10:], 0.16, 0.03)
-    cv.part(blade, "steel", cv.y > 0.52, panel_px=1.5)
-    return cv.finish(1.6)
+    cv.part(blade, "steel", cv.y > 0.52, panel_px=4.0)
+    return cv.finish(3.0)
 
 
 OUTPUTS = {
