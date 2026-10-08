@@ -180,6 +180,8 @@
       <tags>
         <li>Cape</li>
         <li>SpacerMilitary</li>
+        <!-- THIGAPPE opt-out: we ship our own Realistic Body sprites (1.6/Mods/RealisticBody). -->
+        <li>THIGAPPE_IgnoreTag</li>
       </tags>
       <abilities>
         <li>RR_Ability_GhostCloak</li>

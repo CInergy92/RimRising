@@ -301,6 +301,8 @@
       </layers>
       <tags>
         <li>SpacerMilitary</li>
+        <!-- THIGAPPE opt-out: we ship our own Realistic Body sprites (1.6/Mods/RealisticBody). -->
+        <li>THIGAPPE_IgnoreTag</li>
       </tags>
       <defaultOutfitTags>
         <li>Soldier</li>
@@ -474,6 +476,8 @@ Against anything a Gold is carrying it is a formality. Everyone wearing one know
            a vanilla flak vest. The vanilla tag stays so other kinds may
            still find it. -->
       <li>RR_BasicPlate</li>
+        <!-- THIGAPPE opt-out: we ship our own Realistic Body sprites (1.6/Mods/RealisticBody). -->
+        <li>THIGAPPE_IgnoreTag</li>
       </tags>
       <defaultOutfitTags>
         <li>Soldier</li>
@@ -650,6 +654,8 @@ All of that is chemistry and springs rather than circuits, so it goes on working
         <!-- NOT SpacerMilitary. That is a VANILLA tag carried by marine and power armour,
            spawning in marine armour. RR_HeavyPlate is ours alone. -->
       <li>RR_HeavyPlate</li>
+        <!-- THIGAPPE opt-out: we ship our own Realistic Body sprites (1.6/Mods/RealisticBody). -->
+        <li>THIGAPPE_IgnoreTag</li>
       </tags>
       <defaultOutfitTags>
         <li>Soldier</li>

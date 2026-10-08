@@ -782,6 +782,25 @@ Designs are coordinates in body-box units, so one design fits all five bodies. `
 item icon from the same front design, so icon and worn sprite cannot drift apart.
 `New-WornApparel.ps1` no longer draws pulse armour.
 
+### Every worn armour is a Draw-PanelArmor.py design
+
+`pulse`, `recoil`, `duro`, `scarab` and `cloak` in `DESIGNS`, each registered as
+`(function, dyed?, has Realistic Body legs?)`. Only dyed designs write tint masks. The five are
+deliberately distinct at a glance: pulse is a few big shells with a generator pack; recoil is stacked
+**lames** ("plates that coil around the body"); duro is a bare stamped cuirass with no suit under
+it, so the pawn's own clothes show; scarab is a near-black fitted skin with a diagonal weave and no
+bulk; the cloak is a shoulder **mantle** over falling panels. A cloak without the mantle read as
+trousers from the front, and its item icon shows its back for the same reason (`ICON_FACING`).
+
+**Realistic Body variants** (`--rb`) exist for every design that covers the legs: plate greaves for
+the two plate suits, skin-tight legs for scarabSkin, a longer hem for the cloak. All five carry
+`THIGAPPE_IgnoreTag`. duroArmor is torso-only, so its base sprites serve everywhere.
+
+**Test-scene rules learned the hard way:** dye only `RR_CasteColored` armour, the same rule
+`CasteArmor.cs` applies in play - every apparel has a `CompColorable`, and dyeing anything `RR_`
+turned duroArmor, scarabSkin and the cloak gold. Pin test pawns to adult age: Biotech draws 13-18
+year olds smaller, and one teenage Hulk made pulse armour look undersized.
+
 ### Weapons are drawn flat too - Tools/Draw-Weapons.py
 
 The razor family (both weapon sprites - which are also their ground and inventory icons - the

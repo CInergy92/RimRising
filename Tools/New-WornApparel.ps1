@@ -297,13 +297,13 @@ function Draw-DuroArmor {
 $script:FixedColours = @($script:PlateGlow, $Brass)
 
 $Pieces = @{
-    'RR_DuroArmor'   = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_DuroArmor/RR_DuroArmor';     Draw = ${function:Draw-DuroArmor} }
-    'RR_RecoilArmor' = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_RecoilArmor/RR_RecoilArmor'; Draw = ${function:Draw-RecoilArmor}; Masked = $true }
+    # 'RR_DuroArmor'   = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_DuroArmor/RR_DuroArmor';     Draw = ${function:Draw-DuroArmor} }   # now drawn by Tools/Draw-PanelArmor.py
+    # 'RR_RecoilArmor' = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_RecoilArmor/RR_RecoilArmor'; Draw = ${function:Draw-RecoilArmor}; Masked = $true }   # now drawn by Tools/Draw-PanelArmor.py
     # RR_PulseArmor is no longer drawn here. Its sprites, masks and item icon come
     # from Tools/Draw-PanelArmor.py (flat panels, tested in game beside other
     # armour mods); leaving it in this table would overwrite them on the next run.
-    'RR_ScarabSkin'  = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_ScarabSkin/RR_ScarabSkin';   Draw = ${function:Draw-ScarabSkin} }
-    'RR_GhostCloak'  = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_GhostCloak/RR_GhostCloak';   Draw = ${function:Draw-GhostCloak} }
+    # 'RR_ScarabSkin'  = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_ScarabSkin/RR_ScarabSkin';   Draw = ${function:Draw-ScarabSkin} }   # now drawn by Tools/Draw-PanelArmor.py
+    # 'RR_GhostCloak'  = @{ Path = 'Things/Pawn/Humanlike/Apparel/RR_GhostCloak/RR_GhostCloak';   Draw = ${function:Draw-GhostCloak} }   # now drawn by Tools/Draw-PanelArmor.py
 }
 
 # Headgear is a different shape of problem: one texture per FACING, no body-type

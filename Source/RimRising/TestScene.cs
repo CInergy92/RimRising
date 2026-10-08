@@ -32,13 +32,17 @@ namespace RimRising
     {
         private static readonly string[] Armors =
         {
-            "RR_Apparel_PulseArmor",            // ours
+            // Ours, all five worn body armours...
+            "RR_Apparel_PulseArmor",
+            "RR_Apparel_RecoilArmor",
+            "RR_Apparel_DuroArmor",
+            "RR_Apparel_ScarabSkin",
+            "RR_Apparel_GhostCloak",
+            // ...against vanilla's two references for scale and line weight.
+            // (Alpha Genes, VAE and VFE Classical armour were compared earlier;
+            // see CLAUDE.md for what that showed.)
             "Apparel_PowerArmor",               // vanilla marine armour
             "Apparel_ArmorCataphract",          // Royalty cataphract
-            "AG_ForsakenMarineArmor",           // Alpha Genes
-            "VAE_Apparel_HeavyMarineArmor",     // Vanilla Armour Expanded
-            "VFEC_Apparel_LegionnaireArmor",    // VFE Classical
-            "VFEC_Apparel_CenturionArmor",      // VFE Classical
         };
 
         private static readonly Rot4[] Facings = { Rot4.South, Rot4.East, Rot4.North };
@@ -344,6 +348,10 @@ namespace RimRising
                 // the restriction without adding any test hook to the rule itself.
                 forceNoIdeo: true,
                 developmentalStages: DevelopmentalStage.Adult,
+                // Fixed adult age: Biotech draws 13-18 year olds smaller, and one
+                // teenage Hulk made pulse armour look undersized beside recoil.
+                fixedBiologicalAge: 30f,
+                fixedChronologicalAge: 30f,
                 dontGiveWeapon: true,
                 forceNoGear: true);
             Pawn p = PawnGenerator.GeneratePawn(req);
@@ -355,7 +363,11 @@ namespace RimRising
             var ap = (Apparel)ThingMaker.MakeThing(armor, stuff);
             // Ours is shown in a caste colour, since being dyed is half of what it
             // is for; the others keep whatever their defs give them.
-            if (armor.defName.StartsWith("RR_"))
+            // ONLY caste-coloured plate, the same rule CasteArmor.cs applies in
+            // play. Every apparel has a CompColorable (it is how the styling station
+            // dyes clothes), so dyeing anything RR_ tinted duroArmor, scarabSkin and
+            // the ghost cloak gold - a look nobody would ever see in a game.
+            if (armor.apparel?.tags != null && armor.apparel.tags.Contains(RR_CasteArmor.CasteColoredTag))
             {
                 ap.TryGetComp<CompColorable>()?.SetColor(gold);
             }
