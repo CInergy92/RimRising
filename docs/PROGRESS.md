@@ -18,8 +18,11 @@ Game target: **RimWorld 1.6.4871 rev590**. packageId: `cinergy92.rimrising`.
 | 5 | Ideology and hierarchy | **Verified in game.** Memes, 13 knighthoods, razor lock, caste romance, Gold ladder |
 | 6 | Scenarios and world | **Verified in game.** Two starts, two biomes, faction placement |
 | 7 | Vanilla suppression | **Verified in game.** Settings toggle, xenotypes + generic factions, two merchant houses |
-| 8 | Art pass | **Items, weapons, vehicle done and verified. Worn apparel in progress** |
+| 8 | Art pass | **Done and verified in game.** High-detail art (all worn armour incl. Realistic Body, demonHelm, weapons, starShell, Drachenjaeger) is generated and script-fitted; loose items and icons are code-drawn |
 | 9 | Caste armour | **Verified in game.** Colour cast, wear restriction, service ladder, loadouts |
+| 10 | gravBoot flight, trauma suite | **Verified in game** |
+| 11 | Backstories, name pools, mine fauna | **Loads clean; pitviper art verified.** Bios, names, the bite and the flower not yet checked in game |
+| — | Carving | **Built and verified** (`rrtestmode=carve`): the Carver's table, all 15 recipes, ideoligion reaction, carved pawns show their Color's glyph |
 
 ---
 
@@ -1135,16 +1138,17 @@ Carried in `docs/DESIGN.md` §8.
 
 **No lore questions remain open.**
 
-### Still open — the one real gap
+### Still open
 
-**Carving is not actually built.** `docs/DESIGN.md` §3 calls it the most distinctive
-thing this mod can do, and today it is entirely vanilla: the gene assembler and
-`ImplantXenogerm` exist, but nothing in RimRising references them. There is no
-Carver, no Institute, no cost, and no ideoligious reaction to a lowColor being carved
-up into a Gold — which is the single event the whole setting turns on.
+The old "one real gap" — carving not built — is closed: see "Carving — the Carver's
+table" above, and U1 is answered (a carved pawn reads as Baseliner; `RR_CasteIdentity`
+handles it). What remains:
 
-U1 (does an implanted Color gene set read as that Color, or as "Hybrid"?) is still
-unanswered, and it is the first thing to check if carving is ever built out.
+- **Colonists and wanderers draw vanilla backstories.** Color bios reach only pawns
+  generated from our kinds; covering the rest needs a C# postfix keyed on Color.
+- **Vanilla xenogerm implantation raises no carving event.** `RR_ColorCarved` fires from
+  the Carver's table only; a Color assembled the vanilla way passes unremarked (U3).
+- **A Red venom-resistance gene** (so the pitviper spares Reds) needs its glyph first.
 
 ---
 
@@ -1152,7 +1156,7 @@ unanswered, and it is the first thing to check if carving is ever built out.
 
 | # | Unknown | Blocks | Plan |
 |---|---|---|---|
-| U1 | Does implanting a xenogerm built from an exact Color gene set make the pawn read as that Color, or as "Hybrid"? C# behaviour in `Building_GeneAssembler`, invisible from XML. | M2 — the whole carving design | Test in game during M2. If "Hybrid", bring the user options rather than improvise. |
+| U1 | ~~Does an implanted Color gene set read as that Color, or as "Hybrid"?~~ | — | **Answered** by decompilation: neither, Baseliner. See "Carving, step one". |
 | U2 | Exact vanilla xenotype complexity totals. My template-gene resolution is inference, not something the game exposes. Ordering is reliable; figures are provisional. | M2 balance | Check against the in-game gene assembler. |
 | U3 | Does vanilla raise a `HistoryEventDef` on xenogerm implantation? | M5 — ideoligious reaction to carving | Check before M5. If not, raising one needs Harmony. Ask before writing C#. |
 | U4 | Does Odyssey expose a *personal* gravity mechanic, or only ship-scale? | M4 — gravity equipment | Read `Buildings_Gravship.xml` before M4. If ship-only, choose between stat-bonus apparel and a C# comp, and ask. |
@@ -1228,14 +1232,16 @@ four facings are derived by rotating a single position:
 **Verified in play** — the derived offsets put the turrets where they belong on all
 four facings.
 
-### Still to do
+### Status
 
-- Worn apparel: all drawn, and the caste tint is confirmed in play. The only
-  alignment still unverified is the starShell, which is gated behind the exosuit
-  framework. The Child body type is CLOSED, not deferred - apparel is adult-only
-  by default and nothing here opts in, so that row can never be reached. See
-  CLAUDE.md.
-- Storyteller portrait and `About/Preview.png`.
+Done. The ComfyUI pipeline above is historical: on 2026-10-08 the user ruled that
+high-detail art (worn items, weapons, vehicles) is generative through fal and fitted by
+script - see CLAUDE.md, "SUPERSEDED". All worn armour (base and Realistic Body), the
+demonHelm (gold dyeable), every weapon, the starShell and the Drachenjaeger were regenerated
+that way and checked in the test scene. The Drachenjaeger's two turrets draw no graphic of
+their own (the body art paints them; firing is unaffected). The storyteller portrait and
+`About/Preview.png` exist. The Child body type is CLOSED, not deferred - apparel is
+adult-only by default. See CLAUDE.md.
 
 ---
 
@@ -1332,8 +1338,13 @@ entry — every `<tools>` entry must be a `ToolCE`, guns included, and
 
 ## Milestone 11 — backstories, name pools, mine fauna (drafted in the cloud, 2026-10-09)
 
-Drafted on branch `review/2026-10-08` by a session with no game install, so **nothing here has
-loaded yet.** Every structure was mirrored from a working 1.6 mod on GitHub rather than from
+**Since merged to master and loaded in game with no errors attributable to the mod**; the
+pitviper was redrawn (a coiled viper) and checked in the items scene, and `rrtestmode=kinds`
+generates every kind that carries the backstory overrides without throwing. The click-through
+below is still owed for the bios, names, bite and flower.
+
+Drafted on branch `review/2026-10-08` by a session with no game install, so at the time
+**nothing here had loaded.** Every structure was mirrored from a working 1.6 mod on GitHub rather than from
 memory (Vanilla Backstories Expanded, Vanilla Factions Expanded - Medieval 2, Alpha Animals,
 Alpha Biomes, Vanilla Plants Expanded - More Plants); the Python checker passes and every file
 parses, which is all that can be said from there. Suggestions 1.1, 1.4, 6.1 and 6.2.
