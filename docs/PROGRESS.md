@@ -21,7 +21,7 @@ Game target: **RimWorld 1.6.4871 rev590**. packageId: `cinergy92.rimrising`.
 | 8 | Art pass | **Done and verified in game.** High-detail art (all worn armour incl. Realistic Body, demonHelm, weapons, starShell, Drachenjaeger) is generated and script-fitted; loose items and icons are code-drawn |
 | 9 | Caste armour | **Verified in game.** Colour cast, wear restriction, service ladder, loadouts |
 | 10 | gravBoot flight, trauma suite | **Verified in game** |
-| 11 | Backstories, name pools, mine fauna | **Bios and names verified** (`rrtestmode=bios`: 31/31 kinds, every bio from the kind's own categories, names as designed). Pink kinds now adult-only. The bite and the flower not yet checked in game |
+| 11 | Backstories, name pools, mine fauna | **Bios and names verified** (`rrtestmode=bios`: 31/31 kinds, every bio from the kind's own categories, names as designed). Pink kinds now adult-only. **Bite and flower verified** (`rrtestmode=nature`): pitviper bites add toxic buildup (3/3 victims, two runs); haemanthus sowable in zones and pots, wild on a generated barrens map (24-34 per 150x150) with the snake, and - after a fix - grows at any light level |
 | — | Carving | **Built and verified** (`rrtestmode=carve`): the Carver's table, all 15 recipes, ideoligion reaction, carved pawns show their Color's glyph |
 
 ---

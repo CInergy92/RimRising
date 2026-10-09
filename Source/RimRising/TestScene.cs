@@ -115,6 +115,13 @@ namespace RimRising
                         if (GenCommandLine.CommandLineArgPassed("rrtestquit")) { Root.Shutdown(); }
                         return;
                     }
+                    if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string m4) && m4 == "nature")
+                    {
+                        BuildNature();
+                        Find.TickManager.CurTimeSpeed = TimeSpeed.Superfast;
+                        stage = 20;
+                        return;
+                    }
                     if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string m3) && m3 == "bios")
                     {
                         GenerateBios();
@@ -153,6 +160,10 @@ namespace RimRising
                 case 11:
                 case 12:
                     WhipStep();
+                    return;
+
+                case 20:
+                    NatureStep();
                     return;
 
                 case 5:
@@ -763,6 +774,169 @@ namespace RimRising
                 }
                 Log.Message($"[RimRising] KINDS {name}: {plate} in restricted plate of {KindSamples}");
             }
+        }
+
+        // ---- rrtestmode=nature: the pitviper's bite and the haemanthus ----------
+
+        private readonly List<(Pawn victim, Pawn viper, IntVec3 mark)> bites =
+            new List<(Pawn, Pawn, IntVec3)>();
+        private Plant darkFlower, litFlower;
+        private float darkStart, litStart;
+        private int natureFrames;
+        private const int NatureMaxFrames = 9000;
+
+        /// <summary>
+        /// rrtestmode=nature. Manhunting pitvipers beside pinned victims, run until
+        /// every victim shows toxic buildup (or time runs out), logging each
+        /// victim's hediffs. Two haemanthus, one under a roof at glow 0 and one in
+        /// noon light, whose growth is compared at the end. Then the sowing checks
+        /// through vanilla's own PlantUtility.CanSowOnGrower, and a real helium
+        /// barrens map generated to count the flower and the snake wild.
+        /// </summary>
+        private void BuildNature()
+        {
+            IntVec3 c = map.Center;
+            area = new CellRect(c.x - 4, c.z - 4, 9, 9).ClipInsideMap(map);
+            Clear(area.ExpandedBy(3).ClipInsideMap(map));
+            SetNoon();
+
+            PawnKindDef viperKind = DefDatabase<PawnKindDef>.GetNamedSilentFail("RR_Pitviper");
+            if (viperKind == null) { Log.Message("[RimRising] NATURE no RR_Pitviper kind"); }
+            for (int i = 0; viperKind != null && i < 3; i++)
+            {
+                IntVec3 mark = new IntVec3(area.minX + 1 + i * 3, 0, area.maxZ - 1);
+                Pawn victim = MakePawn(BodyTypeDefOf.Male, null, Color.white);
+                victim.Name = new NameSingle("Victim " + i);
+                GenSpawn.Spawn(victim, mark, map, Rot4.South);
+                victim.jobs.StartJob(JobMaker.MakeJob(JobDefOf.Wait, 60000), Verse.AI.JobCondition.InterruptForced);
+                Pawn viper = PawnGenerator.GeneratePawn(new PawnGenerationRequest(viperKind, null, forceGenerateNewPawn: true));
+                GenSpawn.Spawn(viper, mark + IntVec3.South, map, Rot4.North);
+                viper.mindState.mentalStateHandler.TryStartMentalState(MentalStateDefOf.Manhunter, forced: true, forceWake: true);
+                bites.Add((victim, viper, mark));
+            }
+
+            ThingDef flower = DefDatabase<ThingDef>.GetNamedSilentFail("RR_Haemanthus");
+            if (flower == null) { Log.Message("[RimRising] NATURE no RR_Haemanthus"); return; }
+            IntVec3 dark = new IntVec3(area.minX + 1, 0, area.minZ + 1);
+            IntVec3 lit = new IntVec3(area.maxX - 1, 0, area.minZ + 1);
+            foreach (IntVec3 cell in new[] { dark, lit })
+            {
+                map.terrainGrid.SetTerrain(cell, TerrainDefOf.Soil);
+            }
+            map.roofGrid.SetRoof(dark, RoofDefOf.RoofConstructed);
+            darkFlower = (Plant)GenSpawn.Spawn(flower, dark, map);
+            litFlower = (Plant)GenSpawn.Spawn(flower, lit, map);
+            darkFlower.Growth = litFlower.Growth = darkStart = litStart = 0.1f;
+
+            // Sowing: the same call the growing-zone and plant-pot UIs make.
+            var zone = new Zone_Growing(map.zoneManager);
+            map.zoneManager.RegisterZone(zone);
+            zone.AddCell(new IntVec3(area.minX + 4, 0, area.minZ + 1));
+            Log.Message($"[RimRising] NATURE sow: growing zone {PlantUtility.CanSowOnGrower(flower, zone)}");
+            ThingDef potDef = DefDatabase<ThingDef>.GetNamedSilentFail("PlantPot");
+            if (potDef != null)
+            {
+                Thing pot = GenSpawn.Spawn(ThingMaker.MakeThing(potDef, GenStuff.DefaultStuffFor(potDef)),
+                    new IntVec3(area.minX + 5, 0, area.minZ + 1), map);
+                Log.Message($"[RimRising] NATURE sow: plant pot {PlantUtility.CanSowOnGrower(flower, pot)} (pot sowTag {potDef.building?.sowTag})");
+            }
+            Log.Message($"[RimRising] NATURE built {bites.Count} viper/victim pairs");
+        }
+
+        private void NatureStep()
+        {
+            natureFrames++;
+            bool allBitten = bites.All(b => b.victim.health.hediffSet.HasHediff(HediffDefOf.ToxicBuildup) || b.victim.Dead);
+            if (natureFrames % 30 == 0 && !allBitten)
+            {
+                foreach (var b in bites)
+                {
+                    if (b.victim.Dead || !b.victim.Spawned) { continue; }
+                    // Hurt factionless victims flee - same as the whip targets.
+                    if (b.victim.Position != b.mark) { b.victim.Position = b.mark; b.victim.Notify_Teleported(); }
+                    if (!b.victim.Downed)
+                    {
+                        b.victim.mindState?.mentalStateHandler?.Reset();
+                        b.victim.jobs.StartJob(JobMaker.MakeJob(JobDefOf.Wait, 60000), Verse.AI.JobCondition.InterruptForced);
+                    }
+                    if (!b.viper.Dead && b.viper.Spawned && !b.viper.InMentalState)
+                    {
+                        b.viper.mindState.mentalStateHandler.TryStartMentalState(MentalStateDefOf.Manhunter, forced: true, forceWake: true);
+                    }
+                }
+            }
+            if (allBitten)
+            {
+                // Freeze the bite result: the snakes go, the flowers keep growing.
+                foreach (var b in bites) { if (b.viper.Spawned) { b.viper.Destroy(); } }
+            }
+            // The flowers need game time to show growth: half a day at least.
+            if (natureStartTick < 0) { natureStartTick = Find.TickManager.TicksGame; }
+            bool flowersDone = Find.TickManager.TicksGame - natureStartTick >= 30000;
+            if ((!allBitten || !flowersDone) && natureFrames < NatureMaxFrames) { return; }
+
+            // Finish exactly once. Anything below that throws must not leave the
+            // stage live, or the update retries it every frame - which it did,
+            // flooding the log until the process was killed.
+            stage = -1;
+            Find.TickManager.CurTimeSpeed = TimeSpeed.Paused;
+            try { NatureReport(); }
+            catch (System.Exception e) { Log.Error("[RimRising] NATURE report threw: " + e); }
+            Log.Message("[RimRising] TESTSCENE DONE (nature)");
+            if (GenCommandLine.CommandLineArgPassed("rrtestquit")) { Root.Shutdown(); }
+        }
+
+        private int natureStartTick = -1;
+
+        private void NatureReport()
+        {
+            foreach (var b in bites)
+            {
+                Hediff tox = b.victim.health.hediffSet.GetFirstHediffOfDef(HediffDefOf.ToxicBuildup);
+                string injuries = string.Join(", ", b.victim.health.hediffSet.hediffs.OfType<Hediff_Injury>()
+                    .Select(h => $"{h.def.defName}@{h.Part?.def.defName}"));
+                Log.Message($"[RimRising] NATURE bite {b.victim.Name}: toxic={(tox == null ? "NONE" : tox.Severity.ToString("F3"))} " +
+                            $"toxRes={b.victim.GetStatValue(StatDefOf.ToxicResistance):F2} injuries=[{injuries}]");
+            }
+            Log.Message($"[RimRising] NATURE ran {natureFrames} frames, {Find.TickManager.TicksGame - natureStartTick} ticks");
+
+            if (darkFlower != null)
+            {
+                Log.Message($"[RimRising] NATURE flower dark: glow {map.glowGrid.GroundGlowAt(darkFlower.Position):F2} " +
+                            $"lightFactor {darkFlower.GrowthRateFactor_Light:F2} rate {darkFlower.GrowthRate:F2} " +
+                            $"growth {darkStart:F3} -> {darkFlower.Growth:F3}");
+                Log.Message($"[RimRising] NATURE flower lit: glow {map.glowGrid.GroundGlowAt(litFlower.Position):F2} " +
+                            $"lightFactor {litFlower.GrowthRateFactor_Light:F2} rate {litFlower.GrowthRate:F2} " +
+                            $"growth {litStart:F3} -> {litFlower.Growth:F3}");
+                Log.Message($"[RimRising] NATURE flower light factor at glow 0 (engine formula): " +
+                            $"{PlantUtility.GrowthRateFactorFor_Light(darkFlower.def, 0f):F2}");
+            }
+            NatureWorldgen();
+        }
+
+        /// <summary>Generate a real map on a barrens tile and count what grew wild.</summary>
+        private void NatureWorldgen()
+        {
+            ThingDef flower = DefDatabase<ThingDef>.GetNamedSilentFail("RR_Haemanthus");
+            BiomeDef barrens = DefDatabase<BiomeDef>.AllDefs.FirstOrDefault(b => flower != null && b.CommonalityOfPlant(flower) > 0f);
+            if (barrens == null) { Log.Message("[RimRising] NATURE worldgen: no biome lists the flower"); return; }
+            var surface = Find.WorldGrid.Surface;
+            PlanetTile tile = PlanetTile.Invalid;
+            for (int i = 0; i < Find.WorldGrid.TilesCount; i++)
+            {
+                PlanetTile t = surface.PlanetTileForID(i);
+                if (Find.WorldGrid[t].PrimaryBiome == barrens && !Find.WorldObjects.AnyWorldObjectAt(t)) { tile = t; break; }
+            }
+            if (!tile.Valid) { Log.Message($"[RimRising] NATURE worldgen: no free {barrens.defName} tile in this world"); return; }
+            Map gen = GetOrGenerateMapUtility.GetOrGenerateMap(tile, new IntVec3(150, 1, 150), WorldObjectDefOf.Debug_Arena);
+            int flowers = gen.listerThings.ThingsOfDef(flower).Count;
+            int vipers = gen.mapPawns.AllPawnsSpawned.Count(p => p.def.defName == "RR_Pitviper");
+            int animals = gen.mapPawns.AllPawnsSpawned.Count(p => p.RaceProps.Animal);
+            string kinds = string.Join(", ", gen.mapPawns.AllPawnsSpawned.Where(p => p.RaceProps.Animal).GroupBy(p => p.def.defName).Select(g => g.Key + " " + g.Count()));
+            Log.Message($"[RimRising] NATURE worldgen generator {gen.Parent.MapGeneratorDef?.defName}, animals {animals}: {kinds}");
+            Log.Message($"[RimRising] NATURE worldgen {barrens.defName} 150x150: haemanthus {flowers}, pitvipers {vipers} " +
+                        $"(flower commonality {barrens.CommonalityOfPlant(flower):F2})");
+            Current.Game.DeinitAndRemoveMap(gen, false);
         }
 
         private const int BioSamples = 6;

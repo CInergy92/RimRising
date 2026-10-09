@@ -64,6 +64,16 @@
         <li>Decorative</li>
       </sowTags>
       <growMinGlow>0</growMinGlow>
+      <!--
+        growMinGlow 0 alone does NOT make a plant grow in the dark. Decompiled,
+        PlantUtility.GrowthRateFactorFor_Light is InverseLerp(min, optimal, glow),
+        and optimal defaults to 1, so at glow 0 the factor is 0 and
+        HasEnoughLightToGrow is false. Optimal 0 too makes it 1 at every glow
+        (GenMath.InverseLerp returns 1 when a == b and value >= a) - as vanilla's
+        CavePlantBase does, minus cavePlant/diesToLight, since this one grows in
+        the open as well.
+      -->
+      <growOptimalGlow>0</growOptimalGlow>
       <fertilityMin>0.3</fertilityMin>
       <fertilitySensitivity>0.3</fertilitySensitivity>
       <topWindExposure>0.1</topWindExposure>

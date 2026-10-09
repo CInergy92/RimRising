@@ -940,6 +940,14 @@ kind is enough to make title-gated apparel wearable at generation.
   override did not take) and the name is a clean `NameTriple`. Logs `BIOS ... SUMMARY n/n kinds clean`.
   Pawns under 20 have no adulthood - vanilla's rule, not a fault. Biotech generates kinds from age
   13, which is how Pink kinds were found generating minors; they now carry `minGenerationAge 18`.
+- `rrtestmode=nature`: manhunting pitvipers beside pinned victims (logs toxic buildup), two
+  haemanthus grown for half a day, the sowing checks through `PlantUtility.CanSowOnGrower`, and a
+  real 150x150 helium barrens map generated (on a `Debug_Arena` parent - `AbandonedSettlement` is
+  not a MapParent and throws) to count the flower and snake wild. Its final step sets `stage = -1`
+  BEFORE anything that can throw: an exception there once re-ran every frame and flooded the log.
+- **`growMinGlow 0` does not make a plant grow in the dark.** The light factor is
+  `InverseLerp(growMinGlow, growOptimalGlow, glow)` and optimal defaults to 1, so at glow 0 it is 0.
+  Set `growOptimalGlow 0` too, as vanilla's `CavePlantBase` does. The haemanthus shipped with this.
 - `rrtestmode=whip`: drafted Golds lash targets in four armours, eight rounds, logging damage per
   lash. The targets are factionless and **flee** when hurt, and a lash at a pawn running out of reach
   ends without firing. The scene puts them back on their marks every round. Casters are rerolled if
