@@ -58,7 +58,12 @@ weapon and tweak-data drawing scripts are Python (`Draw-PanelArmor.py`, `Draw-We
 ```powershell
 pwsh -File Tools/Test-ModDefs.ps1     # validate every def; exit 1 on any error
 pwsh -File Tools/Publish-Mod.ps1      # validate, then mirror the shipped content into Mods/
+python3 Tools/Check-ModDefs.py        # cloud fallback: no game install needed, cannot see vanilla
 ```
+
+Two Claude Code project skills live in `.claude/skills/`: `/validate` runs the tooling above and
+turns the report into a fix list, and `/newdef` is the "open a vanilla def of the same type first"
+rule as a procedure, with a per-type table of what to open.
 
 `Source/RimRising` holds the C# assembly. `CLAUDE.md` records every verified engine convention
 the project relies on, `docs/DESIGN.md` the content design, and `docs/PROGRESS.md` milestone status.
