@@ -77,5 +77,10 @@
       at the same paths - for Realistic Body players only.
     -->
     <li IfModActive="nals.realisticbody">1.6/Mods/RealisticBody</li>
+    <!--
+      Dragons Descent: its dragons and drake retold as Carver-made (the user's
+      call, 2026-10-09). Optional, descriptions only; not a dependency.
+    -->
+    <li IfModActive="onyxae.dragonsdescent">1.6/Mods/DragonsDescent</li>
   </v1.6>
 </loadFolders>

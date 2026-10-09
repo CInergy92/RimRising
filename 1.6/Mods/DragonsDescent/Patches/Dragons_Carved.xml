@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Dragons Descent (onyxae.dragonsdescent), made to fit the setting. OPTIONAL: this
+  folder loads only when that mod is active (LoadFolders.xml, IfModActive), and the
+  mod is not a dependency.
+
+  The user's call (2026-10-09): there are carved drakes and dragons in the setting,
+  so its creatures are CARVED, NOT NATURAL - Carver work, commissioned by the Society
+  and its great houses, then escaped, sold on or bred down in the wild. Only the
+  descriptions change; stats, spawning and everything else stay that mod's.
+
+  Original text, written for RimRising. Each keeps the species' niche from its own
+  def (cold-water fisher, polar, war beast and so on) without reusing its wording.
+  The talbuk is a pack animal, not a dragon, and is left alone. The orange dragon is
+  disabled in that mod's own 1.6 defs (its ThingDef sits inside a comment), so it has
+  no entry here.
+
+  defNames read from the installed mod's 1.6/Defs/ThingDefs_Races/
+  (Races_Animal_Common_Dragon.xml, Races_Animal_Rare_Dragon.xml,
+  Races_Animal_Drake.xml). success Always on each so a rename upstream degrades
+  quietly to that mod's own text.
+-->
+<Patch>
+
+  <Operation Class="PatchOperationReplace">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="Black_Dragon"]/description</xpath>
+    <value>
+      <description>A Carver's answer to a Gold who asked for something that would frighten other Golds. The black was cut for temper first and size second, and the temper took. Houses that kept them for the arena lost handlers at a rate the ledgers stopped recording; the ones in the wild now are the ones nobody went in after.</description>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="Blue_Dragon"]/description</xpath>
+    <value>
+      <description>Carved for the polar seas, where a house wanted its fisheries patrolled by something that could not be bribed. The blue hunts cold water and lives on what it pulls out of it, and it has outlasted three of the houses that ordered it.</description>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="Green_Dragon"]/description</xpath>
+    <value>
+      <description>The first pattern any Carver's guild sold for war, and still the cheapest: biddable, quick to train, and bred down so far from the original commission that a well-off Copper can own one. Legions used them as mounts and messengers until the paperwork caught up.</description>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="Purple_Dragon"]/description</xpath>
+    <value>
+      <description>A cross the Carvers made on purpose, red pattern over blue, for a house that wanted both. What came out was steadier than either parent and far less patient, and the house paid for the second quality along with the first.</description>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="Red_Dragon"]/description</xpath>
+    <value>
+      <description>Carved as a living siege engine for a war that ended before it could be fielded. The pattern was too expensive to waste, so it was sold on, house to house, and every house that bought one found a reason to use it.</description>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="White_Dragon"]/description</xpath>
+    <value>
+      <description>Made for the poles and made to hold them. The white was Carved to keep a territory against all comers, and the Carver did not add an exception for the people who commissioned it. It does not leave the cold willingly.</description>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="Yellow_Dragon"]/description</xpath>
+    <value>
+      <description>The newest pattern in the wild, and the only one nobody admits to Carving. Somewhere a Carver made a mistake or a joke, and it bred true. The registries list it as a defect. The Yellows who study it list it as a success.</description>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="Gold_Dragon"]/description</xpath>
+    <value>
+      <description>Carved in the colour of the people who own it, which is the point. Gold dragons are gentle by design - a house wants its heraldry to come when called - and worth a fortune on the scale alone. More than one has been stolen by Reds who could not believe what it would sell for, and were right.</description>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="Silver_Dragon"]/description</xpath>
+    <value>
+      <description>Carved for a Silver banking house, to stand beside a Gold's gold dragon and not look smaller. Prized, priced and argued over; a Silver will tell you it is worth more than the gold, and will have the figures ready.</description>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="Jade_Dragon"]/description</xpath>
+    <value>
+      <description>Luxury Carved into a living thing: a hide like one piece of polished jade, made for a Gold who already owned everything else. It is not meant to do anything. That is what makes it expensive.</description>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="True_Dragon"]/description</xpath>
+    <value>
+      <description>The old commission, the one the others were cut down from: a dragon on four legs with its wings left whole, made before the guilds learned to make them smaller, cheaper and safer. Few remain. The houses that own one do not lend it out, and do not talk about the Carver who made it.</description>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="DD_Drake"]/description</xpath>
+    <value>
+      <description>A wingless dragon-pattern, Carved for labour and the arena and long since loose in the wild. Heavy, low and stubborn, about as dangerous as a big wolf and a good deal harder to discourage. Reds know it as the thing that gets into the stores.</description>
+    </value>
+  </Operation>
+
+</Patch>

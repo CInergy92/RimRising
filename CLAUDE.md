@@ -975,6 +975,22 @@ Each loaded without complaint, or with a log line that does not name the cause:
   them twice in one tick (`rrtestmode=m12`).
 - `rrtestmode=m12` checks the second content pass in code: 38 logged `M12` lines and a summary.
 
+### Optional mods we integrate with, beyond the dependencies
+
+Each loads from `1.6/Mods/<Mod>/` under `IfModActive` in `LoadFolders.xml`, and none is in
+`modDependencies` - RimRising runs without every one of them.
+
+| Mod | packageId | What we do |
+|---|---|---|
+| Dragons Descent | `onyxae.dragonsdescent` | Retell its 12 live dragons and drake as Carver-made (descriptions only). Its orange dragon is commented out in its own 1.6 defs. Checked by `rrtestmode=m12` (18). |
+| Giddy-Up 2 - Continued | workshop 3674332861 | Not installed yet. Planned: Obsidians ride griffins. Not needed by anything. |
+
+**Animals in a raid group work** (`rrtestmode=raid`): a griffin in an Obsidian Combat group takes
+`AssaultColony` and fights. But `PawnGroupMakerUtility` multiplies each option's weight by a curve
+on its cost over the dearest affordable option's (0.01 at a fifth), so an expensive animal beside
+cheap warriors needs a tiny weight - 0.6 made raids 30% griffin; 0.06 gives about 4%. A test faction
+that uses goodwill ignores `SetRelationDirect`; lower its goodwill to make it hostile.
+
 ### Combat Extended and damage with no verb
 
 CE resolves a **deflected** sharp hit as blunt, taking the blunt penetration from the attacking

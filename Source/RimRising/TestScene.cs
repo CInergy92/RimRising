@@ -1440,6 +1440,18 @@ namespace RimRising
                 }
             });
 
+            // 18. Dragons Descent, when active: its creatures read as Carver-made.
+            // (Its orange dragon is commented out in that mod's own defs.)
+            Run("18 dragons", () =>
+            {
+                if (!ModsConfig.IsActive("onyxae.dragonsdescent")) { Log.Message("[RimRising] M12 skip 18: Dragons Descent not active"); return; }
+                var names = new[] { "Black_Dragon", "Blue_Dragon", "Green_Dragon", "Purple_Dragon", "Red_Dragon",
+                                    "White_Dragon", "Yellow_Dragon", "Gold_Dragon", "Silver_Dragon", "Jade_Dragon", "True_Dragon", "DD_Drake" };
+                var carved = names.Where(n => DefDatabase<ThingDef>.GetNamedSilentFail(n)?.description?.Contains("Carv") == true).ToList();
+                Check("18 dragons carved", carved.Count == names.Length,
+                      $"{carved.Count}/{names.Length} retold; missing: {string.Join(", ", names.Except(carved))}");
+            });
+
             Log.Message($"[RimRising] M12 SUMMARY {m12Ok} ok, {m12Fail} fail");
         }
 
