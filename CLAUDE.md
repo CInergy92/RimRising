@@ -914,8 +914,10 @@ soft-edged side layer - the texture itself was verified fully opaque. Other armo
 because they ship refit data.
 
 THIGAPPE's `1.6/Patches/THIGAPPE_GlobalIgnores.xml` skips any apparel whose `apparel/tags` has
-`THIGAPPE_IgnoreTag`. Pulse armour carries it; a plain string tag, inert without THIGAPPE. The cost:
-on Realistic Body, bare shins show below the hip plates. Real support would be APP fine-tune Defs.
+`THIGAPPE_IgnoreTag`. Every worn armour carries it; a plain string tag, inert without THIGAPPE.
+Opting out first left bare shins below the hip plates on Realistic Body. That is closed by our own
+Realistic Body textures (`1.6/Mods/RealisticBody/Textures`), whose plate suits carry greaves to the
+feet - checked in the armour scene on every facing, 2026-10-09. No APP fine-tune Defs needed.
 
 ### A faction that confers titles needs royalTitleInheritanceRelations
 
