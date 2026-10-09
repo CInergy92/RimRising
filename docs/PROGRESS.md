@@ -1136,6 +1136,11 @@ Carried in `docs/DESIGN.md` §8.
    superpowers turn permanently hostile past the −75 floor; the Sons of Ares and Sun
    Industries become real allies. DESIGN §8d.
 
+4. **Young fighters are canon.** Society and resistance kinds generate from 13, Biotech's
+   default, and that stays (user, 2026-10-09: "They get fighters very young, it tracks").
+   Only the Pink kinds carry an adult floor (`minGenerationAge 18`), under the under-18
+   rule. Do not add age floors to the other kinds.
+
 **No lore questions remain open.**
 
 ### Still open
