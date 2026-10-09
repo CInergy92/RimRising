@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Tool capacities. A capacity is the name a <tools> entry uses; the ManeuverDef
+  with the same requiredCapacity decides what it does. See
+  ManeuverDefs/Maneuvers_RimRising.xml.
+
+  Mirrored from Alpha Animals' 1.6/Defs/ToolCapacityDefs/ToolCapacity.xml, which
+  is nothing but defName and label.
+-->
+<Defs>
+
+  <ToolCapacityDef>
+    <defName>RR_PitviperBite</defName>
+    <label>venomous bite</label>
+  </ToolCapacityDef>
+
+</Defs>

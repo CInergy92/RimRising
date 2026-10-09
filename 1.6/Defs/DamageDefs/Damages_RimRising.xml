@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Damage types. One so far: the pitviper's bite.
+
+  Mirrored field for field from Alpha Animals' AA_ToxicBite
+  (1.6/Defs/DamageDefs/Damage_AlphaPredators.xml): a stab that also raises a
+  buildup hediff, scaled inversely by the victim's ToxicResistance. The only
+  change is the hediff, which is vanilla ToxicBuildup rather than Alpha Animals'
+  own, so this mod carries no dependency on theirs.
+
+  severityPerDamageDealt 0.009 against a 7-power bite is about 0.06 severity per
+  landed bite; three or four bites put an unresisting pawn into serious toxic
+  buildup, one bite is survivable. That is the intended shape: the snake is a
+  warning, the second snake is a problem.
+-->
+<Defs>
+
+  <DamageDef>
+    <defName>RR_PitviperBite</defName>
+    <label>pitviper bite</label>
+    <workerClass>DamageWorker_Stab</workerClass>
+    <externalViolence>true</externalViolence>
+    <deathMessage>{0} has been bitten to death.</deathMessage>
+    <hediff>Stab</hediff>
+    <hediffSolid>Crack</hediffSolid>
+    <additionalHediffs>
+      <li>
+        <hediff>ToxicBuildup</hediff>
+        <severityPerDamageDealt>0.009</severityPerDamageDealt>
+        <victimSeverityScaling>ToxicResistance</victimSeverityScaling>
+        <inverseStatScaling>true</inverseStatScaling>
+      </li>
+    </additionalHediffs>
+    <harmAllLayersUntilOutside>true</harmAllLayersUntilOutside>
+    <impactSoundType>Slice</impactSoundType>
+    <armorCategory>Sharp</armorCategory>
+  </DamageDef>
+
+</Defs>
