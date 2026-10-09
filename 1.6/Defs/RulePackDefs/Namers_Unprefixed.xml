@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Name pools for the Colors that carry no prefix.
+
+  Namers_ColorPrefixes.xml gives the six prefixed Colors their au/ag/cu/xe/si/ti
+  particle and records why the other eight have none. That absence is correct
+  and stays. What was NOT correct is that those eight Colors drew vanilla names,
+  so a Red was "Jenkins" and an Obsidian was "Rebecca". The absence of a prefix
+  is the statement; the names around it should still sound like the caste.
+
+  So: no prefix anywhere in this file, and a register per group.
+
+    Obsidian   given name + patronymic. The tribes keep no houses, only fathers,
+               so the family name is "<father>sson" or "<father>sdottir". That is
+               the one gendered pool, done with nameMakerFemale on the xenotype -
+               a field observed on vanilla XenotypeDef (CLAUDE.md, "Xenotype
+               budgets live on genes"). Shared by RR_Obsidian, _Stained and
+               _Ascomanni.
+    Red        short given name + the shaft the clan is named for. Reds identify
+               by origin (DESIGN.md 8b), so the family name IS a place, assembled
+               from mining syllables. Shared by RR_Red and RR_Red_Ultraheavy.
+    Pink       given name + the Garden that raised them. The fiction's Pinks have
+               a given name and little else; a Garden name stands in for the
+               house they will never have. Shared by RR_Pink and RR_Pink_Rose.
+    Violet     its own softer pool, artists' names.
+    White      } the highborn register the Golds use, unprefixed. Whites and
+    Yellow     } Yellows sit near the top and were never given a particle.
+    Orange     } the servant register the Grays use, unprefixed.
+    Brown      }
+
+  EVERY NAME IS TWO TOKENS: "[given] [family]". A three-token r_name is parsed by
+  NameTriple as first-nick-last, which is what the prefixed Colors rely on; a
+  one-token name (a bare given name, which would suit Pink best) is not something
+  this project has verified against NameTriple.FromString, so it is not used.
+  If a single-name Pink is wanted later, that is the thing to test first.
+
+  NAMES ARE ORIGINAL. No character name from the books appears here. Given names
+  are ordinary historical forms in the public domain (Norse for Obsidian, which
+  the setting's tribes draw on; Latin and Greek for the highborn, reused from the
+  existing pool; plain working names for Red). Family names are built from
+  syllables.
+
+  Structure mirrored from Namers_ColorPrefixes.xml in this folder, which was
+  itself mirrored from Biotech's RulePacks_Namers_Xenohumans.xml (NamerPersonImpid)
+  and uses RulePackDef.include the way Anomaly's RulePacks_Art.xml does.
+-->
+<Defs>
+
+  <!-- ============================== Obsidian ============================== -->
+
+  <RulePackDef>
+    <defName>RR_NameParts_Obsidian</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>givenM->Hakon</li>
+        <li>givenM->Eyvind</li>
+        <li>givenM->Torvald</li>
+        <li>givenM->Asger</li>
+        <li>givenM->Leif</li>
+        <li>givenM->Gunnar</li>
+        <li>givenM->Halvar</li>
+        <li>givenM->Bjarke</li>
+        <li>givenM->Vidar</li>
+        <li>givenM->Orvar</li>
+        <li>givenM->Steinar</li>
+        <li>givenM->Kettil</li>
+        <li>givenM->Brandr</li>
+        <li>givenM->Rurik</li>
+        <li>givenM->Aslak</li>
+        <li>givenM->Hrolf</li>
+
+        <li>givenF->Brynja</li>
+        <li>givenF->Sigrun</li>
+        <li>givenF->Ingrid</li>
+        <li>givenF->Runa</li>
+        <li>givenF->Thyra</li>
+        <li>givenF->Solvei</li>
+        <li>givenF->Ylva</li>
+        <li>givenF->Astrid</li>
+        <li>givenF->Hedda</li>
+        <li>givenF->Gudrun</li>
+        <li>givenF->Ragna</li>
+        <li>givenF->Tova</li>
+        <li>givenF->Eira</li>
+        <li>givenF->Hilde</li>
+        <li>givenF->Oddny</li>
+        <li>givenF->Svala</li>
+
+        <!-- The father. Patronymics are built on these, never on the given list. -->
+        <li>father->Orm</li>
+        <li>father->Thorv</li>
+        <li>father->Ulf</li>
+        <li>father->Grim</li>
+        <li>father->Egil</li>
+        <li>father->Kol</li>
+        <li>father->Stein</li>
+        <li>father->Arn</li>
+        <li>father->Dag</li>
+        <li>father->Halv</li>
+        <li>father->Bork</li>
+        <li>father->Hask</li>
+        <li>father->Vigg</li>
+        <li>father->Rand</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_Namer_Obsidian</defName>
+    <include><li>RR_NameParts_Obsidian</li></include>
+    <rulePack>
+      <rulesStrings>
+        <li>r_name->[givenM] [father]sson</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_Namer_Obsidian_Female</defName>
+    <include><li>RR_NameParts_Obsidian</li></include>
+    <rulePack>
+      <rulesStrings>
+        <li>r_name->[givenF] [father]sdottir</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <!-- ================================ Red ================================= -->
+
+  <RulePackDef>
+    <defName>RR_Namer_Red</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_name->[given] [shaft]</li>
+
+        <!-- Short. Nobody underground has breath to spare on a long name. -->
+        <li>given->Hesk</li>
+        <li>given->Tam</li>
+        <li>given->Brann</li>
+        <li>given->Wyn</li>
+        <li>given->Cal</li>
+        <li>given->Nell</li>
+        <li>given->Oren</li>
+        <li>given->Doss</li>
+        <li>given->Ren</li>
+        <li>given->Tilda</li>
+        <li>given->Ash</li>
+        <li>given->Mott</li>
+        <li>given->Rue</li>
+        <li>given->Sorrel</li>
+        <li>given->Flint</li>
+        <li>given->Kess</li>
+        <li>given->Ulla</li>
+        <li>given->Brae</li>
+        <li>given->Arn</li>
+        <li>given->Idra</li>
+        <li>given->Lissa</li>
+        <li>given->Garron</li>
+        <li>given->Pell</li>
+        <li>given->Marrow</li>
+        <li>given->Jute</li>
+        <li>given->Vey</li>
+
+        <!-- The shaft. A place, not a lineage: "Hesk Kardun" is Hesk of Kardun. -->
+        <li>shaft->[shSyl][shEnd]</li>
+        <li>shaft->[shSyl][shSyl][shEnd]</li>
+
+        <li>shSyl->Kar</li>
+        <li>shSyl->Vor</li>
+        <li>shSyl->Dun</li>
+        <li>shSyl->Tol</li>
+        <li>shSyl->Hesk</li>
+        <li>shSyl->Rud</li>
+        <li>shSyl->Gal</li>
+        <li>shSyl->Orm</li>
+        <li>shSyl->Bray</li>
+        <li>shSyl->Skar</li>
+        <li>shSyl->Mur</li>
+        <li>shSyl->Ferr</li>
+
+        <li>shEnd->dun</li>
+        <li>shEnd->pit</li>
+        <li>shEnd->holm</li>
+        <li>shEnd->shaft</li>
+        <li>shEnd->wick</li>
+        <li>shEnd->deep</li>
+        <li>shEnd->gash</li>
+        <li>shEnd->mere</li>
+        <li>shEnd->haul</li>
+        <li>shEnd->seam</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <!-- ================================ Pink ================================ -->
+
+  <RulePackDef>
+    <defName>RR_Namer_Pink</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_name->[given] [garden]</li>
+
+        <li>given->Lira</li>
+        <li>given->Ione</li>
+        <li>given->Calla</li>
+        <li>given->Vesper</li>
+        <li>given->Dove</li>
+        <li>given->Linnet</li>
+        <li>given->Mirelle</li>
+        <li>given->Odile</li>
+        <li>given->Perrin</li>
+        <li>given->Tansy</li>
+        <li>given->Rosalind</li>
+        <li>given->Ember</li>
+        <li>given->Juniper</li>
+        <li>given->Lyle</li>
+        <li>given->Corvin</li>
+        <li>given->Ambrose</li>
+        <li>given->Ellery</li>
+        <li>given->Florian</li>
+        <li>given->Jessamine</li>
+        <li>given->Alder</li>
+        <li>given->Seren</li>
+        <li>given->Isolde</li>
+        <li>given->Aurel</li>
+        <li>given->Nerissa</li>
+
+        <!-- The Garden that raised them, standing in for a house. -->
+        <li>garden->[gSyl][gEnd]</li>
+
+        <li>gSyl->Ama</li>
+        <li>gSyl->Ser</li>
+        <li>gSyl->Vio</li>
+        <li>gSyl->Lun</li>
+        <li>gSyl->Cor</li>
+        <li>gSyl->Ely</li>
+        <li>gSyl->Thal</li>
+        <li>gSyl->Mir</li>
+        <li>gSyl->Ros</li>
+        <li>gSyl->Cal</li>
+
+        <li>gEnd->ande</li>
+        <li>gEnd->essa</li>
+        <li>gEnd->iel</li>
+        <li>gEnd->ara</li>
+        <li>gEnd->ene</li>
+        <li>gEnd->ova</li>
+        <li>gEnd->ynne</li>
+        <li>gEnd->ise</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <!-- =============================== Violet =============================== -->
+
+  <RulePackDef>
+    <defName>RR_Namer_Violet</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_name->[given] [house]</li>
+
+        <li>given->Oriel</li>
+        <li>given->Sabine</li>
+        <li>given->Lucan</li>
+        <li>given->Ismay</li>
+        <li>given->Teodor</li>
+        <li>given->Alba</li>
+        <li>given->Renaud</li>
+        <li>given->Cosima</li>
+        <li>given->Elio</li>
+        <li>given->Marisol</li>
+        <li>given->Faron</li>
+        <li>given->Ilse</li>
+        <li>given->Nico</li>
+        <li>given->Senna</li>
+        <li>given->Dorian</li>
+        <li>given->Vivienne</li>
+        <li>given->Anselm</li>
+        <li>given->Leocadia</li>
+        <li>given->Caspar</li>
+        <li>given->Ottilie</li>
+
+        <li>house->[vSyl][vEnd]</li>
+        <li>house->[vSyl][vSyl][vEnd]</li>
+
+        <li>vSyl->Ari</li>
+        <li>vSyl->Cel</li>
+        <li>vSyl->Mel</li>
+        <li>vSyl->Oph</li>
+        <li>vSyl->Sil</li>
+        <li>vSyl->Val</li>
+        <li>vSyl->Ser</li>
+        <li>vSyl->Lio</li>
+        <li>vSyl->Ten</li>
+        <li>vSyl->Ira</li>
+
+        <li>vEnd->anthe</li>
+        <li>vEnd->ione</li>
+        <li>vEnd->isse</li>
+        <li>vEnd->ora</li>
+        <li>vEnd->ette</li>
+        <li>vEnd->eon</li>
+        <li>vEnd->andre</li>
+        <li>vEnd->ule</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <!-- ===================== White, Yellow: highborn, unprefixed ============ -->
+
+  <RulePackDef>
+    <defName>RR_Namer_White</defName>
+    <include><li>RR_NameParts_Highborn</li></include>
+    <rulePack>
+      <rulesStrings>
+        <li>r_name->[given] [house]</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_Namer_Yellow</defName>
+    <include><li>RR_NameParts_Highborn</li></include>
+    <rulePack>
+      <rulesStrings>
+        <li>r_name->[given] [house]</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <!-- ===================== Orange, Brown: servant, unprefixed ============= -->
+
+  <RulePackDef>
+    <defName>RR_Namer_Orange</defName>
+    <include><li>RR_NameParts_Servant</li></include>
+    <rulePack>
+      <rulesStrings>
+        <li>r_name->[given] [house]</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_Namer_Brown</defName>
+    <include><li>RR_NameParts_Servant</li></include>
+    <rulePack>
+      <rulesStrings>
+        <li>r_name->[given] [house]</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+</Defs>
