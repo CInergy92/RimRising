@@ -946,3 +946,9 @@ or `sed`.
 - Stop and ask before anything that needs C# where XML was assumed, or a DLC that is not owned.
 - No copyrighted text or assets. Concept and faction names are fine; verbatim prose is not. All
   descriptions are original writing.
+- **Nothing sexual is ever applied to, or implied about, anyone under 18.** The user's standing
+  rule, and it covers flavour text as well as mechanics: childhood backstories, child pawns,
+  reproductive surgery (`RR_CarveReproduction` is minAllowedAge 18 for this reason). The setting's
+  Pinks are trained for pleasure work as adults; their childhood text describes music, manners and
+  service, never that. A Garden childhood saying Pinks were "taught to please" was rewritten on
+  merge for exactly this.
