@@ -260,6 +260,12 @@
         <thought>RR_KnowColorCarved_Abomination</thought>
         <description>Someone was carved</description>
       </li>
+      <!-- How the carved pawn feels about it (Aftermath.xml). -->
+      <li Class="PreceptComp_SelfTookMemoryThought">
+        <eventDef>RR_ColorCarved</eventDef>
+        <thought>RR_WasCarved_Shame</thought>
+        <description>Was carved</description>
+      </li>
     </comps>
   </PreceptDef>
 
@@ -282,6 +288,11 @@
         <eventDef>RR_ColorCarved</eventDef>
         <thought>RR_KnowColorCarved_Liberation</thought>
         <description>Someone was carved</description>
+      </li>
+      <li Class="PreceptComp_SelfTookMemoryThought">
+        <eventDef>RR_ColorCarved</eventDef>
+        <thought>RR_WasCarved_Liberation</thought>
+        <description>Was carved</description>
       </li>
     </comps>
   </PreceptDef>

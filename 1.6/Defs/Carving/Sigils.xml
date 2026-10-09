@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Sigils. Suggestion 2.1, and DESIGN.md section 4's "sigils implanted in the wrists".
+
+  A sigil is the Society's paperwork, written into the hand: a mark that says what
+  Color the registries have this person down as. It does nothing by itself. It is
+  visible in the health tab, it is lost with the hand, and it is what the Society
+  checks when it checks.
+
+  THE LIE A CARVED PAWN CARRIES. RR_CasteIdentity.ColorOf reads GENES, so a carved
+  Gold passes socially - the ladder thought, the razor law, the titles all see a
+  Gold. The sigil is the other answer: a carved Red still has a Red sigil until a
+  Carver forges a new one. The two places the Society reads the paper rather than
+  the body are the census caravan (TraderKinds_RimRising.xml) and the Lurcher hunt
+  (2.2) - both C#, both in docs/Opus-Notes.md. Until that code exists the sigil is a
+  mark in the health tab and a surgery, which is still the legible half.
+
+  WHO GETS ONE. Every pawn generated for the Society, the Rim Dominion and the two
+  merchant houses, matching their birth Color, via a PawnGenerator postfix in
+  Source/RimRising/Sigils.cs (UNBUILT). The tribes and the Ascomanni have none - the
+  Society never filed them. The Rising's pawns keep whatever they were born with.
+
+  STRUCTURE. Hediffs: one per base Color, each a bare marker with no stages, the
+  way vanilla's cosmetic hediffs are; no hediffClass, so Hediff. Sub-strains carry
+  the parent's sigil (a Lurcher is filed as Gray; a Bronzie as Gold). The forge
+  surgery is RR_CarveBase's shape from Carving.xml - Violet-only via RR_CarverWork,
+  a kit and medicine, CarveTargetExtension naming the Color - with a lighter worker
+  (Recipe_ForgeSigil, in Sigils.cs) that only swaps the hediff. Cheaper and safer
+  than a carving: the forgery is the easy part.
+
+  Body part: the sigil sits on a hand. targetsBodyPart false and the worker picks
+  the first hand, so an amputee with one hand keeps the mark on the other and a
+  pawn with none has no paper at all - which is correct, and the Society would say
+  so.
+-->
+<Defs>
+
+  <HediffDef Abstract="True" Name="RR_SigilBase">
+    <labelNoun>a sigil</labelNoun>
+    <defaultLabelColor>(0.85, 0.85, 0.85)</defaultLabelColor>
+    <isBad>false</isBad>
+    <scenarioCanAdd>false</scenarioCanAdd>
+    <maxSeverity>1</maxSeverity>
+    <initialSeverity>1</initialSeverity>
+    <everCurableByItem>false</everCurableByItem>
+  </HediffDef>
+
+  <HediffDef ParentName="RR_SigilBase"><defName>RR_Sigil_Gold</defName><label>Gold sigil</label><description>The registries' mark on the hand: this person is filed as Gold.</description></HediffDef>
+  <HediffDef ParentName="RR_SigilBase"><defName>RR_Sigil_Silver</defName><label>Silver sigil</label><description>The registries' mark on the hand: this person is filed as Silver.</description></HediffDef>
+  <HediffDef ParentName="RR_SigilBase"><defName>RR_Sigil_White</defName><label>White sigil</label><description>The registries' mark on the hand: this person is filed as White.</description></HediffDef>
+  <HediffDef ParentName="RR_SigilBase"><defName>RR_Sigil_Copper</defName><label>Copper sigil</label><description>The registries' mark on the hand: this person is filed as Copper.</description></HediffDef>
+  <HediffDef ParentName="RR_SigilBase"><defName>RR_Sigil_Blue</defName><label>Blue sigil</label><description>The registries' mark on the hand: this person is filed as Blue.</description></HediffDef>
+  <HediffDef ParentName="RR_SigilBase"><defName>RR_Sigil_Yellow</defName><label>Yellow sigil</label><description>The registries' mark on the hand: this person is filed as Yellow.</description></HediffDef>
+  <HediffDef ParentName="RR_SigilBase"><defName>RR_Sigil_Green</defName><label>Green sigil</label><description>The registries' mark on the hand: this person is filed as Green.</description></HediffDef>
+  <HediffDef ParentName="RR_SigilBase"><defName>RR_Sigil_Violet</defName><label>Violet sigil</label><description>The registries' mark on the hand: this person is filed as Violet.</description></HediffDef>
+  <HediffDef ParentName="RR_SigilBase"><defName>RR_Sigil_Orange</defName><label>Orange sigil</label><description>The registries' mark on the hand: this person is filed as Orange.</description></HediffDef>
+  <HediffDef ParentName="RR_SigilBase"><defName>RR_Sigil_Gray</defName><label>Gray sigil</label><description>The registries' mark on the hand: this person is filed as Gray.</description></HediffDef>
+  <HediffDef ParentName="RR_SigilBase"><defName>RR_Sigil_Obsidian</defName><label>Obsidian sigil</label><description>The registries' mark on the hand: this person is filed as Obsidian.</description></HediffDef>
+  <HediffDef ParentName="RR_SigilBase"><defName>RR_Sigil_Brown</defName><label>Brown sigil</label><description>The registries' mark on the hand: this person is filed as Brown.</description></HediffDef>
+  <HediffDef ParentName="RR_SigilBase"><defName>RR_Sigil_Pink</defName><label>Pink sigil</label><description>The registries' mark on the hand: this person is filed as Pink.</description></HediffDef>
+  <HediffDef ParentName="RR_SigilBase"><defName>RR_Sigil_Red</defName><label>Red sigil</label><description>The registries' mark on the hand: this person is filed as Red.</description></HediffDef>
+
+  <!-- ============================ forging one ============================= -->
+
+  <RecipeDef Abstract="True" Name="RR_ForgeSigilBase" ParentName="SurgeryFlesh">
+    <workerClass>RimRising.Recipe_ForgeSigil</workerClass>
+    <workAmount>4000</workAmount>
+    <hideBodyPartNames>true</hideBodyPartNames>
+    <targetsBodyPart>false</targetsBodyPart>
+    <isViolation>true</isViolation>
+    <surgerySuccessChanceFactor>1.2</surgerySuccessChanceFactor>
+    <deathOnFailedSurgeryChance>0</deathOnFailedSurgeryChance>
+    <researchPrerequisite>RR_Carving</researchPrerequisite>
+    <anesthetize>true</anesthetize>
+    <skillRequirements>
+      <Medicine>8</Medicine>
+    </skillRequirements>
+    <modExtensions>
+      <li Class="RimRising.RR_CarverWork" />
+    </modExtensions>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>RR_ResFlesh</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+      <li>
+        <filter>
+          <categories>
+            <li>Medicine</li>
+          </categories>
+        </filter>
+        <count>1</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>RR_ResFlesh</li>
+      </thingDefs>
+      <categories>
+        <li>Medicine</li>
+      </categories>
+    </fixedIngredientFilter>
+  </RecipeDef>
+
+  <RecipeDef ParentName="RR_ForgeSigilBase"><defName>RR_ForgeSigil_Gold</defName><label>forge a Gold sigil</label><description>Rewrite the mark on this person's hand so the registries read Gold.</description><jobString>Forging a Gold sigil.</jobString><modExtensions><li Class="RimRising.CarveTargetExtension"><color>RR_Gold</color></li></modExtensions></RecipeDef>
+  <RecipeDef ParentName="RR_ForgeSigilBase"><defName>RR_ForgeSigil_Silver</defName><label>forge a Silver sigil</label><description>Rewrite the mark on this person's hand so the registries read Silver.</description><jobString>Forging a Silver sigil.</jobString><modExtensions><li Class="RimRising.CarveTargetExtension"><color>RR_Silver</color></li></modExtensions></RecipeDef>
+  <RecipeDef ParentName="RR_ForgeSigilBase"><defName>RR_ForgeSigil_White</defName><label>forge a White sigil</label><description>Rewrite the mark on this person's hand so the registries read White.</description><jobString>Forging a White sigil.</jobString><modExtensions><li Class="RimRising.CarveTargetExtension"><color>RR_White</color></li></modExtensions></RecipeDef>
+  <RecipeDef ParentName="RR_ForgeSigilBase"><defName>RR_ForgeSigil_Copper</defName><label>forge a Copper sigil</label><description>Rewrite the mark on this person's hand so the registries read Copper.</description><jobString>Forging a Copper sigil.</jobString><modExtensions><li Class="RimRising.CarveTargetExtension"><color>RR_Copper</color></li></modExtensions></RecipeDef>
+  <RecipeDef ParentName="RR_ForgeSigilBase"><defName>RR_ForgeSigil_Blue</defName><label>forge a Blue sigil</label><description>Rewrite the mark on this person's hand so the registries read Blue.</description><jobString>Forging a Blue sigil.</jobString><modExtensions><li Class="RimRising.CarveTargetExtension"><color>RR_Blue</color></li></modExtensions></RecipeDef>
+  <RecipeDef ParentName="RR_ForgeSigilBase"><defName>RR_ForgeSigil_Yellow</defName><label>forge a Yellow sigil</label><description>Rewrite the mark on this person's hand so the registries read Yellow.</description><jobString>Forging a Yellow sigil.</jobString><modExtensions><li Class="RimRising.CarveTargetExtension"><color>RR_Yellow</color></li></modExtensions></RecipeDef>
+  <RecipeDef ParentName="RR_ForgeSigilBase"><defName>RR_ForgeSigil_Green</defName><label>forge a Green sigil</label><description>Rewrite the mark on this person's hand so the registries read Green.</description><jobString>Forging a Green sigil.</jobString><modExtensions><li Class="RimRising.CarveTargetExtension"><color>RR_Green</color></li></modExtensions></RecipeDef>
+  <RecipeDef ParentName="RR_ForgeSigilBase"><defName>RR_ForgeSigil_Violet</defName><label>forge a Violet sigil</label><description>Rewrite the mark on this person's hand so the registries read Violet.</description><jobString>Forging a Violet sigil.</jobString><modExtensions><li Class="RimRising.CarveTargetExtension"><color>RR_Violet</color></li></modExtensions></RecipeDef>
+  <RecipeDef ParentName="RR_ForgeSigilBase"><defName>RR_ForgeSigil_Orange</defName><label>forge an Orange sigil</label><description>Rewrite the mark on this person's hand so the registries read Orange.</description><jobString>Forging an Orange sigil.</jobString><modExtensions><li Class="RimRising.CarveTargetExtension"><color>RR_Orange</color></li></modExtensions></RecipeDef>
+  <RecipeDef ParentName="RR_ForgeSigilBase"><defName>RR_ForgeSigil_Gray</defName><label>forge a Gray sigil</label><description>Rewrite the mark on this person's hand so the registries read Gray.</description><jobString>Forging a Gray sigil.</jobString><modExtensions><li Class="RimRising.CarveTargetExtension"><color>RR_Gray</color></li></modExtensions></RecipeDef>
+  <RecipeDef ParentName="RR_ForgeSigilBase"><defName>RR_ForgeSigil_Obsidian</defName><label>forge an Obsidian sigil</label><description>Rewrite the mark on this person's hand so the registries read Obsidian.</description><jobString>Forging an Obsidian sigil.</jobString><modExtensions><li Class="RimRising.CarveTargetExtension"><color>RR_Obsidian</color></li></modExtensions></RecipeDef>
+  <RecipeDef ParentName="RR_ForgeSigilBase"><defName>RR_ForgeSigil_Brown</defName><label>forge a Brown sigil</label><description>Rewrite the mark on this person's hand so the registries read Brown.</description><jobString>Forging a Brown sigil.</jobString><modExtensions><li Class="RimRising.CarveTargetExtension"><color>RR_Brown</color></li></modExtensions></RecipeDef>
+  <RecipeDef ParentName="RR_ForgeSigilBase"><defName>RR_ForgeSigil_Pink</defName><label>forge a Pink sigil</label><description>Rewrite the mark on this person's hand so the registries read Pink.</description><jobString>Forging a Pink sigil.</jobString><modExtensions><li Class="RimRising.CarveTargetExtension"><color>RR_Pink</color></li></modExtensions></RecipeDef>
+  <RecipeDef ParentName="RR_ForgeSigilBase"><defName>RR_ForgeSigil_Red</defName><label>forge a Red sigil</label><description>Rewrite the mark on this person's hand so the registries read Red.</description><jobString>Forging a Red sigil.</jobString><modExtensions><li Class="RimRising.CarveTargetExtension"><color>RR_Red</color></li></modExtensions></RecipeDef>
+
+</Defs>

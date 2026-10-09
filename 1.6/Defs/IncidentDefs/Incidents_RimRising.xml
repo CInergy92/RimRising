@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Incidents. Suggestion 6.4, the Laurel, in its cheap form, plus the Board's census
+  letter from the suggestions' section 3 - the same mechanism twice.
+
+  THE LAUREL. The Society's production prize: promised to the clan that exceeds
+  quota, and awarded elsewhere. The setting's founding injustice in one event. Two
+  letters: the first names a quota and a deadline, the second says the Laurel went
+  to another clan. It teaches a new player what the Society is in thirty seconds.
+
+  THE CENSUS LETTER. Each year under any storyteller, the Board of Quality Control
+  states the colony's target population for the year - the premise of the BQC
+  storyteller (Storyteller/Storyteller_BQC.xml) said out loud in play.
+
+  STRUCTURE mirrored from Vanilla Factions Expanded - Medieval 2's
+  Incidents.xml and Vanilla Events Expanded's Incidents_Map_Special.xml: category,
+  targetTags Map_PlayerHome, letterLabel/letterDef/letterText, workerClass,
+  baseChance, minRefireDays, earliestDay. Only the Laurel's second letter is sent by
+  code; the worker (Source/RimRising/IncidentWorker_Letter.cs, UNBUILT) sends the
+  def's own letter and, for the Laurel, schedules the follow-up. Until the DLL is
+  rebuilt the workerClass does not exist and these defs error on load - so they are
+  gated on nothing and listed in docs/Opus-Notes.md as the first thing to build.
+
+  Both fire only on a colony the Society would bother with: the worker checks that
+  at least one colonist reads as a lowColor (RR_CasteIdentity), since the Laurel is
+  a Red's prize and a census is something done TO people. A colony of Golds gets
+  neither, which is the point.
+
+  Category Misc, like VEE's refugees; baseChance low; the Laurel earliest on day 30
+  and not again for a year; the census once a year from day 60. Letter texts are
+  original; "the Laurel" and "the Board" are setting terms the mod already uses.
+-->
+<Defs>
+
+  <IncidentDef>
+    <defName>RR_Incident_LaurelQuota</defName>
+    <label>the Laurel</label>
+    <category>Misc</category>
+    <targetTags>
+      <li>Map_PlayerHome</li>
+    </targetTags>
+    <workerClass>RimRising.IncidentWorker_Laurel</workerClass>
+    <baseChance>0.6</baseChance>
+    <earliestDay>30</earliestDay>
+    <minRefireDays>60</minRefireDays>
+    <letterLabel>The Laurel</letterLabel>
+    <letterDef>NeutralEvent</letterDef>
+    <letterText>A Society notice has arrived, addressed to the clan.\n\nThe Laurel - a season's extra rations, better quarters, the Society's regard - will be awarded to the clan that exceeds its helium quota this quarter. Your quota is listed. It is high, and it is achievable, if everyone works.\n\nThe notice ends the way they always end: that the Society rewards those who serve it.</letterText>
+  </IncidentDef>
+
+  <IncidentDef>
+    <defName>RR_Incident_LaurelAwarded</defName>
+    <label>the Laurel, awarded</label>
+    <category>Misc</category>
+    <targetTags>
+      <li>Map_PlayerHome</li>
+    </targetTags>
+    <workerClass>RimRising.IncidentWorker_Letter</workerClass>
+    <!-- Never fires on its own; the Laurel worker schedules it. -->
+    <baseChance>0</baseChance>
+    <letterLabel>The Laurel, awarded</letterLabel>
+    <letterDef>NegativeEvent</letterDef>
+    <letterText>The quarter's tallies have been published.\n\nThe Laurel has been awarded to another clan, as it was last quarter and the quarter before that. Their total was lower than yours. Nobody expects this to be explained, and it is not.\n\nThe notice ends the way they always end.</letterText>
+  </IncidentDef>
+
+  <IncidentDef>
+    <defName>RR_Incident_CensusLetter</defName>
+    <label>census directive</label>
+    <category>Misc</category>
+    <targetTags>
+      <li>Map_PlayerHome</li>
+    </targetTags>
+    <workerClass>RimRising.IncidentWorker_Letter</workerClass>
+    <baseChance>0.4</baseChance>
+    <earliestDay>60</earliestDay>
+    <minRefireDays>60</minRefireDays>
+    <letterLabel>Census directive</letterLabel>
+    <letterDef>NeutralEvent</letterDef>
+    <letterText>The Board of Quality Control has reviewed this settlement's returns and issued its directive for the year.\n\nTarget population, by Color, is attached. Births below target will be noted. Births above target will be noted. The Board thanks the settlement for its continued contribution and reminds it that contribution is not optional.\n\nNo signature. The Board does not sign.</letterText>
+  </IncidentDef>
+
+</Defs>

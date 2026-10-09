@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Carving aftermath. Suggestion 1.10.
+
+  A carving takes months and is not bearable; the person who walks out is not the
+  person who walked in. In game it was one surgery and a message. Now it is a period:
+
+    RR_CarvingRecovery   weeks of pain and weakness that burn off by themselves
+    RR_CarvingRejection  permanent, mild, a scar in the record - rolled on a
+                         carving that failed but was survived
+
+  Both are added from Source/RimRising/Recipe_CarveColor.cs (ApplyOnPawn adds the
+  recovery; a new failure branch adds the rejection). The C# change is written and
+  UNBUILT - see docs/Opus-Notes.md. Until the DLL is rebuilt these hediffs exist and
+  nothing applies them, which loads clean.
+
+  The carved pawn also now has an opinion about it: a PreceptComp_SelfTookMemoryThought
+  on RR_ColorCarved under both carving precepts (Carving.xml), reading as shame under
+  the hierarchy and as liberation under equality. The knows-thoughts for onlookers
+  already existed; the self-thoughts did not.
+
+  STRUCTURE. Hediffs mirrored from HediffDefs/Hediffs_ArmorMedical.xml in this mod
+  (RR_CombatStim for a SeverityPerDay hediff with capMods and painFactor;
+  RR_TraumaSeal for a permanent single-stage one). HediffCompProperties_Disappears
+  is not used: a severity that reaches zero removes the hediff when
+  everCurableByItem/… no - vanilla removes a hediff whose severity falls to 0 only if
+  it has a comp that does so; SeverityPerDay alone leaves a 0-severity hediff in the
+  tab. So the recovery carries HediffCompProperties_Disappears with a fixed window,
+  which is the simplest honest form and is what RR_CombatStim's comment says to do
+  explicitly rather than trust a default. disappearsAfterTicks is vanilla
+  (HediffCompProperties_Disappears), seen on Alpha Animals' temporary hediffs.
+  Self-thought comp mirrored from Precepts_InterColorUnion.xml in this mod.
+-->
+<Defs>
+
+  <HediffDef>
+    <defName>RR_CarvingRecovery</defName>
+    <label>carving recovery</label>
+    <labelNoun>carving recovery</labelNoun>
+    <description>This person has been carved. The new tissue is still knitting to the old, the nerves are still arguing about which body they belong to, and everything hurts. It passes, in a few weeks, for those it passes for.</description>
+    <defaultLabelColor>(0.8, 0.6, 0.9)</defaultLabelColor>
+    <isBad>true</isBad>
+    <scenarioCanAdd>false</scenarioCanAdd>
+    <initialSeverity>1</initialSeverity>
+    <maxSeverity>1</maxSeverity>
+    <comps>
+      <li Class="HediffCompProperties_SeverityPerDay">
+        <!-- Eighteen days from full to nothing. -->
+        <severityPerDay>-0.055</severityPerDay>
+        <showDaysToRecover>true</showDaysToRecover>
+      </li>
+      <li Class="HediffCompProperties_Disappears">
+        <disappearsAfterTicks>1080000</disappearsAfterTicks>
+      </li>
+    </comps>
+    <stages>
+      <li>
+        <label>healing</label>
+        <minSeverity>0</minSeverity>
+        <painOffset>0.08</painOffset>
+        <capMods>
+          <li>
+            <capacity>Moving</capacity>
+            <offset>-0.08</offset>
+          </li>
+        </capMods>
+      </li>
+      <li>
+        <label>raw</label>
+        <minSeverity>0.4</minSeverity>
+        <painOffset>0.2</painOffset>
+        <capMods>
+          <li>
+            <capacity>Moving</capacity>
+            <offset>-0.15</offset>
+          </li>
+          <li>
+            <capacity>Manipulation</capacity>
+            <offset>-0.15</offset>
+          </li>
+        </capMods>
+      </li>
+      <li>
+        <label>fresh from the table</label>
+        <minSeverity>0.75</minSeverity>
+        <painOffset>0.35</painOffset>
+        <capMods>
+          <li>
+            <capacity>Moving</capacity>
+            <offset>-0.3</offset>
+          </li>
+          <li>
+            <capacity>Manipulation</capacity>
+            <offset>-0.25</offset>
+          </li>
+          <li>
+            <capacity>Consciousness</capacity>
+            <offset>-0.1</offset>
+          </li>
+        </capMods>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <HediffDef>
+    <defName>RR_CarvingRejection</defName>
+    <label>carving rejection</label>
+    <labelNoun>carving rejection</labelNoun>
+    <description>A carving that did not take cleanly. Some of the new tissue was never accepted by the old, and the seam between them is a permanent low ache and a permanent small weakness. Carvers call it a signature. Patients call it something else.</description>
+    <defaultLabelColor>(0.8, 0.4, 0.5)</defaultLabelColor>
+    <isBad>true</isBad>
+    <scenarioCanAdd>false</scenarioCanAdd>
+    <maxSeverity>1</maxSeverity>
+    <stages>
+      <li>
+        <painOffset>0.05</painOffset>
+        <capMods>
+          <li>
+            <capacity>Manipulation</capacity>
+            <offset>-0.05</offset>
+          </li>
+        </capMods>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <!-- ====================== how the carved pawn feels ====================== -->
+
+  <ThoughtDef>
+    <defName>RR_WasCarved_Shame</defName>
+    <durationDays>30</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>I was carved</label>
+        <description>I was made into something I was not born. Everyone who sees me now sees a forgery, and so do I.</description>
+        <baseMoodEffect>-8</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>RR_WasCarved_Liberation</defName>
+    <durationDays>30</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>I was carved</label>
+        <description>They told me what I was for eight hundred years. It took a Violet an afternoon to prove them wrong.</description>
+        <baseMoodEffect>8</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+</Defs>

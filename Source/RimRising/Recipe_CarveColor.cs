@@ -87,7 +87,13 @@ namespace RimRising
             if (!ModLister.CheckBiotech("Color carving")) { return; }
             // billDoer is null on dev-mode and quest paths; guarded the same way as
             // CarverRestoration and vanilla's own surgeries.
-            if (billDoer != null && CheckSurgeryFail(billDoer, pawn, ingredients, part, bill)) { return; }
+            if (billDoer != null && CheckSurgeryFail(billDoer, pawn, ingredients, part, bill))
+            {
+                // Suggestion 1.10: a carving that failed but was survived leaves a
+                // permanent mark in the record (Defs/Carving/Aftermath.xml).
+                if (!pawn.Dead) { CarvingAftermath.Add(pawn, "RR_CarvingRejection"); }
+                return;
+            }
 
             XenotypeDef target = TargetColor;
             if (target == null || pawn.genes == null) { return; }
@@ -107,6 +113,9 @@ namespace RimRising
             // What the paperwork says. The xenotype itself stays Baseliner - see
             // the class comment on why that matters for inheritance.
             pawn.genes.xenotypeName = target.LabelCap;
+            // Suggestion 1.10: weeks of recovery. The person who walks out is not
+            // the person who walked in, and for a while they cannot walk well either.
+            CarvingAftermath.Add(pawn, "RR_CarvingRecovery");
             // And the Color's glyph. Without iconDef, a pawn with a xenotypeName
             // shows vanilla's generic custom icon (Pawn_GeneTracker.XenotypeIcon);
             // vanilla's own xenogerm sets this too. Defs in XenotypeIconDefs_RimRising.xml.
@@ -138,6 +147,21 @@ namespace RimRising
                     "[RimRising] {0} carved from {1} to {2}.",
                     pawn.LabelShort, wasBorn.defName, target.defName));
             }
+        }
+    }
+
+    public static class CarvingAftermath
+    {
+        /// <summary>
+        /// Adds a whole-body aftermath hediff by name, silently doing nothing if the
+        /// def is absent, so a missing XML file cannot throw from inside a surgery.
+        /// </summary>
+        public static void Add(Pawn pawn, string hediffDefName)
+        {
+            HediffDef def = DefDatabase<HediffDef>.GetNamedSilentFail(hediffDefName);
+            if (def == null || pawn?.health == null) { return; }
+            if (pawn.health.hediffSet.HasHediff(def)) { return; }
+            pawn.health.AddHediff(def);
         }
     }
 

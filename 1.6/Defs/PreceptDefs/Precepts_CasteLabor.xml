@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Caste-restricted work, the soft way. Suggestion 2.3.
+
+  Colors are confined to their caste's trade by law. NOT as incapables - a Red who
+  cannot research is a worse pawn and it is wrong anyway; Reds are denied education,
+  not unable. As a thought: a hierarchy believer working outside their Color's trades
+  feels it, and an equality believer feels the opposite.
+
+  Which trades belong to which Color is a CasteWorkExtension on each XenotypeDef
+  (XenotypeDefs_Colors.xml), read by Source/RimRising/CasteLabor.cs (UNBUILT; until the
+  DLL is rebuilt the two workerClass names below do not exist and these ThoughtDefs
+  error on load - docs/Opus-Notes.md lists them first).
+
+  STRUCTURE mirrored from Precepts_ColorDeference.xml in this folder: an IssueDef,
+  one precept per meme with PreceptComp_SituationalThought, Thought_Situational
+  ThoughtDefs with a RimRising worker. Both precepts are REQUIRED on their meme
+  (Memes_RimRising.xml requireOne), per the associatedMemes lesson.
+
+  Only the pawn's own feeling is modelled. The suggestion's observer thought ("a Red
+  at the research bench") would be a social thought keyed on another pawn's current
+  job, which is the ladder thought's shape and can be added the same way later.
+-->
+<Defs>
+
+  <IssueDef>
+    <defName>RR_CasteLabor</defName>
+    <label>caste labor</label>
+    <iconPath>UI/Issues/RR_CasteLabor</iconPath>
+  </IssueDef>
+
+  <ThoughtDef>
+    <defName>RR_Thought_WorkOutsideCaste</defName>
+    <thoughtClass>Thought_Situational</thoughtClass>
+    <workerClass>RimRising.ThoughtWorker_CasteLabor</workerClass>
+    <validWhileDespawned>false</validWhileDespawned>
+    <stages>
+      <li>
+        <label>work above my station</label>
+        <description>This is not my trade. It was never meant to be, and everyone who sees me at it knows it.</description>
+        <baseMoodEffect>-4</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>RR_Thought_WorkBeyondCaste</defName>
+    <thoughtClass>Thought_Situational</thoughtClass>
+    <workerClass>RimRising.ThoughtWorker_CasteLabor_Equality</workerClass>
+    <validWhileDespawned>false</validWhileDespawned>
+    <stages>
+      <li>
+        <label>doing what I was never allowed</label>
+        <description>They had a law about who could do this. Look at me doing it.</description>
+        <baseMoodEffect>3</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <PreceptDef>
+    <defName>RR_CasteLabor_Confined</defName>
+    <issue>RR_CasteLabor</issue>
+    <label>each to their trade</label>
+    <description>A Color is a function. The Reds dig, the Oranges build, the Yellows heal, the Golds rule, and a person doing another Color's work is a part in the wrong machine. It will not run well, and it will not be allowed to run long.</description>
+    <impact>Medium</impact>
+    <displayOrderInIssue>10</displayOrderInIssue>
+    <associatedMemes>
+      <li>RR_ColorHierarchy</li>
+    </associatedMemes>
+    <conflictingMemes>
+      <li>RR_ColorEquality</li>
+    </conflictingMemes>
+    <comps>
+      <li Class="PreceptComp_SituationalThought">
+        <thought>RR_Thought_WorkOutsideCaste</thought>
+        <description>Working outside one's Color</description>
+      </li>
+    </comps>
+  </PreceptDef>
+
+  <PreceptDef>
+    <defName>RR_CasteLabor_Open</defName>
+    <issue>RR_CasteLabor</issue>
+    <label>any hands</label>
+    <description>Every trade is open to every hand that can learn it. The Society said otherwise for eight hundred years and built its whole order on the lie; every Red at a research bench is a brick out of the wall.</description>
+    <impact>Medium</impact>
+    <displayOrderInIssue>20</displayOrderInIssue>
+    <associatedMemes>
+      <li>RR_ColorEquality</li>
+    </associatedMemes>
+    <conflictingMemes>
+      <li>RR_ColorHierarchy</li>
+    </conflictingMemes>
+    <comps>
+      <li Class="PreceptComp_SituationalThought">
+        <thought>RR_Thought_WorkBeyondCaste</thought>
+        <description>Working beyond one's Color</description>
+      </li>
+    </comps>
+  </PreceptDef>
+
+</Defs>
