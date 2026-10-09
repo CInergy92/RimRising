@@ -668,6 +668,13 @@
         <options>
           <RR_Tribe_Obsidian_Warrior>12</RR_Tribe_Obsidian_Warrior>
           <RR_Tribe_Obsidian_Stained>1.5</RR_Tribe_Obsidian_Stained>
+          <!-- War griffins (user, 2026-10-09: griffins are the Obsidians' beasts).
+               An animal in a Combat group: checked with rrtestmode=raid. The weight
+               is tiny on purpose: PawnGroupMakerUtility multiplies each option by a
+               curve on its cost over the dearest affordable option's, and a 90-point
+               warrior beside a 450-point griffin gets 0.01 of its weight - at 0.6 the
+               griffin was 30% of every raid. -->
+          <RR_Griffin>0.06</RR_Griffin>
         </options>
       </li>
       <li>

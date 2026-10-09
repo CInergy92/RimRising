@@ -131,7 +131,7 @@
         <thingDef>ComponentIndustrial</thingDef>
         <countRange>8~20</countRange>
       </li>
-      <!-- A griffin, now and then. Races_Animal_Griffin.xml; sold nowhere else. -->
+      <!-- A griffin, now and then; the Society fields Obsidians. Races_Animal_Griffin.xml. -->
       <li Class="StockGenerator_Animals">
         <maxWildness>1</maxWildness>
         <!-- StockGenerator.countRange defaults to ZERO; without this no griffin ever
@@ -139,7 +139,7 @@
         <countRange>0~1</countRange>
         <checkTemperature>false</checkTemperature>
         <tradeTagsSell>
-          <li>RR_SocietyBeast</li>
+          <li>RR_GriffinBeast</li>
         </tradeTagsSell>
       </li>
       <li Class="StockGenerator_BuyTradeTag">
@@ -351,6 +351,16 @@
         <checkTemperature>true</checkTemperature>
         <tradeTagsSell>
           <li>AnimalFarm</li>
+        </tradeTagsSell>
+      </li>
+      <!-- Now and then a griffin the hunters ran down in the high country.
+           countRange 0~1: StockGenerator.countRange defaults to zero. -->
+      <li Class="StockGenerator_Animals">
+        <maxWildness>1</maxWildness>
+        <countRange>0~1</countRange>
+        <checkTemperature>false</checkTemperature>
+        <tradeTagsSell>
+          <li>RR_GriffinBeast</li>
         </tradeTagsSell>
       </li>
       <!-- The steel the tribes are not supposed to have. -->

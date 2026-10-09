@@ -123,6 +123,14 @@ namespace RimRising
                         stage = 20;
                         return;
                     }
+                    if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string m6) && m6 == "raid")
+                    {
+                        try { BuildRaid(); }
+                        catch (System.Exception e) { Log.Error("[RimRising] RAID build threw: " + e); }
+                        Find.TickManager.CurTimeSpeed = TimeSpeed.Superfast;
+                        stage = 30;
+                        return;
+                    }
                     if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string m5) && m5 == "m12")
                     {
                         // Each check is isolated: one that throws is logged as FAIL
@@ -176,6 +184,10 @@ namespace RimRising
 
                 case 20:
                     NatureStep();
+                    return;
+
+                case 30:
+                    RaidStep();
                     return;
 
                 case 5:
@@ -981,6 +993,105 @@ namespace RimRising
             Log.Message($"[RimRising] NATURE worldgen {barrens.defName} 150x150: haemanthus {flowers}, pitvipers {vipers} " +
                         $"(flower commonality {barrens.CommonalityOfPlant(flower):F2})");
             Current.Game.DeinitAndRemoveMap(gen, false);
+        }
+
+        // ---- rrtestmode=raid: war griffins in an Obsidian tribe raid --------------
+
+        private Faction raidFac;
+        private readonly List<Pawn> raidGriffins = new List<Pawn>();
+        private int raidFrames, raidErrorsAtStart;
+
+        /// <summary>
+        /// rrtestmode=raid. First, Obsidian tribe Combat groups generated straight
+        /// from the faction's PawnGroupMaker, counting griffins - does the maker
+        /// accept an animal option at all. Then a real RaidEnemy from the tribes,
+        /// with two griffins of the tribe added to the raid's lord the way the
+        /// group maker would deliver them, run at speed: do they take the lord's
+        /// duty, close on the colony and fight, and does anything log an error.
+        /// </summary>
+        private void BuildRaid()
+        {
+            raidFac = FactionOf("RR_ObsidianTribes");
+            if (raidFac == null)
+            {
+                FactionDef fd = DefDatabase<FactionDef>.GetNamed("RR_ObsidianTribes");
+                raidFac = FactionGenerator.NewGeneratedFaction(new FactionGeneratorParms(fd));
+                Find.FactionManager.Add(raidFac);
+                Log.Message("[RimRising] RAID generated the tribes faction (not in this world)");
+            }
+            int griffinsInGroups = 0, pawnsInGroups = 0;
+            for (int i = 0; i < 20; i++)
+            {
+                var parms = new PawnGroupMakerParms
+                {
+                    groupKind = PawnGroupKindDefOf.Combat, faction = raidFac, points = 3000f,
+                    tile = map.Tile, inhabitants = false
+                };
+                foreach (Pawn p in PawnGroupMakerUtility.GeneratePawns(parms, false))
+                {
+                    pawnsInGroups++;
+                    if (p.def.defName == "RR_Griffin") { griffinsInGroups++; }
+                    Discard(p);
+                }
+            }
+            Log.Message($"[RimRising] RAID groups: {griffinsInGroups} griffins among {pawnsInGroups} pawns in 20 tribe Combat groups at 3000 points");
+
+            // The tribes use goodwill; SetRelationDirect is overridden by it, and the
+            // first run's raid wandered with no targets because it was not hostile.
+            raidFac.TryAffectGoodwillWith(Faction.OfPlayer, -200, false, false);
+            Log.Message($"[RimRising] RAID tribes hostile to the colony: {raidFac.HostileTo(Faction.OfPlayer)} (goodwill {raidFac.PlayerGoodwill})");
+            raidErrorsAtStart = RR_LogErrorCount();
+            var rp = new IncidentParms
+            {
+                target = map, faction = raidFac, points = 1500f, forced = true,
+                raidStrategy = RaidStrategyDefOf.ImmediateAttack, raidArrivalMode = PawnsArrivalModeDefOf.EdgeWalkIn
+            };
+            bool fired = IncidentDefOf.RaidEnemy.Worker.TryExecute(rp);
+            Pawn anyRaider = map.mapPawns.SpawnedPawnsInFaction(raidFac).FirstOrDefault();
+            Verse.AI.Group.Lord lord = anyRaider == null ? null : Verse.AI.Group.LordUtility.GetLord(anyRaider);
+            PawnKindDef gk = DefDatabase<PawnKindDef>.GetNamed("RR_Griffin");
+            for (int i = 0; i < 2 && anyRaider != null; i++)
+            {
+                Pawn g = PawnGenerator.GeneratePawn(new PawnGenerationRequest(gk, raidFac, forceGenerateNewPawn: true));
+                IntVec3 at = CellFinder.RandomClosewalkCellNear(anyRaider.Position, map, 4);
+                GenSpawn.Spawn(g, at, map);
+                lord?.AddPawn(g);
+                raidGriffins.Add(g);
+            }
+            Log.Message($"[RimRising] RAID fired {fired}: {map.mapPawns.SpawnedPawnsInFaction(raidFac).Count} raiders, lord {lord?.LordJob?.GetType().Name ?? "none"}, griffins added {raidGriffins.Count}");
+        }
+
+        private static int RR_LogErrorCount()
+        {
+            return Verse.Log.Messages.Count(m => m.type == LogMessageType.Error);
+        }
+
+        private void RaidStep()
+        {
+            raidFrames++;
+            if (raidFrames % 300 == 0 || raidFrames >= 2400)
+            {
+                Pawn human = map.mapPawns.SpawnedPawnsInFaction(raidFac).FirstOrDefault(x => x.RaceProps.Humanlike && !x.Dead);
+                foreach (Pawn g in raidGriffins.Concat(human == null ? Enumerable.Empty<Pawn>() : new[] { human }))
+                {
+                    var probe = new JobGiver_AIGotoNearestHostile();
+                    Verse.AI.Job pj = null;
+                    try { pj = probe.TryIssueJobPackage(g, default(Verse.AI.JobIssueParams)).Job; } catch { }
+                    int targets = map.attackTargetsCache.GetPotentialTargetsFor(g).Count;
+                    Log.Message($"[RimRising] RAID t{raidFrames} probe {g.LabelShort}: attack targets {targets}, goto-hostile gives {pj?.def?.defName ?? "null"}");
+                    Pawn near = map.mapPawns.FreeColonistsSpawned.OrderBy(c => c.Position.DistanceTo(g.Position)).FirstOrDefault();
+                    Log.Message($"[RimRising] RAID t{raidFrames} griffin {g.LabelShort}: {(g.Dead ? "dead" : g.Downed ? "downed" : "up")}, " +
+                                $"job {g.CurJobDef?.defName ?? "-"}, duty {g.mindState?.duty?.def?.defName ?? "-"}, " +
+                                $"lord {(Verse.AI.Group.LordUtility.GetLord(g) != null)}, nearest colonist {(near == null ? -1 : g.Position.DistanceTo(near.Position)):F0} cells");
+                }
+            }
+            if (raidFrames < 2400) { return; }
+            stage = -1;
+            Find.TickManager.CurTimeSpeed = TimeSpeed.Paused;
+            int hurt = map.mapPawns.FreeColonists.Count(c => c.health.hediffSet.hediffs.OfType<Hediff_Injury>().Any());
+            Log.Message($"[RimRising] RAID end: {hurt} colonists injured, {RR_LogErrorCount() - raidErrorsAtStart} new log errors");
+            Log.Message("[RimRising] TESTSCENE DONE (raid)");
+            if (GenCommandLine.CommandLineArgPassed("rrtestquit")) { Root.Shutdown(); }
         }
 
         // ---- rrtestmode=m12: the second content pass, checked in code ----------
