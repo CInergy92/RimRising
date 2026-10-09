@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Plants. One so far: haemanthus, the red flower of the mines.
+
+  Haemanthus is a real plant genus (the blood lilies), so the name is safe to
+  use as-is; what is borrowed is only the idea that a Red clan's one beautiful
+  thing grows in the dark.
+
+  STRUCTURE mirrored from Vanilla Plants Expanded - More Plants'
+  Plants_Cultivated_Flowers.xml (VCE_Lavender, VCE_FragrantbloomRose): PlantBase
+  parent, Graphic_Random, the Beauty/BeautyOutdoors pair, harvestTag Standard
+  with harvestMinGrowth 0.99 so "cut plant" works, purpose Beauty,
+  lifespanDaysPerGrowDays so a flower eventually dies back and is replanted.
+  The wild-growth fields (wildClusterRadius / wildClusterWeight, growMinGlow 0,
+  fertilityMin / fertilitySensitivity) are from Alpha Biomes' cave plants in
+  Plants_ForsakenCrags.xml, which grow in no light the same way.
+
+  growMinGlow 0 is the point: it grows underground. It does NOT need to be
+  underground - a colony can sow it in a garden and a Gold can put it in a vase -
+  but wild, it only appears on the helium barrens (BiomeDefs/Biomes_RimRising.xml
+  lists it), and it clusters there the way a flower that seeds itself would.
+
+  sowTags Ground and Decorative are both vanilla: Decorative is the tag the plant
+  pot accepts (VCE_Canola carries both and is sowable in pots).
+
+  Graphic_Random is a COLLECTION class, so texPath is a FOLDER (CLAUDE.md,
+  "Collection graphics resolve texPath as a FOLDER"). Textures needed:
+    Things/Plant/RR_Haemanthus/RR_Haemanthus_a   (and _b, _c)
+  New-PlaceholderTextures.ps1 emits the folder form for collection classes.
+
+  NUMBERS. Beauty 20 beats VPE's roses (18) on purpose; within this mod it is the
+  finest flower there is, which is what the Reds think of it. Nutrition 0.05 is
+  the token value every decorative plant carries so animals can nibble it.
+-->
+<Defs>
+
+  <ThingDef ParentName="PlantBase">
+    <defName>RR_Haemanthus</defName>
+    <label>haemanthus</label>
+    <description>A deep red flower on a short dark stem, native to the warm cracks of a helium seam and found nowhere a Gold would ever walk. It needs no light at all and very little soil, and in the mines it grows in the gaps between the drill tracks where nothing else will.\n\nThe Reds plant it on their graves. It is the only thing they own that was not issued to them.</description>
+    <statBases>
+      <MaxHitPoints>85</MaxHitPoints>
+      <Beauty>20</Beauty>
+      <BeautyOutdoors>20</BeautyOutdoors>
+      <Nutrition>0.05</Nutrition>
+    </statBases>
+    <graphicData>
+      <texPath>Things/Plant/RR_Haemanthus</texPath>
+      <graphicClass>Graphic_Random</graphicClass>
+    </graphicData>
+    <altitudeLayer>Item</altitudeLayer>
+    <selectable>true</selectable>
+    <ingestible>
+      <canAutoSelectAsFoodForCaravan>false</canAutoSelectAsFoodForCaravan>
+    </ingestible>
+    <plant>
+      <dieIfLeafless>true</dieIfLeafless>
+      <harvestTag>Standard</harvestTag>
+      <harvestMinGrowth>0.99</harvestMinGrowth>
+      <sowWork>600</sowWork>
+      <sowMinSkill>4</sowMinSkill>
+      <sowTags>
+        <li>Ground</li>
+        <li>Decorative</li>
+      </sowTags>
+      <growMinGlow>0</growMinGlow>
+      <fertilityMin>0.3</fertilityMin>
+      <fertilitySensitivity>0.3</fertilitySensitivity>
+      <topWindExposure>0.1</topWindExposure>
+      <growDays>5</growDays>
+      <lifespanDaysPerGrowDays>6</lifespanDaysPerGrowDays>
+      <visualSizeRange>0.35~0.5</visualSizeRange>
+      <wildClusterRadius>4</wildClusterRadius>
+      <wildClusterWeight>7.5</wildClusterWeight>
+      <wildOrder>1</wildOrder>
+      <purpose>Beauty</purpose>
+      <maxMeshCount>25</maxMeshCount>
+    </plant>
+  </ThingDef>
+
+</Defs>

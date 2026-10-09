@@ -92,6 +92,13 @@
         <RR_Gray>1</RR_Gray>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Gray</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <!-- Lurcher: bred to hunt the castes above it. Rare, and pointed. -->
@@ -121,6 +128,13 @@
         <RR_Gray_Lurcher>1</RR_Gray_Lurcher>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Gray</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <!-- Obsidian: enormous, close-range, and legally property. -->
@@ -160,6 +174,13 @@
         <RR_Obsidian_Stained>0.2</RR_Obsidian_Stained>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Obsidian</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <!-- Bronzie: Gold enough to command, cheap enough to spend. -->
@@ -193,6 +214,13 @@
         <RR_Bronzie>1</RR_Bronzie>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Gold</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <!-- Gold: rare by construction. One of these leads; there is never a squad. -->
@@ -229,6 +257,13 @@
         <RR_Gold>1</RR_Gold>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Gold</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <!--
@@ -283,6 +318,13 @@
         <RR_Gold>1</RR_Gold>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Gold</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <!-- ======================= the Society: civilian ========================= -->
@@ -315,6 +357,13 @@
         <RR_Silver>1</RR_Silver>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Silver</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <PawnKindDef ParentName="RR_ColorPawnBase">
@@ -341,6 +390,13 @@
         <RR_Copper>1</RR_Copper>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Copper</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <PawnKindDef ParentName="RR_ColorPawnBase">
@@ -363,6 +419,13 @@
         <RR_Yellow>1</RR_Yellow>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Yellow</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <PawnKindDef ParentName="RR_ColorPawnBase">
@@ -384,6 +447,13 @@
         <RR_Brown>1</RR_Brown>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Brown</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <PawnKindDef ParentName="RR_ColorPawnBase">
@@ -406,6 +476,13 @@
         <RR_Red_Ultraheavy>0.15</RR_Red_Ultraheavy>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Red</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <!-- ========================== the resistance ============================ -->
@@ -451,6 +528,14 @@
         <RR_Red_Ultraheavy>0.2</RR_Red_Ultraheavy>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Red</li>
+          <li>RR_Rising</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <PawnKindDef ParentName="RR_AresFighterBase">
@@ -480,6 +565,14 @@
         <RR_Orange>1</RR_Orange>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Orange</li>
+          <li>RR_Rising</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <!-- A Gray who walked. The Society finds these especially embarrassing. -->
@@ -512,6 +605,14 @@
         <RR_Gray_Lurcher>0.1</RR_Gray_Lurcher>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Gray</li>
+          <li>RR_Rising</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <PawnKindDef ParentName="RR_AresFighterBase">
@@ -543,6 +644,14 @@
         <RR_Obsidian_Stained>0.15</RR_Obsidian_Stained>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Obsidian</li>
+          <li>RR_Rising</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <!-- The rarest thing in the resistance, and its most useful weapon. -->
@@ -578,6 +687,14 @@
         <RR_Gold>0.3</RR_Gold>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Gold</li>
+          <li>RR_Rising</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <!-- ========================== Obsidian tribes =========================== -->
@@ -621,6 +738,13 @@
         <RR_Obsidian>1</RR_Obsidian>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Obsidian</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <PawnKindDef ParentName="RR_TribeBase">
@@ -647,6 +771,13 @@
         <RR_Obsidian_Stained>1</RR_Obsidian_Stained>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Obsidian</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <!-- ============================= Ascomanni ============================== -->
@@ -687,6 +818,13 @@
         <RR_Obsidian_Ascomanni>1</RR_Obsidian_Ascomanni>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Obsidian</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <PawnKindDef ParentName="RR_AscomanniBase">
@@ -713,6 +851,13 @@
         <RR_Obsidian_Ascomanni>1</RR_Obsidian_Ascomanni>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Obsidian</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <!-- ======================= the two merchant powers ======================= -->
@@ -751,6 +896,13 @@
         <RR_Silver>1</RR_Silver>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Silver</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <PawnKindDef ParentName="RR_ColorPawnBase">
@@ -779,6 +931,13 @@
         <RR_Gray>1</RR_Gray>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Gray</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <PawnKindDef ParentName="RR_ColorPawnBase">
@@ -809,6 +968,13 @@
         <RR_Silver>1</RR_Silver>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Silver</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <PawnKindDef ParentName="RR_ColorPawnBase">
@@ -837,6 +1003,13 @@
         <RR_Gray>1</RR_Gray>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Gray</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <PawnKindDef ParentName="RR_ColorPawnBase">
@@ -863,6 +1036,13 @@
         <RR_Green>1</RR_Green>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Green</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <!-- ==================== the Colors that had no kind ===================== -->
@@ -904,6 +1084,13 @@
         <RR_White>1</RR_White>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_White</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <PawnKindDef ParentName="RR_ColorPawnBase">
@@ -932,6 +1119,13 @@
         <RR_Blue>1</RR_Blue>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Blue</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <PawnKindDef ParentName="RR_ColorPawnBase">
@@ -953,6 +1147,13 @@
         <RR_Violet>1</RR_Violet>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Violet</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <!--
@@ -985,6 +1186,13 @@
         <RR_Pink>1</RR_Pink>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Pink</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <!--
@@ -1020,6 +1228,13 @@
         <RR_Green_FulgurBellator>1</RR_Green_FulgurBellator>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Green</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
   <!--
@@ -1046,6 +1261,13 @@
         <RR_Pink_Rose>1</RR_Pink_Rose>
       </xenotypeChances>
     </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Pink</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
   </PawnKindDef>
 
 </Defs>

@@ -86,6 +86,7 @@
       <Rat>0.8</Rat>
       <Deer>0.3</Deer>
       <Fox_Red>0.15</Fox_Red>
+      <RR_Pitviper>0.08</RR_Pitviper>
       <Sparrow MayRequire="Ludeon.RimWorld.Odyssey">0.5</Sparrow>
       <Quail MayRequire="Ludeon.RimWorld.Odyssey">0.4</Quail>
     </wildAnimals>
@@ -143,8 +144,13 @@
       <Plant_Agave>0.3</Plant_Agave>
       <Plant_Bush>0.2</Plant_Bush>
       <Plant_PebbleCactus MayRequire="Ludeon.RimWorld.Biotech">0.6</Plant_PebbleCactus>
+      <!-- The one beautiful thing the mines grow. Barrens only; it is not
+           a steppe flower and a Gold has never seen one wild. -->
+      <RR_Haemanthus>0.35</RR_Haemanthus>
     </wildPlants>
     <wildAnimals>
+      <!-- The native hazard. Everything else here is stock or stray. -->
+      <RR_Pitviper>0.7</RR_Pitviper>
       <Rat>1.4</Rat>
       <Boomrat>0.8</Boomrat>
       <Hare>0.5</Hare>

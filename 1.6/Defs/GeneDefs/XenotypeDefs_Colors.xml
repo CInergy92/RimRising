@@ -202,6 +202,10 @@
     <displayPriority>30</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>0.5</factionlessGenerationWeight>
+    <!-- No prefix - deliberate, see Namers_ColorPrefixes.xml. The pool
+         itself is in Namers_Unprefixed.xml. -->
+    <nameMaker>RR_Namer_White</nameMaker>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_SnowWhite</li>
       <li>Eyes_White</li>
@@ -296,6 +300,10 @@
     <displayPriority>60</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>2</factionlessGenerationWeight>
+    <!-- No prefix - deliberate, see Namers_ColorPrefixes.xml. The pool
+         itself is in Namers_Unprefixed.xml. -->
+    <nameMaker>RR_Namer_Yellow</nameMaker>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_SandyBlonde</li>
       <li>Eyes_Yellow</li>
@@ -351,6 +359,10 @@
     <displayPriority>80</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>0.5</factionlessGenerationWeight>
+    <!-- No prefix - deliberate, see Namers_ColorPrefixes.xml. The pool
+         itself is in Namers_Unprefixed.xml. -->
+    <nameMaker>RR_Namer_Violet</nameMaker>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_LightPurple</li>
       <li>Eyes_Purple</li>
@@ -374,6 +386,10 @@
     <displayPriority>90</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>4</factionlessGenerationWeight>
+    <!-- No prefix - deliberate, see Namers_ColorPrefixes.xml. The pool
+         itself is in Namers_Unprefixed.xml. -->
+    <nameMaker>RR_Namer_Orange</nameMaker>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_LightOrange</li>
       <li>Eyes_Orange</li>
@@ -430,6 +446,11 @@
     <displayPriority>110</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>2</factionlessGenerationWeight>
+    <!-- No prefix - deliberate, see Namers_ColorPrefixes.xml. The pool
+         itself is in Namers_Unprefixed.xml. -->
+    <nameMaker>RR_Namer_Obsidian</nameMaker>
+    <nameMakerFemale>RR_Namer_Obsidian_Female</nameMakerFemale>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_SnowWhite</li>
       <li>Eyes_DarkestGray</li>
@@ -459,6 +480,10 @@
     <displayPriority>130</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>1.5</factionlessGenerationWeight>
+    <!-- No prefix - deliberate, see Namers_ColorPrefixes.xml. The pool
+         itself is in Namers_Unprefixed.xml. -->
+    <nameMaker>RR_Namer_Pink</nameMaker>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_Pink</li>
       <li>Eyes_Pink</li>
@@ -485,6 +510,10 @@
     <displayPriority>120</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>6</factionlessGenerationWeight>
+    <!-- No prefix - deliberate, see Namers_ColorPrefixes.xml. The pool
+         itself is in Namers_Unprefixed.xml. -->
+    <nameMaker>RR_Namer_Brown</nameMaker>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_DarkBrown</li>
       <li>Eyes_Brown</li>
@@ -509,6 +538,10 @@
     <displayPriority>140</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>30</factionlessGenerationWeight>
+    <!-- No prefix - deliberate, see Namers_ColorPrefixes.xml. The pool
+         itself is in Namers_Unprefixed.xml. -->
+    <nameMaker>RR_Namer_Red</nameMaker>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_BrightRed</li>
       <li>Eyes_Red</li>
@@ -631,6 +664,11 @@
     <displayPriority>112</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>0.3</factionlessGenerationWeight>
+    <!-- No prefix - deliberate, see Namers_ColorPrefixes.xml. The pool
+         itself is in Namers_Unprefixed.xml. -->
+    <nameMaker>RR_Namer_Obsidian</nameMaker>
+    <nameMakerFemale>RR_Namer_Obsidian_Female</nameMakerFemale>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_SnowWhite</li>
       <li>Eyes_DarkestGray</li>
@@ -661,6 +699,11 @@
     <displayPriority>114</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>0.25</factionlessGenerationWeight>
+    <!-- No prefix - deliberate, see Namers_ColorPrefixes.xml. The pool
+         itself is in Namers_Unprefixed.xml. -->
+    <nameMaker>RR_Namer_Obsidian</nameMaker>
+    <nameMakerFemale>RR_Namer_Obsidian_Female</nameMakerFemale>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_SnowWhite</li>
       <li>Eyes_DarkestGray</li>
@@ -689,6 +732,10 @@
     <displayPriority>132</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>0.25</factionlessGenerationWeight>
+    <!-- No prefix - deliberate, see Namers_ColorPrefixes.xml. The pool
+         itself is in Namers_Unprefixed.xml. -->
+    <nameMaker>RR_Namer_Pink</nameMaker>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_Pink</li>
       <li>Eyes_Pink</li>
@@ -715,6 +762,10 @@
     <displayPriority>145</displayPriority>
     <inheritable>true</inheritable>
     <factionlessGenerationWeight>0.5</factionlessGenerationWeight>
+    <!-- No prefix - deliberate, see Namers_ColorPrefixes.xml. The pool
+         itself is in Namers_Unprefixed.xml. -->
+    <nameMaker>RR_Namer_Red</nameMaker>
+    <chanceToUseNameMaker>1</chanceToUseNameMaker>
     <genes>
       <li>Hair_BrightRed</li>
       <li>Eyes_Red</li>

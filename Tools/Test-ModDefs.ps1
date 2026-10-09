@@ -1067,6 +1067,9 @@ foreach ($file in $xmlFiles) {
                         # weapon; ThingDef.IsMeleeWeapon is IsWeapon && !IsRangedWeapon.
                         OwnRanged = [bool]$node.SelectSingleNode('verbs/li[defaultProjectile]')
                         OwnArmor  = [bool]$node.SelectSingleNode('statBases/ArmorRating_Sharp')
+                        # A pawn race carries <tools> for its own body - bites, claws - and is
+                        # not a weapon, so it must not be held to weapon-only checks.
+                        OwnRace   = [bool]$node.SelectSingleNode('race')
                         Concrete = [bool]($dnNode -and $dnNode.InnerText)
                     }
                 }
@@ -1955,6 +1958,7 @@ foreach ($mName in $ourThings.Keys) {
     $mInfo = $ourThings[$mName]
     if (-not $mInfo.Concrete) { continue }
     if ($mInfo.OwnRanged) { continue }              # a gun, not a melee weapon
+    if ($mInfo.OwnRace -or $mInfo.Parent -match '^(AnimalThingBase|BasePawn|Base\w*Mech\w*)$') { continue }   # an animal's bite, not a weapon
     if (-not (Test-InheritsTools $mName)) { continue }
 
     $expected = '{0}_{1}.json' -f $mName, $ourPackageId

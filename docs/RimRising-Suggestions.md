@@ -1,6 +1,6 @@
 # RimRising — suggestions for fun and lore fidelity
 
-**Status:** proposals, not decisions. Written 2026-10-08 against commit `ea7105f` by a read-only review session, for the user and the Opus session to pick from. Companion to `docs/RimRising-Review-2026-10-08.md` (bugs) — nothing here is a bug.
+**Status:** proposals, not decisions. Written 2026-10-08 against commit `ea7105f` by a read-only review session (section 6 added 2026-10-09), for the user and the Opus session to pick from. Companion to `docs/RimRising-Review-2026-10-08.md` (bugs) — nothing here is a bug.
 
 Every item names the vanilla mechanism it rides on, an effort estimate, and what has to be verified before building (this session had no game install or decompiler; **verify, never recall** applies to every mechanism named below). Nothing here reproduces text from the books, and no character name from them is used — the project's standing rule.
 
@@ -21,6 +21,8 @@ A second rule, from the user's own direction in CLAUDE.md: nothing is done until
 ## 1. Quick wins — XML, highest lore per hour
 
 ### 1.1 Backstories per Color
+
+> **Drafted 2026-10-09** - `1.6/Defs/BackstoryDefs/Backstories_Colors.xml` plus `backstoryFiltersOverride` on every pawn kind. Unverified in game; see PROGRESS.md "Milestone 11".
 
 **Lore.** A Red was a helldiver or a drill hand; a Gray stood a wall; a Copper filed; a Violet was raised in a Grove; a Gold went to the Institute. Right now every pawn's bio is a vanilla outlander or offworlder, and the bio is the single most-read text on a pawn.
 
@@ -47,6 +49,8 @@ Same mechanism as 1.2, no favour: Sun sells recoilArmor, pulseFists and the impl
 **Effort.** XML. **Verify:** as 1.2.
 
 ### 1.4 Names for the Colors that have none
+
+> **Drafted 2026-10-09** - `1.6/Defs/RulePackDefs/Namers_Unprefixed.xml`, wired to the twelve unprefixed xenotypes. Two-token names throughout; the single-name Pink stays untested.
 
 **Lore.** DESIGN §8b: Red, Pink and Obsidian carry no prefix because the Society files them as property; White, Yellow, Violet, Orange and Brown have none in the reference. Today those eight Colors draw vanilla names, so a Red is "Jenkins" and an Obsidian is "Rebecca". The *absence of a prefix* is the point, but the names themselves should still sound like the caste.
 
@@ -193,3 +197,106 @@ Vehicle Framework supports aerial vehicles. A Blue-piloted `ripWing` (two seats,
 5. **2.1 sigils → 2.2 Lurcher hunt** — the one new *system*; do 2.1 first and let 2.2 wait for a test of whether the carving loop needs an antagonist.
 6. **2.3 caste work thoughts** — after the ladder thought has been judged in play, since it is the same idea applied to jobs.
 7. Everything else as the art budget allows.
+8. **Section 6 below** slots in by effort: 6.2, 6.3 and 6.6 beside step 1; 6.4 beside step 2; the rest with step 7.
+
+---
+
+## 6. Second pass — more from the setting (2026-10-09)
+
+Added after the first pass, at the user's request. Same rules: setting *terms* only, no prose, no character names, every item on a vanilla mechanism, every item ending in a verify step. Where something turned out to be already built it is said so rather than re-proposed — `RR_Tribe_Obsidian_Stained` and `RR_Society_Obsidian_Knight` already cover the Obsidian elite, so the Stained are not here.
+
+### 6.1 Pitvipers
+
+> **Drafted 2026-10-09** - `1.6/Defs/ThingDefs_Races/Races_Animal_Pitviper.xml` and its bite chain. The Red toxic-resistance gene was not added (icon ownership).
+
+**Lore.** The venomous snakes of the Red mines; the first thing a helldiver learns to fear.
+
+**Mechanism.** A `ThingDef` animal cloned from `Core/Defs/ThingDefs_Races/Races_Animal_Cobra.xml` (`Cobra` has a venom tool with a `HediffDef` — mirror both, do not point at vanilla's) plus a `PawnKindDef`. Spawn via `wildAnimals` on `RR_HeliumBarrens` and `RR_TerraformedSteppe`, weighted low on the steppe. `RR_Red` and `RR_Red_Ultraheavy` could take a small `damageFactors` reduction against the venom hediff, the way vanilla genes reduce toxic damage, so Reds shrug off what kills a Gold tourist.
+
+**Fun.** Gives the Red biome a native hazard, and a cheap, lore-flavoured reason that outsiders die in the mines.
+
+**Effort.** XML+art (a 128 px top-down snake in the existing item pipeline; vanilla's cobra is three frames, one is enough). **Verify:** `wildAnimals` field on `BiomeDef`; `damageFactors` on `GeneDef` accepts a hediff-applying damage, or whether the resistance needs `statFactors ToxicResistance` instead.
+
+### 6.2 Haemanthus
+
+> **Drafted 2026-10-09** - `1.6/Defs/ThingDefs_Plants/Plants_RimRising.xml`, wild on the barrens.
+
+**Lore.** The red flower that grows underground in the mines; the one beautiful thing a Red clan owns.
+
+**Mechanism.** A `ThingDef` plant cloned from `Core/Defs/ThingDefs_Plants/Plants_Wild_Base.xml`'s rose, `sowTags Ground`, high `Beauty`, slow growth, `lightRequirement`-style low light tolerance if the field exists (Biotech's `Plant_Toxipotato` and `Plant_Fibercorn` are the dark-tolerant references). Wild-spawn only on `RR_HeliumBarrens`; sowable anywhere once a colony has seeds via Society traders or by harvesting a wild one. Haemanthus is a real plant genus, so the name is safe to use as-is.
+
+**Fun.** A Red colony's first decorative plant is its own, not a vanilla rose. Pairs with 1.8 (caste marks) as the Red register's symbol.
+
+**Effort.** XML+art. **Verify:** which plant field governs minimum light in 1.6 (`growMinGlow` on `PlantProperties`); that `wildBiomes` on the plant or `wildPlants` on the biome is the 1.6 side to set.
+
+### 6.3 Swill
+
+**Lore.** Red moonshine, brewed from whatever the clan can spare.
+
+**Mechanism.** `ThingDef` drug cloned from `Core/Defs/ThingDefs_Items/Items_Drug.xml`'s beer with its own `Chemical_RR_Swill`, `RR_SwillHigh` hediff and addiction set, following the zoladone pattern already in `Drugs_RimRising.xml` exactly. Cheaper ingredients (any raw food, including fungus, so it brews underground), worse mood, a small `Consciousness` penalty, same addictiveness as beer. A `RecipeDef` on the vanilla brewery or, better, on a cheap `RR_Still` building so the production chain is visibly Red.
+
+**Fun.** Gives Red colonies a native recreation and trade good from day one, and something the census caravan can be pointedly uninterested in.
+
+**Effort.** XML, or XML+art with the still. **Verify:** `ChemicalDef`, `NeedDef` for the addiction and the `hediffGivers` layout against beer; that fungus is accepted by a `fixedIngredientFilter` on raw food.
+
+### 6.4 The Laurel
+
+**Lore.** The Society's production prize, promised to the clan that exceeds quota, and awarded elsewhere. The setting's founding injustice in one event.
+
+**Mechanism, cheap form.** An `IncidentDef` on `RR_Society` for Red-aligned colonies (gate on the colony's ideoligion carrying `RR_ColorEquality` or on the player faction's xenotype majority, whichever a worker can read) that sends a letter naming a quota of helium-3 or ionsteel and a deadline, then a follow-up letter saying the Laurel went to another clan. Pure flavour, two letters, mirrors `IncidentWorker_LetterOnly`-style workers if one exists in Core, else `C#‑small`.
+
+**Mechanism, real form.** A `QuestScriptDef` with a `QuestNode_Delay` and a `QuestNode_RequireResources`-style check (vanilla's "deliver X" quests are the template): meet the quota and the reward is a small goodwill bump and a one-line letter; miss it and nothing happens; **and either way the Laurel goes elsewhere.** The reward not matching the promise is the point, so write the quest text to promise more than the reward node gives.
+
+**Fun.** It teaches a new player what the Society is in thirty seconds, and it gives the BQC storyteller's census letter (section 3) a companion.
+
+**Effort.** XML (cheap) / XML with QuestScript nodes (real). **Verify:** whether any Core `IncidentWorker` sends a letter with no map effect; `QuestScriptDef` node names against `Core/Defs/QuestScriptDefs/`.
+
+### 6.5 Griffins
+
+**Lore.** Bioengineered mounts the Society breeds for its Golds; seen at the Institute and in Society hunting parties.
+
+**Mechanism.** A large `ThingDef` animal, `trainability Advanced`, `wildness` high, `combatPower` well above a warg, sold only by Society traders (`StockGenerator_Animals` with a `kindDefs` list, as the Empire's traders sell their own stock) and never wild. Odyssey's large flyers are the template for size and movement; do not give it true flight, since vanilla flight is an Odyssey-specific mechanism and the animal would be Odyssey-gated. A Society raid pawn group that brings two of them (`PawnGroupMaker` `kindDef` entries with `commonality`) is the real use: a Gold hunting party arriving with its beasts.
+
+**Fun.** A visible status animal for a hierarchy colony, and a terrifying raid addition on the Society side that a Red colony will remember.
+
+**Effort.** XML+art (large; a four-direction animal is the biggest art cost in this section). **Verify:** `StockGenerator_Animals` fields against `Core/Defs/TraderKindDefs/`; that a non-flying animal can be given `Pawn_Flying`-free movement at a large body size without pathing complaints.
+
+### 6.6 Yellow, Orange and Blue roles
+
+**Lore.** The mid Colors each own a profession: Yellows heal, Oranges build and fix, Blues fly.
+
+**Mechanism.** Three `Precept_RoleSingle` roles for hierarchy ideoligions, each with `RoleRequirement_Xenotype` on the Color (the pattern `Roles_OlympicKnights.xml` already uses), and one stat effect each via `RoleEffect_PawnStatOffset`: `MedicalSurgerySuccessChance` and `MedicalTendQuality` for the Yellow physician, `ConstructionSpeed` and `FixBrokenDownBuildingSuccessChance`-style for the Orange engineer, and for the Blue pilot whatever stat Odyssey's gravship console reads, if one exists (see 6.7). Add them to `RR_ColorHierarchy`'s `requireOne`? No — roles are optional, so leave them as `associatedMemes` only; the lesson from `PreceptNotGuaranteed` applies to precepts the design *depends on*, and these are flavour.
+
+**Fun.** The Colors between Gold and Red currently have aptitudes and nothing else; a role gives each a seat at the ideoligion table and a reason to recruit one.
+
+**Effort.** XML. **Verify:** `RoleEffect_PawnStatOffset` field names against `Ideology/Defs/PreceptDefs/Precepts_Role.xml`; that three more singular roles do not exceed any per-ideoligion role cap.
+
+### 6.7 Blues and gravships
+
+**Lore.** Blues are the pilots and navigators; no ship moves without one.
+
+**Mechanism.** Odyssey ships gravships with a pilot console. If piloting or gravship launch reads a stat or a work type, `RR_Blue` gets a `statFactors` entry on it and nobody else does; if the console is a plain job with no stat, the lever is a `PreceptComp_UnwillingToDo`-style precept ("only Blues pilot") on the hierarchy memes, which the colony can reject by not taking the meme. Nothing here should *hard-gate* flight, for the same reason 2.3 does not hard-gate work: a Red colony with no Blue must still be able to leave.
+
+**Fun.** The first mechanical reason for Blues to exist in a colony.
+
+**Effort.** XML, once the field is known. **Verify first, build second:** read `Odyssey/Defs/` for the gravship console `ThingDef` and any `StatDef` it names; this session could not.
+
+### 6.8 ClawDrills
+
+**Lore.** The helldiver's rig: a drill operated from inside, driven into rock at speeds that kill the careless.
+
+**Mechanism.** A `ThingDef` building cloned from `Core/Defs/ThingDefs_Buildings/Buildings_Production.xml`'s deep drill, with higher yield and a `WorkTableWorkSpeedFactor`-style stat (or `DeepDrillingSpeed`, which is a real vanilla stat on pawns) that `RR_Red` and `RR_Red_Ultraheavy` boost through `statFactors`. Yields helium-3 if 2.4 is built, otherwise ionsteel and the vanilla ores. Operating it without the Red boost should be slow rather than impossible.
+
+**Fun.** Pairs with 2.4 and the "Reds and the dark" note in section 3 to make Reds the best miners in the game, which is the one superlative they are owed.
+
+**Effort.** XML+art (a 2x2 building sprite). **Verify:** `DeepDrillingSpeed` is a `StatDef` a gene's `statFactors` can target; `CompProperties_DeepDrill` yield fields on the vanilla deep drill.
+
+### 6.9 Howler pelts
+
+**Lore.** The Howlers wear wolf pelts over their armour; it is their uniform and their joke.
+
+**Mechanism.** A cheap `ThingDef` apparel on the `Shell` layer, `Outer` group, made from any animal leather, with `apparel/tags RR_Howler` so the 1.9 Howler pawn kind can generate in it. Worn over pulse or recoil armour it is visually the Howler mark. Small armour value, a cold insulation bonus, nothing else.
+
+**Fun.** It makes 1.9 legible from across the map, which is what a uniform is for.
+
+**Effort.** XML+art (a worn directional sprite through `Draw-PanelArmor.py`; a single pelt shape draped over the shoulders is the cheapest worn art in the mod). **Verify:** layer and body-part group values against `Core/Defs/ThingDefs_Misc/Apparel_Various.xml`'s duster.

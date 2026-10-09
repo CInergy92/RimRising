@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Melee maneuvers: the link from a tool capacity to a damage type.
+
+  Mirrored from Alpha Animals' AA_ToxicBite maneuver
+  (1.6/Defs/Maneuvers/*.xml): Verb_MeleeAttackDamage with the damage def, and
+  the vanilla Stab combat-log rule packs, which exist for every stabbing
+  maneuver in Core and read correctly for a bite.
+-->
+<Defs>
+
+  <ManeuverDef>
+    <defName>RR_PitviperBite</defName>
+    <requiredCapacity>RR_PitviperBite</requiredCapacity>
+    <verb>
+      <verbClass>Verb_MeleeAttackDamage</verbClass>
+      <meleeDamageDef>RR_PitviperBite</meleeDamageDef>
+    </verb>
+    <logEntryDef>MeleeAttack</logEntryDef>
+    <combatLogRulesHit>Maneuver_Stab_MeleeHit</combatLogRulesHit>
+    <combatLogRulesDeflect>Maneuver_Stab_MeleeDeflect</combatLogRulesDeflect>
+    <combatLogRulesMiss>Maneuver_Stab_MeleeMiss</combatLogRulesMiss>
+    <combatLogRulesDodge>Maneuver_Stab_MeleeDodge</combatLogRulesDodge>
+  </ManeuverDef>
+
+</Defs>
