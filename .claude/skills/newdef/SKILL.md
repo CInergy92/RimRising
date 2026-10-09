@@ -72,6 +72,11 @@ headings.
   complexity change is intended.
 - **Vehicles and implants are triads** whose halves point at each other.
 - **No book names, no book prose.** Setting terms are fine; descriptions are original.
+- **Nothing sexual is ever applied to, or implied about, anyone under 18.** The user's standing
+  rule. It binds flavour text as much as mechanics: childhood backstories, anything a child pawn
+  can receive, and reproductive surgery (minAllowedAge 18). Pinks are trained for pleasure work
+  as adults only; their childhood text describes music, manners and service. See CLAUDE.md
+  "Working agreements".
 - **Lore calls go to the user.** If a value is a setting judgement rather than a technical
   one, put options in the report and do not pick.
 
