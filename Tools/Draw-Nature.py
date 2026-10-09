@@ -45,6 +45,109 @@ dw.C.update({
 SNAKE_OUTLINE = 3.0
 PLANT_OUTLINE = 2.0
 
+dw.C.update({
+    "ridge":   (np.array([0.70, 0.65, 0.57]), np.array([0.70, 0.65, 0.57])),
+    "under":   (np.array([0.45, 0.41, 0.36]), np.array([0.45, 0.41, 0.36])),
+    "blotch":  (np.array([0.42, 0.37, 0.31]), np.array([0.42, 0.37, 0.31])),
+    "socket":  (np.array([0.30, 0.27, 0.24]), np.array([0.30, 0.27, 0.24])),
+})
+
+
+def _bezier(p0, p1, p2, n):
+    return [((1 - t) ** 2 * p0[0] + 2 * (1 - t) * t * p1[0] + t * t * p2[0],
+             (1 - t) ** 2 * p0[1] + 2 * (1 - t) * t * p1[1] + t * t * p2[1])
+            for t in np.linspace(0, 1, n)]
+
+
+def _normal(pts, i):
+    (ax, ay), (bx, by) = pts[max(i - 1, 0)], pts[min(i + 1, len(pts) - 1)]
+    dx, dy = bx - ax, by - ay
+    L = math.hypot(dx, dy) or 1
+    return -dy / L, dx / L
+
+
+# A pit viper at rest: a tight coil on the ground and an S-neck raised out of it,
+# the broad wedge head pointing the way the animal faces. (cx, cy) is the coil's
+# centre, (hx, hy) the head, ctrl the neck's bend, ang the head's heading.
+POSES = {
+    "south": dict(cx=0.50, cy=0.68, hx=0.52, hy=0.42, ctrl=(0.70, 0.36), ang=90),
+    "north": dict(cx=0.50, cy=0.68, hx=0.50, hy=0.26, ctrl=(0.34, 0.46), ang=-90),
+    "east":  dict(cx=0.40, cy=0.66, hx=0.80, hy=0.38, ctrl=(0.52, 0.30), ang=8),
+}
+
+
+def pitviper(pose, dry=False, size=128):
+    P = POSES[pose]
+    cv = Canvas(size)
+    # Coil: one and a bit turns, tail first, the tail tapering to a point.
+    coil = spiral(P["cx"], P["cy"], 0.31, 0.12, 1.15, math.radians(200), n=70)
+    neck = _bezier(coil[-1], P["ctrl"], (P["hx"], P["hy"]), 24)
+    half = len(coil) // 2
+    coil_mask = cv.ribbon(coil[:half + 1], 0.012, 0.13) | cv.ribbon(coil[half:], 0.13, 0.12)
+    neck_mask = cv.ribbon(neck, 0.11, 0.085)
+    X = Xform(cv, P["hx"], P["hy"], 0.10, P["ang"])
+    head = X.poly([(1.15, 0.0), (0.55, -0.66), (-0.30, -0.86), (-0.80, -0.42),
+                   (-0.80, 0.42), (-0.30, 0.86), (0.55, 0.66)])
+
+    def shade(pts, w, mask):
+        """Roundness: a darker underside along the lower-right edge, a pale ridge
+        along the upper-left of the spine. Light from the upper left."""
+        under = mask.copy()
+        lit = np.zeros_like(mask)
+        for k in range(len(pts) - 1):
+            nx, ny = _normal(pts, k)
+            if nx + ny * 0.6 > 0:          # make the normal point upper-left
+                nx, ny = -nx, -ny
+            off = 0.28 * w
+            seg = [(pts[k][0] + nx * off, pts[k][1] + ny * off),
+                   (pts[k + 1][0] + nx * off, pts[k + 1][1] + ny * off)]
+            lit |= cv.ribbon(seg, w * 0.95, w * 0.95)
+        under &= ~lit
+        cv.rgb[under & mask] = dw.C["under"][0]
+
+    if dry:
+        cv.part(coil_mask, "bonewhite", None, panel_px=2.0)
+        keep = cv.rgb.copy()
+        cv.part(neck_mask | head, "bonewhite", None, panel_px=2.0)
+        join = cv.disc(*coil[-1], 0.09) & coil_mask & ~(neck_mask | head)
+        cv.rgb[join] = keep[join]
+        for pts, w in ((coil, 0.10), (neck, 0.08)):
+            cv.line(pts[3:-3], 1.6)                             # spine
+            for i in range(4, len(pts) - 3, 4):                 # ribs
+                nx, ny = _normal(pts, i)
+                cv.line([(pts[i][0] - nx * w * 0.5, pts[i][1] - ny * w * 0.5),
+                         (pts[i][0] + nx * w * 0.5, pts[i][1] + ny * w * 0.5)], 1.8)
+        if pose != "north":
+            fill(X, X.ell(0.15, -0.42, 0.22, 0.20) | X.ell(0.15, 0.42, 0.22, 0.20), "socket")
+        return cv.finish(SNAKE_OUTLINE)
+
+    # The coil, then the neck and head drawn OVER it as one shape, so the head
+    # has no seam; where the neck leaves the coil, the coil's colour is restored
+    # over the neck's ring so no line cuts across the body at the join.
+    cv.part(coil_mask, "rock", None, panel_px=2.0)
+    shade(coil, 0.12, coil_mask)
+    for i in range(6, len(coil) - 2, 7):                        # soft blotches down the spine
+        w = 0.05 * min(1.0, i / 20)
+        fill(X, cv.disc(*coil[i], w) & coil_mask, "blotch")
+    keep = cv.rgb.copy()
+    front = neck_mask | head
+    cv.part(front, "rock", None, panel_px=2.0)
+    join = cv.disc(*coil[-1], 0.09) & coil_mask & ~front
+    cv.rgb[join] = keep[join]
+    shade(neck, 0.10, neck_mask & ~head)
+    for i in range(5, len(neck) - 6, 6):
+        fill(X, cv.disc(*neck[i], 0.035) & neck_mask, "blotch")
+    cv.rgb[head & X.dark(0.1, 0.0, 1.0)] = dw.C["under"][0]
+    # The pit viper's mark: a dark chevron on the crown, pointing forward.
+    fill(X, X.poly([(0.55, 0.0), (-0.40, -0.55), (-0.55, -0.38), (0.20, 0.0),
+                    (-0.55, 0.38), (-0.40, 0.55)]), "blotch")
+    if pose != "north":
+        sides = (-1, 1) if pose == "south" else (-1,)
+        for s in sides:
+            fill(X, X.ell(0.30, 0.50 * s, 0.17, 0.15), "eye")
+            fill(X, X.ell(0.30, 0.50 * s, 0.05, 0.13), "socket")
+    return cv.finish(SNAKE_OUTLINE)
+
 
 def spiral(cx, cy, r0, r1, turns, a0, n=60):
     pts = []
@@ -52,61 +155,9 @@ def spiral(cx, cy, r0, r1, turns, a0, n=60):
         f = i / (n - 1)
         a = a0 + f * turns * 2 * math.pi
         r = r0 + (r1 - r0) * f
-        pts.append((cx + math.cos(a) * r, cy + math.sin(a) * r * 0.80))
+        pts.append((cx + math.cos(a) * r, cy + math.sin(a) * r * 0.78))
     return pts
 
-
-def snake(pts, head_at_end=True, dry=False, size=128, eyes=True, w0=0.15, w1=0.045):
-    """A tapered body along pts (canvas fractions, tail first), with bands, and a
-    head at the last point. dry=True draws the desiccated form: bone, ribs."""
-    cv = Canvas(size)
-    body = cv.ribbon(pts, w1, w0) if head_at_end else cv.ribbon(pts, w0, w1)
-    hx, hy = pts[-1]
-    px, py = pts[-4]
-    ang = math.atan2(hy - py, hx - px)
-    X = Xform(cv, hx, hy, 0.095, math.degrees(ang))
-    head = X.ell(0.25, 0, 0.95, 0.72)
-    if dry:
-        part(X, body | head, "bonewhite", None)
-        for i in range(4, len(pts) - 4, 3):        # ribs across the spine
-            (ax, ay), (bx, by) = pts[i - 1], pts[i + 1]
-            dx, dy = bx - ax, by - ay
-            L = math.hypot(dx, dy) or 1
-            nx, ny = -dy / L, dx / L
-            w = 0.045
-            cv.line([(pts[i][0] - nx * w, pts[i][1] - ny * w),
-                     (pts[i][0] + nx * w, pts[i][1] + ny * w)], 2.0)
-        cv.line(pts[2:-2], 1.6)                        # spine
-        fill(X, X.ell(0.55, -0.28, 0.16, 0.14) | X.ell(0.55, 0.28, 0.16, 0.14), "rockband")
-        return cv.finish(SNAKE_OUTLINE)
-    lit = dw.C["rock"]
-    cv.part(body, "rock", None, panel_px=2.0)
-    for i in range(3, len(pts) - 5, 5):                # narrow cross-bands, clipped to the body
-        (ax, ay), (bx, by) = pts[i - 1], pts[i + 1]
-        dx, dy = bx - ax, by - ay
-        L = math.hypot(dx, dy) or 1
-        nx, ny = -dy / L, dx / L
-        band = cv.ribbon([(pts[i][0] - nx * 0.09, pts[i][1] - ny * 0.09),
-                          (pts[i][0] + nx * 0.09, pts[i][1] + ny * 0.09)], 0.035, 0.035) & body
-        cv.rgb[band] = dw.C["rockband"][0]
-    cv.part(head, "rock", X.dark(0.0, 0.0, 1.0), panel_px=2.0)
-    fill(X, X.ell(0.10, 0.0, 0.30, 0.40), "rockband")
-    if eyes:
-        for s in (-1, 1):
-            fill(X, X.ell(0.55, 0.38 * s, 0.14, 0.13), "eye")
-    return cv.finish(SNAKE_OUTLINE)
-
-
-def east(dry=False):
-    pts = [(0.07 + 0.80 * f, 0.60 - 0.18 * math.sin(f * math.pi * 2.2)) for f in np.linspace(0, 1, 40)]
-    return snake(pts, dry=dry)
-
-
-def coil(head_dy, eyes, dry=False):
-    pts = spiral(0.50, 0.58, 0.36, 0.12, 1.3, math.radians(30))
-    hx, hy = pts[-1]
-    pts += [(hx + 0.01 * k, hy + head_dy * k / 6) for k in range(1, 7)]
-    return snake(pts, dry=dry, eyes=eyes)
 
 
 PITVIPER = "Things/Pawn/Animal/RR_Pitviper/RR_Pitviper"
@@ -138,12 +189,12 @@ def haemanthus(variant, size=128):
 
 
 OUTPUTS = {
-    PITVIPER + "_east": lambda: east(),
-    PITVIPER + "_south": lambda: coil(0.10, eyes=True),
-    PITVIPER + "_north": lambda: coil(-0.10, eyes=False),
-    "Things/Pawn/Animal/RR_Pitviper/RR_Pitviper_Dessicated_east": lambda: east(dry=True),
-    "Things/Pawn/Animal/RR_Pitviper/RR_Pitviper_Dessicated_south": lambda: coil(0.10, False, dry=True),
-    "Things/Pawn/Animal/RR_Pitviper/RR_Pitviper_Dessicated_north": lambda: coil(-0.10, False, dry=True),
+    PITVIPER + "_east": lambda: pitviper("east"),
+    PITVIPER + "_south": lambda: pitviper("south"),
+    PITVIPER + "_north": lambda: pitviper("north"),
+    "Things/Pawn/Animal/RR_Pitviper/RR_Pitviper_Dessicated_east": lambda: pitviper("east", dry=True),
+    "Things/Pawn/Animal/RR_Pitviper/RR_Pitviper_Dessicated_south": lambda: pitviper("south", dry=True),
+    "Things/Pawn/Animal/RR_Pitviper/RR_Pitviper_Dessicated_north": lambda: pitviper("north", dry=True),
     "Things/Plant/RR_Haemanthus/RR_Haemanthus_a": lambda: haemanthus(0),
     "Things/Plant/RR_Haemanthus/RR_Haemanthus_b": lambda: haemanthus(1),
     "Things/Plant/RR_Haemanthus/RR_Haemanthus_c": lambda: haemanthus(2),
