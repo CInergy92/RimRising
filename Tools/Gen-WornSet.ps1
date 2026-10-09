@@ -26,6 +26,9 @@ param(
     [Parameter(Mandatory)] [string] $Style,
     [Parameter(Mandatory)] [string] $Desc,
     [switch] $Dyed,
+    # Extra instruction for the back view only: what a part looks like from behind
+    # (the Howler pelt's wolf head showed its face from the back on the first run).
+    [string] $NorthNote = '',
     [string] $Folder = $Prefix,
     [string] $Blender = 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe'
 )
@@ -66,7 +69,8 @@ foreach ($t in $targets) {
             $ref = Join-Path $gen "ref$($t.Tag)_$body`_$facing.png"
             & $Blender -b --factory-startup --python (Join-Path $PSScriptRoot 'Prep-GenRef.py') -- $keep $ref 2>&1 | Out-Null
             $legs = if ($t.Legs) { ' Here the armour also covers both legs down to the feet; keep that leg armour.' } else { '' }
-            $prompt = "Image 1 is the silhouette to keep; image 2 is the style to copy. Redraw the armour in image 1 - $Desc, $($views[$facing]) - with exactly the detail, materials, bevels, seams, rivets, flat cel shading and thick black outlines of image 2. KEEP image 1's exact silhouette, size and position on the canvas and its layout.$legs $colour Draw ONLY the armour: no person, no head, no hands, empty white where the body would show. Plain flat pure white background, no text, no shadow"
+            $note = if ($facing -eq 'north' -and $NorthNote) { " $NorthNote" } else { '' }
+            $prompt = "Image 1 is the silhouette to keep; image 2 is the style to copy. Redraw the armour in image 1 - $Desc, $($views[$facing]) - with exactly the detail, materials, bevels, seams, rivets, flat cel shading and thick black outlines of image 2. KEEP image 1's exact silhouette, size and position on the canvas and its layout.$note$legs $colour Draw ONLY the armour: no person, no head, no hands, empty white where the body would show. Plain flat pure white background, no text, no shadow"
             um fal edit $prompt --ref $ref --ref $style --name $stem --out $gen --model openai/gpt-image-2/edit --set quality=medium 2>&1 | Select-Object -Last 1
             if (-not (Test-Path $out)) { Write-Warning "no image for $stem"; continue }
         }
