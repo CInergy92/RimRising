@@ -33,6 +33,10 @@
     <thingCategories>
       <li>Manufactured</li>
     </thingCategories>
+    <tradeTags>
+      <!-- What the Society's census caravan buys for standing. TraderKinds_RimRising.xml. -->
+      <li>RR_SocietyTribute</li>
+    </tradeTags>
   </ThingDef>
 
 </Defs>

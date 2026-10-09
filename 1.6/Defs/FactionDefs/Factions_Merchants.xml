@@ -145,10 +145,8 @@
       and a colony whose ideoligion forbids it simply declines the trade.
     -->
     <caravanTraderKinds>
-      <li>Caravan_Outlander_BulkGoods</li>
-      <li>Caravan_Outlander_CombatSupplier</li>
-      <li>Caravan_Outlander_Exotic</li>
-      <li>Caravan_Outlander_PirateMerchant</li>
+      <!-- The house's own stock - TraderKindDefs/TraderKinds_RimRising.xml. -->
+      <li>RR_Caravan_Julii_Trade</li>
     </caravanTraderKinds>
     <visitorTraderKinds>
       <li>Visitor_Outlander_Standard</li>
@@ -292,9 +290,8 @@
       technology, and it is the one merchant on the map that will happily arm you.
     -->
     <caravanTraderKinds>
-      <li>Caravan_Outlander_BulkGoods</li>
-      <li>Caravan_Outlander_CombatSupplier</li>
-      <li>Caravan_Outlander_Exotic</li>
+      <!-- The house's own stock - TraderKindDefs/TraderKinds_RimRising.xml. -->
+      <li>RR_Caravan_Sun_Armory</li>
     </caravanTraderKinds>
     <visitorTraderKinds>
       <li>Visitor_Outlander_Standard</li>

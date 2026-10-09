@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Helium-3. Suggestion 2.4.
+
+  The Barrens exist for what is under them, and nothing in the mod produced it. This
+  is the export: a canistered gas that the Society buys for standing (census caravan,
+  TraderKindDefs/TraderKinds_RimRising.xml) and the merchant houses buy for silver.
+
+  OBTAINED BY DEEP DRILLING. The three deep* fields below are what vanilla's own deep
+  resources (Uranium, Plasteel in Core/Defs/ThingDefs_Items/Items_Resource_Stuff.xml)
+  carry. UNVERIFIED FROM HERE: no reference mod on GitHub defines a deep resource, so
+  these three names come from memory of the vanilla file and must be checked against
+  it before this is called done - Find-VanillaDef.ps1 -Contains deepCommonality. If
+  a name is wrong the game logs an XML field error naming this def on load.
+
+  Deep resources are global, so a scanner on any map can find helium. That is
+  accepted: the Barrens' claim is that the seam is RICH there, which the clawDrill
+  (ThingDefs_Buildings/Buildings_RimRising.xml) expresses by yielding more of it.
+
+  Everything else mirrored from RR_Ionsteel in Items_Resource_RimRising.xml, which was
+  itself mirrored from vanilla's ComponentIndustrial.
+
+  PULSE ARMOUR UPKEEP IS DELIBERATELY NOT DONE. The suggestion flags that fuel on
+  clothing is disliked; the honest middle path (the trauma suite restocking from
+  helium) is a C# change in TraumaSuite.cs and is listed in docs/Opus-Notes.md as a
+  design call for the user first.
+-->
+<Defs>
+
+  <ThingDef ParentName="ResourceBase">
+    <defName>RR_Helium3</defName>
+    <label>helium-3</label>
+    <description>A pressurised canister of the isotope the whole Society runs on: the fuel for its reactors, its warships and its claim on everything else. It comes up out of the ground in a few places, and the people who bring it up are not the ones who are paid for it.\n\nOne canister will not light a room. A thousand will move a fleet.</description>
+    <graphicData>
+      <texPath>Things/Item/Resource/RR_Helium3</texPath>
+      <graphicClass>Graphic_StackCount</graphicClass>
+    </graphicData>
+    <soundInteract>Metal_Drop</soundInteract>
+    <soundDrop>Standard_Drop</soundDrop>
+    <stackLimit>75</stackLimit>
+    <healthAffectsPrice>false</healthAffectsPrice>
+    <statBases>
+      <MaxHitPoints>80</MaxHitPoints>
+      <!-- Between plasteel (9) and uranium (6) per unit is too cheap for a fuel the
+           Society wages wars over; this sits at uranium x4 so a stack is worth a trip. -->
+      <MarketValue>24</MarketValue>
+      <Mass>0.6</Mass>
+      <Flammability>0</Flammability>
+      <DeteriorationRate>0.5</DeteriorationRate>
+    </statBases>
+    <thingCategories>
+      <li>ResourcesRaw</li>
+    </thingCategories>
+    <tradeTags>
+      <!-- What the census caravan buys. See TraderKinds_RimRising.xml. -->
+      <li>RR_SocietyTribute</li>
+    </tradeTags>
+    <!-- VERIFY these three against Items_Resource_Stuff.xml (Uranium). -->
+    <deepCommonality>0.6</deepCommonality>
+    <deepCountPerPortion>8</deepCountPerPortion>
+    <deepLumpSizeRange>6~18</deepLumpSizeRange>
+  </ThingDef>
+
+</Defs>

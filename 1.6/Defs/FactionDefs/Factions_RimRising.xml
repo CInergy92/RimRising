@@ -203,9 +203,10 @@
     </pawnGroupMakers>
     <!-- The Society sells everything and is short of nothing. Full industrial trade, exotics included. -->
     <caravanTraderKinds>
-      <li>Caravan_Outlander_BulkGoods</li>
-      <li>Caravan_Outlander_CombatSupplier</li>
-      <li>Caravan_Outlander_Exotic</li>
+      <!-- The faction's own stock - TraderKindDefs/TraderKinds_RimRising.xml. Vanilla
+           outlander caravans replaced on purpose, so what arrives IS the faction. -->
+      <li>RR_Caravan_Society_Census</li>
+      <li>RR_Caravan_Society_Armory</li>
     </caravanTraderKinds>
     <visitorTraderKinds>
       <li>Visitor_Outlander_Standard</li>
@@ -405,9 +406,10 @@
     </pawnGroupMakers>
     <!-- The Rim trades in what it mines and what it builds, and drives a harder bargain than Luna does. -->
     <caravanTraderKinds>
-      <li>Caravan_Outlander_BulkGoods</li>
-      <li>Caravan_Outlander_CombatSupplier</li>
-      <li>Caravan_Outlander_Exotic</li>
+      <!-- The faction's own stock - TraderKindDefs/TraderKinds_RimRising.xml. Vanilla
+           outlander caravans replaced on purpose, so what arrives IS the faction. -->
+      <li>RR_Caravan_Dominion_Mining</li>
+      <li>RR_Caravan_Dominion_Census</li>
     </caravanTraderKinds>
     <visitorTraderKinds>
       <li>Visitor_Outlander_Standard</li>
@@ -514,6 +516,7 @@
           <RR_Ares_Obsidian_Freed>2.5</RR_Ares_Obsidian_Freed>
           <RR_Ares_Gray_Defector>2</RR_Ares_Gray_Defector>
           <RR_Ares_Gold_Turncoat>0.3</RR_Ares_Gold_Turncoat>
+          <RR_Ares_Howler>1</RR_Ares_Howler>
         </options>
       </li>
       <li>
@@ -702,9 +705,9 @@
     </pawnGroupMakers>
     <!-- Neolithic goods only. The tribes were kept pre-industrial on purpose and the trade reflects it. -->
     <caravanTraderKinds>
-      <li>Caravan_Neolithic_BulkGoods</li>
-      <li>Caravan_Neolithic_WarMerchant</li>
-      <li>Caravan_Neolithic_ShamanMerchant</li>
+      <!-- The faction's own stock - TraderKindDefs/TraderKinds_RimRising.xml. Vanilla
+           outlander caravans replaced on purpose, so what arrives IS the faction. -->
+      <li>RR_Caravan_Tribe_Hunters</li>
     </caravanTraderKinds>
     <visitorTraderKinds>
       <li>Visitor_Neolithic_Standard</li>
