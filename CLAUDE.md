@@ -508,6 +508,12 @@ pwsh -File Tools/Test-ModDefs.ps1
 | `New-PlaceholderTextures.ps1` | Writes flat colored labelled PNGs for referenced-but-missing `RR_*` paths. `-IncludeModArt` also does Preview/ModIcon. Color is a deterministic hash of the path, so it is stable between runs. |
 | `Publish-Mod.ps1` | robocopy `/MIR` into the Mods folder, excluding the directories `.git`, `.github`, `.vs`, `Source`, `docs`, `Tools`, `Art`, `obj`, `bin` and the files `*.ps1`, `*.md`, `*.sln`, `*.csproj`, `*.user`, `.gitignore`, `.gitattributes`. `WeaponTweakData/` and `Sounds/` ship. Runs the validator first and refuses to publish on failure. |
 | `Get-ModLoadErrors.ps1` | Splits `Player.log` into blocks, keeps error blocks naming our packageId / mod name / folder / `RR_` prefix. `-All` shows everyone's. Warns when the log is stale. |
+| `Check-ModDefs.py` | **Cloud fallback** for `Test-ModDefs.ps1`: no game install or PowerShell needed. Malformed XML, unresolved `RR_` refs, gated-folder leaks, missing `RR_` textures (graphic-class aware), DefOf and Keyed checks. Cannot see vanilla, so a vanilla defName typo passes it. Exit 1 on error. Needs `lxml` and `Pillow`. |
+
+Two project skills wrap this: **`/validate`** runs the validator, the build when `Source/` changed and the
+log reader when a launch happened, and turns the report into a fix list keyed to this file's headings.
+**`/newdef`** is "verify, never recall" as a procedure, with a per-type table of which file to open first
+(`.claude/skills/newdef/references/sources.md`) and a grep script for the vanilla tree.
 
 **Run `Test-ModDefs.ps1` before calling anything finished.** It has been negative-tested: a fixture
 with the original five fault classes produced five errors and exit 1, and later checks were
