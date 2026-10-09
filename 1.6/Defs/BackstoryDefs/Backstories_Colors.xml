@@ -1,0 +1,1633 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Backstories per Color.
+
+  A pawn's bio is the most-read text on it, and until now every Color drew vanilla
+  outlander and offworlder bios - a Red was "a medieval farmhand", a Gold "a
+  glitterworld socialite". These give each caste its own childhoods and adulthoods.
+
+  HOW THEY ARE SELECTED
+
+    Each def lists ONE spawn category, RR_<Color>. The pawn kinds in
+    PawnKindDefs/PawnKinds_RimRising.xml carry <backstoryFiltersOverride> naming
+    their Color's category, which replaces the faction's Offworld/Outlander filter
+    for that kind. Resistance kinds add RR_Rising as a second category, which only
+    has adulthoods, so a Rising fighter gets a Red childhood and either a Red or a
+    Rising adulthood.
+
+    backstoryFiltersOverride is a PawnKindDef field; the categories list inside it
+    is the same BackstoryCategoryFilter the faction field uses. Mirrored from
+    Vanilla Factions Expanded - Medieval 2, PawnKinds_Kingdom.xml, which pins its
+    nobles to MedievalHigh the same way.
+
+    EVERY CATEGORY MUST HAVE AT LEAST ONE CHILDHOOD AND ONE ADULTHOOD, or a kind
+    filtered to it has nothing to draw from. RR_Rising is the one exception and
+    is never used alone.
+
+  WHAT THEY DO NOT REACH
+
+    Starting colonists and any pawn generated without a kind that carries the
+    override - wanderers, refugees, quest pawns on vanilla kinds - still draw from
+    the faction filter. Matching a backstory to a pawn's xenotype rather than its
+    kind needs a C# postfix on PawnBioAndNameGenerator; that is the follow-up, and
+    it is the only way the player's own colonists get these bios.
+
+  FIELDS
+
+    slot, title, titleShort, defName, baseDesc, spawnCategories, bodyTypeMale,
+    bodyTypeFemale, skillGains, workDisables, forcedTraits, disallowedTraits -
+    exactly the set used by Vanilla Backstories Expanded's 1.6 defs (153 of them,
+    all carrying bodyTypeMale/Female, so this file does too). No other field is
+    used. Trait and work-tag names are limited to ones that appear in that file.
+
+    Skill gains are deliberately small. The xenotype genes already carry each
+    Color's aptitudes; a bio that stacked another +5 on top would make the caste
+    gap wider than the design wants (DESIGN.md: no hard incapables by Color).
+
+  ALL TEXT IS ORIGINAL. No character, place or house name from the books appears
+  here; the only shared vocabulary is setting terms the mod already uses
+  (Institute, Peerless, helldiver, Carver, Garden, Lurcher, Howler, Stained).
+-->
+<Defs>
+
+  <!-- ================================ Gold ================================ -->
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>House heir</title>
+    <titleShort>Heir</titleShort>
+    <defName>RR_Child_Gold_Heir</defName>
+    <baseDesc>[PAWN_nameDef] was raised as the future of a house, which meant tutors before dawn, drillmasters after, and a father who measured [PAWN_objective] against cousins at every meal. Nobody asked whether [PAWN_pronoun] was happy. The question had never come up in the family.</baseDesc>
+    <spawnCategories>
+      <li>RR_Gold</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Social>2</Social>
+      <Melee>1</Melee>
+      <Intellectual>1</Intellectual>
+    </skillGains>
+    <disallowedTraits>
+      <Wimp />
+    </disallowedTraits>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Lesser scion</title>
+    <titleShort>Scion</titleShort>
+    <defName>RR_Child_Gold_LesserScion</defName>
+    <baseDesc>A third child of a minor house on a minor moon. [PAWN_nameDef] had the blood and the training and none of the attention, and learned early that a Gold nobody is watching can get away with a great deal.</baseDesc>
+    <spawnCategories>
+      <li>RR_Gold</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Social>1</Social>
+      <Shooting>1</Shooting>
+      <Melee>1</Melee>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Drillmaster's ward</title>
+    <titleShort>Ward</titleShort>
+    <defName>RR_Child_Gold_Ward</defName>
+    <baseDesc>Orphaned young and handed to the house's weapons master to raise, [PAWN_nameDef] grew up in the practice yard rather than the salon. [PAWN_pronoun] can fight better than [PAWN_pronoun] can talk, which among Golds is a handicap and an asset in equal measure.</baseDesc>
+    <spawnCategories>
+      <li>RR_Gold</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Melee>3</Melee>
+      <Social>-1</Social>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Institute graduate</title>
+    <titleShort>Graduate</titleShort>
+    <defName>RR_Adult_Gold_Graduate</defName>
+    <baseDesc>[PAWN_nameDef] went through the Institute and came out the far side alive and unremarkable, which is what happens to most who go in. [PAWN_pronoun] commands competently, governs adequately, and has made peace with the fact that no door will ever go quiet when [PAWN_pronoun] walks through it.</baseDesc>
+    <spawnCategories>
+      <li>RR_Gold</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Social>3</Social>
+      <Melee>2</Melee>
+      <Shooting>1</Shooting>
+    </skillGains>
+    <workDisables>
+      <li>ManualDumb</li>
+    </workDisables>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Peerless</title>
+    <titleShort>Peerless</titleShort>
+    <defName>RR_Adult_Gold_Peerless</defName>
+    <baseDesc>[PAWN_nameDef] won. The scar on [PAWN_possessive] face says so before [PAWN_pronoun] opens [PAWN_possessive] mouth, and every Gold in any room has already done the arithmetic of what that means for their own standing. [PAWN_pronoun] has never had to raise [PAWN_possessive] voice.</baseDesc>
+    <spawnCategories>
+      <li>RR_Gold</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Melee>4</Melee>
+      <Social>3</Social>
+      <Shooting>2</Shooting>
+    </skillGains>
+    <workDisables>
+      <li>ManualDumb</li>
+      <li>Cleaning</li>
+    </workDisables>
+    <forcedTraits>
+      <Tough />
+    </forcedTraits>
+    <disallowedTraits>
+      <Wimp />
+    </disallowedTraits>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Iron commander</title>
+    <titleShort>Commander</titleShort>
+    <defName>RR_Adult_Gold_IronCommander</defName>
+    <baseDesc>[PAWN_nameDef] believes the old creed: that a Gold who does not bleed beside the Grays has no right to command them. [PAWN_pronoun] sleeps on the floor of [PAWN_possessive] own quarters, eats what the troops eat, and is loathed by the Golds who do neither.</baseDesc>
+    <spawnCategories>
+      <li>RR_Gold</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Melee>3</Melee>
+      <Shooting>3</Shooting>
+      <Social>1</Social>
+    </skillGains>
+    <forcedTraits>
+      <Tough />
+      <Brawler />
+    </forcedTraits>
+    <disallowedTraits>
+      <Greedy />
+      <Wimp />
+    </disallowedTraits>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Pleasure-house Gold</title>
+    <titleShort>Pixie</titleShort>
+    <defName>RR_Adult_Gold_Pixie</defName>
+    <baseDesc>[PAWN_nameDef] inherited an empire and treated it as an allowance. Parties that lasted a season, duels fought by proxy, Pinks by the dozen. The old Golds call [PAWN_objective] a pixie and the word is not kind, but it is accurate.</baseDesc>
+    <spawnCategories>
+      <li>RR_Gold</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Social>4</Social>
+      <Artistic>2</Artistic>
+      <Melee>-2</Melee>
+    </skillGains>
+    <workDisables>
+      <li>ManualDumb</li>
+      <li>ManualSkilled</li>
+    </workDisables>
+    <forcedTraits>
+      <Greedy />
+      <Industriousness>-1</Industriousness>
+    </forcedTraits>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Shamed Gold</title>
+    <titleShort>Shamed</titleShort>
+    <defName>RR_Adult_Gold_Shamed</defName>
+    <baseDesc>[PAWN_nameDef] went into the Institute and came out the bottom. The law still calls [PAWN_objective] Gold and so does the mirror, but the posting that followed was on the edge of nowhere, with a title nobody uses and a staff who pity [PAWN_objective]. [PAWN_pronoun] has had years to think about it.</baseDesc>
+    <spawnCategories>
+      <li>RR_Gold</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Intellectual>3</Intellectual>
+      <Social>1</Social>
+      <Melee>1</Melee>
+    </skillGains>
+    <forcedTraits>
+      <NaturalMood>-1</NaturalMood>
+    </forcedTraits>
+  </BackstoryDef>
+
+  <!-- =============================== Silver =============================== -->
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Ledger child</title>
+    <titleShort>Ledger</titleShort>
+    <defName>RR_Child_Silver_Ledger</defName>
+    <baseDesc>[PAWN_nameDef] could read a balance sheet before [PAWN_pronoun] could read a story. [PAWN_possessive] family dealt in the money that Golds pretend not to think about, and taught [PAWN_objective] that every favour is a loan with the terms left unspoken.</baseDesc>
+    <spawnCategories>
+      <li>RR_Silver</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Intellectual>2</Intellectual>
+      <Social>2</Social>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Counting-house runner</title>
+    <titleShort>Runner</titleShort>
+    <defName>RR_Child_Silver_Runner</defName>
+    <baseDesc>A poor Silver is still a Silver, and [PAWN_nameDef]'s family was poor. [PAWN_pronoun] ran messages between the houses that mattered, and learned which doors opened for a child with the right eyes and the wrong shoes.</baseDesc>
+    <spawnCategories>
+      <li>RR_Silver</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Social>2</Social>
+      <Intellectual>1</Intellectual>
+    </skillGains>
+    <forcedTraits>
+      <SpeedOffset>1</SpeedOffset>
+    </forcedTraits>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>House factor</title>
+    <titleShort>Factor</titleShort>
+    <defName>RR_Adult_Silver_Factor</defName>
+    <baseDesc>[PAWN_nameDef] managed the fortune of a Gold house that could not have told you where its own money was. [PAWN_pronoun] took a percentage, as factors do, and the house never missed it, as houses do not.</baseDesc>
+    <spawnCategories>
+      <li>RR_Silver</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Social>4</Social>
+      <Intellectual>3</Intellectual>
+    </skillGains>
+    <workDisables>
+      <li>ManualDumb</li>
+    </workDisables>
+    <forcedTraits>
+      <Greedy />
+    </forcedTraits>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Trade broker</title>
+    <titleShort>Broker</titleShort>
+    <defName>RR_Adult_Silver_Broker</defName>
+    <baseDesc>Helium, ionsteel, bodies - [PAWN_nameDef] brokered whatever was moving and never once asked where it had come from. [PAWN_pronoun] has contacts in three merchant houses and debts in two of them.</baseDesc>
+    <spawnCategories>
+      <li>RR_Silver</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Social>4</Social>
+      <Intellectual>2</Intellectual>
+      <Shooting>1</Shooting>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Quiet financier</title>
+    <titleShort>Financier</titleShort>
+    <defName>RR_Adult_Silver_Financier</defName>
+    <baseDesc>Somebody pays for every revolution, and for a while that somebody was [PAWN_nameDef]. [PAWN_pronoun] moved money to people the Society would have hanged and did it from an office with a view of the Society's own banners. [PAWN_pronoun] is not sure anyone has noticed yet.</baseDesc>
+    <spawnCategories>
+      <li>RR_Silver</li>
+      <li>RR_Rising</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Intellectual>4</Intellectual>
+      <Social>3</Social>
+    </skillGains>
+    <forcedTraits>
+      <Nerves>1</Nerves>
+    </forcedTraits>
+  </BackstoryDef>
+
+  <!-- =============================== White ================================ -->
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Cloister child</title>
+    <titleShort>Cloister</titleShort>
+    <defName>RR_Child_White_Cloister</defName>
+    <baseDesc>[PAWN_nameDef] was raised in a cloister where the Whites keep their own, learning law and rite and the long silences in between. [PAWN_pronoun] did not meet a child of another Color until [PAWN_pronoun] was twelve, and found the experience unsettling.</baseDesc>
+    <spawnCategories>
+      <li>RR_White</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Intellectual>3</Intellectual>
+      <Social>1</Social>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Court observer</title>
+    <titleShort>Observer</titleShort>
+    <defName>RR_Child_White_Observer</defName>
+    <baseDesc>[PAWN_nameDef]'s parent sat in judgment, and [PAWN_nameDef] sat behind, watching. By ten [PAWN_pronoun] could tell which Gold would lie before the Gold knew it. By fourteen [PAWN_pronoun] had stopped finding it interesting.</baseDesc>
+    <spawnCategories>
+      <li>RR_White</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Social>2</Social>
+      <Intellectual>2</Intellectual>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Arbiter</title>
+    <titleShort>Arbiter</titleShort>
+    <defName>RR_Adult_White_Arbiter</defName>
+    <baseDesc>[PAWN_nameDef] ruled on disputes between houses that could have ended in war, and [PAWN_possessive] rulings held because both sides feared the Whites more than each other. [PAWN_pronoun] has never carried a weapon. [PAWN_pronoun] has never needed one.</baseDesc>
+    <spawnCategories>
+      <li>RR_White</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Social>4</Social>
+      <Intellectual>3</Intellectual>
+    </skillGains>
+    <workDisables>
+      <li>Violent</li>
+    </workDisables>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Rite-keeper</title>
+    <titleShort>Keeper</titleShort>
+    <defName>RR_Adult_White_RiteKeeper</defName>
+    <baseDesc>Weddings, funerals, the marking of the Peerless - [PAWN_nameDef] presided over all of it, in the same voice, for thirty years. [PAWN_pronoun] knows the words to every ceremony the Society has and believes about half of them.</baseDesc>
+    <spawnCategories>
+      <li>RR_White</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Social>3</Social>
+      <Intellectual>2</Intellectual>
+      <Artistic>1</Artistic>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Census auditor</title>
+    <titleShort>Auditor</titleShort>
+    <defName>RR_Adult_White_Auditor</defName>
+    <baseDesc>[PAWN_nameDef] counted people for the Board. Births against targets, deaths against projections, a column for each Color. [PAWN_pronoun] can tell you the breeding quota of any mine in the system and has stopped noticing that the numbers are people.</baseDesc>
+    <spawnCategories>
+      <li>RR_White</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Intellectual>4</Intellectual>
+      <Social>1</Social>
+    </skillGains>
+    <forcedTraits>
+      <Psychopath />
+    </forcedTraits>
+  </BackstoryDef>
+
+  <!-- =============================== Copper =============================== -->
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Clerk's apprentice</title>
+    <titleShort>Apprentice</titleShort>
+    <defName>RR_Child_Copper_Apprentice</defName>
+    <baseDesc>[PAWN_nameDef] learned to file before [PAWN_pronoun] learned to run. Forms, permits, the proper seals in the proper order - the Society runs on paper and Coppers are raised to be the paper.</baseDesc>
+    <spawnCategories>
+      <li>RR_Copper</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Intellectual>2</Intellectual>
+      <Social>1</Social>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Bureau brat</title>
+    <titleShort>Brat</titleShort>
+    <defName>RR_Child_Copper_Brat</defName>
+    <baseDesc>Both parents worked for the same ministry, which meant [PAWN_nameDef] grew up under a desk. [PAWN_pronoun] knows how every office in the system actually works, as opposed to how it says it works, and finds the difference funny.</baseDesc>
+    <spawnCategories>
+      <li>RR_Copper</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Social>2</Social>
+      <Intellectual>1</Intellectual>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Ministry official</title>
+    <titleShort>Official</titleShort>
+    <defName>RR_Adult_Copper_Official</defName>
+    <baseDesc>[PAWN_nameDef] ran a department whose purpose nobody above [PAWN_objective] could name and nobody below [PAWN_objective] could do without. [PAWN_pronoun] stamped, approved, deferred and denied, and the Society kept turning.</baseDesc>
+    <spawnCategories>
+      <li>RR_Copper</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Social>3</Social>
+      <Intellectual>3</Intellectual>
+    </skillGains>
+    <workDisables>
+      <li>ManualDumb</li>
+    </workDisables>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Mine administrator</title>
+    <titleShort>Administrator</titleShort>
+    <defName>RR_Adult_Copper_MineAdmin</defName>
+    <baseDesc>[PAWN_nameDef] kept the books for a helium mine - quotas, rations, the tally of Reds below. [PAWN_pronoun] never went down the shaft. [PAWN_pronoun] knew exactly how many came back up each year and signed the form that said it was acceptable.</baseDesc>
+    <spawnCategories>
+      <li>RR_Copper</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Intellectual>3</Intellectual>
+      <Social>2</Social>
+      <Mining>1</Mining>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Customs clerk</title>
+    <titleShort>Clerk</titleShort>
+    <defName>RR_Adult_Copper_Customs</defName>
+    <baseDesc>Every crate that crossed a dock crossed [PAWN_nameDef]'s desk first. [PAWN_pronoun] learned what was in them, who wanted it, and precisely how much a signature was worth. [PAWN_pronoun] left the post with savings nobody has asked about.</baseDesc>
+    <spawnCategories>
+      <li>RR_Copper</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Social>3</Social>
+      <Intellectual>2</Intellectual>
+    </skillGains>
+    <forcedTraits>
+      <Greedy />
+    </forcedTraits>
+  </BackstoryDef>
+
+  <!-- ================================ Blue ================================ -->
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Dock-born</title>
+    <titleShort>Dockborn</titleShort>
+    <defName>RR_Child_Blue_Dockborn</defName>
+    <baseDesc>[PAWN_nameDef] was born in orbit and did not stand on a planet until [PAWN_pronoun] was nine. The crews raised [PAWN_objective] between shifts; [PAWN_possessive] first toy was a navigation plot and [PAWN_possessive] first word was a heading.</baseDesc>
+    <spawnCategories>
+      <li>RR_Blue</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Intellectual>2</Intellectual>
+      <Crafting>1</Crafting>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Pilot academy</title>
+    <titleShort>Cadet</titleShort>
+    <defName>RR_Child_Blue_Cadet</defName>
+    <baseDesc>Selected young for the academies, [PAWN_nameDef] spent [PAWN_possessive] childhood in a simulator being told [PAWN_pronoun] was the best in the cohort, then being shown someone better. The result is a pilot who is very good and does not believe it.</baseDesc>
+    <spawnCategories>
+      <li>RR_Blue</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Intellectual>2</Intellectual>
+      <Shooting>1</Shooting>
+    </skillGains>
+    <forcedTraits>
+      <Neurotic>1</Neurotic>
+    </forcedTraits>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Helmsman</title>
+    <titleShort>Helmsman</titleShort>
+    <defName>RR_Adult_Blue_Helmsman</defName>
+    <baseDesc>[PAWN_nameDef] flew warships for the Society and never once chose where they went. [PAWN_pronoun] put a Gold's orders into a hull the size of a city and made them true, and was thanked for it about as often as the hull was.</baseDesc>
+    <spawnCategories>
+      <li>RR_Blue</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Intellectual>4</Intellectual>
+      <Shooting>2</Shooting>
+    </skillGains>
+    <workDisables>
+      <li>Animals</li>
+    </workDisables>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Hauler pilot</title>
+    <titleShort>Hauler</titleShort>
+    <defName>RR_Adult_Blue_Hauler</defName>
+    <baseDesc>Freight, not glory. [PAWN_nameDef] ran helium from the mines to the refineries for twenty years, a route so familiar [PAWN_pronoun] could fly it asleep and sometimes did. [PAWN_pronoun] knows every shaft-head and dock on the run by its lights.</baseDesc>
+    <spawnCategories>
+      <li>RR_Blue</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Intellectual>3</Intellectual>
+      <Crafting>2</Crafting>
+      <Social>1</Social>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Grounded navigator</title>
+    <titleShort>Navigator</titleShort>
+    <defName>RR_Adult_Blue_Grounded</defName>
+    <baseDesc>A Blue without a ship is a strange, unhappy thing, and [PAWN_nameDef] has been one for years. Whatever cost [PAWN_objective] the post is not discussed. [PAWN_pronoun] still looks up at the wrong moments and still calculates burns for ships [PAWN_pronoun] will never fly.</baseDesc>
+    <spawnCategories>
+      <li>RR_Blue</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Intellectual>4</Intellectual>
+      <Construction>1</Construction>
+    </skillGains>
+    <forcedTraits>
+      <NaturalMood>-1</NaturalMood>
+    </forcedTraits>
+  </BackstoryDef>
+
+  <!-- =============================== Yellow =============================== -->
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Physician's child</title>
+    <titleShort>Clinic</titleShort>
+    <defName>RR_Child_Yellow_Clinic</defName>
+    <baseDesc>[PAWN_nameDef] grew up in a clinic that treated every Color and billed them accordingly. [PAWN_pronoun] held clamps at eight and closed a wound at eleven, and has never been squeamish about anything that bleeds.</baseDesc>
+    <spawnCategories>
+      <li>RR_Yellow</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Medicine>3</Medicine>
+      <Intellectual>1</Intellectual>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Laboratory-raised</title>
+    <titleShort>Lab</titleShort>
+    <defName>RR_Child_Yellow_Lab</defName>
+    <baseDesc>[PAWN_possessive] parents studied things in jars, and [PAWN_nameDef] was mostly left to study them too. [PAWN_pronoun] learned patience, precision, and that most questions worth asking take a decade to answer.</baseDesc>
+    <spawnCategories>
+      <li>RR_Yellow</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Intellectual>3</Intellectual>
+      <Medicine>1</Medicine>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>House physician</title>
+    <titleShort>Physician</titleShort>
+    <defName>RR_Adult_Yellow_Physician</defName>
+    <baseDesc>[PAWN_nameDef] kept a Gold house alive: the duelling wounds, the poisonings, the children who were not supposed to exist. [PAWN_pronoun] has seen what the ruling caste looks like under the skin and has never been impressed by it since.</baseDesc>
+    <spawnCategories>
+      <li>RR_Yellow</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Medicine>5</Medicine>
+      <Social>1</Social>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Mine surgeon</title>
+    <titleShort>Surgeon</titleShort>
+    <defName>RR_Adult_Yellow_MineSurgeon</defName>
+    <baseDesc>Posted to a helium mine, [PAWN_nameDef] set bones and sewed burns on Reds for a decade with half the supplies [PAWN_pronoun] requested. [PAWN_pronoun] learned to work fast, work cheap, and to stop asking the Copper upstairs for anything.</baseDesc>
+    <spawnCategories>
+      <li>RR_Yellow</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Medicine>4</Medicine>
+      <Crafting>1</Crafting>
+    </skillGains>
+    <forcedTraits>
+      <Kind />
+    </forcedTraits>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Gene researcher</title>
+    <titleShort>Researcher</titleShort>
+    <defName>RR_Adult_Yellow_Researcher</defName>
+    <baseDesc>[PAWN_nameDef] worked on the templates the Colors are bred from - the gene lines, the drift corrections, the quiet adjustments nobody outside the laboratory is told about. [PAWN_pronoun] knows exactly how the castes were made and finds the knowledge heavier every year.</baseDesc>
+    <spawnCategories>
+      <li>RR_Yellow</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Intellectual>5</Intellectual>
+      <Medicine>2</Medicine>
+    </skillGains>
+    <workDisables>
+      <li>ManualDumb</li>
+    </workDisables>
+  </BackstoryDef>
+
+  <!-- =============================== Green ================================ -->
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Terminal child</title>
+    <titleShort>Terminal</titleShort>
+    <defName>RR_Child_Green_Terminal</defName>
+    <baseDesc>[PAWN_nameDef] was given a terminal at four and a system to maintain at nine. [PAWN_possessive] childhood was an unbroken conversation with machines, which answered more reliably than anyone else in the house.</baseDesc>
+    <spawnCategories>
+      <li>RR_Green</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Intellectual>3</Intellectual>
+      <Social>-1</Social>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Cipher pupil</title>
+    <titleShort>Cipher</titleShort>
+    <defName>RR_Child_Green_Cipher</defName>
+    <baseDesc>Raised in a Society signals school, [PAWN_nameDef] spent [PAWN_possessive] childhood breaking codes set by adults who expected [PAWN_objective] to fail. [PAWN_pronoun] did not, and learned to keep [PAWN_possessive] face still while doing it.</baseDesc>
+    <spawnCategories>
+      <li>RR_Green</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Intellectual>2</Intellectual>
+      <Crafting>1</Crafting>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Systems engineer</title>
+    <titleShort>Engineer</titleShort>
+    <defName>RR_Adult_Green_Systems</defName>
+    <baseDesc>[PAWN_nameDef] kept the networks of a Gold house running, which meant [PAWN_pronoun] read every message the house sent and most of the ones it received. [PAWN_pronoun] has never been asked to use any of it, and has never been sure whether that is trust or oversight.</baseDesc>
+    <spawnCategories>
+      <li>RR_Green</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Intellectual>4</Intellectual>
+      <Crafting>2</Crafting>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>War-signals operator</title>
+    <titleShort>Signals</titleShort>
+    <defName>RR_Adult_Green_Signals</defName>
+    <baseDesc>[PAWN_nameDef] served with a legion as its ears and eyes: jamming, tracking, listening to the enemy breathe. [PAWN_pronoun] was armed, trained, and expected to fight if the line broke, which it did twice.</baseDesc>
+    <spawnCategories>
+      <li>RR_Green</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Intellectual>3</Intellectual>
+      <Shooting>2</Shooting>
+      <Crafting>1</Crafting>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Blacknet runner</title>
+    <titleShort>Runner</titleShort>
+    <defName>RR_Adult_Green_Blacknet</defName>
+    <baseDesc>Officially [PAWN_nameDef] maintained archive systems. Unofficially [PAWN_pronoun] moved information the Society would have killed to stop, between people who never met. [PAWN_pronoun] still flinches at an unexpected knock.</baseDesc>
+    <spawnCategories>
+      <li>RR_Green</li>
+      <li>RR_Rising</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Intellectual>4</Intellectual>
+      <Social>1</Social>
+    </skillGains>
+    <forcedTraits>
+      <Nerves>-1</Nerves>
+    </forcedTraits>
+  </BackstoryDef>
+
+  <!-- =============================== Violet =============================== -->
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Atelier child</title>
+    <titleShort>Atelier</titleShort>
+    <defName>RR_Child_Violet_Atelier</defName>
+    <baseDesc>[PAWN_nameDef] grew up among sculptors and composers who argued about beauty the way other castes argue about money. [PAWN_pronoun] was handed a brush before a spoon and was expected to have an opinion about both.</baseDesc>
+    <spawnCategories>
+      <li>RR_Violet</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Artistic>3</Artistic>
+      <Social>1</Social>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Carver's apprentice</title>
+    <titleShort>Apprentice</titleShort>
+    <defName>RR_Child_Violet_CarverApprentice</defName>
+    <baseDesc>Apprenticed to a Carver at nine, [PAWN_nameDef] spent [PAWN_possessive] childhood watching bodies be remade and learning that flesh is only another medium. [PAWN_pronoun] can draw a nerve from memory and has strong views on the aesthetics of a scar.</baseDesc>
+    <spawnCategories>
+      <li>RR_Violet</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Medicine>2</Medicine>
+      <Artistic>2</Artistic>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Carver</title>
+    <titleShort>Carver</titleShort>
+    <defName>RR_Adult_Violet_Carver</defName>
+    <baseDesc>[PAWN_nameDef] remakes people. Faces, frames, Colors - for a price, and the Society prefers not to ask what [PAWN_pronoun] has made for whom. [PAWN_pronoun] considers [PAWN_possessive] work art and [PAWN_possessive] clients canvases, which they do not always enjoy hearing.</baseDesc>
+    <spawnCategories>
+      <li>RR_Violet</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Medicine>5</Medicine>
+      <Artistic>3</Artistic>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Court artist</title>
+    <titleShort>Artist</titleShort>
+    <defName>RR_Adult_Violet_CourtArtist</defName>
+    <baseDesc>Golds collect Violets the way they collect everything else. [PAWN_nameDef] was collected: composed for one house, painted for another, and told at every turn how fortunate [PAWN_pronoun] was. [PAWN_pronoun] agreed, in public.</baseDesc>
+    <spawnCategories>
+      <li>RR_Violet</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Artistic>5</Artistic>
+      <Social>2</Social>
+    </skillGains>
+    <workDisables>
+      <li>ManualDumb</li>
+    </workDisables>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Gutter poet</title>
+    <titleShort>Poet</titleShort>
+    <defName>RR_Adult_Violet_GutterPoet</defName>
+    <baseDesc>Not every Violet finds a patron. [PAWN_nameDef] wrote for the low Colors instead - songs that were sung in the mines and the barracks and that [PAWN_pronoun] was never paid for. Some of them are banned now. [PAWN_pronoun] is prouder of that than of anything else.</baseDesc>
+    <spawnCategories>
+      <li>RR_Violet</li>
+      <li>RR_Rising</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Artistic>4</Artistic>
+      <Social>3</Social>
+    </skillGains>
+    <forcedTraits>
+      <TorturedArtist />
+    </forcedTraits>
+  </BackstoryDef>
+
+  <!-- =============================== Orange =============================== -->
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Workshop child</title>
+    <titleShort>Workshop</titleShort>
+    <defName>RR_Child_Orange_Workshop</defName>
+    <baseDesc>[PAWN_nameDef] grew up on a shop floor, passing tools before [PAWN_pronoun] could name them. By ten [PAWN_pronoun] could strip a drill motor; by twelve [PAWN_pronoun] had been burned, cut and crushed enough to have stopped mentioning it.</baseDesc>
+    <spawnCategories>
+      <li>RR_Orange</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Crafting>3</Crafting>
+      <Construction>1</Construction>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Dockyard scrapper</title>
+    <titleShort>Scrapper</titleShort>
+    <defName>RR_Child_Orange_Scrapper</defName>
+    <baseDesc>[PAWN_nameDef] ran with the children who stripped wrecks in the orbital yards for whatever the Society had not bothered to salvage. [PAWN_pronoun] can tell good metal from bad by the sound it makes when dropped.</baseDesc>
+    <spawnCategories>
+      <li>RR_Orange</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Crafting>2</Crafting>
+      <Construction>2</Construction>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Fleet mechanic</title>
+    <titleShort>Mechanic</titleShort>
+    <defName>RR_Adult_Orange_FleetMechanic</defName>
+    <baseDesc>[PAWN_nameDef] kept warships flying with parts that did not exist and time that had not been allotted. [PAWN_pronoun] has never been thanked by a Gold and has stopped expecting to be. The ships flew. That was the thanks.</baseDesc>
+    <spawnCategories>
+      <li>RR_Orange</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Crafting>4</Crafting>
+      <Construction>3</Construction>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Drill engineer</title>
+    <titleShort>Engineer</titleShort>
+    <defName>RR_Adult_Orange_DrillEngineer</defName>
+    <baseDesc>The drills that eat rock in the helium mines are [PAWN_nameDef]'s. [PAWN_pronoun] built them, tuned them, and went down the shaft to fix them when they failed, which made [PAWN_objective] one of the few higher Colors a Red crew would speak to.</baseDesc>
+    <spawnCategories>
+      <li>RR_Orange</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Construction>4</Construction>
+      <Crafting>2</Crafting>
+      <Mining>2</Mining>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Saboteur</title>
+    <titleShort>Saboteur</titleShort>
+    <defName>RR_Adult_Orange_Saboteur</defName>
+    <baseDesc>Everything [PAWN_nameDef] knows about building, [PAWN_pronoun] has used to take apart. Fuel lines, lift cables, the clamps that hold a dock together - [PAWN_pronoun] knows where every machine the Society owns is weakest, because [PAWN_pronoun] used to be the one who kept it from breaking there.</baseDesc>
+    <spawnCategories>
+      <li>RR_Orange</li>
+      <li>RR_Rising</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Construction>3</Construction>
+      <Crafting>3</Crafting>
+      <Shooting>1</Shooting>
+    </skillGains>
+  </BackstoryDef>
+
+  <!-- ================================ Gray ================================ -->
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Barracks child</title>
+    <titleShort>Barracks</titleShort>
+    <defName>RR_Child_Gray_Barracks</defName>
+    <baseDesc>[PAWN_nameDef] was born in a garrison to two soldiers and raised by the regiment between deployments. [PAWN_pronoun] learned to march before [PAWN_pronoun] learned to read and has never found a civilian house that felt like home.</baseDesc>
+    <spawnCategories>
+      <li>RR_Gray</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Shooting>2</Shooting>
+      <Melee>1</Melee>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Cadet</title>
+    <titleShort>Cadet</titleShort>
+    <defName>RR_Child_Gray_Cadet</defName>
+    <baseDesc>Taken into a Society training school at seven, [PAWN_nameDef] was shaped into exactly what the legions needed: steady hands, a short memory for pain, and no questions. [PAWN_pronoun] turned out well. [PAWN_pronoun] is not sure [PAWN_pronoun] turned out at all.</baseDesc>
+    <spawnCategories>
+      <li>RR_Gray</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Shooting>2</Shooting>
+      <Melee>2</Melee>
+      <Social>-1</Social>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Legionary</title>
+    <titleShort>Legionary</titleShort>
+    <defName>RR_Adult_Gray_Legionary</defName>
+    <baseDesc>[PAWN_nameDef] stood a wall for the Society. Riots, raids, the occasional war between Gold houses that the Grays died in and the Golds toasted afterwards. [PAWN_pronoun] is good at it, and has long since stopped asking what it is for.</baseDesc>
+    <spawnCategories>
+      <li>RR_Gray</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Shooting>4</Shooting>
+      <Melee>2</Melee>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Lurcher</title>
+    <titleShort>Lurcher</titleShort>
+    <defName>RR_Adult_Gray_Lurcher</defName>
+    <baseDesc>[PAWN_nameDef] hunted people. Escaped Reds, carved impostors, Golds the Society had quietly decided against - [PAWN_pronoun] found them, and what happened next was not [PAWN_possessive] concern. [PAWN_pronoun] is patient, observant and very hard to lose.</baseDesc>
+    <spawnCategories>
+      <li>RR_Gray</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Shooting>4</Shooting>
+      <Melee>2</Melee>
+      <Social>1</Social>
+    </skillGains>
+    <forcedTraits>
+      <Psychopath />
+    </forcedTraits>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Mine warden</title>
+    <titleShort>Warden</titleShort>
+    <defName>RR_Adult_Gray_MineWarden</defName>
+    <baseDesc>[PAWN_nameDef] kept order in a helium mine, which meant keeping Reds underground and the lift locked. [PAWN_pronoun] was not cruel by the standards of the post and knows how little that is worth.</baseDesc>
+    <spawnCategories>
+      <li>RR_Gray</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Shooting>3</Shooting>
+      <Melee>2</Melee>
+      <Mining>1</Mining>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Deserter</title>
+    <titleShort>Deserter</titleShort>
+    <defName>RR_Adult_Gray_Deserter</defName>
+    <baseDesc>There was an order, and [PAWN_nameDef] did not carry it out. What the order was, [PAWN_pronoun] does not say. [PAWN_pronoun] walked out of the legion with [PAWN_possessive] rifle and [PAWN_possessive] armour and has been looking over [PAWN_possessive] shoulder ever since.</baseDesc>
+    <spawnCategories>
+      <li>RR_Gray</li>
+      <li>RR_Rising</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Shooting>4</Shooting>
+      <Melee>2</Melee>
+    </skillGains>
+    <disallowedTraits>
+      <Psychopath />
+    </disallowedTraits>
+  </BackstoryDef>
+
+  <!-- ============================== Obsidian ============================== -->
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Pole-born</title>
+    <titleShort>Poleborn</titleShort>
+    <defName>RR_Child_Obsidian_Poleborn</defName>
+    <baseDesc>[PAWN_nameDef] was born on the ice where the Society keeps the Obsidians, in a tribe that believes the Golds are gods because the Golds arranged for them to. [PAWN_pronoun] killed [PAWN_possessive] first animal at six and [PAWN_possessive] first rival at eleven.</baseDesc>
+    <spawnCategories>
+      <li>RR_Obsidian</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Melee>3</Melee>
+      <Animals>1</Animals>
+    </skillGains>
+    <disallowedTraits>
+      <Wimp />
+    </disallowedTraits>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Taken young</title>
+    <titleShort>Taken</titleShort>
+    <defName>RR_Child_Obsidian_Taken</defName>
+    <baseDesc>The Society came to [PAWN_nameDef]'s tribe when [PAWN_pronoun] was eight and chose the strongest children. [PAWN_pronoun] was carried off to be trained, and has not seen the ice or [PAWN_possessive] family since. [PAWN_pronoun] remembers the cold more clearly than their faces.</baseDesc>
+    <spawnCategories>
+      <li>RR_Obsidian</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Melee>3</Melee>
+      <Shooting>1</Shooting>
+    </skillGains>
+    <workDisables>
+      <li>Intellectual</li>
+    </workDisables>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Tribal warrior</title>
+    <titleShort>Warrior</titleShort>
+    <defName>RR_Adult_Obsidian_TribalWarrior</defName>
+    <baseDesc>[PAWN_nameDef] fought for [PAWN_possessive] tribe and prayed to the Golds between fights. [PAWN_pronoun] has never seen a city. [PAWN_pronoun] has seen a great deal of blood and considers most of it to have been deserved.</baseDesc>
+    <spawnCategories>
+      <li>RR_Obsidian</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Melee>5</Melee>
+      <Animals>2</Animals>
+    </skillGains>
+    <workDisables>
+      <li>Intellectual</li>
+    </workDisables>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Stained</title>
+    <titleShort>Stained</titleShort>
+    <defName>RR_Adult_Obsidian_Stained</defName>
+    <baseDesc>Chosen from the tribe and shaped into something more than a warrior, [PAWN_nameDef] serves as the Society's blade and knows nothing else. The marks on [PAWN_possessive] skin are an oath. [PAWN_pronoun] has not yet been given a reason to break it.</baseDesc>
+    <spawnCategories>
+      <li>RR_Obsidian</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Melee>6</Melee>
+      <Shooting>1</Shooting>
+    </skillGains>
+    <forcedTraits>
+      <Tough />
+    </forcedTraits>
+    <disallowedTraits>
+      <Wimp />
+    </disallowedTraits>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>House bodyguard</title>
+    <titleShort>Bodyguard</titleShort>
+    <defName>RR_Adult_Obsidian_Bodyguard</defName>
+    <baseDesc>[PAWN_nameDef] stood behind a Gold for fifteen years and killed whoever came too close. [PAWN_pronoun] learned the house's manners by watching and its secrets by being invisible. Nobody ever thought to lower their voice around the Obsidian.</baseDesc>
+    <spawnCategories>
+      <li>RR_Obsidian</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Melee>4</Melee>
+      <Shooting>2</Shooting>
+      <Social>1</Social>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Sea raider</title>
+    <titleShort>Raider</titleShort>
+    <defName>RR_Adult_Obsidian_Raider</defName>
+    <baseDesc>[PAWN_nameDef] belongs to no tribe and no house. [PAWN_pronoun] raids whoever is closest and worships nothing, which the Society finds more alarming than any rebellion. [PAWN_pronoun] has taken Gold ships and worn Gold armour and was not struck down for it.</baseDesc>
+    <spawnCategories>
+      <li>RR_Obsidian</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Melee>4</Melee>
+      <Shooting>2</Shooting>
+    </skillGains>
+    <forcedTraits>
+      <Bloodlust />
+    </forcedTraits>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Freed Obsidian</title>
+    <titleShort>Freed</titleShort>
+    <defName>RR_Adult_Obsidian_Freed</defName>
+    <baseDesc>Someone showed [PAWN_nameDef] that the gods bleed. [PAWN_pronoun] has not been the same since, and neither has anyone who stood between [PAWN_objective] and the people who lied to [PAWN_possessive] tribe for three hundred years.</baseDesc>
+    <spawnCategories>
+      <li>RR_Obsidian</li>
+      <li>RR_Rising</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Melee>5</Melee>
+      <Shooting>1</Shooting>
+    </skillGains>
+  </BackstoryDef>
+
+  <!-- ================================ Pink ================================ -->
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Garden-raised</title>
+    <titleShort>Garden</titleShort>
+    <baseDesc>[PAWN_nameDef] was raised in a Garden, where Pinks are taught to please before they are taught to read. [PAWN_pronoun] learned to read anyway, in secret, and has never told anyone which books.</baseDesc>
+    <defName>RR_Child_Pink_Garden</defName>
+    <spawnCategories>
+      <li>RR_Pink</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Social>3</Social>
+      <Artistic>1</Artistic>
+    </skillGains>
+    <workDisables>
+      <li>Violent</li>
+    </workDisables>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>House-born Pink</title>
+    <titleShort>Houseborn</titleShort>
+    <defName>RR_Child_Pink_Houseborn</defName>
+    <baseDesc>Born to a Pink in a Gold household and raised as part of the furniture, [PAWN_nameDef] grew up knowing every secret in the house and the price of repeating any of them. [PAWN_pronoun] is charming because charm was the only thing that was ever safe.</baseDesc>
+    <spawnCategories>
+      <li>RR_Pink</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Social>3</Social>
+      <Cooking>1</Cooking>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Companion</title>
+    <titleShort>Companion</titleShort>
+    <defName>RR_Adult_Pink_Companion</defName>
+    <baseDesc>[PAWN_nameDef] was assigned to a Gold house as its companion and spent a decade being exquisite on demand. [PAWN_pronoun] can read a room before the door closes and manage a temper before it breaks, and has rarely been thanked for either.</baseDesc>
+    <spawnCategories>
+      <li>RR_Pink</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Social>5</Social>
+      <Artistic>2</Artistic>
+    </skillGains>
+    <workDisables>
+      <li>Violent</li>
+    </workDisables>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>House steward</title>
+    <titleShort>Steward</titleShort>
+    <defName>RR_Adult_Pink_Steward</defName>
+    <baseDesc>Too old for the Gardens and too useful to discard, [PAWN_nameDef] ran a Gold household: the staff, the kitchens, the thousand small arrangements that let Golds believe things simply happen. [PAWN_pronoun] is superb at it and has never once been seen to be.</baseDesc>
+    <spawnCategories>
+      <li>RR_Pink</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Social>4</Social>
+      <Cooking>2</Cooking>
+      <Intellectual>1</Intellectual>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Listener</title>
+    <titleShort>Listener</titleShort>
+    <defName>RR_Adult_Pink_Listener</defName>
+    <baseDesc>Golds say things in front of Pinks that they would never say in front of people. [PAWN_nameDef] listened, remembered, and passed it on to those who could use it. [PAWN_pronoun] has ended careers with a single sentence and no one has ever suspected the source.</baseDesc>
+    <spawnCategories>
+      <li>RR_Pink</li>
+      <li>RR_Rising</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Social>4</Social>
+      <Intellectual>2</Intellectual>
+    </skillGains>
+  </BackstoryDef>
+
+  <!-- =============================== Brown ================================ -->
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Kitchen child</title>
+    <titleShort>Kitchen</titleShort>
+    <defName>RR_Child_Brown_Kitchen</defName>
+    <baseDesc>[PAWN_nameDef] grew up below stairs in a Gold house, peeling and scrubbing from the age [PAWN_pronoun] could hold a knife. [PAWN_pronoun] knows how the people upstairs take their meals and has never once eaten one.</baseDesc>
+    <spawnCategories>
+      <li>RR_Brown</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Cooking>3</Cooking>
+      <Social>1</Social>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Field-born</title>
+    <titleShort>Fieldborn</titleShort>
+    <defName>RR_Child_Brown_Field</defName>
+    <baseDesc>[PAWN_nameDef] was born on an agricultural estate and was working its rows by seven. [PAWN_pronoun] has never been further than the next estate over and does not expect to be. The plants, at least, have never told [PAWN_objective] what [PAWN_pronoun] is.</baseDesc>
+    <spawnCategories>
+      <li>RR_Brown</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Plants>3</Plants>
+      <Animals>1</Animals>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>House servant</title>
+    <titleShort>Servant</titleShort>
+    <defName>RR_Adult_Brown_Servant</defName>
+    <baseDesc>[PAWN_nameDef] cleaned, carried and cooked for a Gold house for most of [PAWN_possessive] life. [PAWN_pronoun] knows which Gold sleeps badly and which one drinks, and has learned to be present without being seen.</baseDesc>
+    <spawnCategories>
+      <li>RR_Brown</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Cooking>3</Cooking>
+      <Plants>1</Plants>
+      <Social>1</Social>
+    </skillGains>
+    <forcedTraits>
+      <Industriousness>1</Industriousness>
+    </forcedTraits>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Estate hand</title>
+    <titleShort>Hand</titleShort>
+    <defName>RR_Adult_Brown_EstateHand</defName>
+    <baseDesc>Sowing, reaping, the animals, the walls - whatever needed hands, [PAWN_nameDef]'s were the ones used. [PAWN_pronoun] can make anything grow and has never owned a single thing [PAWN_pronoun] grew.</baseDesc>
+    <spawnCategories>
+      <li>RR_Brown</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Plants>4</Plants>
+      <Animals>2</Animals>
+      <Construction>1</Construction>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Runaway</title>
+    <titleShort>Runaway</titleShort>
+    <defName>RR_Adult_Brown_Runaway</defName>
+    <baseDesc>One night [PAWN_nameDef] put down the tray and walked out of the house, and nobody noticed for three days. [PAWN_pronoun] has been moving ever since, working for whoever asks no questions. Being nobody turns out to be something [PAWN_pronoun] was well trained for.</baseDesc>
+    <spawnCategories>
+      <li>RR_Brown</li>
+      <li>RR_Rising</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Plants>2</Plants>
+      <Cooking>2</Cooking>
+      <Melee>1</Melee>
+    </skillGains>
+  </BackstoryDef>
+
+  <!-- ================================ Red ================================= -->
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Mine-born</title>
+    <titleShort>Mineborn</titleShort>
+    <defName>RR_Child_Red_Mineborn</defName>
+    <baseDesc>[PAWN_nameDef] was born underground and saw the sky for the first time as an adult, if at all. The mine was the whole world: the clan, the shaft, the pitvipers, the songs. [PAWN_pronoun] was told it was all there was and believed it.</baseDesc>
+    <spawnCategories>
+      <li>RR_Red</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Mining>3</Mining>
+      <Construction>1</Construction>
+    </skillGains>
+    <forcedTraits>
+      <Undergrounder />
+    </forcedTraits>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Scrubber's child</title>
+    <titleShort>Scrubber</titleShort>
+    <defName>RR_Child_Red_Scrubber</defName>
+    <baseDesc>Too small to drill, [PAWN_nameDef] cleaned the machines that did. [PAWN_pronoun] crawled into spaces adults could not reach and came out with the grit of every drill in the shaft under [PAWN_possessive] nails. [PAWN_pronoun] still cannot stand still in a tight space.</baseDesc>
+    <spawnCategories>
+      <li>RR_Red</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Crafting>2</Crafting>
+      <Mining>2</Mining>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Childhood</slot>
+    <title>Clan singer</title>
+    <titleShort>Singer</titleShort>
+    <defName>RR_Child_Red_Singer</defName>
+    <baseDesc>Every clan keeps its songs, and [PAWN_nameDef] was the child who kept them best. [PAWN_pronoun] sang at the burials and the weddings and the long shifts, and learned early that some songs are sung quietly because the wardens are listening.</baseDesc>
+    <spawnCategories>
+      <li>RR_Red</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Artistic>2</Artistic>
+      <Social>2</Social>
+      <Mining>1</Mining>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Helldiver</title>
+    <titleShort>Helldiver</titleShort>
+    <defName>RR_Adult_Red_Helldiver</defName>
+    <baseDesc>[PAWN_nameDef] rode the drill. Helldivers go where the rock is hottest and the gas is thickest, and most of them do not reach thirty. [PAWN_pronoun] is fast, reckless, and better in a hole than anyone born above ground will ever be.</baseDesc>
+    <spawnCategories>
+      <li>RR_Red</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Mining>5</Mining>
+      <Melee>1</Melee>
+    </skillGains>
+    <forcedTraits>
+      <Nerves>1</Nerves>
+    </forcedTraits>
+    <disallowedTraits>
+      <Wimp />
+    </disallowedTraits>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Drill hand</title>
+    <titleShort>Drillhand</titleShort>
+    <baseDesc>[PAWN_nameDef] worked the shaft: hauling, bracing, feeding the drills, burying the ones the drills ate. Thirty years of it. [PAWN_pronoun] can read rock the way Coppers read ledgers and has exactly as much to show for it.</baseDesc>
+    <defName>RR_Adult_Red_DrillHand</defName>
+    <spawnCategories>
+      <li>RR_Red</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Mining>4</Mining>
+      <Construction>2</Construction>
+    </skillGains>
+    <forcedTraits>
+      <Industriousness>1</Industriousness>
+    </forcedTraits>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Clan elder</title>
+    <titleShort>Elder</titleShort>
+    <defName>RR_Adult_Red_Elder</defName>
+    <baseDesc>[PAWN_nameDef] outlived the drill, which among Reds is itself a kind of rank. [PAWN_pronoun] settled the clan's quarrels, counted its dead and kept its songs, and dealt with the wardens so nobody younger had to.</baseDesc>
+    <spawnCategories>
+      <li>RR_Red</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Social>3</Social>
+      <Mining>2</Mining>
+      <Medicine>1</Medicine>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Surface Red</title>
+    <titleShort>Surface</titleShort>
+    <defName>RR_Adult_Red_Surface</defName>
+    <baseDesc>Not every Red is a miner. [PAWN_nameDef] cleaned the cities the other Colors live in, hauling and scrubbing and sleeping in the dormitories under the streets. [PAWN_pronoun] has seen the sky every day and been told every day that it was not [PAWN_possessive].</baseDesc>
+    <spawnCategories>
+      <li>RR_Red</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Construction>2</Construction>
+      <Cooking>2</Cooking>
+      <Mining>1</Mining>
+    </skillGains>
+  </BackstoryDef>
+
+  <!-- ================================ Rising ==============================
+    Adulthoods only, and only ever listed as a SECOND category on a kind, so
+    the childhood still comes from the pawn's own Color. These are the people
+    who left - the mod's resistance kinds draw from here and from their Color.
+  -->
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Cell fighter</title>
+    <titleShort>Fighter</titleShort>
+    <defName>RR_Adult_Rising_CellFighter</defName>
+    <baseDesc>[PAWN_nameDef] joined the resistance with nothing but anger and was handed a rifle. [PAWN_pronoun] has learned the rest the hard way, in cellars and tunnels and the backs of stolen haulers, and is still alive, which in [PAWN_possessive] line of work counts as seniority.</baseDesc>
+    <spawnCategories>
+      <li>RR_Rising</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Shooting>3</Shooting>
+      <Melee>2</Melee>
+      <Construction>1</Construction>
+    </skillGains>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Tunnel runner</title>
+    <titleShort>Runner</titleShort>
+    <defName>RR_Adult_Rising_TunnelRunner</defName>
+    <baseDesc>Messages, weapons, people - [PAWN_nameDef] moved them through places the Society does not map. [PAWN_pronoun] has been chased by Lurchers and lost them, more than once, and would rather not talk about the times it was close.</baseDesc>
+    <spawnCategories>
+      <li>RR_Rising</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Shooting>2</Shooting>
+      <Social>2</Social>
+    </skillGains>
+    <forcedTraits>
+      <SpeedOffset>1</SpeedOffset>
+    </forcedTraits>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <slot>Adulthood</slot>
+    <title>Turncoat</title>
+    <titleShort>Turncoat</titleShort>
+    <defName>RR_Adult_Rising_Turncoat</defName>
+    <baseDesc>[PAWN_nameDef] had a place in the Society and gave it up. The people [PAWN_pronoun] fights beside now do not fully trust [PAWN_objective], and the people [PAWN_pronoun] left would kill [PAWN_objective] on sight. [PAWN_pronoun] has decided that this is what honesty costs.</baseDesc>
+    <spawnCategories>
+      <li>RR_Rising</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+    <skillGains>
+      <Shooting>2</Shooting>
+      <Melee>2</Melee>
+      <Social>1</Social>
+    </skillGains>
+    <disallowedTraits>
+      <Greedy />
+    </disallowedTraits>
+  </BackstoryDef>
+
+</Defs>
