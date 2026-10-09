@@ -202,6 +202,32 @@ Guard with `PatchOperationFindMod`; put `<success>Always</success>` on individua
 upstream rename degrades quietly instead of spamming red errors.
 *Source: Alpha Genes `1.6/Patches/AlphaMythologyPatch.xml`*
 
+### Backstories are pinned per pawn kind, not per xenotype
+
+```xml
+<backstoryFiltersOverride>
+  <li><categories><li>RR_Red</li><li>RR_Rising</li></categories></li>
+</backstoryFiltersOverride>
+```
+
+`PawnKindDef.backstoryFiltersOverride` replaces the faction's `backstoryFilters` for that kind.
+There is no xenotype-level hook in XML, so Color-specific bios only reach pawns generated from a
+kind that carries the override; colonists and wanderers do not. Every category named must have
+at least one Childhood and one Adulthood, or generation has nothing to pick.
+*Source: VFE Medieval 2 `1.6/Defs/PawnKindDefs_Humanlikes/PawnKinds_Kingdom.xml`; BackstoryDef
+fields from Vanilla Backstories Expanded `1.6/Defs/BackstoryDefs/`*
+
+### In a cloud session, working mods on GitHub stand in for vanilla defs
+
+The game is not on disk in the cloud, so "open a vanilla def of the same type" is impossible
+there. The substitute that keeps the rule's spirit: shallow-clone a public mod that works on 1.6
+and mirror *its* use of the field (`git clone --depth 1 --filter=blob:none`; the GitHub API is
+blocked but raw clones work). Used so far: `juanosarg/AlphaAnimals`, `juanosarg/AlphaBiomes`,
+`juanosarg/AlphaGenes`, `Vanilla-Expanded/VanillaBackstoriesExpanded`,
+`Vanilla-Expanded/VanillaFactionsExpanded-Medieval2`, `Vanilla-Expanded/VanillaPlantsExpanded-MorePlants`.
+A field seen in one of those is a field that loads; a vanilla defName they reference exists.
+Anything with no such example is noted as unverified in the def's header.
+
 ---
 
 ## Biotech facts that shape the whole design

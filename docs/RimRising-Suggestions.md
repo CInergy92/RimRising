@@ -22,6 +22,8 @@ A second rule, from the user's own direction in CLAUDE.md: nothing is done until
 
 ### 1.1 Backstories per Color
 
+> **Drafted 2026-10-09** - `1.6/Defs/BackstoryDefs/Backstories_Colors.xml` plus `backstoryFiltersOverride` on every pawn kind. Unverified in game; see PROGRESS.md "Milestone 11".
+
 **Lore.** A Red was a helldiver or a drill hand; a Gray stood a wall; a Copper filed; a Violet was raised in a Grove; a Gold went to the Institute. Right now every pawn's bio is a vanilla outlander or offworlder, and the bio is the single most-read text on a pawn.
 
 **Mechanism.** `BackstoryDef` is plain XML since 1.4 (`Core/Backstories/*.xml`; `slot Childhood|Adulthood`, `title`, `titleShort`, `baseDesc`, `skillGains`, `workDisables`, `forcedTraits`, `spawnCategories`, `bodyTypeGlobal`). Factions select by `backstoryFilters/categories`, which the mod already sets. Define a category per tier (`RR_Society`, `RR_LowColor`, `RR_Rising`, `RR_Tribe`) and point each faction at it. Twenty childhoods and thirty adulthoods, all original writing, cover the roster; the Color is implied by the text, and the xenotype genes already carry the aptitudes, so `skillGains` can stay small.
@@ -47,6 +49,8 @@ Same mechanism as 1.2, no favour: Sun sells recoilArmor, pulseFists and the impl
 **Effort.** XML. **Verify:** as 1.2.
 
 ### 1.4 Names for the Colors that have none
+
+> **Drafted 2026-10-09** - `1.6/Defs/RulePackDefs/Namers_Unprefixed.xml`, wired to the twelve unprefixed xenotypes. Two-token names throughout; the single-name Pink stays untested.
 
 **Lore.** DESIGN §8b: Red, Pink and Obsidian carry no prefix because the Society files them as property; White, Yellow, Violet, Orange and Brown have none in the reference. Today those eight Colors draw vanilla names, so a Red is "Jenkins" and an Obsidian is "Rebecca". The *absence of a prefix* is the point, but the names themselves should still sound like the caste.
 
@@ -203,6 +207,8 @@ Added after the first pass, at the user's request. Same rules: setting *terms* o
 
 ### 6.1 Pitvipers
 
+> **Drafted 2026-10-09** - `1.6/Defs/ThingDefs_Races/Races_Animal_Pitviper.xml` and its bite chain. The Red toxic-resistance gene was not added (icon ownership).
+
 **Lore.** The venomous snakes of the Red mines; the first thing a helldiver learns to fear.
 
 **Mechanism.** A `ThingDef` animal cloned from `Core/Defs/ThingDefs_Races/Races_Animal_Cobra.xml` (`Cobra` has a venom tool with a `HediffDef` — mirror both, do not point at vanilla's) plus a `PawnKindDef`. Spawn via `wildAnimals` on `RR_HeliumBarrens` and `RR_TerraformedSteppe`, weighted low on the steppe. `RR_Red` and `RR_Red_Ultraheavy` could take a small `damageFactors` reduction against the venom hediff, the way vanilla genes reduce toxic damage, so Reds shrug off what kills a Gold tourist.
@@ -212,6 +218,8 @@ Added after the first pass, at the user's request. Same rules: setting *terms* o
 **Effort.** XML+art (a 128 px top-down snake in the existing item pipeline; vanilla's cobra is three frames, one is enough). **Verify:** `wildAnimals` field on `BiomeDef`; `damageFactors` on `GeneDef` accepts a hediff-applying damage, or whether the resistance needs `statFactors ToxicResistance` instead.
 
 ### 6.2 Haemanthus
+
+> **Drafted 2026-10-09** - `1.6/Defs/ThingDefs_Plants/Plants_RimRising.xml`, wild on the barrens.
 
 **Lore.** The red flower that grows underground in the mines; the one beautiful thing a Red clan owns.
 

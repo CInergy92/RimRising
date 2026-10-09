@@ -1330,6 +1330,68 @@ entry — every `<tools>` entry must be a `ToolCE`, guns included, and
 
 ---
 
+## Milestone 11 — backstories, name pools, mine fauna (drafted in the cloud, 2026-10-09)
+
+Drafted on branch `review/2026-10-08` by a session with no game install, so **nothing here has
+loaded yet.** Every structure was mirrored from a working 1.6 mod on GitHub rather than from
+memory (Vanilla Backstories Expanded, Vanilla Factions Expanded - Medieval 2, Alpha Animals,
+Alpha Biomes, Vanilla Plants Expanded - More Plants); the Python checker passes and every file
+parses, which is all that can be said from there. Suggestions 1.1, 1.4, 6.1 and 6.2.
+
+### What was added
+
+- **81 backstories**, `Defs/BackstoryDefs/Backstories_Colors.xml`. Two or three childhoods and
+  three to five adulthoods per Color under spawn categories `RR_<Color>`, plus an `RR_Rising`
+  category of adulthoods only. Every concrete pawn kind now carries `backstoryFiltersOverride`
+  naming its Color; the five resistance kinds add `RR_Rising`. Skill gains are small on purpose -
+  the genes already carry aptitude.
+- **Name pools for the eight unprefixed Colors**, `Defs/RulePackDefs/Namers_Unprefixed.xml`:
+  Obsidian patronymics (gendered via `nameMakerFemale`), Red "given + shaft" place-names, Pink
+  "given + Garden", a Violet pool, and the existing highborn/servant pools unprefixed for
+  White/Yellow and Orange/Brown. Twelve xenotypes gained `nameMaker`; still no prefix on any.
+- **Pitviper**, `Defs/ThingDefs_Races/Races_Animal_Pitviper.xml`: a small venomous snake on the
+  vanilla `Snake` body, wild on the barrens (0.7) and rarely on the steppe (0.08). Its bite is a
+  capacity → maneuver → damage chain in the matching vanilla folders, landing on vanilla
+  `ToxicBuildup` scaled by `ToxicResistance`.
+- **Haemanthus**, `Defs/ThingDefs_Plants/Plants_RimRising.xml`: a Beauty-20 flower with
+  `growMinGlow 0`, wild in clusters on the barrens, sowable in ground and pots.
+- Placeholder textures for the snake (six facings) and the flower (three variants) were written
+  by hand in the placeholder script's style; `New-PlaceholderTextures.ps1` leaves existing files
+  alone, so running it is still safe.
+
+### What to click in game
+
+1. **Backstories.** Dev mode → spawn `RR_Society_Red_Laborer`, `RR_Ares_Gray_Defector`,
+   `RR_Tribe_Obsidian_Warrior`, `RR_Society_Pink_Companion`. Open each bio: the childhood and
+   adulthood titles should be from this file (Mine-born / Helldiver, Barracks child / Deserter,
+   and so on), never a vanilla one. If any kind shows a vanilla bio, the override did not take
+   for that kind. If a kind throws on generation, a category has no backstory for that slot -
+   `RR_Rising` is adulthood-only and must never be a kind's sole category.
+2. **Names.** Same pawns: a Red should read "Hesk Kardun"-style, an Obsidian "Hakon Ormsson"
+   or "Brynja Ormsdottir" by gender, a Pink "Lira Amaressa". No prefix on any of them. A
+   three-token or quoted name means `NameTriple` parsed the pool differently than expected.
+3. **Colonists are NOT covered.** Starting pawns and wanderers still draw vanilla bios. That
+   needs a C# postfix keyed on xenotype (the file header says where). Expected, not a bug.
+4. **Pitviper.** Settle on helium barrens, or dev-spawn `RR_Pitviper`. It should render with
+   the placeholder (letter and arrow, so facing is checkable), hunt rats, and a bite should add
+   toxic buildup to the victim's health tab. Butchering should give lizard leather. Check the
+   log for a `Snake` body or `Mouth` group complaint - those two names come from Alpha Animals'
+   use of them, not from reading Core.
+5. **Haemanthus.** Barrens map: clusters of the flower should be present at generation.
+   Sow one in a growing zone and in a plant pot; it should appear in both lists. Unroof a
+   mountain cell with no light and sow there - it should grow.
+6. **Validator.** `pwsh -File Tools/Test-ModDefs.ps1` - the new folders are standard names so
+   the scan should pick them up with no change.
+
+### Left out on purpose
+
+- A Red `ToxicResistance` gene (so the pitviper spares Reds) - its icon lives under
+  `UI/Icons/Genes`, which `New-XenotypeIcons.ps1` owns, so it needs a glyph recipe first.
+- Single-name Pinks - not verified against `NameTriple.FromString`.
+- The `RR_Rising` category on `RR_Society_*` kinds - the Society does not employ defectors.
+
+---
+
 ## Known errors
 
 None outstanding. One found and fixed on first load — see "First in-game load" above.
