@@ -56,7 +56,9 @@ User's decisions, applied and checked in game (`rrtestmode=kinds`, 30 per kind):
 
 Plate rate at 30 samples: knights 18/30, Praetors 14/30, Bronzies 23/30. The earlier 10-sample swings were noise.
 
-Still open: RV-10 for the ordinary razor (Society Obsidian Knights can generate holding one, which triggers the "lesser Color bore a razor" thought). Not done: RV-16 (starShell in game), RV-18 (cosmetic).
+**RV-10, ordinary razors are Gold-only at generation:** the razor carries a mod-owned `RR_RazorBearer` tag in place of `UltratechMelee`, given to the four Gold/Bronzie kinds. At 30 per kind: knights 0 razors, Praetors 7, Bronzies 3.
+
+Not done: RV-16 (starShell in game), RV-18 (cosmetic).
 
 ---
 

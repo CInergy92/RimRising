@@ -89,7 +89,11 @@
     <smeltable>false</smeltable>
     <burnableByRecipe>false</burnableByRecipe>
     <weaponTags>
-      <li>UltratechMelee</li>
+      <!-- Gold-only at generation (user's call): only the Gold and Bronzie kinds
+           carry RR_RazorBearer. Under vanilla UltratechMelee any kind with that
+           tag could roll a razor - Society Obsidian Knights did, and each one
+           handed hierarchy believers the lesser-Color-bore-a-razor thought. -->
+      <li>RR_RazorBearer</li>
       <!-- Keyed on by the caste restriction in Source/RimRising/HarmonyPatches.cs. -->
       <li>RR_CasteRestricted</li>
     </weaponTags>

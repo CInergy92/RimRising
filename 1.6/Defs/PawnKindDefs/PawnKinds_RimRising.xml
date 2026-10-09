@@ -179,6 +179,7 @@
       <li>IndustrialBasic</li>
     </apparelTags>
     <weaponTags>
+      <li>RR_RazorBearer</li>
       <li>SpacerGun</li>
       <li>UltratechMelee</li>
     </weaponTags>
@@ -214,6 +215,7 @@
       <li>IndustrialBasic</li>
     </apparelTags>
     <weaponTags>
+      <li>RR_RazorBearer</li>
       <li>UltratechMelee</li>
       <li>SpacerGun</li>
     </weaponTags>
@@ -267,6 +269,7 @@
       <li>IndustrialBasic</li>
     </apparelTags>
     <weaponTags>
+      <li>RR_RazorBearer</li>
       <li>UltratechMelee</li>
       <li>SpacerGun</li>
     </weaponTags>
@@ -560,6 +563,7 @@
       <li>IndustrialBasic</li>
     </apparelTags>
     <weaponTags>
+      <li>RR_RazorBearer</li>
       <li>RR_RisingWeapon</li>
       <li>UltratechMelee</li>
       <li>SpacerGun</li>
