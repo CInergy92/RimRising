@@ -378,4 +378,92 @@
     </value>
   </Operation>
 
+  <!-- ============================ heirloom razor ===========================
+    The same blade as RR_Weapon_Razor, bonded. Numbers copied from the razor's
+    patch above so the two cannot drift. -->
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Weapon_Razor_Heirloom"]/tools</xpath>
+    <value>
+      <tools>
+        <li Class="CombatExtended.ToolCE">
+          <label>hilt</label>
+          <capacities>
+            <li>Blunt</li>
+          </capacities>
+          <power>4</power>
+          <cooldownTime>1.30</cooldownTime>
+          <chanceFactor>0.1</chanceFactor>
+          <armorPenetrationBlunt>0.85</armorPenetrationBlunt>
+          <linkedBodyPartsGroup>Handle</linkedBodyPartsGroup>
+        </li>
+        <li Class="CombatExtended.ToolCE">
+          <label>edge</label>
+          <capacities>
+            <li>Cut</li>
+          </capacities>
+          <power>40</power>
+          <cooldownTime>0.70</cooldownTime>
+          <armorPenetrationBlunt>3.80</armorPenetrationBlunt>
+          <armorPenetrationSharp>26.50</armorPenetrationSharp>
+          <linkedBodyPartsGroup>Edge</linkedBodyPartsGroup>
+        </li>
+        <li Class="CombatExtended.ToolCE">
+          <label>point</label>
+          <capacities>
+            <li>Stab</li>
+          </capacities>
+          <power>18</power>
+          <cooldownTime>0.82</cooldownTime>
+          <armorPenetrationBlunt>1.30</armorPenetrationBlunt>
+          <armorPenetrationSharp>34.00</armorPenetrationSharp>
+        </li>
+      </tools>
+    </value>
+  </Operation>
+
+  <!-- ============================== slingBlade =============================
+    A curved steel cutting tool. Placed under CE's gladius: sharp penetration in
+    the low teens of millimetres, blunt modest. First placement - judge in play. -->
+
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/ThingDef[defName="RR_Weapon_SlingBlade"]/tools</xpath>
+    <value>
+      <tools>
+        <li Class="CombatExtended.ToolCE">
+          <label>haft</label>
+          <capacities>
+            <li>Blunt</li>
+          </capacities>
+          <power>5</power>
+          <cooldownTime>1.40</cooldownTime>
+          <chanceFactor>0.15</chanceFactor>
+          <armorPenetrationBlunt>1.20</armorPenetrationBlunt>
+          <linkedBodyPartsGroup>Handle</linkedBodyPartsGroup>
+        </li>
+        <li Class="CombatExtended.ToolCE">
+          <label>edge</label>
+          <capacities>
+            <li>Cut</li>
+          </capacities>
+          <power>16</power>
+          <cooldownTime>1.10</cooldownTime>
+          <armorPenetrationBlunt>1.50</armorPenetrationBlunt>
+          <armorPenetrationSharp>12.00</armorPenetrationSharp>
+          <linkedBodyPartsGroup>Edge</linkedBodyPartsGroup>
+        </li>
+        <li Class="CombatExtended.ToolCE">
+          <label>hook</label>
+          <capacities>
+            <li>Stab</li>
+          </capacities>
+          <power>12</power>
+          <cooldownTime>1.25</cooldownTime>
+          <armorPenetrationBlunt>0.90</armorPenetrationBlunt>
+          <armorPenetrationSharp>14.00</armorPenetrationSharp>
+        </li>
+      </tools>
+    </value>
+  </Operation>
+
 </Patch>

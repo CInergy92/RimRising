@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The heirloom razor. Suggestion 1.5.
+
+  Razors are named, kept for generations and handed down inside a house. Royalty's
+  persona weapons are exactly that mechanic: a weapon that bonds to one wielder,
+  carries traits, and has a generated name. The project's original plan for the razor
+  (Weapons_RimRising.xml) was "the razor becomes a persona weapon"; it was dropped when
+  Royalty was not yet a dependency. It is now.
+
+  STRUCTURE. ParentName BaseWeapon_Bladelink, which is Royalty's abstract for persona
+  melee weapons - mirrored from Vanilla Factions Expanded - Empire's
+  VFEE_MeleeWeapon_ToxbladeBladelink (1.6/Defs/ThingDefs_Misc/Weapons/MeleeBladelink.xml),
+  which inherits the bladelink and generated-name comps from that parent and declares
+  nothing of its own but stats, graphic, sounds, classes and tools. This def does the
+  same, and the tool numbers are the ordinary razor's.
+
+  WHAT IT DOES NOT HAVE: the whip. The ordinary razor replaces its inherited comps
+  with Inherit="False" to swap CompEquippable for CompEquippableAbility; doing that
+  here would discard the parent's bladelink comps too, and their field set is not
+  visible from this session. So the heirloom is the rigid blade only, bonded and
+  named. If CompEquippableAbility can sit beside the inherited comps without
+  doubling CompEquippable, adding the whip is a two-line change - that is the test
+  for Opus in docs/Opus-Notes.md. Until then, the heirloom and the whip are two
+  different razors, which is defensible: an heirloom is carried for what it means.
+
+  NEVER CRAFTED. No recipeMaker. generateCommonality low, tradeability None - it is
+  found on a dead Olympic Knight or granted by a quest, never built or bought.
+  tradeability values and generateCommonality seen on VFE/VWE weapons.
+
+  RR_RazorBearer + RR_CasteRestricted so the Harmony restriction applies and only
+  Gold and Bronzie kinds roll it. A bonded weapon that will not let a Red hold it is
+  the setting's own line about razors, for free.
+
+  CE: 1.6/Mods/CombatExtended/Patches/Weapons_RimRising.xml patches its tools, as
+  the validator requires (CEToolsUnpatched).
+-->
+<Defs>
+
+  <ThingDef ParentName="BaseWeapon_Bladelink">
+    <defName>RR_Weapon_Razor_Heirloom</defName>
+    <label>heirloom razor</label>
+    <description>A razor that has been carried before. The hilt is worn to the shape of several hands, and the blade has a name that was given to it in another century by someone who is now a portrait.\n\nIt will bond to one bearer and refuse every other. The house it came from would say that is the blade recognising blood. The Orange who serviced it would say it is a lock.</description>
+    <techLevel>Ultra</techLevel>
+    <equippedAngleOffset>-65</equippedAngleOffset>
+    <graphicData>
+      <texPath>Things/Item/Equipment/WeaponMelee/RR_RazorHeirloom</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <soundInteract>Interact_BladelinkMonoSword</soundInteract>
+    <meleeHitSound>MeleeHit_BladelinkMonoSword</meleeHitSound>
+    <statBases>
+      <MarketValue>4200</MarketValue>
+      <Mass>1.4</Mass>
+    </statBases>
+    <generateCommonality>0.3</generateCommonality>
+    <tradeability>None</tradeability>
+    <smeltable>false</smeltable>
+    <burnableByRecipe>false</burnableByRecipe>
+    <weaponTags>
+      <li>RR_RazorBearer</li>
+      <li>RR_CasteRestricted</li>
+    </weaponTags>
+    <weaponClasses>
+      <li>Melee</li>
+      <li>Ultratech</li>
+      <li>MeleePiercer</li>
+    </weaponClasses>
+    <tools>
+      <li>
+        <label>hilt</label>
+        <capacities>
+          <li>Blunt</li>
+        </capacities>
+        <power>10</power>
+        <cooldownTime>1.5</cooldownTime>
+      </li>
+      <li>
+        <label>point</label>
+        <capacities>
+          <li>Stab</li>
+        </capacities>
+        <power>26</power>
+        <cooldownTime>1.9</cooldownTime>
+        <armorPenetration>0.95</armorPenetration>
+      </li>
+      <li>
+        <label>edge</label>
+        <capacities>
+          <li>Cut</li>
+        </capacities>
+        <power>27</power>
+        <cooldownTime>1.9</cooldownTime>
+        <armorPenetration>0.95</armorPenetration>
+      </li>
+    </tools>
+  </ThingDef>
+
+</Defs>

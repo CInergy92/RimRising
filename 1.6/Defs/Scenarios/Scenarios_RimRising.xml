@@ -177,6 +177,12 @@
         </li>
 
         <!-- What you can carry out of a flooding shaft, and no more. -->
+        <!-- "You have a drill": the tool every Red holds all day (Weapons_SlingBlade_RimRising.xml). -->
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>RR_Weapon_SlingBlade</thingDef>
+          <count>3</count>
+        </li>
         <li Class="ScenPart_StartingThing_Defined">
           <def>StartingThing_Defined</def>
           <thingDef>MealSimple</thingDef>

@@ -219,6 +219,39 @@ def reaper_razor(size=256):
     return cv.finish(1.0)
 
 
+def sling_blade(size=256):
+    """The Red's mining tool (suggestion 1.7): a short wooden haft with a steel
+    hook-blade, the reaper's curve at a smaller scale. Drawn with the reaper's
+    arc code so the family resemblance is literal. No stud - it is a tool."""
+    cv = Canvas(size)
+    ax = Axis((0.14, 0.88), (0.52, 0.52))            # the haft, lower-left to centre
+    dark = ax.side(cv)
+    w = 0.040
+    haft = cv.poly([ax.at(0.0, w), ax.at(1.0, w * 0.85), ax.at(1.0, -w * 0.85), ax.at(0.0, -w)])
+    cv.part(haft, "grip", dark)
+    for tb in (0.12, 0.88):                           # iron bands at both ends
+        band = cv.poly([ax.at(tb - 0.03, w + 0.005), ax.at(tb + 0.03, w + 0.005),
+                        ax.at(tb + 0.03, -w - 0.005), ax.at(tb - 0.03, -w - 0.005)])
+        cv.part(band, "steel", dark, panel_px=2.0)
+    acx, acy, arad = 0.58, 0.46, 0.27                 # the hook: a tighter arc than the reaper's
+    a0, a1, steps = 120.0, -40.0, 36
+    outer, inner, edge = [], [], []
+    for i in range(steps + 1):
+        f = i / steps
+        ang = math.radians(a0 + (a1 - a0) * f)
+        hw = 0.046 * (1 - f) + 0.004 * f
+        cx, cy = acx + arad * math.cos(ang), acy + arad * math.sin(ang)
+        rx, ry = math.cos(ang), math.sin(ang)
+        outer.append((cx + rx * hw, cy + ry * hw))
+        inner.append((cx - rx * hw, cy - ry * hw))
+        edge.append((cx - rx * hw * 0.55, cy - ry * hw * 0.55))
+    blade = cv.poly(outer + inner[::-1])
+    dist = np.sqrt((cv.x - acx) ** 2 + (cv.y - acy) ** 2)
+    cv.part(blade, "steel", dist > arad)
+    cv.line(edge[2:-3], 2.0, "edge")
+    return cv.finish(1.0)
+
+
 def whip_icon(size=128):
     """Ability icon, whip form: the grip at lower left and the blade uncoiled into
     a long tapering S-curve, with two motion lines - the razor gone slack."""
@@ -263,6 +296,7 @@ def lash_line(size=256):
 OUTPUTS = {
     "Things/Item/Equipment/WeaponMelee/RR_Razor": razor,
     "Things/Item/Equipment/WeaponMelee/RR_ReaperRazor": reaper_razor,
+    "Things/Item/Equipment/WeaponMelee/RR_SlingBlade": sling_blade,
     "UI/Abilities/RR_RazorWhip": whip_icon,
     "Things/Mote/RR_RazorLashLine": lash_line,
     # The razor-bearing precept's icon: the razor itself at icon size, so the

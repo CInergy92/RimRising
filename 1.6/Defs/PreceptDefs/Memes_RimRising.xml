@@ -117,6 +117,15 @@
       <li>
         <li>RR_ArmorBearing_Restricted</li>
       </li>
+      <!-- Standing is settled by the blade. Rituals_RazorTrial.xml; required for the
+           same reason as everything else in this list. -->
+      <li>
+        <li>RR_Ritual_RazorTrial</li>
+      </li>
+      <!-- Each to their trade. Precepts_CasteLabor.xml. -->
+      <li>
+        <li>RR_CasteLabor_Confined</li>
+      </li>
       <!--
         SCARS. Vanilla Ideology already models this completely - the Scarification
         issue, its tiers, and the ScarificationCeremony ritual - and none of those
@@ -285,6 +294,9 @@
       </li>
       <li>
         <li>RR_Carving_Liberation</li>
+      </li>
+      <li>
+        <li>RR_CasteLabor_Open</li>
       </li>
       <!-- The mirror of RR_ArmorBearing_Restricted, and required for the same
            reason: without it an equality ideoligion could take no stance on the

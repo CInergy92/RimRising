@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The slingBlade. Suggestion 1.7.
+
+  The Reaper's razor is shaped like a mining tool, and the tool itself was missing:
+  the thing every Red holds all day. A curved cutting blade on a short haft, cheap,
+  Industrial, made of steel at a smithy with no research. It sits between a gladius
+  and an ikwa in numbers and it is what a resistance raid should arrive holding
+  beside its assault rifles.
+
+  STRUCTURE mirrored from RR_Weapon_Razor in Weapons_RimRising.xml (BaseMeleeWeapon,
+  graphicData, statBases, recipeMaker, costList, weaponTags, weaponClasses, tools),
+  minus everything the razor restates for its ability comp - the comps are inherited
+  as vanilla's own melee weapons inherit them. The recipe users are vanilla's smithies
+  (the fuelled and electric smithy are where vanilla's gladius is made).
+
+  TAGGED RR_RisingWeapon so the Sons of Ares kinds can roll it, and added to the
+  Breakout start (Scenarios_RimRising.xml, "you have a drill"). The Society's Red
+  laborers carry no weapon tag at all and that is left alone: the Society does not
+  arm its Reds.
+
+  CE: tools patched in 1.6/Mods/CombatExtended/Patches/Weapons_RimRising.xml
+  (CEToolsUnpatched). Sprite: Tools/Draw-Weapons.py (sling_blade). Melee Animation
+  tweak data: WeaponTweakData/RR_Weapon_SlingBlade_cinergy92.rimrising.json via
+  Tools/Derive-MeleeTweak.py, type 2 (Long_Sharp - a curved cutting weapon, unlike
+  the razors, which are 6 for the reasons CLAUDE.md gives).
+-->
+<Defs>
+
+  <ThingDef ParentName="BaseMeleeWeapon">
+    <defName>RR_Weapon_SlingBlade</defName>
+    <label>slingBlade</label>
+    <description>A helldiver's tool: a curved blade on a short haft, for cutting cable, clearing a drill head and, when it comes to it, settling a disagreement in a tunnel. Every Red is issued one and every Red keeps it sharp.\n\nIt is not a weapon. The Society is very clear about that, and the Society has never been in a tunnel.</description>
+    <techLevel>Industrial</techLevel>
+    <equippedAngleOffset>-65</equippedAngleOffset>
+    <graphicData>
+      <texPath>Things/Item/Equipment/WeaponMelee/RR_SlingBlade</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <statBases>
+      <WorkToMake>4500</WorkToMake>
+      <MarketValue>140</MarketValue>
+      <Mass>1.8</Mass>
+    </statBases>
+    <recipeMaker>
+      <skillRequirements>
+        <Crafting>3</Crafting>
+      </skillRequirements>
+      <recipeUsers Inherit="False">
+        <li>FueledSmithy</li>
+        <li>ElectricSmithy</li>
+      </recipeUsers>
+      <displayPriority>200</displayPriority>
+    </recipeMaker>
+    <costList>
+      <Steel>40</Steel>
+      <WoodLog>15</WoodLog>
+    </costList>
+    <weaponTags>
+      <li>RR_RisingWeapon</li>
+      <li>IndustrialMeleeDecent</li>
+    </weaponTags>
+    <weaponClasses>
+      <li>MeleeBlunt</li>
+    </weaponClasses>
+    <tools>
+      <li>
+        <label>haft</label>
+        <capacities>
+          <li>Blunt</li>
+        </capacities>
+        <power>9</power>
+        <cooldownTime>1.6</cooldownTime>
+      </li>
+      <li>
+        <label>hook</label>
+        <capacities>
+          <li>Stab</li>
+        </capacities>
+        <power>14</power>
+        <cooldownTime>2.2</cooldownTime>
+        <armorPenetration>0.25</armorPenetration>
+      </li>
+      <li>
+        <label>edge</label>
+        <capacities>
+          <li>Cut</li>
+        </capacities>
+        <power>17</power>
+        <cooldownTime>2.0</cooldownTime>
+        <armorPenetration>0.28</armorPenetration>
+      </li>
+    </tools>
+  </ThingDef>
+
+</Defs>
