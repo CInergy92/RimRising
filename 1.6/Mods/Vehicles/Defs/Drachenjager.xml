@@ -180,13 +180,16 @@
         <texPath>UI/Gizmos/FireRate_Single</texPath>
       </li>
     </fireModes>
-    <graphicData>
-      <texPath>Things/Vehicles/RR_Drachenjager/RR_Drachenjager_WarheadRack</texPath>
-      <graphicClass>Vehicles.Graphic_Turret</graphicClass>
-      <shaderType>Cutout</shaderType>
-      <!-- Stays wider than the cannon: it sits on the back and spans the pack. -->
-      <drawSize>(3, 3)</drawSize>
-    </graphicData>
+    <!--
+      NO graphicData, on purpose (user's call, 2026-10-09). The body art already
+      paints the spiked warhead pack, and a turret graphic is one top-down texture
+      for every facing, so on the side profile it lay across the pack sideways.
+      Decompiled: VehicleTurret.NoGraphic (graphicData == null) only skips drawing -
+      render, ghost, pattern, blit - never aiming or firing, and the projectile
+      still leaves from the renderProperties offset. The framework's config check
+      then requires gizmoIconTexPath, so the gizmo keeps the rack's own texture.
+    -->
+    <gizmoIconTexPath>Things/Vehicles/RR_Drachenjager/RR_Drachenjager_WarheadRack</gizmoIconTexPath>
     <ammunition>
       <thingDefs>
         <li>Uranium</li>
@@ -469,12 +472,17 @@
               drawSize (6,8) sprite is ((0.155-0.5)*6, (0.5-0.285)*8) = (-2.07,
               1.72), pulled in to (-1.8, 1.6) so a 3x3 turret does not hang off the
               sprite's left edge.
+
+              2026-10-09, after the canon redesign (headless humanoid, six arms,
+              Tools/Gen-Vehicle.ps1): the front-left elbow cannon's cyan emitter
+              sits at normalised (0.053, 0.443) on the north sprite, i.e. (-2.68,
+              0.46), pulled in to (-2.0, 0.5) by the same rule.
             -->
             <renderProperties>
-              <north>(-1.8, 1.6)</north>
-              <east>(1.6, 1.8)</east>
-              <south>(1.8, -1.6)</south>
-              <west>(-1.6, -1.8)</west>
+              <north>(-2.0, 0.5)</north>
+              <east>(0.5, 2.0)</east>
+              <south>(2.0, -0.5)</south>
+              <west>(-0.5, -2.0)</west>
             </renderProperties>
           </li>
           <li>

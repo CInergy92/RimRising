@@ -58,7 +58,7 @@ def bbox(a):
     return xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
 
 
-def place(gen, ref, width_only=False):
+def place(gen, ref, width_only=False, contain=False):
     """Resample gen's opaque area into ref's opaque box, at ref's size.
 
     width_only: match the reference's WIDTH and bottom edge and keep the
@@ -69,7 +69,16 @@ def place(gen, ref, width_only=False):
     gx0, gy0, gx1, gy1 = bbox(gen[..., 3] > 0.5)
     crop = gen[gy0:gy1, gx0:gx1].copy()
     crop[..., :3] *= crop[..., 3:4]
-    if width_only:
+    if contain:
+        # Keep the generated aspect, fit INSIDE the reference box, centred - a
+        # redesign whose outline the reference does not share (the Drachenjager).
+        s = min((rx1 - rx0) / (gx1 - gx0), (ry1 - ry0) / (gy1 - gy0))
+        w, h = int(round((gx1 - gx0) * s)), int(round((gy1 - gy0) * s))
+        cx, cy = (rx0 + rx1) // 2, (ry0 + ry1) // 2
+        rx0, ry0 = cx - w // 2, cy - h // 2
+        rx1, ry1 = rx0 + w, ry0 + h
+        small = cw.resize(crop, w, h)
+    elif width_only:
         w = rx1 - rx0
         h = int(round((gy1 - gy0) * w / (gx1 - gx0)))
         ry0 = max(0, ry1 - h)
@@ -101,7 +110,7 @@ if __name__ == "__main__":
     scale = 4                                   # work at 4x the sprite, then reduce
     big_ref = cw.resize(ref, ref.shape[1] * scale, ref.shape[0] * scale)
     gen = cutout(cw.load_rgba(gen_p))
-    img = place(gen, big_ref, width_only="--width-only" in a)
+    img = place(gen, big_ref, width_only="--width-only" in a, contain="--contain" in a)
 
     mask = None
     if dyed:

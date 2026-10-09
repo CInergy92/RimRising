@@ -230,6 +230,11 @@ namespace RimRising
             }
             Directory.CreateDirectory(outDir);
 
+            if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string vmode) && vmode == "vehicle")
+            {
+                BuildVehicle();
+                return;
+            }
             if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string imode) && imode == "items")
             {
                 BuildItems();
@@ -291,6 +296,40 @@ namespace RimRising
 
             Find.TickManager.CurTimeSpeed = TimeSpeed.Paused;
             Log.Message($"[RimRising] TESTSCENE built: {defs.Count} armours x {bodies.Length} bodies x {Facings.Length} facings at {area}; left to right: " + string.Join(", ", defs.Select(d => d.defName)));
+        }
+
+        /// <summary>
+        /// rrtestmode=vehicle: the Drachenjager facing south, east and north, side by
+        /// side. Spawned through Vehicle Framework's VehicleSpawner.GenerateVehicle by
+        /// reflection, so this assembly takes no compile-time dependency on it.
+        /// </summary>
+        private void BuildVehicle()
+        {
+            TargetOrtho = 6.5f;
+            System.Type vdef = GenTypes.GetTypeInAnyAssembly("Vehicles.VehicleDef");
+            ThingDef def = vdef == null ? null : GenDefDatabase.GetDef(vdef, "RR_Drachenjager", false) as ThingDef;
+            System.Type spawner = GenTypes.GetTypeInAnyAssembly("Vehicles.VehicleSpawner");
+            var gen = spawner?.GetMethods().FirstOrDefault(m => m.Name == "GenerateVehicle" && m.GetParameters().Length == 2
+                && m.GetParameters()[1].ParameterType == typeof(Faction));
+            if (def == null || gen == null)
+            {
+                Log.Warning($"[RimRising] VEHICLE: def {(def != null)}, spawner {(gen != null)} - Vehicle Framework not active?");
+                return;
+            }
+            IntVec3 c = map.Center;
+            area = new CellRect(c.x - 14, c.z - 6, 29, 13).ClipInsideMap(map);
+            Clear(area.ExpandedBy(3).ClipInsideMap(map));
+            SetNoon();
+            Rot4[] rots = { Rot4.South, Rot4.East, Rot4.North };
+            for (int i = 0; i < rots.Length; i++)
+            {
+                var v = (Pawn)gen.Invoke(null, new object[] { def, Faction.OfPlayer });
+                GenSpawn.Spawn(v, new IntVec3(c.x - 10 + i * 10, 0, c.z), map, rots[i]);
+                v.Rotation = rots[i];
+            }
+            shots.Add(("vehicle", new Vector3(c.x + 0.5f, 0f, c.z + 0.5f), 0f));
+            Find.TickManager.CurTimeSpeed = TimeSpeed.Paused;
+            Log.Message("[RimRising] TESTSCENE built vehicle");
         }
 
         private static readonly string[] OurItems =

@@ -44,3 +44,8 @@ Art/Gen/Armor/**/style_*_2.png
 Art/Gen/Weapons/gen_*.png
 Art/Gen/Weapons/ref_*.png
 !Art/Gen/Armor/Pulse/gen_Male_south.png
+Art/Gen/Vehicles/**/gen_*.png
+Art/Gen/Vehicles/**/ref_*.png
+Art/Gen/Vehicles/**/style_*.png
+Art/Gen/Vehicles/**/dj_south.png
+Art/Gen/Vehicles/**/dj_south_2.png

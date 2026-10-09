@@ -19,6 +19,15 @@ if __name__ == "__main__":
     src, dst = os.path.abspath(a[0]), os.path.abspath(a[1])
     size = int(a[2]) if len(a) > 2 else 1024
     img = cw.load_rgba(src)
+    # Pad to a square first, centred, so a non-square sprite (a 768x1024
+    # vehicle body) is not squashed; Clean-GenWorn.py fits by bounding box, so
+    # the padding costs nothing on the way back.
+    h, w = img.shape[:2]
+    if h != w:
+        n = max(h, w)
+        sq = np.zeros((n, n, 4), np.float32)
+        sq[(n - h) // 2:(n - h) // 2 + h, (n - w) // 2:(n - w) // 2 + w] = img
+        img = sq
     img = cw.resize(img, size, size)
     al = img[..., 3:4]
     out = np.ones((size, size, 4), np.float32)
