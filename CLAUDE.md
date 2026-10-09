@@ -483,6 +483,18 @@ measurements above remain the registration target - generate the detail, then fi
 result back onto the measured box / the procedural silhouette by script. The starShell
 (`Tools/Clean-GenStarShell.py`) is the first worked example.
 
+The general pipeline, used for every armour, the demonHelm and every weapon:
+`Tools/Gen-WornSet.ps1` (armour, all bodies and facings, base and Realistic Body) and
+`Tools/Gen-Weapons.ps1` feed each existing sprite to `openai/gpt-image-2/edit` as the silhouette
+reference plus ONE approved style image, then `Tools/Clean-GenWorn.py` cuts out the white, fits the
+result onto the original's box (`--width-only` lets a redesign rise past the old top, as the horned
+helm does), turns GOLD into the dye mask (`--dyed`) and outlines it. Originals are kept in
+`Art/Gen/*/orig/` as the fit target for reruns; both scripts are resumable. Lessons: pick the style
+image by eye before batching; check the game's Realistic Body folder too, since the user runs it and it
+overrides Male/Female/Thin; `\w+` in a body-name regex swallows the prefix's underscores (use lazy);
+a run that writes "no image" is usually `Exhausted balance` on fal - read the CLI's error before
+assuming the content was refused.
+
 The body boxes above are confirmed in play for the adult types, tint included.
 
 **The Child row is unreachable, so it never needs measuring.**
