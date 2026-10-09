@@ -346,6 +346,33 @@ namespace RimRising
                 GenSpawn.Spawn(t, new IntVec3(area.minX + a, 0, zv), map);
             }
             shots.Add(("items", new Vector3(area.minX + width / 2f, 0f, area.maxZ - 1.5f * rowGap + 0.5f), 0f));
+
+            // Nature: our flower beside a vanilla one, fully grown, and our snake
+            // beside vanilla's cobra, south and east. Factionless and paused.
+            int zn = area.minZ - rowGap;
+            int col = area.minX;
+            foreach (string pn in new[] { "RR_Haemanthus", "RR_Haemanthus", "RR_Haemanthus", "Plant_Dandelion" })
+            {
+                ThingDef pd = DefDatabase<ThingDef>.GetNamedSilentFail(pn);
+                if (pd == null) { col++; continue; }
+                IntVec3 cell = new IntVec3(col++, 0, zn);
+                foreach (Thing old in cell.GetThingList(map).ToList()) { if (old is Plant) { old.Destroy(); } }
+                var plant = (Plant)ThingMaker.MakeThing(pd);
+                plant.Growth = 1f;
+                GenSpawn.Spawn(plant, cell, map);
+            }
+            foreach (string kn in new[] { "RR_Pitviper", "Cobra" })
+            {
+                PawnKindDef kd = DefDatabase<PawnKindDef>.GetNamedSilentFail(kn);
+                if (kd == null) { col += 2; continue; }
+                foreach (Rot4 rot in new[] { Rot4.South, Rot4.East })
+                {
+                    Pawn an = PawnGenerator.GeneratePawn(new PawnGenerationRequest(kd, null, forceGenerateNewPawn: true));
+                    GenSpawn.Spawn(an, new IntVec3(col++, 0, zn), map, rot);
+                    an.Rotation = rot;
+                }
+            }
+            shots.Add(("nature", new Vector3(area.minX + 4f, 0f, zn + 0.5f), 0f));
             Find.TickManager.CurTimeSpeed = TimeSpeed.Paused;
             Log.Message("[RimRising] TESTSCENE built items: ours " + string.Join(", ", ours.Select(d => d.defName)) +
                         " | vanilla " + string.Join(", ", theirs.Select(d => d.defName)));
