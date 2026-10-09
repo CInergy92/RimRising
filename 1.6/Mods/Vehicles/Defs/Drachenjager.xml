@@ -135,19 +135,14 @@
         <texPath>UI/Gizmos/FireRate_Single</texPath>
       </li>
     </fireModes>
-    <graphicData>
-      <texPath>Things/Vehicles/RR_Drachenjager/RR_Drachenjager_ParticleCannon</texPath>
-      <graphicClass>Vehicles.Graphic_Turret</graphicClass>
-      <shaderType>Cutout</shaderType>
-      <!--
-        Shrunk from (4,4) now that this is arm-mounted rather than centred on the
-        torso. Four cells across, offset 1.8 cells left on a six-cell-wide sprite,
-        puts half the turret off the edge of the mech. At 2.6 it reads as a weapon
-        an arm is carrying. The 512x512 texture is left as it is - drawSize only
-        changes how large it is drawn, so the extra resolution costs nothing.
-      -->
-      <drawSize>(2.6, 2.6)</drawSize>
-    </graphicData>
+    <!--
+      NO graphicData, same as the warhead rack (user's call, 2026-10-09). The body
+      art paints the particle cannons on the elbows, and the top-down turret
+      texture floated over the shoulder on the side profile and doubled them up.
+      Aiming and firing are unaffected; shots still leave from the renderProperties
+      offset below. Cost: the cannon no longer visibly swings toward its target.
+    -->
+    <gizmoIconTexPath>Things/Vehicles/RR_Drachenjager/RR_Drachenjager_ParticleCannon</gizmoIconTexPath>
     <ammunition>
       <thingDefs>
         <li>Plasteel</li>
