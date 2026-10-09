@@ -845,6 +845,35 @@ THIGAPPE's `1.6/Patches/THIGAPPE_GlobalIgnores.xml` skips any apparel whose `app
 `THIGAPPE_IgnoreTag`. Pulse armour carries it; a plain string tag, inert without THIGAPPE. The cost:
 on Realistic Body, bare shins show below the hip plates. Real support would be APP fine-tune Defs.
 
+### A faction that confers titles needs royalTitleInheritanceRelations
+
+`Pawn_RoyaltyTracker.SetTitle` assigns an heir on every grant, and
+`RoyalTitleInheritanceWorker.FindHeir` walks `faction.def.royalTitleInheritanceRelations` with no
+null check; vanilla skips the search only for the Empire. Both our royal factions shipped without
+the list, so **every Society title grant threw**. It loaded clean and went unnoticed until a pawn
+kind used `titleRequired` and generation looped on the exception. Checked by
+`RoyalFactionNoInheritance`.
+
+PawnGenerator order (decompiled): ideoligion, then **title, then gear**. So `titleRequired` on a
+kind is enough to make title-gated apparel wearable at generation.
+
+### More test-scene modes
+
+- `rrtestmode=kinds` generates ten of each kind in `TestScene.Kinds` for a faction that fields it,
+  logging Colour, titles, weapon and apparel. No screenshots; read `Player.log` for `KINDS`.
+- `rrtestmode=whip`: drafted Golds lash targets in four armours, eight rounds, logging damage per
+  lash. The targets are factionless and **flee** when hurt, and a lash at a pawn running out of reach
+  ends without firing. The scene puts them back on their marks every round. Casters are rerolled if
+  they come out pacifist.
+
+### Combat Extended and damage with no verb
+
+CE resolves a **deflected** sharp hit as blunt, taking the blunt penetration from the attacking
+melee verb. A DamageInfo built in code (the whip lash) has none, so CE falls back to the DamageDef's
+`defaultArmorPenetration`, and failing that logs "has null verb, overriding AP" and uses **50**.
+Give such damage its own DamageDef (`RR_RazorLash`, parent `CutBase`) and set the default in the CE
+folder.
+
 ### Persisted state does not retroactively update
 
 A def fix does not repair things already created from the old def. Faction leaders are

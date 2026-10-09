@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    The razor's whip form, drawn hand to target for an instant when it lands.
+    Laid down by FleckMaker.ConnectingLine, which stretches the texture along its
+    X axis to the distance and scales Z to the line width - so the texture is a
+    horizontal line running the full width of its canvas (Tools/Draw-Weapons.py).
+    Mirrored from vanilla's LineEMP in Core/Defs/Effects/Fleck_Visual.xml.
+  -->
+  <FleckDef ParentName="FleckBase">
+    <defName>RR_Fleck_RazorLash</defName>
+    <graphicData>
+      <texPath>Things/Mote/RR_RazorLashLine</texPath>
+    </graphicData>
+    <altitudeLayer>MoteOverhead</altitudeLayer>
+    <solidTime>0.08</solidTime>
+    <fadeOutTime>0.2</fadeOutTime>
+  </FleckDef>
+
+</Defs>

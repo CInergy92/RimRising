@@ -94,6 +94,14 @@ namespace RimRising
                 case 0:
                     // Let the quicktest map settle - colonists spawned, UI up.
                     if (frame < 180) { return; }
+                    if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string m1) && m1 == "whip")
+                    {
+                        BuildWhip();
+                        Find.TickManager.CurTimeSpeed = TimeSpeed.Normal;
+                        stage = 10;
+                        wait = 60;
+                        return;
+                    }
                     if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string m0) && m0 == "kinds")
                     {
                         // No pictures: generation is judged from the log.
@@ -118,6 +126,12 @@ namespace RimRising
                     StartZoomSearch();
                     stage = 4;
                     wait = 30;
+                    return;
+
+                case 10:
+                case 11:
+                case 12:
+                    WhipStep();
                     return;
 
                 case 5:
@@ -343,6 +357,180 @@ namespace RimRising
             Log.Message($"[RimRising] TESTSCENE built weapons at {area}; left to right: " + string.Join(", ", defs.Select(d => d.defName)));
         }
 
+        // rrtestmode=whip: one Gold per row lashes a target five cells away, each
+        // target in different armour; null is bare skin.
+        private static readonly string[] WhipTargetArmor =
+        {
+            null, "RR_Apparel_DuroArmor", "RR_Apparel_PulseArmor", "Apparel_PowerArmor",
+        };
+        private const int WhipReps = 8;
+        private readonly List<(Pawn caster, Pawn target, Ability ability, string armor)> lashers =
+            new List<(Pawn, Pawn, Ability, string)>();
+        private readonly List<List<float>> lashDamage = new List<List<float>>();
+        private int whipRep;
+        private int whipWaited;
+
+        /// <summary>
+        /// rrtestmode=whip: drafted Golds with razors, each facing a pawn five cells
+        /// away in a different armour, lash WhipReps times. Each lash's damage is
+        /// read off the target's injuries (0 = missed, dodged or deflected) and the
+        /// target is healed before the next. The first lash is paused on, so the
+        /// line fleck is in the screenshot.
+        /// </summary>
+        private void BuildWhip()
+        {
+            if (!GenCommandLine.TryGetCommandLineArg("rrtestout", out outDir) || outDir.NullOrEmpty())
+            {
+                outDir = GenFilePaths.ScreenshotFolderPath;
+            }
+            Directory.CreateDirectory(outDir);
+
+            ThingDef razorDef = DefDatabase<ThingDef>.GetNamed("RR_Weapon_Razor");
+            int rows = WhipTargetArmor.Length;
+            IntVec3 c = map.Center;
+            area = new CellRect(c.x - 3, c.z - rows, 8, rows * 2).ClipInsideMap(map);
+            Clear(area.ExpandedBy(3).ClipInsideMap(map));
+            SetNoon();
+
+            for (int r = 0; r < rows; r++)
+            {
+                int z = area.maxZ - r * 2;
+                var req = new PawnGenerationRequest(
+                    PawnKindDefOf.Colonist, Faction.OfPlayer, forceGenerateNewPawn: true,
+                    canGeneratePawnRelations: false, fixedGender: Gender.Male,
+                    forcedXenotype: RR_DefOf.RR_Gold, forceNoIdeo: true,
+                    developmentalStages: DevelopmentalStage.Adult,
+                    fixedBiologicalAge: 30f, fixedChronologicalAge: 30f,
+                    dontGiveWeapon: true, forceNoGear: true);
+                Pawn caster = PawnGenerator.GeneratePawn(req);
+                // A pacifist backstory makes the ability refuse ("incapable of
+                // violence") and silently blanks a whole row - it did once.
+                for (int tries = 0; tries < 20 && caster.WorkTagIsDisabled(WorkTags.Violent); tries++)
+                {
+                    caster = PawnGenerator.GeneratePawn(req);
+                }
+                caster.skills.GetSkill(SkillDefOf.Melee).Level = 12;
+                caster.equipment.DestroyAllEquipment();
+                var razor = (ThingWithComps)ThingMaker.MakeThing(razorDef);
+                caster.equipment.AddEquipment(razor);
+                caster.Name = new NameSingle("Lasher " + r);
+                GenSpawn.Spawn(caster, new IntVec3(area.minX, 0, z), map, Rot4.East);
+                caster.drafter.Drafted = true;
+
+                string armor = WhipTargetArmor[r];
+                ThingDef ad = armor == null ? null : DefDatabase<ThingDef>.GetNamedSilentFail(armor);
+                Pawn target = MakePawn(BodyTypeDefOf.Male, ad, Color.white);
+                target.Name = new NameSingle(armor ?? "unarmoured");
+                GenSpawn.Spawn(target, new IntVec3(area.minX + 5, 0, z), map, Rot4.West);
+                target.jobs.StartJob(JobMaker.MakeJob(JobDefOf.Wait, 60000), Verse.AI.JobCondition.InterruptForced);
+
+                Ability ab = razor.TryGetComp<CompEquippableAbility>()?.AbilityForReading;
+                lashers.Add((caster, target, ab, armor ?? "none"));
+                lashDamage.Add(new List<float>());
+            }
+            shots.Add(("whip", new Vector3(area.minX + 3f, 0f, area.CenterVector3.z), 0f));
+            Log.Message($"[RimRising] WHIP built {rows} rows; ability found: {lashers.All(l => l.ability != null)}");
+        }
+
+        private static float InjurySum(Pawn p) =>
+            p.health.hediffSet.hediffs.OfType<Hediff_Injury>().Sum(h => h.Severity);
+
+        private void WhipStep()
+        {
+            switch (stage)
+            {
+                case 10:   // order every lasher to cast
+                    if (whipRep >= WhipReps)
+                    {
+                        for (int i = 0; i < lashers.Count; i++)
+                        {
+                            List<float> d = lashDamage[i];
+                            Log.Message($"[RimRising] WHIP vs {lashers[i].armor}: {d.Count(x => x > 0)}/{d.Count} drew blood, damage [{string.Join(", ", d.Select(x => x.ToString("F1")))}]");
+                        }
+                        Log.Message("[RimRising] TESTSCENE DONE -> " + outDir);
+                        stage = -1;
+                        if (GenCommandLine.CommandLineArgPassed("rrtestquit")) { Root.Shutdown(); }
+                        return;
+                    }
+                    foreach (var l in lashers)
+                    {
+                        if (l.ability == null) { continue; }
+                        // Hurt factionless targets FLEE, and a lash ordered at a pawn
+                        // running out of reach ends without firing - which read as a
+                        // stalled cast. Put each one back on its mark every round.
+                        IntVec3 mark = new IntVec3(area.minX + 5, 0, l.caster.Position.z);
+                        if (l.target.Spawned && l.target.Position != mark)
+                        {
+                            l.target.Position = mark;
+                            l.target.Notify_Teleported();
+                        }
+                        if (l.target.Spawned && !l.target.Downed)
+                        {
+                            l.target.mindState?.mentalStateHandler?.Reset();
+                            l.target.jobs.StartJob(JobMaker.MakeJob(JobDefOf.Wait, 60000), Verse.AI.JobCondition.InterruptForced);
+                        }
+                        l.ability.ResetCooldown();
+                        bool ordered = l.caster.jobs.TryTakeOrderedJob(l.ability.GetJob(l.target, l.target));
+                        if (!ordered || l.ability.GizmoDisabled(out string why))
+                        {
+                            l.ability.GizmoDisabled(out why);
+                            Log.Warning($"[RimRising] WHIP rep {whipRep} vs {l.armor}: ordered={ordered} disabled={why ?? "-"} target downed={l.target.Downed} spawned={l.target.Spawned} pos={l.target.Position}");
+                        }
+                    }
+                    stage = 11;
+                    wait = 0;
+                    whipWaited = 0;
+                    return;
+
+                case 11:   // wait for all casts to land, i.e. every cooldown started
+                    if (lashers.Any(l => l.ability != null && !l.ability.OnCooldown))
+                    {
+                        if (++whipWaited < 900) { return; }
+                        Log.Warning("[RimRising] WHIP: a cast never landed within 900 frames: " +
+                            string.Join(", ", lashers.Where(l => l.ability != null && !l.ability.OnCooldown)
+                                .Select(l => l.armor + " (" + (l.caster.CurJobDef?.defName ?? "no job") +
+                                    $", dist {l.caster.Position.DistanceTo(l.target.Position):F1}" +
+                                    $", los {GenSight.LineOfSight(l.caster.Position, l.target.Position, map)}" +
+                                    $", target job {l.target.CurJobDef?.defName ?? "-"}" +
+                                    $", stance {l.caster.stances?.curStance?.GetType().Name ?? "-"})")));
+                    }
+                    if (whipRep == 0)
+                    {
+                        Find.TickManager.CurTimeSpeed = TimeSpeed.Paused;
+                        foreach (Window w in Find.WindowStack.Windows.ToList()) { Find.WindowStack.TryRemove(w, false); }
+                        Find.CameraDriver.SetRootPosAndSize(shots[0].centre, 12f);   // Camera+ floor is 11
+                        stage = 12;
+                        wait = 10;
+                        return;
+                    }
+                    RecordLashes();
+                    return;
+
+                case 12:
+                    ScreenCapture.CaptureScreenshot(Path.Combine(outDir, "whip.png"), 2);
+                    Find.TickManager.CurTimeSpeed = TimeSpeed.Normal;
+                    RecordLashes();
+                    return;
+            }
+        }
+
+        private void RecordLashes()
+        {
+            for (int i = 0; i < lashers.Count; i++)
+            {
+                Pawn t = lashers[i].target;
+                lashDamage[i].Add(InjurySum(t));
+                foreach (Hediff h in t.health.hediffSet.hediffs.Where(h => h is Hediff_Injury || h.def == HediffDefOf.BloodLoss).ToList())
+                {
+                    t.health.RemoveHediff(h);
+                }
+                if (t.Downed || t.Dead) { Log.Message($"[RimRising] WHIP target {lashers[i].armor} downed/dead after lash {whipRep}"); }
+            }
+            whipRep++;
+            stage = 10;
+            wait = 30;
+        }
+
         private static readonly string[] Kinds =
         {
             "RR_Society_Obsidian_Knight",
@@ -415,6 +603,8 @@ namespace RimRising
             p.story.bodyType = body;
             p.apparel?.DestroyAll();
             p.equipment?.DestroyAllEquipment();
+
+            if (armor == null) { p.SetFaction(null); return p; }   // rrtestmode=whip's bare target
 
             ThingDef stuff = armor.MadeFromStuff ? GenStuff.DefaultStuffFor(armor) : null;
             var ap = (Apparel)ThingMaker.MakeThing(armor, stuff);

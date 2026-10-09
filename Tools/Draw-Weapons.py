@@ -1,7 +1,7 @@
 """
 Draw the razor family in RimWorld's flat weapon idiom: the two weapon sprites
 (which are also their inventory and ground icons), the whip-form ability icon,
-and the lash projectile.
+and the lash line fleck.
 
 Run through Blender (for its bundled numpy), never directly:
 
@@ -241,24 +241,30 @@ def whip_icon(size=128):
     return cv.finish(1.0)
 
 
-def lash_projectile(size=64):
-    """In-flight lash: a short crescent streak of blade with a pale glow trail,
-    drawn pointing right (projectiles are rotated to their heading)."""
+def lash_line(size=256):
+    """The whip uncoiled, hand (left) to target (right), for RR_Fleck_RazorLash.
+    FleckMaker.ConnectingLine stretches the canvas's X to the lash's length and
+    its height to the line width, so the blade runs edge to edge and is drawn
+    tall - it is squashed several times over on the map. Thick at the hand,
+    tapering to a point, with one and a half slow waves: a whip, not a beam."""
     cv = Canvas(size)
-    pts = [(0.10 + 0.80 * f, 0.55 - 0.10 * math.sin(f * math.pi)) for f in np.linspace(0, 1, 24)]
-    trail = cv.ribbon(pts[:14], 0.05, 0.16)
-    cv.rgb[trail] = C["glow"][1]
-    cv.alpha |= trail
-    blade = cv.ribbon(pts[10:], 0.16, 0.03)
-    cv.part(blade, "steel", cv.y > 0.52, panel_px=4.0)
-    return cv.finish(3.0)
+    def centre(x):
+        f = (x - 0.01) / 0.98
+        return 0.5 - 0.16 * np.sin(f * math.pi * 3.0) * (0.3 + 0.7 * f)
+
+    pts = [(float(x), float(centre(x))) for x in np.linspace(0.01, 0.99, 64)]
+    blade = cv.ribbon(pts, 0.20, 0.05)
+    # The darker plane is the underside of the ribbon itself, not of the canvas.
+    cv.part(blade, "steel", cv.y > centre(cv.x), panel_px=4.0)
+    cv.line(pts[4:-6], 3.0, "edge")
+    return cv.finish(4.0)
 
 
 OUTPUTS = {
     "Things/Item/Equipment/WeaponMelee/RR_Razor": razor,
     "Things/Item/Equipment/WeaponMelee/RR_ReaperRazor": reaper_razor,
     "UI/Abilities/RR_RazorWhip": whip_icon,
-    "Things/Projectile/RR_RazorLash": lash_projectile,
+    "Things/Mote/RR_RazorLashLine": lash_line,
     # The razor-bearing precept's icon: the razor itself at icon size, so the
     # precept and the item can't drift apart. Was a placeholder stick.
     "UI/Issues/RR_RazorBearing": lambda: razor(128, inset=0.07),

@@ -130,16 +130,6 @@
         <cooldownTime>1.9</cooldownTime>
         <armorPenetration>0.95</armorPenetration>
       </li>
-      <li>
-        <!-- The whip state: longer reach, wider arc, less concentrated force. -->
-        <label>lash</label>
-        <capacities>
-          <li>Cut</li>
-        </capacities>
-        <power>20</power>
-        <cooldownTime>1.4</cooldownTime>
-        <armorPenetration>0.6</armorPenetration>
-      </li>
     </tools>
   </ThingDef>
 
@@ -233,7 +223,7 @@
     The blade is the weapon's ordinary melee; the whip is this: a lash out to
     just under eight cells, on a flat cooldown with no ammunition.
 
-    The AbilityDef and its projectile are colocated with the weapon rather than
+    The AbilityDef and its line fleck are colocated with the weapon rather than
     filed under Defs/AbilityDefs, following vanilla - Anomaly keeps the bioferrite
     burner's AbilityDef inside Weapons_Ranged.xml beside the gun that grants it.
   -->
@@ -265,30 +255,22 @@
       </targetParams>
     </verbProperties>
     <comps>
-      <li Class="CompProperties_AbilityLaunchProjectile">
-        <projectileDef>RR_Bullet_RazorLash</projectileDef>
+      <!-- A melee stroke at reach, rolled on the wielder's melee stats - see
+           Source/RimRising/RazorLash.cs for why it is no longer a projectile.
+           damage/armorPenetration are the old bullet's numbers; the CE folder
+           patches armorPenetration to millimetres. -->
+      <li Class="RimRising.CompProperties_AbilityRazorLash">
+        <damage>19</damage>
+        <armorPenetration>0.75</armorPenetration>
+        <damageDef>RR_RazorLash</damageDef>
+        <sweepAll>false</sweepAll>
+        <ignoreDodge>false</ignoreDodge>
+        <staggerTicks>45</staggerTicks>
+        <lineFleck>RR_Fleck_RazorLash</lineFleck>
       </li>
     </comps>
   </AbilityDef>
 
-  <ThingDef ParentName="BaseBullet">
-    <defName>RR_Bullet_RazorLash</defName>
-    <label>razor lash</label>
-    <graphicData>
-      <texPath>Things/Projectile/RR_RazorLash</texPath>
-      <graphicClass>Graphic_Single</graphicClass>
-    </graphicData>
-    <projectile>
-      <damageDef>Cut</damageDef>
-      <!-- Below the razor's own 26-power stab. Reach is what the whip buys; it
-           is not also meant to be the harder hit. -->
-      <damageAmountBase>19</damageAmountBase>
-      <!-- Canonically a razor cuts through armour. This stays under the blade's
-           own penetration for the same reason as the damage. -->
-      <armorPenetrationBase>0.75</armorPenetrationBase>
-      <speed>55</speed>
-    </projectile>
-  </ThingDef>
 
   <!-- ============================== scorcher ================================
 
@@ -595,15 +577,6 @@ It cuts as well as any razor. It is worth rather more than that to the people wh
         <power>31</power>
         <cooldownTime>1.9</cooldownTime>
         <armorPenetration>0.95</armorPenetration>
-      </li>
-      <li>
-        <label>lash</label>
-        <capacities>
-          <li>Cut</li>
-        </capacities>
-        <power>20</power>
-        <cooldownTime>1.4</cooldownTime>
-        <armorPenetration>0.6</armorPenetration>
       </li>
     </tools>
   </ThingDef>

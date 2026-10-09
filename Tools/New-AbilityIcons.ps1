@@ -113,16 +113,8 @@ Save-Icon 'UI/Abilities/RR_RazorWhip' 128 {
     try { $g.DrawLine($pen, [single](0.10 * $S), [single](0.94 * $S), [single](0.21 * $S), [single](0.79 * $S)) } finally { $pen.Dispose() }
 }
 
-# ------------------------------------------------------------- the lash itself
-#
-# The projectile. Projectiles are drawn small and in motion, so this is a bare
-# tapering streak with no interior detail - anything finer is invisible at speed.
-Save-Icon 'Things/Projectile/RR_RazorLash' 64 {
-    param($g, $S)
-    Draw-Lash $g $S @(
-        @(0.10, 0.72), @(0.34, 0.60), @(0.60, 0.46), @(0.90, 0.30)
-    ) 0.30 $Steel 0.07
-}
+# The lash projectile was drawn here; the whip is no longer a projectile, and
+# its line fleck is drawn by Tools/Draw-Weapons.py.
 
 # Everything else under UI/, plus the biome marks. Drawing routines live in
 # UIGlyphs.ps1, dot-sourced purely for size.

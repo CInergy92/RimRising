@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    The razor's whip lash: vanilla's cut in every respect but one field.
+
+    CompAbilityEffect_RazorLash builds its own DamageInfo, with no verb behind it.
+    When Combat Extended deflects a sharp hit it converts it to blunt and takes the
+    blunt penetration from the attacking melee verb; with none it falls back to
+    the DamageDef's defaultArmorPenetration, and with none of THAT it logs
+    "has null verb, overriding AP" and uses 50 - far more than any razor's blunt
+    figure. This def exists so that fallback has a real number: the CE folder sets
+    it to the removed lash ToolCE's armorPenetrationBlunt.
+
+    Without CE nothing reads it: the lash always passes an explicit penetration,
+    and vanilla only falls back to the default for a negative one.
+  -->
+  <DamageDef ParentName="CutBase">
+    <defName>RR_RazorLash</defName>
+    <defaultArmorPenetration>0.75</defaultArmorPenetration>
+  </DamageDef>
+
+</Defs>

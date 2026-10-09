@@ -56,21 +56,6 @@
           <armorPenetrationBlunt>1.30</armorPenetrationBlunt>
           <armorPenetrationSharp>34.00</armorPenetrationSharp>
         </li>
-        <li Class="CombatExtended.ToolCE">
-          <!--
-            Whip state. Faster and wider than the blade, and markedly worse at
-            getting through plate - which is the trade the toggle exists for.
-          -->
-          <label>lash</label>
-          <capacities>
-            <li>Cut</li>
-          </capacities>
-          <power>28</power>
-          <cooldownTime>0.55</cooldownTime>
-          <armorPenetrationBlunt>1.10</armorPenetrationBlunt>
-          <armorPenetrationSharp>9.50</armorPenetrationSharp>
-          <linkedBodyPartsGroup>Edge</linkedBodyPartsGroup>
-        </li>
       </tools>
     </value>
   </Operation>
@@ -213,17 +198,6 @@
           <cooldownTime>1.05</cooldownTime>
           <armorPenetrationBlunt>1.00</armorPenetrationBlunt>
           <armorPenetrationSharp>18.00</armorPenetrationSharp>
-        </li>
-        <li Class="CombatExtended.ToolCE">
-          <label>lash</label>
-          <capacities>
-            <li>Cut</li>
-          </capacities>
-          <power>26</power>
-          <cooldownTime>0.58</cooldownTime>
-          <armorPenetrationBlunt>1.05</armorPenetrationBlunt>
-          <armorPenetrationSharp>9.00</armorPenetrationSharp>
-          <linkedBodyPartsGroup>Edge</linkedBodyPartsGroup>
         </li>
       </tools>
     </value>
@@ -381,18 +355,26 @@
 
   <!-- ========================== the razor's whip form ========================
 
-    RR_RazorWhip launches a vanilla Bullet (RR_Bullet_RazorLash). CE does not cast
-    it - vanilla Bullet impacts still resolve - but its armorPenetrationBase is
-    read in CE's millimetres, so the shipped 0.75 could not get through a shirt
-    while the same weapon's lash ToolCE above penetrates 9.50. Same number here,
-    until the whip is reworked away from a projectile
-    (docs/RimRising-Review-2026-10-08.md, "Whip rework").
+    The whip is a melee stroke at reach (RimRising.CompAbilityEffect_RazorLash),
+    which builds its own DamageInfo. CE reads that armour penetration as
+    millimetres, so the vanilla 0.75 is replaced with 9.5 - the figure the
+    removed lash ToolCE carried. Reworked from a projectile per
+    docs/RimRising-Review-2026-10-08.md, "Whip rework".
   -->
 
   <Operation Class="PatchOperationReplace">
-    <xpath>Defs/ThingDef[defName="RR_Bullet_RazorLash"]/projectile/armorPenetrationBase</xpath>
+    <xpath>Defs/AbilityDef[defName="RR_RazorWhip"]/comps/li[@Class="RimRising.CompProperties_AbilityRazorLash"]/armorPenetration</xpath>
     <value>
-      <armorPenetrationBase>9.5</armorPenetrationBase>
+      <armorPenetration>9.5</armorPenetration>
+    </value>
+  </Operation>
+
+  <!-- Blunt penetration for a DEFLECTED lash; see Defs/DamageDefs/Damages_RimRising.xml.
+       1.10 is the removed lash ToolCE's armorPenetrationBlunt. -->
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/DamageDef[defName="RR_RazorLash"]/defaultArmorPenetration</xpath>
+    <value>
+      <defaultArmorPenetration>1.10</defaultArmorPenetration>
     </value>
   </Operation>
 

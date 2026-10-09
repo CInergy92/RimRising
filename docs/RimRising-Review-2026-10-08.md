@@ -30,6 +30,25 @@ Fixed from the cloud, no game needed, all XML/text — **RV-01** (six CE armour 
 
 Still open, needing a build or the game: RV-03, RV-06, RV-07, RV-08, RV-09, RV-10, RV-11, RV-12, RV-13, RV-14, RV-16, RV-18, RV-19 and the whip rework. No `.cs` file was touched, so `1.6/Assemblies/RimRising.dll` still matches `Source/`.
 
+### Status after the live session (master, 2026-10-08)
+
+Merged the branch. Verified against vanilla defs, the decompiled game and in game:
+
+| ID | Outcome |
+|---|---|
+| RV-01 | Fable's six blocks kept (every xpath resolves). Added validator check `CEArmorUnpatched`, negative-tested. CE's flak vest is stuff-scaled, not a flat 10/20. |
+| RV-03 | **Confirmed in game** (`rrtestmode=kinds`): 0/10 knights in plate. Fixed with option (a), `titleRequired RR_Title_Praetorian`. That exposed a worse bug: neither royal faction had `royalTitleInheritanceRelations`, so **every Society title grant threw** in `RoyalTitleInheritanceWorker.FindHeir`. Fixed; validator check `RoyalFactionNoInheritance`. Also the plate rule now accepts sub-strains (Stained, Lurcher). After: 9/10 knights in plate, all titled. |
+| RV-07 | Fixed with the Sterilized mechanism (hediff `tags` + recipe `incompatibleWithHediffTags`). |
+| RV-08 | Kit moved to `Manufactured`. |
+| RV-09 | Confirmed (`BaseMeleeWeapon_Sharp_Quality` carries the art comp). Restated on both razors. |
+| RV-12, RV-14, RV-19, RV-17 (C#) | Fixed. RV-14 uses `IdeoUtility.DoerWillingToDo`, Colour carves only. RV-19 uses vanilla `ToCommaListOr`. |
+| RV-13 | **No change needed.** Decompiled: destroying worn apparel → `ThingOwner.Remove` → `Notify_ApparelRemoved` → comps' `Notify_Unequipped`. |
+| Whip rework | Done with the conservative defaults (one target, dodgeable, 45-tick stagger, 15 s cooldown, line of sight kept). `RazorLash.cs`, `RR_Fleck_RazorLash`, `RR_RazorLash` DamageDef (gives CE a blunt AP for deflected lashes instead of its 50 fallback), lash tools removed, bullet deleted. Tested with `rrtestmode=whip` under CE. |
+
+**New finding:** the Reaper's razor also carries `UltratechMelee`, so Society Golds and Bronzies generate holding it (seen in the kinds run). This belongs with RV-10.
+
+Still open, all decisions for the user: RV-06, RV-10 (+ the Reaper's razor), RV-11, the whip switches (`sweepAll`, `ignoreDodge`, cooldown, yank, line of sight). Not done: RV-16 (starShell in game), RV-18 (cosmetic).
+
 ---
 
 ## MAJOR
