@@ -1436,9 +1436,17 @@ load or the test:
   generation; 10/10 Helmsmen, Legionaries and tribe warriors now carry theirs.
 - **The Howler uniform is the pelt.** The ghostCloak only appears on a Howler without one.
 
-Still owed: the art in `docs/Opus-Notes.md` section 3 (slingBlade, Howler pelt, griffin,
-clawDrill, tattoos, role/ritual/issue icons, heirloom razor), and its section 4/5 items, which
-are design calls or new systems.
+**Art: done (2026-10-09).** Generated: heirloom razor (gold battle frieze, the user's direction),
+slingBlade, Howler pelt (back views redrawn after the user saw the wolf's face from behind), griffin
+and clawDrill. Drawn: the five role icons, the razor-trial and caste-labour icons, and the four caste
+marks. All checked in the test scenes.
+
+**Griffins (user, 2026-10-09):** Obsidian beasts, not Gold pets - thrumbo-class, wild in cold
+biomes, sold by Obsidian hunters and the Society, and in tribe raids (`rrtestmode=raid`: they take
+the assault duty and fight).
+
+Still open from `docs/Opus-Notes.md` sections 4 and 5: design calls and new systems (Lurcher hunt,
+Iron Rain, ripWings, Blues and gravships, the Dominion ladder, the heirloom's whip).
 
 Every remaining item in `docs/RimRising-Suggestions.md` sections 1, 2, 3 and 6 that could be
 drafted without the game, drafted on `master` by a cloud session. At drafting, nothing had loaded. Four

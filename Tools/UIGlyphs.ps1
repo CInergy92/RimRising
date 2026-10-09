@@ -177,3 +177,77 @@ function Glyph-GhostCloakAbility { param($g, [int]$S)
         GBar $g $S $x 0.56 $x 0.80 0.045 $script:GlyphDim -NoEdge
     }
 }
+
+# ------------------------------------------- second content pass (2026-10-09)
+#
+# The five Color roles, the trial by razor and the caste-labour issue. Each role
+# is drawn in its Color's own hue so the role list reads by caste at a glance;
+# the marks are generic tools of the trade, not the published sigils (CLAUDE.md,
+# copyright line on the sigils).
+
+$script:GlyphYellow   = [System.Drawing.Color]::FromArgb(255, 222, 196,  84)
+$script:GlyphOrange   = [System.Drawing.Color]::FromArgb(255, 214, 128,  58)
+$script:GlyphBlue     = [System.Drawing.Color]::FromArgb(255,  92, 140, 206)
+$script:GlyphWhite    = [System.Drawing.Color]::FromArgb(255, 236, 234, 228)
+$script:GlyphObsidian = [System.Drawing.Color]::FromArgb(255,  70,  66,  78)
+
+# Physician (Yellow): a staff with a cross-piece, and a drop.
+function Glyph-RolePhysician { param($g, [int]$S)
+    GBar  $g $S 0.50 0.82 0.50 0.20 0.085 $script:GlyphYellow
+    GBar  $g $S 0.30 0.40 0.70 0.40 0.085 $script:GlyphYellow
+    GDisc $g $S 0.70 0.70 0.085 $script:GlyphRed
+}
+
+# Engineer (Orange): a gear ring crossed by a spanner.
+function Glyph-RoleEngineer { param($g, [int]$S)
+    for ($i = 0; $i -lt 8; $i++) {
+        $a = $i * [Math]::PI / 4
+        $x1 = 0.46 + 0.20 * [Math]::Cos($a); $y1 = 0.54 + 0.20 * [Math]::Sin($a)
+        $x2 = 0.46 + 0.29 * [Math]::Cos($a); $y2 = 0.54 + 0.29 * [Math]::Sin($a)
+        GBar $g $S $x1 $y1 $x2 $y2 0.075 $script:GlyphOrange
+    }
+    GRing $g $S 0.46 0.54 0.19 0.075 $script:GlyphOrange
+    GBar  $g $S 0.30 0.70 0.82 0.18 0.080 $script:GlyphSteel
+}
+
+# Pilot (Blue): a swept wing over a heading line.
+function Glyph-RolePilot { param($g, [int]$S)
+    GPoly $g $S @(@(0.14,0.62), @(0.50,0.26), @(0.86,0.62), @(0.70,0.62), @(0.50,0.44), @(0.30,0.62)) $script:GlyphBlue
+    GBar  $g $S 0.50 0.58 0.50 0.84 0.075 $script:GlyphSteel
+}
+
+# Arbiter (White): a balance.
+function Glyph-RoleArbiter { param($g, [int]$S)
+    GBar  $g $S 0.50 0.80 0.50 0.22 0.070 $script:GlyphWhite
+    GBar  $g $S 0.20 0.32 0.80 0.32 0.070 $script:GlyphWhite
+    GPoly $g $S @(@(0.12,0.58), @(0.32,0.58), @(0.22,0.38)) $script:GlyphDim
+    GPoly $g $S @(@(0.68,0.58), @(0.88,0.58), @(0.78,0.38)) $script:GlyphDim
+    GBar  $g $S 0.34 0.82 0.66 0.82 0.070 $script:GlyphWhite
+}
+
+# Shaman (Obsidian): the god's gold crescent, a spear standing through it. (A
+# crossbar under a disc read as the female sign - avoided.)
+function Glyph-RoleShaman { param($g, [int]$S)
+    GDisc $g $S 0.46 0.40 0.27 $script:GlyphGold
+    GDisc $g $S 0.58 0.33 0.25 $script:GlyphObsidian
+    GBar  $g $S 0.50 0.88 0.50 0.30 0.065 $script:GlyphSteel
+    GPoly $g $S @(@(0.50,0.10), @(0.60,0.30), @(0.40,0.30)) $script:GlyphSteel
+}
+
+# Trial by razor: two razors crossed inside a ring - two duelists, one circle.
+function Glyph-RazorTrial { param($g, [int]$S)
+    GRing $g $S 0.50 0.50 0.32 0.060 $script:GlyphRed
+    GBar  $g $S 0.24 0.78 0.78 0.24 0.070 $script:GlyphSteel
+    GBar  $g $S 0.22 0.24 0.76 0.78 0.070 $script:GlyphSteel
+    GBar  $g $S 0.20 0.80 0.30 0.70 0.130 $script:GlyphGold
+    GBar  $g $S 0.20 0.20 0.30 0.30 0.130 $script:GlyphGold
+}
+
+# Caste labour: a pick above a dividing bar, a quill below - whose work is whose.
+function Glyph-CasteLabor { param($g, [int]$S)
+    GBar  $g $S 0.18 0.50 0.82 0.50 0.070 $script:GlyphDim
+    GBar  $g $S 0.30 0.40 0.62 0.14 0.065 $script:GlyphSand
+    GPoly $g $S @(@(0.52,0.12), @(0.76,0.20), @(0.70,0.28)) $script:GlyphSteel
+    GBar  $g $S 0.36 0.86 0.64 0.60 0.060 $script:GlyphInk
+    GPoly $g $S @(@(0.60,0.58), @(0.72,0.56), @(0.68,0.68)) $script:GlyphInk
+}

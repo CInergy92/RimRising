@@ -975,6 +975,20 @@ Each loaded without complaint, or with a log line that does not name the cause:
   them twice in one tick (`rrtestmode=m12`).
 - `rrtestmode=m12` checks the second content pass in code: 38 logged `M12` lines and a summary.
 
+### Who draws which glyph (second content pass)
+
+- `Tools/New-AbilityIcons.ps1` (+ `UIGlyphs.ps1`) owns UI icons - now including the five Color
+  roles, the razor-trial ritual and the caste-labour issue. It no longer draws the whip gizmo or the
+  razor-bearing issue icon: `Draw-Weapons.py` owns those, and a full run used to put stale ones back.
+  Use `-Only <path>` to draw one icon without rewriting the rest.
+- `Tools/New-CasteMarks.ps1` owns the caste-mark tattoos. A TattooDef is `Graphic_Multi` with the
+  `CutoutSkinOverlay` shader, masked to head or body: one texture per facing, strokes fully opaque
+  (cutout tests alpha), drawn in ink colours (the renderer only scales alpha by 0.8). Checked with
+  `rrtestmode=marks`.
+- Generated high-detail art added this pass: heirloom razor, slingBlade, Howler pelt
+  (`Prep-PeltSilhouette.py` cuts the cloak's mantle as its silhouette), griffin
+  (`Fit-GenAnimal.py`: one scale across facings, centred, 512 px) and clawDrill.
+
 ### Optional mods we integrate with, beyond the dependencies
 
 Each loads from `1.6/Mods/<Mod>/` under `IfModActive` in `LoadFolders.xml`, and none is in

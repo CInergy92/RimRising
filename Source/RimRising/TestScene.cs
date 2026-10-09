@@ -273,6 +273,11 @@ namespace RimRising
             }
             Directory.CreateDirectory(outDir);
 
+            if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string kmode) && kmode == "marks")
+            {
+                BuildMarks();
+                return;
+            }
             if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string vmode) && vmode == "vehicle")
             {
                 BuildVehicle();
@@ -993,6 +998,40 @@ namespace RimRising
             Log.Message($"[RimRising] NATURE worldgen {barrens.defName} 150x150: haemanthus {flowers}, pitvipers {vipers} " +
                         $"(flower commonality {barrens.CommonalityOfPlant(flower):F2})");
             Current.Game.DeinitAndRemoveMap(gen, false);
+        }
+
+        // ---- rrtestmode=marks: the caste-mark tattoos on skin ----------------------
+
+        /// <summary>
+        /// rrtestmode=marks. One pawn of each marked kind per column (Helmsman,
+        /// tribe warrior, Legionary), stripped so the body marks show, one row per
+        /// facing; factionless and paused. CasteMarks.cs stamps the tattoos.
+        /// </summary>
+        private void BuildMarks()
+        {
+            TargetOrtho = 3.2f;
+            string[] kinds = { "RR_Society_Blue_Helmsman", "RR_Tribe_Obsidian_Warrior", "RR_Society_Legionary" };
+            IntVec3 c = map.Center;
+            area = new CellRect(c.x - 3, c.z - 3, 7, 7).ClipInsideMap(map);
+            Clear(area.ExpandedBy(3).ClipInsideMap(map));
+            SetNoon();
+            for (int k = 0; k < kinds.Length; k++)
+            {
+                for (int f = 0; f < Facings.Length; f++)
+                {
+                    Pawn p = PawnGenerator.GeneratePawn(new PawnGenerationRequest(DefDatabase<PawnKindDef>.GetNamed(kinds[k]), null,
+                        forceGenerateNewPawn: true, developmentalStages: DevelopmentalStage.Adult, fixedBiologicalAge: 30f, fixedChronologicalAge: 30f));
+                    p.apparel?.DestroyAll();
+                    p.equipment?.DestroyAllEquipment();
+                    p.story.hairDef = HairDefOf.Bald;
+                    GenSpawn.Spawn(p, new IntVec3(area.minX + 1 + k * 2, 0, area.maxZ - 1 - f * 2), map, Facings[f]);
+                    p.Rotation = Facings[f];
+                    p.Drawer.renderer.SetAllGraphicsDirty();
+                    Log.Message($"[RimRising] MARKS {kinds[k]} {Facings[f]}: face {p.style?.FaceTattoo?.defName}, body {p.style?.BodyTattoo?.defName}");
+                }
+            }
+            Find.TickManager.CurTimeSpeed = TimeSpeed.Paused;
+            shots.Add(("marks", new Vector3(area.minX + 3.5f, 0f, area.maxZ - 2.5f), 0f));
         }
 
         // ---- rrtestmode=raid: war griffins in an Obsidian tribe raid --------------

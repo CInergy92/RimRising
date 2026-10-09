@@ -24,7 +24,10 @@
 [CmdletBinding()]
 param(
     [string] $ModRoot,
-    [string] $OutRoot
+    [string] $OutRoot,
+    # Draw only these UI paths (e.g. 'UI/Roles/RR_Role_Pilot'). Without it every
+    # icon below is redrawn, which rewrites unchanged files too.
+    [string[]] $Only
 )
 
 Set-StrictMode -Version Latest
@@ -60,58 +63,10 @@ function Save-Icon {
     Write-Host ("  + {0}" -f $RelPath) -ForegroundColor Green
 }
 
-<# A tapering lash along a curve: wide at the grip, nothing at the tip. #>
-function Draw-Lash {
-    param($g, [int]$S, [array]$Pts, [single]$WBase, [System.Drawing.Color]$Color, [single]$OutlineScale = 0.09)
-    $n = $Pts.Count
-    $a = New-Object 'System.Collections.Generic.List[System.Drawing.PointF]'
-    $b = New-Object 'System.Collections.Generic.List[System.Drawing.PointF]'
-    for ($i = 0; $i -lt $n; $i++) {
-        $ia = [Math]::Max(0, $i - 1)
-        $ib = [Math]::Min(($n - 1), ($i + 1))
-        $dx = ([double]$Pts[$ib][0] - [double]$Pts[$ia][0])
-        $dy = ([double]$Pts[$ib][1] - [double]$Pts[$ia][1])
-        $len = [Math]::Sqrt(($dx * $dx) + ($dy * $dy)); if ($len -lt 1e-9) { $len = 1e-9 }
-        $nx = -$dy / $len; $ny = $dx / $len
-        $t = 0.0; if ($n -gt 1) { $t = [double]$i / ($n - 1) }
-        $hw = ([double]$WBase * (1.0 - $t) / 2.0) * $S
-        $cx = [double]$Pts[$i][0] * $S
-        $cy = [double]$Pts[$i][1] * $S
-        $a.Add((New-Object System.Drawing.PointF([single]($cx + ($nx * $hw)), [single]($cy + ($ny * $hw)))))
-        $b.Add((New-Object System.Drawing.PointF([single]($cx - ($nx * $hw)), [single]($cy - ($ny * $hw)))))
-    }
-    $b.Reverse()
-    $poly = New-Object 'System.Collections.Generic.List[System.Drawing.PointF]'
-    $poly.AddRange($a); $poly.AddRange($b)
-    $arr = [System.Drawing.PointF[]]$poly.ToArray()
-    $pen = New-Object System.Drawing.Pen($Outline, [single]($S * $OutlineScale))
-    $pen.LineJoin = [System.Drawing.Drawing2D.LineJoin]::Round
-    try { $g.DrawPolygon($pen, $arr) } finally { $pen.Dispose() }
-    $br = New-Object System.Drawing.SolidBrush($Color)
-    try { $g.FillPolygon($br, $arr) } finally { $br.Dispose() }
-}
-
-# --------------------------------------------------------- the whip-form gizmo
-#
-# An S-curved lash uncoiling from a short grip. Read at button size the curve is
-# the whole message: it is the one shape in the mod that is not a straight line,
-# so it cannot be confused with the razor's own rigid-blade icon.
-Save-Icon 'UI/Abilities/RR_RazorWhip' 128 {
-    param($g, $S)
-    Draw-Lash $g $S @(
-        @(0.16, 0.86), @(0.30, 0.66), @(0.52, 0.60), @(0.70, 0.44),
-        @(0.66, 0.26), @(0.50, 0.20), @(0.36, 0.26)
-    ) 0.20 $Steel
-    # The grip, so it reads as a weapon rather than a length of rope.
-    $pen = New-Object System.Drawing.Pen($Outline, [single]($S * 0.20))
-    $pen.StartCap = [System.Drawing.Drawing2D.LineCap]::Round
-    $pen.EndCap   = [System.Drawing.Drawing2D.LineCap]::Round
-    try { $g.DrawLine($pen, [single](0.10 * $S), [single](0.94 * $S), [single](0.21 * $S), [single](0.79 * $S)) } finally { $pen.Dispose() }
-    $pen = New-Object System.Drawing.Pen($Brass, [single]($S * 0.13))
-    $pen.StartCap = [System.Drawing.Drawing2D.LineCap]::Round
-    $pen.EndCap   = [System.Drawing.Drawing2D.LineCap]::Round
-    try { $g.DrawLine($pen, [single](0.10 * $S), [single](0.94 * $S), [single](0.21 * $S), [single](0.79 * $S)) } finally { $pen.Dispose() }
-}
+# The whip-form gizmo and the razor-bearing issue icon are drawn by
+# Tools/Draw-Weapons.py (whip_icon, razor(128)), from the same geometry as the
+# weapon sprite. They were drawn here first; running this script used to put the
+# stale versions back.
 
 # The lash projectile was drawn here; the whip is no longer a projectile, and
 # its line fleck is drawn by Tools/Draw-Weapons.py.
@@ -121,7 +76,6 @@ Save-Icon 'UI/Abilities/RR_RazorWhip' 128 {
 . (Join-Path $PSScriptRoot 'UIGlyphs.ps1')
 
 $glyphs = @(
-    @('UI/Issues/RR_RazorBearing',      128, ${function:Glyph-RazorBearing}),
     @('UI/Issues/RR_ArmorBearing',      128, ${function:Glyph-ArmorBearing}),
     @('UI/Issues/RR_Carving',           128, ${function:Glyph-Carving}),
     @('UI/Issues/RR_ColorDeference',    128, ${function:Glyph-ColorDeference}),
@@ -130,6 +84,13 @@ $glyphs = @(
     @('UI/Memes/RR_ColorEquality',      128, ${function:Glyph-ColorEquality}),
     @('UI/Memes/RR_GoldWorship',        128, ${function:Glyph-GoldWorship}),
     @('UI/Roles/RR_OlympicKnight',      128, ${function:Glyph-OlympicKnight}),
+    @('UI/Roles/RR_Role_Physician', 128, ${function:Glyph-RolePhysician}),
+    @('UI/Roles/RR_Role_Engineer', 128, ${function:Glyph-RoleEngineer}),
+    @('UI/Roles/RR_Role_Pilot', 128, ${function:Glyph-RolePilot}),
+    @('UI/Roles/RR_Role_Arbiter', 128, ${function:Glyph-RoleArbiter}),
+    @('UI/Roles/RR_Role_Shaman', 128, ${function:Glyph-RoleShaman}),
+    @('UI/Rituals/RR_RazorTrial', 128, ${function:Glyph-RazorTrial}),
+    @('UI/Issues/RR_CasteLabor', 128, ${function:Glyph-CasteLabor}),
     @('UI/Abilities/RR_GhostCloak',     128, ${function:Glyph-GhostCloakAbility}),
     @('UI/RimRisingModIcon',             64, ${function:Glyph-ModIcon}),
     @('World/Biomes/RR_HeliumBarrens',  512, ${function:Glyph-HeliumBarrens}),
@@ -138,6 +99,7 @@ $glyphs = @(
 
 foreach ($gl in $glyphs) {
     $path = [string]$gl[0]; $size = [int]$gl[1]; $draw = $gl[2]
+    if ($Only -and $path -notin $Only) { continue }
     Save-Icon $path $size $draw
 }
 
