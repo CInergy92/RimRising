@@ -1171,6 +1171,14 @@
     <label>companion</label>
     <defaultFactionDef>RR_Society</defaultFactionDef>
     <combatPower>18</combatPower>
+    <!--
+      Adults only. Biotech generates kinds from 13 by default, and rrtestmode=bios
+      showed a quarter of Companions and Roses coming out 13-17. The setting's
+      Pinks do pleasure work as adults; under the standing rule (CLAUDE.md, nothing
+      sexual applied to or implied about anyone under 18) a Pink kind never
+      generates a minor. PawnGenerator.AgeAllowed rejects ages below this.
+    -->
+    <minGenerationAge>18</minGenerationAge>
     <apparelColor>(236,150,190)</apparelColor>
     <apparelMoney>700~1600</apparelMoney>
     <apparelTags>
@@ -1246,6 +1254,8 @@
     <label>rose</label>
     <defaultFactionDef>RR_Society</defaultFactionDef>
     <combatPower>20</combatPower>
+    <!-- Adults only; see RR_Society_Pink_Companion. -->
+    <minGenerationAge>18</minGenerationAge>
     <apparelColor>(246,176,206)</apparelColor>
     <apparelMoney>2200~4200</apparelMoney>
     <apparelTags>

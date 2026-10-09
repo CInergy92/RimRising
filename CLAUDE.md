@@ -935,6 +935,11 @@ kind is enough to make title-gated apparel wearable at generation.
 
 - `rrtestmode=kinds` generates ten of each kind in `TestScene.Kinds` for a faction that fields it,
   logging Colour, titles, weapon and apparel. No screenshots; read `Player.log` for `KINDS`.
+- `rrtestmode=bios` generates every `RR_` humanlike kind with `backstoryFiltersOverride` six times
+  and checks each childhood/adulthood carries one of the kind's categories (a vanilla bio = the
+  override did not take) and the name is a clean `NameTriple`. Logs `BIOS ... SUMMARY n/n kinds clean`.
+  Pawns under 20 have no adulthood - vanilla's rule, not a fault. Biotech generates kinds from age
+  13, which is how Pink kinds were found generating minors; they now carry `minGenerationAge 18`.
 - `rrtestmode=whip`: drafted Golds lash targets in four armours, eight rounds, logging damage per
   lash. The targets are factionless and **flee** when hurt, and a lash at a pawn running out of reach
   ends without firing. The scene puts them back on their marks every round. Casters are rerolled if

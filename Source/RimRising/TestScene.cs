@@ -115,6 +115,14 @@ namespace RimRising
                         if (GenCommandLine.CommandLineArgPassed("rrtestquit")) { Root.Shutdown(); }
                         return;
                     }
+                    if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string m3) && m3 == "bios")
+                    {
+                        GenerateBios();
+                        Log.Message("[RimRising] TESTSCENE DONE (bios)");
+                        stage = -1;
+                        if (GenCommandLine.CommandLineArgPassed("rrtestquit")) { Root.Shutdown(); }
+                        return;
+                    }
                     if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string m0) && m0 == "kinds")
                     {
                         // No pictures: generation is judged from the log.
@@ -755,6 +763,67 @@ namespace RimRising
                 }
                 Log.Message($"[RimRising] KINDS {name}: {plate} in restricted plate of {KindSamples}");
             }
+        }
+
+        private const int BioSamples = 6;
+
+        /// <summary>
+        /// rrtestmode=bios: every RR_ humanlike kind that pins backstories through
+        /// backstoryFiltersOverride, generated a few times. Each pawn's childhood and
+        /// adulthood must carry one of the kind's categories (a vanilla bio means the
+        /// override did not take), and its name is logged for reading. A kind that
+        /// throws is caught and logged, since that is the failure a category with no
+        /// backstory for a slot produces.
+        /// </summary>
+        private void GenerateBios()
+        {
+            int bad = 0, total = 0;
+            foreach (PawnKindDef kind in DefDatabase<PawnKindDef>.AllDefs
+                         .Where(k => k.defName.StartsWith("RR_") && k.RaceProps?.Humanlike == true &&
+                                     k.backstoryFiltersOverride != null)
+                         .OrderBy(k => k.defName))
+            {
+                HashSet<string> cats = new HashSet<string>(kind.backstoryFiltersOverride
+                    .Where(f => f.categories != null).SelectMany(f => f.categories));
+                Faction fac = Find.FactionManager.AllFactionsListForReading.FirstOrDefault(f =>
+                    f.def.pawnGroupMakers != null && f.def.pawnGroupMakers.Any(g =>
+                        (g.options != null && g.options.Any(o => o.kind == kind)) ||
+                        (g.traders != null && g.traders.Any(o => o.kind == kind)) ||
+                        (g.guards != null && g.guards.Any(o => o.kind == kind))));
+                int kindBad = 0;
+                List<string> names = new List<string>();
+                for (int i = 0; i < BioSamples; i++)
+                {
+                    Pawn p;
+                    try
+                    {
+                        p = PawnGenerator.GeneratePawn(new PawnGenerationRequest(kind, fac, forceGenerateNewPawn: true));
+                    }
+                    catch (System.Exception e)
+                    {
+                        Log.Message($"[RimRising] BIOS {kind.defName} THREW: {e.GetType().Name}: {e.Message}");
+                        kindBad++;
+                        continue;
+                    }
+                    BackstoryDef child = p.story?.Childhood, adult = p.story?.Adulthood;
+                    bool childOk = child != null && child.spawnCategories.Any(cats.Contains);
+                    bool adultOk = adult == null || adult.spawnCategories.Any(cats.Contains);
+                    string full = p.Name?.ToStringFull ?? "-";
+                    bool nameOk = p.Name is NameTriple && !full.Contains("'") && !full.Contains("\"");
+                    if (!childOk || !adultOk || !nameOk) { kindBad++; }
+                    names.Add(full);
+                    Log.Message($"[RimRising] BIOS {kind.defName} #{i} {(childOk && adultOk && nameOk ? "ok" : "BAD")} " +
+                                $"color={RR_CasteIdentity.ColorOf(p)?.defName ?? "-"} age={p.ageTracker.AgeBiologicalYears} " +
+                                $"name=\"{full}\" child={child?.defName ?? "-"}{(childOk ? "" : "(!)")} " +
+                                $"adult={adult?.defName ?? "-"}{(adultOk ? "" : "(!)")}");
+                    Find.WorldPawns.PassToWorld(p, PawnDiscardDecideMode.Discard);
+                }
+                total++;
+                if (kindBad > 0) { bad++; }
+                Log.Message($"[RimRising] BIOS {kind.defName}: {(kindBad == 0 ? "OK" : kindBad + " BAD")} of {BioSamples} " +
+                            $"(faction {fac?.Name ?? "none"}, categories {string.Join("/", cats)})");
+            }
+            Log.Message($"[RimRising] BIOS SUMMARY {total - bad}/{total} kinds clean");
         }
 
         private Pawn MakePawn(BodyTypeDef body, ThingDef armor, Color gold)
