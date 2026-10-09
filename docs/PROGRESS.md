@@ -1408,6 +1408,84 @@ parses, which is all that can be said from there. Suggestions 1.1, 1.4, 6.1 and 
 
 ---
 
+## Milestone 12 — the second content pass (drafted in the cloud, 2026-10-09)
+
+Every remaining item in `docs/RimRising-Suggestions.md` sections 1, 2, 3 and 6 that could be
+drafted without the game, drafted on `master` by a cloud session. **Nothing has loaded.** Four
+C# files are UNBUILT and are referenced from XML, so the mod will throw on load until the DLL
+is rebuilt; `docs/Opus-Notes.md` is the ordered list of what to build, verify and draw, and
+every def's header says what in it is unverified. The Python checker passes; every file
+parses; all new textures are placeholders.
+
+### Built (XML complete, pending verification)
+
+| Item | Where | Depends on |
+|---|---|---|
+| 1.2 / 1.3 trader kinds, census caravans paying favour | `TraderKindDefs/TraderKinds_RimRising.xml`, every faction's `caravanTraderKinds` | `tradeCurrency` / `faction` fields (unverified) |
+| 1.5 heirloom razor | `ThingDefs_Misc/Weapons_Heirloom_RimRising.xml`, CE patch | `BaseWeapon_Bladelink` comps |
+| 1.6 trial by razor | `PreceptDefs/Rituals_RazorTrial.xml`, in `RR_ColorHierarchy` requireOne | outcome worker class name |
+| 1.7 slingBlade | `ThingDefs_Misc/Weapons_SlingBlade_RimRising.xml`, CE patch, Breakout start | sprite + tweak data (Blender) |
+| 1.8 caste marks | `StyleDefs/Styles_RimRising.xml`, `styleItemTags` on Blue/Gray/Obsidian kinds | `TattooDef` fields; art |
+| 1.9 / 6.9 Howlers and the pelt | `RR_Ares_Howler`, `RR_StealthKit` tag, `Apparel_HowlerPelt.xml` | worn art |
+| 1.10 carving aftermath | `Carving/Aftermath.xml`, self-thoughts on both carving precepts | `Recipe_CarveColor.cs` (unbuilt) |
+| 2.1 sigils | `Carving/Sigils.xml`: 14 hediffs, 14 forge surgeries | `Sigils.cs` (unbuilt) |
+| 2.3 caste labour | `PreceptDefs/Precepts_CasteLabor.xml`, work tables on all 21 xenotypes, required on both memes | `CasteLabor.cs` (unbuilt) |
+| 2.4 helium-3 | `ThingDefs_Items/Items_Helium_RimRising.xml`, bought by the census caravans | deep-resource field names |
+| 2.5 the Institute | `Scenarios/Scenarios_Institute.xml` | - |
+| 6.3 swill | `ThingDefs_Items/Drugs_Swill_RimRising.xml` | - |
+| 6.4 the Laurel, the census letter | `IncidentDefs/Incidents_RimRising.xml` | `IncidentWorkers.cs` (unbuilt) |
+| 6.5 griffins | `ThingDefs_Races/Races_Animal_Griffin.xml`, Society quartermaster stock | art; raid entry untested |
+| 6.6 + section 3 roles | `PreceptDefs/Roles_Colors.xml`: Physician, Engineer, Pilot, Arbiter, Shaman | `ConstructSuccessChance` stat name |
+| 6.8 clawDrill | `ThingDefs_Buildings/Buildings_RimRising.xml` | deep-drill comp form |
+| section 3 combat drugs | `combatEnhancingDrugsChance` on Legionary, Lurcher, tribe kinds | - |
+
+Not drafted, with the design written up in the Opus notes: 2.2 the Lurcher hunt, 2.6 Iron
+Rain, 2.7 ripWings, 6.7 Blues and gravships, the Dominion's own ladder.
+
+### What to click in game, once the DLL builds and the load is clean
+
+1. **Traders.** Dev mode → incident → trader caravan arrival, faction Society: a *census
+   caravan* should arrive, buy helium/ionsteel/slaves and show standing, not silver, as its
+   currency. If the trade window shows silver, `tradeCurrency` did not take. Then Julii, Sun,
+   the Dominion and the tribes: each caravan's stock should be its own
+   (`TraderKinds_RimRising.xml`), never vanilla outlander goods.
+2. **Heirloom razor.** Spawn `RR_Weapon_Razor_Heirloom`: it should have a generated name
+   and bond on equip, and refuse a Red the same way the plain razor does. Then the whip test
+   in the Opus notes.
+3. **Trial by razor.** A hierarchy ideoligion must list it under rituals. Start one with two
+   colonists: they drop weapons, gather, the speaker speaks, they fight to the death, and the
+   witnesses get one of four memories.
+4. **SlingBlade.** Breakout start: three on the ground. Craft one at a smithy with no
+   research. A Sons of Ares raid should sometimes arrive carrying them.
+5. **Caste marks.** Spawn `RR_Society_Blue_Helmsman`, `RR_Tribe_Obsidian_Warrior`,
+   `RR_Society_Legionary`: a digiTat, a stain, a legion mark respectively, most of the time.
+6. **Howlers.** A Sons of Ares raid should sometimes include a *howler* in scarabSkin,
+   demonHelm, ghostCloak and a pelt.
+7. **Carving aftermath.** Carve someone: the carving-recovery hediff appears and burns off
+   over ~18 days; a failed-but-survived carving leaves carving rejection. The carved pawn
+   gets *I was carved* (shame or liberation by ideoligion).
+8. **Sigils.** Spawn any Society kind: a `<Color> sigil` on a hand in the health tab. A
+   Violet can *forge a … sigil* on a pawn; the mark changes and nothing else does. Tribe
+   pawns have none.
+9. **Caste labour.** A hierarchy believer Red set to research: *work above my station*
+   while at the bench, gone when hauling. An equality believer: *doing what I was never
+   allowed*. A drafted pawn: nothing.
+10. **Helium-3.** Ground-penetrating scanner should find helium deposits; a deep drill or
+    clawDrill yields canisters; the census caravan buys them.
+11. **The Institute.** New game: six Golds, two knives, a raid every six days.
+12. **Swill.** Crafting spot bill from any raw plant food (fungus works), five per batch;
+    drinking gives *swill* plus the ordinary alcohol high and tolerance.
+13. **The Laurel and the census.** A colony with any Red: within the first season a quota
+    letter, fifteen days later the award letter; a census directive around day 60. A colony
+    of Golds only: neither.
+14. **Griffins.** A Society quartermaster caravan should occasionally sell one; it trains to
+    Advanced and is lethal.
+15. **Roles.** A hierarchy ideoligion: Physician (Yellow), Engineer (Orange), Pilot (Blue),
+    Arbiter (White) assignable only to the right Color; GoldWorship: Shaman (Obsidian).
+16. **ClawDrill.** Buildable under deep drilling research, 2x2, draws 450 W, drills.
+17. **Combat drugs.** Society legionaries should sometimes arrive carrying zoladone; tribe
+    warriors fever cloud.
+
 ## Known errors
 
 None outstanding. One found and fixed on first load — see "First in-game load" above.

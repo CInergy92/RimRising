@@ -34,6 +34,8 @@ A second rule, from the user's own direction in CLAUDE.md: nothing is done until
 
 ### 1.2 The Society pays in standing — a census caravan
 
+> **Drafted 2026-10-09** - `TraderKindDefs/TraderKinds_RimRising.xml` (`RR_Caravan_Society_Census`, `RR_Caravan_Dominion_Census`). `tradeCurrency`/`faction` UNVERIFIED; see docs/Opus-Notes.md.
+
 **Lore.** Standing with the Society is earned by service. In game, favour on the Gold ladder (`RR_Title_*`) currently has no source except what Royalty's Empire quests happen to hand out — and those are the Empire's.
 
 **Mechanism.** Royalty's tribute collector is a `TraderKindDef` with `tradeCurrency Favor` and a `faction` field, delivered by the ordinary `TraderCaravanArrival` incident. Clone it: `RR_Caravan_Society_Census` buys ionsteel, resFlesh, carving kits, prisoners and slaves (Ideology slavery already models the Society buying people), and *pays in standing*. Add it to `RR_Society.caravanTraderKinds` and `RR_RimDominion`'s. A second one, `RR_Caravan_Society_Armory`, sells duroArmor, scorchers, nazopran and resFlesh for silver and buys helium if 1.6 is built — today the Society sells vanilla outlander stock, which is the one place the faction still reads as "an outlander town with Golds".
@@ -43,6 +45,8 @@ A second rule, from the user's own direction in CLAUDE.md: nothing is done until
 **Effort.** XML. **Verify:** `TraderKindDef.tradeCurrency` and `faction` on `Royalty/Defs/TraderKindDefs/TraderKinds_Caravan_Empire.xml`; `StockGenerator_SingleDef` / `StockGenerator_Tag` / `StockGenerator_Slaves` names; that a favour-currency caravan works for a non-Empire faction (the Empire's uses `royalFavorLabel`, which `RR_Society` already sets).
 
 ### 1.3 Trader kinds for every faction
+
+> **Drafted 2026-10-09** - six kinds in `TraderKinds_RimRising.xml`, wired into every faction's `caravanTraderKinds`.
 
 Same mechanism as 1.2, no favour: Sun sells recoilArmor, pulseFists and the implants (the one merchant that arms the Rising — `RR_Scenario_Rising`'s description promises this); Julii sells everything plus `StockGenerator_Slaves` (the pirate merchant already hints at it); the obsidian tribes sell god's bread, fever cloud and Stained-grade melee weapons and buy steel they are not supposed to have. Replace the vanilla `Caravan_Outlander_*` entries rather than adding beside them, so the faction's stock *is* its character.
 
@@ -62,6 +66,8 @@ Same mechanism as 1.2, no favour: Sun sells recoilArmor, pulseFists and the impl
 
 ### 1.5 The razor as a persona weapon
 
+> **Drafted 2026-10-09** - `ThingDefs_Misc/Weapons_Heirloom_RimRising.xml`, rigid blade only (no whip comp yet). CE patched.
+
 **Lore.** Razors are named, kept for generations, and handed down inside a house. The project's own original plan (`Weapons_RimRising.xml:9-12`) was "the razor becomes a persona weapon" and it was dropped when Royalty was not yet a dependency. Royalty is a dependency now.
 
 **Mechanism.** A second def, `RR_Weapon_Razor_Heirloom`, mirrored from `MeleeWeapon_MonoSword` with `CompProperties_Bladelink` and `CompProperties_GeneratedName` (the mono/plasma/zeus swords in `Royalty/Defs/ThingDefs_Misc/Weapons/MeleeBladelink.xml`): bonds to one wielder, carries one to three weapon traits, has a generated name. Give it `RR_RazorBearer`-style tags so Olympic Knights and Praetors generate with it, `tradeability` None, `generateCommonality` low. Keep the plain razor craftable; the heirloom is found on a dead knight or granted by a Society quest reward, never built.
@@ -72,6 +78,8 @@ Same mechanism as 1.2, no favour: Sun sells recoilArmor, pulseFists and the impl
 
 ### 1.6 Trial by razor — a duel ritual for hierarchy ideoligions
 
+> **Drafted 2026-10-09** - `PreceptDefs/Rituals_RazorTrial.xml`, required on `RR_ColorHierarchy`. Outcome worker class UNVERIFIED; duelists not yet Gold-gated.
+
 **Lore.** Golds settle standing by the blade; the Institute is a year-long duel. **Mechanism.** Ideology ships a duel ritual (the `Duel` precept, `RitualBehaviorWorker_Duel`, with `RitualOutcomeEffectDef` moods). Clone it as `RR_Ritual_RazorTrial`, put it in `RR_ColorHierarchy`'s `requireOne` so every hierarchy ideoligion has it, and give the outcome effect a `RR_` thought ("watched a trial by razor") and, if the loser dies, the vanilla execution events. Restrict participants with `RoleRequirement_Xenotype` to Gold/Bronzie if the ritual framework exposes participant requirements (the duel takes two fighters chosen in the dialog).
 
 **Fun.** Duels are one of Ideology's best set pieces and almost nobody runs them. A hierarchy colony *has* to, and the loser is a Gold.
@@ -79,6 +87,8 @@ Same mechanism as 1.2, no favour: Sun sells recoilArmor, pulseFists and the impl
 **Effort.** XML. **Verify:** `Ideology/Defs/PreceptDefs/Precepts_Ritual.xml` for the duel precept's `ritualPatternBase`, and whether participant roles accept requirements.
 
 ### 1.7 A slingBlade for the Reds
+
+> **Drafted 2026-10-09** - `Weapons_SlingBlade_RimRising.xml`, CE patched, in the Breakout start. Sprite and tweak data need Blender on the local machine (Opus notes).
 
 **Lore.** The reaper's razor is shaped like a mining tool. The tool itself is missing from the mod: the thing every Red holds all day. **Mechanism.** `RR_Weapon_SlingBlade`, parented to `BaseMeleeWeapon`, Industrial, cheap (steel at a smithy, no research), a curved cut weapon between a gladius and an ikwa in numbers, tagged `RR_RisingWeapon` so Ares fighters and laborers carry it, and added to `RR_Scenario_Breakout`'s starting things (its text already says "you have a drill"). Under CE it needs a `ToolCE` block — the validator will insist. Sprite via `Draw-Weapons.py` (the reaper's curve at a smaller scale, wooden haft).
 
@@ -88,17 +98,23 @@ Same mechanism as 1.2, no favour: Sun sells recoilArmor, pulseFists and the impl
 
 ### 1.8 Caste marks — tattoos and styles tied to the memes
 
+> **Drafted 2026-10-09** - `StyleDefs/Styles_RimRising.xml` + `styleItemTags` on the Blue, Gray and Obsidian kinds (per Color, no C#). `tattooType` UNVERIFIED; art is placeholders.
+
 **Lore.** Blues shave and tattoo; Obsidians are stained; Peerless Golds are scarred (done). **Mechanism.** Ideology's `TattooDef` / `HairDef` carry `styleTags`; memes list `styleTags` they favour, and pawns generated for an ideoligion draw from them. Two or three tattoo sets (`RR_DigiTat_Face`, `RR_ObsidianStain_Body`) with 128² textures from the icon pipeline, tagged to `RR_ColorHierarchy` and `RR_GoldWorship`. Xenotype-specific assignment (only Blues get digiTats) is not expressible by meme alone; `GeneDef` has `tattooDef`?-style hooks only for hair/skin colour, so either accept that any hierarchy pawn may carry a digiTat or do the per-Color assignment in a small `PawnGenerator` postfix.
 
 **Effort.** XML+art, `C#‑small` for per-Color accuracy. **Verify:** `StyleItemDef.styleTags`, `MemeDef.styleTags`, and whether `XenotypeDef` or `GeneDef` has any style hook in 1.6.
 
 ### 1.9 Howlers as a pawn kind
 
+> **Drafted 2026-10-09** - `RR_Ares_Howler` in the Sons of Ares combat group; `RR_StealthKit` on the three pieces and the pelt.
+
 The stealth kit exists (scarabSkin, demonHelm, ghostCloak) but nobody spawns in it. Add `RR_Ares_Howler` (Red/Gray mix, `apparelTags Inherit="False"` → a new `RR_StealthKit` tag carried by the three pieces, `weaponTags` SpacerGun, combatPower ~110) to the Sons of Ares combat group at low weight, and `RR_Society_Lurcher` could carry the demonHelm the same way. Whether AI pawns *use* the cloak ability is a separate question (see the review's note on `aiCanUse`); even unused, a raider in a ghostCloak is lootable, which is how the player gets one early.
 
 **Effort.** XML.
 
 ### 1.10 Carving aftermath
+
+> **Drafted 2026-10-09** - `Carving/Aftermath.xml` + self-thoughts on both carving precepts; the two `AddHediff` calls are in `Recipe_CarveColor.cs`, UNBUILT.
 
 **Lore.** A carving takes months and is not bearable; the person who walks out is not the person who walked in. In game it is one surgery and a message. **Mechanism.** Two hediffs added by `Recipe_CarveColor.ApplyOnPawn` (one line each): `RR_CarvingRecovery` — weeks of pain, Moving and Manipulation down, `HediffCompProperties_SeverityPerDay` to burn off, `HediffCompProperties_Disappears`; and, on a failed-but-survived surgery roll, `RR_CarvingRejection` — permanent, mild, a scar in the record. Plus a `Thought_Memory` for the carved pawn via `PreceptComp_SelfTookMemoryThought` on `RR_ColorCarved` under both memes (the hierarchy's reads as shame, the equality's as liberation — the knows-thoughts exist; the *self* thoughts do not).
 
@@ -112,6 +128,8 @@ The stealth kit exists (scarabSkin, demonHelm, ghostCloak) but nobody spawns in 
 
 ### 2.1 Sigils, and the lie a carved pawn carries
 
+> **Drafted 2026-10-09** - `Carving/Sigils.xml` (14 hediffs, 14 forge surgeries) + `Source/RimRising/Sigils.cs` (generation postfix, forge recipe), UNBUILT. The census/Lurcher reads of the sigil are not done.
+
 **Lore.** DESIGN §4 lists "sigils implanted in the wrists — a HediffDef that marks caste, and whose absence or falsification is itself detectable". Not built. **Mechanism.** `RR_Sigil_<Color>` hediffs on a hand, added at generation by a small `PawnGenerator` postfix for Society-faction pawns and by the Breakout/Household scenarios; invisible in effect, visible in the health tab. A Carver surgery `RR_ForgeSigil` (Violet-only, kit + resFlesh) swaps it. Then the interesting part: `RR_CasteIdentity` keeps reading *genes* (a carved Gold passes socially), but a new `RR_CasteIdentity.SigilOf(pawn)` reads the *paper*, and the two places the Society checks paper — the census caravan (1.2) and the Lurcher hunt (2.2) — use the sigil. A carved Red with a Red sigil is a Gold until somebody looks at their wrist.
 
 **Fun.** Turns "passing" into a mechanic with a tell, a fix (forge it), and a risk, instead of a flag that is set and forgotten.
@@ -119,6 +137,8 @@ The stealth kit exists (scarabSkin, demonHelm, ghostCloak) but nobody spawns in 
 **Effort.** `C#‑small` for generation, XML for the rest. **Verify:** `Hediff` on `BodyPartDefOf.Hand` survives amputation sensibly (it will be lost with the hand — which is correct and funny).
 
 ### 2.2 The Lurcher hunt
+
+> **Not drafted** - needs an IncidentWorker and Lord code against the game; docs/Opus-Notes.md has the design, and `RR_Sigils.SigilMismatch` is the trigger it should read.
 
 **Lore.** Lurchers are bred to kill highColors and are pointed at the ones who should not be. **Mechanism.** An `IncidentDef` (`IncidentWorker_RaidEnemy` subclass, or a `QuestScriptDef` if a letter and a timer are wanted) that fires only when the player colony holds a carved pawn whose sigil (2.1) does not match, or a lowColor who bore a razor (the `RR_LowColorBoreRazor` event already exists as a trigger): a small Society group of `RR_Society_Lurcher` arrives with a `LordJob_AssaultColony`-style job targeting that pawn. Storyteller comp: `StorytellerCompProperties_Triggered`-style, or a `QuestNode_Root` with a `HistoryEvent` trigger.
 
@@ -128,6 +148,8 @@ The stealth kit exists (scarabSkin, demonHelm, ghostCloak) but nobody spawns in 
 
 ### 2.3 Caste-restricted work, the soft way
 
+> **Drafted 2026-10-09** - `Precepts_CasteLabor.xml`, `CasteWorkExtension` tables on all 21 xenotypes, `Source/RimRising/CasteLabor.cs` UNBUILT. Self-thought only; the observer thought is not done.
+
 **Lore.** Colors are confined to their caste's trade by law. DESIGN §4 planned precepts for it. **Do not** use `GeneDef.disabledWorkTags` or hard incapables: a Red who *cannot* research is a worse RimWorld pawn and it is wrong anyway — Reds are *denied* education, not unable. **Mechanism.** A `ThoughtWorker` (sibling of `ThoughtWorker_ColorRank`) giving hierarchy-believing pawns a situational thought when a pawn is doing work "above" or "below" their Color — reading `Pawn.CurJob.workGiverDef.workType` against a per-Color table on a `DefModExtension` on each `XenotypeDef` (`allowedWorkTypes`). Observers: "a Red at the research bench" (−); the pawn themself: "work above my station" (−, hierarchy) or "doing what I was never allowed" (+, equality). Expose it as a precept pair on a new `RR_CasteLabor` issue, `requireOne` under both memes.
 
 **Fun.** A hierarchy colony has to staff the research bench with Yellows and Greens and feels it when it cannot; an equality colony gets a small, constant reward for mixing. It is the daily-life version of the ladder thought, which today only fires on *who* you stand next to, not *what* you do.
@@ -135,6 +157,8 @@ The stealth kit exists (scarabSkin, demonHelm, ghostCloak) but nobody spawns in 
 **Effort.** `C#‑small` (one worker, one extension) + XML. **Verify:** `Pawn.CurJob.workGiverDef` is set for most work jobs but not all (e.g. hauling via `JobGiver_Work`); fall back to `JobDef` category.
 
 ### 2.4 Helium-3 and the Barrens
+
+> **Drafted 2026-10-09** - `Items_Helium_RimRising.xml`; the three deep-resource fields UNVERIFIED. No armour upkeep, by design, pending the user.
 
 **Lore.** The Barrens exist for what is under them, and pulse armour "drinks helium-3". Neither is a thing in game. **Mechanism.** `RR_Helium3` as a resource (`Graphic_StackCount`, canister sprites from `New-ItemIcons.ps1`), obtained by deep drilling (`ThingDef.deepCommonality`, `deepCountPerPortion`, `deepLumpSizeRange` — vanilla's deep resources) with a `MarketValue` that makes it the Barrens' export, bought by the Society census caravan (1.2) and Julii. Making the Barrens *better* for it than other biomes needs a check: deep resources are global, so either accept it (fine; the biome's scanner just finds more rock) or add a mineable `RR_HeliumSeam` placed by the biome's terrain if a 1.6 biome field for scatterable mineables exists.
 
@@ -144,17 +168,23 @@ Then pulse armour can cost something to run: a `CompProperties_ApparelReloadable
 
 ### 2.5 The Institute as a start and as a place
 
+> **Drafted 2026-10-09** - `Scenarios/Scenarios_Institute.xml`, the cheap form; the raid is the generic one.
+
 **Lore.** The year-long trial every Gold child is put through. **Mechanism, cheap form:** a fourth scenario, "The Institute" — eight Gold adolescents (`allowedDevelopmentalStages Child`? no: Biotech children cannot fight; use young adults at `pawnChoiceCount`), no faction help, a `ScenPart_CreateIncident` raid from the Society every few days (the "Proctors"), a `ScenPart_StatFactor`-style harsh start, and the Household scenario's standing offered at the end via a timed quest. **Expensive form:** a `WorldObjectDef` site with a `SitePartDef` and a quest chain. The cheap form is a weekend; the expensive form is a milestone.
 
 **Effort.** XML (cheap) / `C#` (site).
 
 ### 2.6 Iron Rain
 
+> **Not drafted** - no XML lever for faction arrival modes was found in any reference mod; C# note in docs/Opus-Notes.md.
+
 **Lore.** The Society's assaults come down from orbit. **Mechanism.** Vanilla picks raid arrival modes per faction through `PawnsArrivalModeDef.selectionWeightCurvesPerFaction`? — not a field this session can confirm. If the arrival-mode weighting is reachable from XML (check `Core/Defs/PawnsArrivalModeDefs` and `RaidStrategyDef`), give the Society and Dominion a heavy weight on `CenterDrop`/`EdgeDrop` and the tribes none. If it is not, a `C#‑small` Harmony postfix on the arrival-mode selection for `RR_Society` is enough. Pair with a `RR_IronRain` skyfaller skin (the gravAscent sprite pipeline already exists) and the starShell's `RR_StarShellFrame` description, which already names the term.
 
 **Effort.** XML or `C#‑small` depending on the field. **Verify** first.
 
 ### 2.7 RipWings and a gravBike
+
+> **Not drafted** - vehicle art and Vehicle Framework aerial fields need the local machine; note in docs/Opus-Notes.md.
 
 Vehicle Framework supports aerial vehicles. A Blue-piloted `ripWing` (two seats, light cannon, fast, fragile) on the same VF folder as the Drachenjaeger gives Blues a reason to exist in a colony and the Society a second vehicle. Art is the expensive part — the vehicle pipeline (`New-VehicleArt.ps1`, silhouettes, 128 px per cell) is already built. Same for a one-seat gravBike for Golds. Both are optional-folder content with no new dependency.
 
@@ -167,12 +197,12 @@ Vehicle Framework supports aerial vehicles. A Blue-piloted `ripWing` (two seats,
 - **The razor hum.** A `soundInteract`/`soundDrop` for both razors (there is a `SoundDef` pipeline via fal already); vanilla melee weapons use `Interact_...` sounds. XML.
 - **A `RR_Society_Praetor` persona name rule.** Golds who reach Peerless get an epithet: `RoyalTitleDef` has `labelFemale`/`labelCap`; a `nameMaker`-style epithet is not vanilla, but the title's label itself can read "Peerless Scarred" + the house, which is what the fiction does. XML.
 - **Dominion vs Society goodwill.** NPC-to-NPC relations are not authorable (CLAUDE.md), but *which Society you serve* is: give the Rim Dominion its own `royalFavorLabel` ("the Rim's regard") and a slightly different ladder (`RR_Title_Shamed` → `RR_Title_RimKnight` …) via a second `royalTitleTags` set, so standing with one is not standing with the other. XML; interacts with `TitleLadders.cs` (it keys on tags, so a third tag needs adding to `EligibleFor`).
-- **Obsidian shamans as a role.** `RR_GoldWorship` already names the moralist "shaman"; a `Precept_RoleSingle` "Shaman" requiring `RR_Obsidian` with the vanilla moralist abilities, so a tribe ideoligion has a face. XML.
-- **White arbiters as a role** in hierarchy ideoligions: `RoleRequirement_Xenotype` → `RR_White`, with `RoleEffect_PawnStatOffset NegotiationAbility` and the vanilla leader's "conversion" abilities swapped for a "pronounce" (the vanilla `Trial` ritual exists in Ideology; the arbiter presides). XML.
+- **Obsidian shamans as a role.** *(Drafted 2026-10-09: `RR_Role_Shaman`.)* `RR_GoldWorship` already names the moralist "shaman"; a `Precept_RoleSingle` "Shaman" requiring `RR_Obsidian` with the vanilla moralist abilities, so a tribe ideoligion has a face. XML.
+- **White arbiters as a role** *(Drafted 2026-10-09: `RR_Role_Arbiter`.)* in hierarchy ideoligions: `RoleRequirement_Xenotype` → `RR_White`, with `RoleEffect_PawnStatOffset NegotiationAbility` and the vanilla leader's "conversion" abilities swapped for a "pronounce" (the vanilla `Trial` ritual exists in Ideology; the arbiter presides). XML.
 - **Copper officials raise trade prices for the Society.** A `RoleEffect`-free version: give the Society's census caravan better prices when the colony has a Copper (needs C#) — or skip it and give Coppers `AptitudeStrong_Social` already present. Note only.
-- **Zoladone for Gray squads.** Society combat kinds could carry it as `combatEnhancingDrugsChance` (a `PawnKindDef` field used by vanilla pirates for go-juice) with `combatEnhancingDrugsCount`. Grays on zoladone are harder to break, which is the drug's canon use. XML, verify the field names.
-- **Fever cloud for tribe raids.** Same field on `RR_Tribe_Obsidian_Warrior` → berserk Obsidians, which is what "making men into savages" looks like arriving at the wall. XML.
-- **The Board's census letter.** Each new year under the BQC storyteller, a letter stating the colony's "target population" for the year (a `StorytellerCompProperties_Triggered`-style comp or an `IncidentDef` with `IncidentWorker_LetterOnly`-style worker: check whether vanilla has a letter-only worker, else `C#‑small`). Flavour that explains the storyteller's premise in play.
+- **Zoladone for Gray squads.** *(Drafted 2026-10-09: `combatEnhancingDrugsChance` on the Legionary and Lurcher kinds.)* Society combat kinds could carry it as `combatEnhancingDrugsChance` (a `PawnKindDef` field used by vanilla pirates for go-juice) with `combatEnhancingDrugsCount`. Grays on zoladone are harder to break, which is the drug's canon use. XML, verify the field names.
+- **Fever cloud for tribe raids.** *(Drafted 2026-10-09: on the Obsidian warrior, Stained and Ascomanni raider kinds.)* Same field on `RR_Tribe_Obsidian_Warrior` → berserk Obsidians, which is what "making men into savages" looks like arriving at the wall. XML.
+- **The Board's census letter.** *(Drafted 2026-10-09: `RR_Incident_CensusLetter`, same worker as the Laurel.)* Each new year under the BQC storyteller, a letter stating the colony's "target population" for the year (a `StorytellerCompProperties_Triggered`-style comp or an `IncidentDef` with `IncidentWorker_LetterOnly`-style worker: check whether vanilla has a letter-only worker, else `C#‑small`). Flavour that explains the storyteller's premise in play.
 - **Reds and the dark.** `CaveDweller` + `DarkVision` are on; a `MineableSpeed`-style stat bonus underground is not a vanilla stat, but `MiningSpeed`/`MiningYield` offsets via a gene are. Already `AptitudeRemarkable_Mining`; consider `MiningYield` +20% on Red and Ultraheavy as the one thing Reds are *the best in the game* at. XML.
 - **Carver reputation.** A Violet who has carved N pawns gets a title-like `Hediff` or trait ("Master Carver", DESIGN §2.7) that improves `surgerySuccessChanceFactor` via `MedicalSurgerySuccessChance` offset. `C#‑small` (counting) or XML if simply granted by a ritual.
 
@@ -231,6 +261,8 @@ Added after the first pass, at the user's request. Same rules: setting *terms* o
 
 ### 6.3 Swill
 
+> **Drafted 2026-10-09** - `Drugs_Swill_RimRising.xml`, on vanilla's Alcohol chemical, brewed at a crafting spot from any raw plant food.
+
 **Lore.** Red moonshine, brewed from whatever the clan can spare.
 
 **Mechanism.** `ThingDef` drug cloned from `Core/Defs/ThingDefs_Items/Items_Drug.xml`'s beer with its own `Chemical_RR_Swill`, `RR_SwillHigh` hediff and addiction set, following the zoladone pattern already in `Drugs_RimRising.xml` exactly. Cheaper ingredients (any raw food, including fungus, so it brews underground), worse mood, a small `Consciousness` penalty, same addictiveness as beer. A `RecipeDef` on the vanilla brewery or, better, on a cheap `RR_Still` building so the production chain is visibly Red.
@@ -240,6 +272,8 @@ Added after the first pass, at the user's request. Same rules: setting *terms* o
 **Effort.** XML, or XML+art with the still. **Verify:** `ChemicalDef`, `NeedDef` for the addiction and the `hediffGivers` layout against beer; that fungus is accepted by a `fixedIngredientFilter` on raw food.
 
 ### 6.4 The Laurel
+
+> **Drafted 2026-10-09** - `IncidentDefs/Incidents_RimRising.xml` (quota, awarded, census) + `Source/RimRising/IncidentWorkers.cs` UNBUILT.
 
 **Lore.** The Society's production prize, promised to the clan that exceeds quota, and awarded elsewhere. The setting's founding injustice in one event.
 
@@ -253,6 +287,8 @@ Added after the first pass, at the user's request. Same rules: setting *terms* o
 
 ### 6.5 Griffins
 
+> **Drafted 2026-10-09** - `Races_Animal_Griffin.xml`, sold by the Society quartermaster. Not in raids yet (needs a one-line test, Opus notes).
+
 **Lore.** Bioengineered mounts the Society breeds for its Golds; seen at the Institute and in Society hunting parties.
 
 **Mechanism.** A large `ThingDef` animal, `trainability Advanced`, `wildness` high, `combatPower` well above a warg, sold only by Society traders (`StockGenerator_Animals` with a `kindDefs` list, as the Empire's traders sell their own stock) and never wild. Odyssey's large flyers are the template for size and movement; do not give it true flight, since vanilla flight is an Odyssey-specific mechanism and the animal would be Odyssey-gated. A Society raid pawn group that brings two of them (`PawnGroupMaker` `kindDef` entries with `commonality`) is the real use: a Gold hunting party arriving with its beasts.
@@ -262,6 +298,8 @@ Added after the first pass, at the user's request. Same rules: setting *terms* o
 **Effort.** XML+art (large; a four-direction animal is the biggest art cost in this section). **Verify:** `StockGenerator_Animals` fields against `Core/Defs/TraderKindDefs/`; that a non-flying animal can be given `Pawn_Flying`-free movement at a large body size without pathing complaints.
 
 ### 6.6 Yellow, Orange and Blue roles
+
+> **Drafted 2026-10-09** - `PreceptDefs/Roles_Colors.xml`: Physician, Engineer, Pilot, plus the White Arbiter and Obsidian Shaman from section 3.
 
 **Lore.** The mid Colors each own a profession: Yellows heal, Oranges build and fix, Blues fly.
 
@@ -273,6 +311,8 @@ Added after the first pass, at the user's request. Same rules: setting *terms* o
 
 ### 6.7 Blues and gravships
 
+> **Not drafted** - needs Odyssey's defs on disk; the Pilot role carries stand-in stats until then. Opus notes.
+
 **Lore.** Blues are the pilots and navigators; no ship moves without one.
 
 **Mechanism.** Odyssey ships gravships with a pilot console. If piloting or gravship launch reads a stat or a work type, `RR_Blue` gets a `statFactors` entry on it and nobody else does; if the console is a plain job with no stat, the lever is a `PreceptComp_UnwillingToDo`-style precept ("only Blues pilot") on the hierarchy memes, which the colony can reject by not taking the meme. Nothing here should *hard-gate* flight, for the same reason 2.3 does not hard-gate work: a Red colony with no Blue must still be able to leave.
@@ -283,6 +323,8 @@ Added after the first pass, at the user's request. Same rules: setting *terms* o
 
 ### 6.8 ClawDrills
 
+> **Drafted 2026-10-09** - `ThingDefs_Buildings/Buildings_RimRising.xml`; the deep-drill comp form UNVERIFIED and the yield/Red levers are notes.
+
 **Lore.** The helldiver's rig: a drill operated from inside, driven into rock at speeds that kill the careless.
 
 **Mechanism.** A `ThingDef` building cloned from `Core/Defs/ThingDefs_Buildings/Buildings_Production.xml`'s deep drill, with higher yield and a `WorkTableWorkSpeedFactor`-style stat (or `DeepDrillingSpeed`, which is a real vanilla stat on pawns) that `RR_Red` and `RR_Red_Ultraheavy` boost through `statFactors`. Yields helium-3 if 2.4 is built, otherwise ionsteel and the vanilla ores. Operating it without the Red boost should be slow rather than impossible.
@@ -292,6 +334,8 @@ Added after the first pass, at the user's request. Same rules: setting *terms* o
 **Effort.** XML+art (a 2x2 building sprite). **Verify:** `DeepDrillingSpeed` is a `StatDef` a gene's `statFactors` can target; `CompProperties_DeepDrill` yield fields on the vanilla deep drill.
 
 ### 6.9 Howler pelts
+
+> **Drafted 2026-10-09** - `Apparel_HowlerPelt.xml`, CE bulk patched, worn art is placeholders pending a `Draw-PanelArmor.py` design.
 
 **Lore.** The Howlers wear wolf pelts over their armour; it is their uniform and their joke.
 
