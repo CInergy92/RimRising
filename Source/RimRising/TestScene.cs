@@ -360,6 +360,8 @@ namespace RimRising
             "MeleeWeapon_PlasmaSword",
             "MeleeWeapon_Gladius",
             "AG_ForsakenLongBlade",
+            // ranged, against vanilla charge rifle and autopistol
+            "RR_Weapon_PulseFist", "RR_Weapon_Scorcher", "Gun_ChargeRifle", "Gun_Autopistol",
         };
 
         /// <summary>

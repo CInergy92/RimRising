@@ -82,7 +82,8 @@
       <AccuracyLong>0.55</AccuracyLong>
       <RangedWeapon_Cooldown>2.4</RangedWeapon_Cooldown>
     </statBases>
-    <equippedAngleOffset>-40</equippedAngleOffset>
+    <!-- 0, as vanilla guns: Tools/Draw-Ranged.py draws it horizontal, muzzle right. -->
+    <equippedAngleOffset>0</equippedAngleOffset>
     <costList>
       <RR_Ionsteel>30</RR_Ionsteel>
       <Plasteel>80</Plasteel>
