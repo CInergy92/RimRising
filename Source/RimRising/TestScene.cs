@@ -68,7 +68,7 @@ namespace RimRising
         // wide at 16:9: one row of seven armours with room for the HUD at the
         // edges. Close, because the user judged the first run's close-up zoom the
         // right one to read sprites at.
-        private const float TargetOrtho = 2.7f;
+        private float TargetOrtho = 2.7f;    // rrtestmode=items widens it
         private const int RowGap = 5;            // cells between rows; one row per shot
         private int calibration;
         private bool letTimeRun;
@@ -230,6 +230,11 @@ namespace RimRising
             }
             Directory.CreateDirectory(outDir);
 
+            if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string imode) && imode == "items")
+            {
+                BuildItems();
+                return;
+            }
             if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string mode) && mode == "weapons")
             {
                 BuildWeapons();
@@ -286,6 +291,64 @@ namespace RimRising
 
             Find.TickManager.CurTimeSpeed = TimeSpeed.Paused;
             Log.Message($"[RimRising] TESTSCENE built: {defs.Count} armours x {bodies.Length} bodies x {Facings.Length} facings at {area}; left to right: " + string.Join(", ", defs.Select(d => d.defName)));
+        }
+
+        private static readonly string[] OurItems =
+        {
+            "RR_Zoladone", "RR_Nazopran", "RR_MjolnirSix", "RR_GodsBread", "RR_FeverCloud",
+            "RR_ResFlesh", "RR_Ionsteel", "RR_CarvelingVat_Sylph", "RR_CarvingKit",
+            "RR_CupidsKiss", "RR_SynapticLattice", "RR_Apparel_Aegis",
+            "RR_Apparel_GravBoots", "RR_Apparel_SkipBoots",
+        };
+
+        private static readonly string[] VanillaItems =
+        {
+            "GoJuice", "Yayo", "Flake", "Luciferium", "Penoxycyline", "MedicineIndustrial",
+            "MedicineUltratech", "Steel", "Plasteel", "Uranium", "ComponentSpacer",
+            "Apparel_ShieldBelt", "Apparel_PackJump", "BionicArm",
+        };
+
+        /// <summary>
+        /// rrtestmode=items: our items on the ground at one, a middling and a full
+        /// stack (Graphic_StackCount shows _a, _b and _c), then a row of vanilla
+        /// items for scale and line weight. Not forbidden, so no red X.
+        /// </summary>
+        private void BuildItems()
+        {
+            TargetOrtho = 4.2f;
+            var ours = OurItems.Select(n => DefDatabase<ThingDef>.GetNamedSilentFail(n)).Where(d => d != null).ToList();
+            var theirs = VanillaItems.Select(n => DefDatabase<ThingDef>.GetNamedSilentFail(n)).Where(d => d != null).ToList();
+            int width = Mathf.Max(ours.Count, theirs.Count);
+            int rowGap = 2;
+            IntVec3 c = map.Center;
+            area = new CellRect(c.x - width / 2, c.z - 4, width, 4 * rowGap).ClipInsideMap(map);
+            Clear(area.ExpandedBy(3).ClipInsideMap(map));
+            SetNoon();
+
+            float[] fractions = { 0f, 0.4f, 1f };     // count 1, mid, full
+            for (int r = 0; r < fractions.Length; r++)
+            {
+                int z = area.maxZ - r * rowGap;
+                for (int a = 0; a < ours.Count; a++)
+                {
+                    ThingDef d = ours[a];
+                    Thing t = ThingMaker.MakeThing(d, d.MadeFromStuff ? GenStuff.DefaultStuffFor(d) : null);
+                    t.stackCount = Mathf.Max(1, Mathf.RoundToInt(d.stackLimit * fractions[r]));
+                    GenSpawn.Spawn(t, new IntVec3(area.minX + a, 0, z), map);
+                }
+            }
+            int zv = area.maxZ - 3 * rowGap;
+            for (int a = 0; a < theirs.Count; a++)
+            {
+                ThingDef d = theirs[a];
+                Thing t = ThingMaker.MakeThing(d, d.MadeFromStuff ? GenStuff.DefaultStuffFor(d) : null);
+                t.stackCount = Mathf.Max(1, Mathf.RoundToInt(d.stackLimit * 0.4f));
+                GenSpawn.Spawn(t, new IntVec3(area.minX + a, 0, zv), map);
+            }
+            shots.Add(("items", new Vector3(area.minX + width / 2f, 0f, area.maxZ - 1.5f * rowGap + 0.5f), 0f));
+            Find.TickManager.CurTimeSpeed = TimeSpeed.Paused;
+            Log.Message("[RimRising] TESTSCENE built items: ours " + string.Join(", ", ours.Select(d => d.defName)) +
+                        " | vanilla " + string.Join(", ", theirs.Select(d => d.defName)));
         }
 
         private static readonly string[] Weapons =
