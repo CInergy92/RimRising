@@ -1079,7 +1079,7 @@ namespace RimRising
                         Discard(p);
                     }
                     int marked = seen.Count(s => s.Contains("RR_Tattoo_"));
-                    Check("5 marks " + k, marked >= 5, $"{marked}/10 marked: {string.Join(", ", seen.Distinct())}");
+                    Check("5 marks " + k, marked == 10, $"{marked}/10 marked: {string.Join(", ", seen.Distinct())}");
                 }
             });
 

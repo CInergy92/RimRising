@@ -6,21 +6,18 @@
   stained in patterns their tribe reads; Grays carry their unit on the forearm.
   Peerless Golds are scarred, and that is done already (Precepts_Scarification.xml).
 
-  HOW THEY ARE ASSIGNED. Per Color, through the pawn kinds: PawnKindDef.styleItemTags
-  (tag, baseWeight, weightFactor - verified on VFE Empire's PawnKinds_Deserter.xml)
-  weights a style tag for pawns generated from that kind, and the tattoos below carry
-  the matching tag. So a Blue helmsman gets a Blue digiTat and an Obsidian a tribal
-  stain, with no C# and no meme involvement. A meme-level styleTags list would hand
-  every hierarchy pawn every mark, which the suggestion flagged as the wrong grain.
+  HOW THEY ARE ASSIGNED. Imposed by Color (user's call, 2026-10-09): a pawn kind
+  names a style tag (RR_BlueMarks, RR_GrayMarks, RR_ObsidianMarks) in its
+  styleItemTags, and Source/RimRising/CasteMarks.cs stamps the matching tattoo on
+  after generation, the tag's weight being the chance. Vanilla's style roll could
+  never do it: a pawn with an ideoligion only gets tattoos its culture or memes tag,
+  and kind tags only weight within that set (rrtestmode=m12 measured 0 of 30).
   Colonists and wanderers, as with backstories, are not reached.
-
   STRUCTURE. styleTags, texPath, label and defName are the HairDef fields from
   Vanilla Hair Expanded (1.6/Defs/HairDefs/HairsViking.xml); a TattooDef is a StyleItemDef
   like a HairDef. The one field a tattoo has that a hair does not is tattooType
-  (Face or Body), which is UNVERIFIED from here - no reference mod on GitHub ships a
-  tattoo. Confirm against Ideology/Defs/TattooDefs/ (Find-VanillaDef.ps1 -DefType
-  TattooDef) before this loads. If TattooDef needs anything else, that file is the
-  template; a field error on load names this def.
+  (Face or Body), verified against Ideology/Defs/TattooDefs/. TattooDef.GraphicFor is
+  a Graphic_Multi, so each needs _south/_east/_north; the icon falls back to _south.
 
   TEXTURES are Ideology's tattoo convention: 128x128 overlays per facing
   (<texPath>_south, _north, _east) matched to the head or body. These are placeholders
@@ -32,7 +29,6 @@
   <TattooDef>
     <defName>RR_Tattoo_DigiTat</defName>
     <label>digiTat</label>
-    <!-- VERIFY field name and values. -->
     <tattooType>Face</tattooType>
     <texPath>Things/Pawn/Humanlike/Tattoos/RR_DigiTat</texPath>
     <styleTags>

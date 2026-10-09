@@ -1413,8 +1413,7 @@ parses, which is all that can be said from there. Suggestions 1.1, 1.4, 6.1 and 
 ### Status after the local session (2026-10-09)
 
 **Built, loads clean, and checked in code:** `rrtestmode=m12` turns the click-list below into
-38 logged checks; **35 pass**. The three that fail are the caste marks, which wait on a design
-call (below). Fixed on the way, each found by the validator, the decompiled game, the first
+38 logged checks; **all 38 pass**. Fixed on the way, each found by the validator, the decompiled game, the first
 load or the test:
 
 | Item | What was wrong |
@@ -1430,12 +1429,12 @@ load or the test:
 | Howlers | the kit was left to the budget (a demonHelm never came up); now `apparelRequired`. The pelt and ghostCloak cannot be worn together - both Shell capes |
 | Heirloom razor | re-declared an inherited weapon class |
 
-**Waiting on the user:**
-- **Caste marks never generate.** A pawn with an ideoligion only gets a tattoo whose tags the
-  ideoligion's culture or memes carry (`IdeoStyleTracker.RecalculateAvailableStyleItems`); the
-  pawn kind's `styleItemTags` only weight what is already allowed. Ours sit on kinds only, so
-  every Society and tribe pawn rolls `NoTattoo`.
-- **Howler cape:** the pelt is required; the ghostCloak only appears on a Howler without one.
+**Decided by the user (2026-10-09):**
+- **Caste marks are imposed by Color.** Vanilla's style roll could never pick them: a pawn with
+  an ideoligion only gets a tattoo its culture or memes tag (`IdeoStyleTracker`), and the kind's
+  `styleItemTags` only weight within that set. `CasteMarks.cs` stamps the kind's mark after
+  generation; 10/10 Helmsmen, Legionaries and tribe warriors now carry theirs.
+- **The Howler uniform is the pelt.** The ghostCloak only appears on a Howler without one.
 
 Still owed: the art in `docs/Opus-Notes.md` section 3 (slingBlade, Howler pelt, griffin,
 clawDrill, tattoos, role/ritual/issue icons, heirloom razor), and its section 4/5 items, which

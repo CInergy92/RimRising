@@ -964,7 +964,8 @@ Each loaded without complaint, or with a log line that does not name the cause:
   own work giver (`ClawDrill.cs`). Assume the same of any vanilla work giver until its
   `PotentialWorkThingRequest` is read.
 - **A pawn with an ideoligion only gets tattoos its culture or memes tag.** The kind's
-  `styleItemTags` weight within that set; they cannot add to it.
+  `styleItemTags` weight within that set; they cannot add to it. Caste marks are therefore
+  stamped after generation (`CasteMarks.cs`, the user's call: imposed by Color).
 - **1.6 places deep resources lazily**, when a scanner finds one (`CompDeepScanner`); a fresh
   map's deep grid is empty. A deep resource is in play if its `deepCommonality` is non-zero.
 - **A ScenarioDef needs `ParentName="ScenarioBase"`** for its player faction and planet layer.
