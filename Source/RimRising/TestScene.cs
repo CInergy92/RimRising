@@ -531,6 +531,8 @@ namespace RimRising
             wait = 30;
         }
 
+        private const int KindSamples = 30;
+
         private static readonly string[] Kinds =
         {
             "RR_Society_Obsidian_Knight",
@@ -562,18 +564,25 @@ namespace RimRising
                 if (fac == null) { Log.Message("[RimRising] KINDS " + name + ": no faction in this world fields it"); continue; }
 
                 int plate = 0;
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < KindSamples; i++)
                 {
                     Pawn p = PawnGenerator.GeneratePawn(new PawnGenerationRequest(kind, fac, forceGenerateNewPawn: true));
                     string apparel = string.Join(", ", p.apparel?.WornApparel.Select(a => a.def.defName) ?? Enumerable.Empty<string>());
                     string weapon = p.equipment?.Primary?.def.defName ?? "-";
+                    CompShield shield = p.apparel?.WornApparel.Select(a => a.TryGetComp<CompShield>()).FirstOrDefault(s => s != null);
+                    if (shield != null)
+                    {
+                        bool canFire = p.equipment?.Primary == null || p.equipment.Primary.def.IsMeleeWeapon ||
+                                       p.apparel.WornApparel.All(a => a.AllowVerbCast(p.equipment.PrimaryEq.PrimaryVerb));
+                        weapon += $" (shield {shield.parent.def.defName} max {shield.parent.GetStatValue(StatDefOf.EnergyShieldEnergyMax):F2}, may fire {canFire})";
+                    }
                     string titles = p.royalty == null ? "-" :
                         string.Join(", ", p.royalty.AllTitlesForReading.Select(t => t.def.defName));
                     if (p.apparel != null && p.apparel.WornApparel.Any(a => a.def.apparel?.tags?.Contains(RR_CasteArmor.RestrictedTag) == true)) { plate++; }
                     Log.Message($"[RimRising] KINDS {name} #{i} ({fac.Name}) color={RR_CasteIdentity.ColorOf(p)?.defName ?? "-"} titles=[{titles}] weapon={weapon} apparel=[{apparel}]");
                     Find.WorldPawns.PassToWorld(p, PawnDiscardDecideMode.Discard);
                 }
-                Log.Message($"[RimRising] KINDS {name}: {plate}/10 in restricted plate");
+                Log.Message($"[RimRising] KINDS {name}: {plate} in restricted plate of {KindSamples}");
             }
         }
 

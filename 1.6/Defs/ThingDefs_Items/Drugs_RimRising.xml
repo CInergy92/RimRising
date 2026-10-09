@@ -71,6 +71,16 @@
           <severity>0.5</severity>
           <toleranceChemical>RR_Zoladone</toleranceChemical>
         </li>
+        <!-- Tolerance, wired as vanilla wires alcohol's (Core/Defs/Drugs/Beer.xml):
+             a second GiveHediff doer plus toleranceHediff on the ChemicalDef. Twice
+             beer's rate - zoladone is taken daily by people who need it to cope. -->
+        <li Class="IngestionOutcomeDoer_GiveHediff">
+          <hediffDef>RR_ZoladoneTolerance</hediffDef>
+          <toleranceChemical>RR_Zoladone</toleranceChemical>
+          <severity>0.032</severity>
+          <divideByBodySize>true</divideByBodySize>
+          <multiplyByGeneToleranceFactors>true</multiplyByGeneToleranceFactors>
+        </li>
       </outcomeDoers>
     </ingestible>
     <recipeMaker>
@@ -156,6 +166,8 @@
     <defName>RR_Zoladone</defName>
     <label>zoladone</label>
     <addictionHediff>RR_ZoladoneAddiction</addictionHediff>
+    <toleranceHediff>RR_ZoladoneTolerance</toleranceHediff>
+    <onGeneratedAddictedToleranceChance>0.8</onGeneratedAddictedToleranceChance>
     <geneOverdoseChanceFactorResist>0.5</geneOverdoseChanceFactorResist>
     <geneOverdoseChanceFactorImmune>0</geneOverdoseChanceFactorImmune>
   </ChemicalDef>

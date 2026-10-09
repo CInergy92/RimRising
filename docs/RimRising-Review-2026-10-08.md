@@ -47,7 +47,16 @@ Merged the branch. Verified against vanilla defs, the decompiled game and in gam
 
 **New finding:** the Reaper's razor also carries `UltratechMelee`, so Society Golds and Bronzies generate holding it (seen in the kinds run). This belongs with RV-10.
 
-Still open, all decisions for the user: RV-06, RV-10 (+ the Reaper's razor), RV-11, the whip switches (`sweepAll`, `ignoreDodge`, cooldown, yank, line of sight). Not done: RV-16 (starShell in game), RV-18 (cosmetic).
+User's decisions, applied and checked in game (`rrtestmode=kinds`, 30 per kind):
+
+- **Reaper's razor is Rising-only:** `UltratechMelee` removed, leaving `RR_RisingWeapon`. Society pawns holding it: 0.
+- **RV-06, zoladone builds tolerance:** wired the way vanilla alcohol is (second GiveHediff doer at 0.032 plus `toleranceHediff` on the ChemicalDef).
+- **RV-11, pulse armour has a real pulseShield that blocks no guns:** `CompProperties_Shield` with `blocksRangedWeapons false`, energy 1.0 / 0.13. In game, a charge-rifle Praetor and a pulseFist Bronzie in pulse armour may both fire.
+- **Whip defaults kept.**
+
+Plate rate at 30 samples: knights 18/30, Praetors 14/30, Bronzies 23/30. The earlier 10-sample swings were noise.
+
+Still open: RV-10 for the ordinary razor (Society Obsidian Knights can generate holding one, which triggers the "lesser Color bore a razor" thought). Not done: RV-16 (starShell in game), RV-18 (cosmetic).
 
 ---
 

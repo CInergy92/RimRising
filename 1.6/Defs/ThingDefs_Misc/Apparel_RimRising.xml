@@ -62,6 +62,11 @@
       <Insulation_Cold>74</Insulation_Cold>
       <Insulation_Heat>14</Insulation_Heat>
       <EquipDelay>18</EquipDelay>
+      <!-- The spine generator's pulseShield, read by CompShield below. A shield
+           belt is 1.1 / 0.13; the suit's is a touch smaller, since it also has
+           to carry the servos. -->
+      <EnergyShieldEnergyMax>1.0</EnergyShieldEnergyMax>
+      <EnergyShieldRechargeRate>0.13</EnergyShieldRechargeRate>
     </statBases>
     <equippedStatOffsets>
       <!--
@@ -113,6 +118,22 @@
         <stimHediff>RR_CombatStim</stimHediff>
         <stimDoses>4</stimDoses>
         <doseRechargeTicks>45000</doseRechargeTicks>
+      </li>
+      <!--
+        The pulseShield the description promises (review RV-11). Stops shots and
+        blasts like a shield belt - CompShield never absorbs melee, so it does
+        nothing against a razor, which is canon.
+
+        blocksRangedWeapons FALSE, unlike every vanilla shield: the wearer may fire
+        any gun, pulseFist included (user's call). The field governs what the
+        WEARER may shoot, not what gets stopped. Leaving it true would also have
+        disarmed every SpacerGun Praetor and Gray defector that generates in it,
+        since pawn generation never checks shields against weapons.
+
+        Ticks because the def's tickerType is Normal - see the trauma suite note.
+      -->
+      <li Class="CompProperties_Shield">
+        <blocksRangedWeapons>false</blocksRangedWeapons>
       </li>
     </comps>
     <!--

@@ -540,8 +540,10 @@ It cuts as well as any razor. It is worth rather more than that to the people wh
     </comps>
     <smeltable>false</smeltable>
     <burnableByRecipe>false</burnableByRecipe>
+    <!-- Rising-only (user's call). UltratechMelee used to sit here too, and every
+         kind carrying that vanilla tag - Society Golds and Bronzies included -
+         could roll the Reaper's own razor (seen in rrtestmode=kinds). -->
     <weaponTags>
-      <li>UltratechMelee</li>
       <li>RR_RisingWeapon</li>
     </weaponTags>
     <weaponClasses>
