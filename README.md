@@ -70,10 +70,14 @@ the project relies on, `docs/DESIGN.md` the content design, and `docs/PROGRESS.m
 
 ## Credits
 
-Built with Claude Code (Anthropic). Item, weapon and preview art generated locally with
-Z-Image-Turbo and a ControlNet in ComfyUI, guided by procedural silhouettes from `Tools/`;
-icons, worn apparel and terrain are drawn procedurally. Sound effects generated with fal (fal.ai)
-using `fal-ai/elevenlabs/sound-effects/v2`; prompts and request ids are kept in
+Built with Claude Code (Anthropic). Items, weapons, worn apparel, animals, plants, icons and
+terrain are drawn procedurally by scripts in `Tools/` (`Draw-Items.py`, `Draw-Weapons.py`,
+`Draw-Ranged.py`, `Draw-PanelArmor.py`, `Draw-Nature.py` and others). The starShell exosuit was
+generated with fal (fal.ai) using `openai/gpt-image-2` and `fal-ai/nano-banana-2/edit`, then cut
+out, greyscaled and outlined by `Tools/Clean-GenStarShell.py`; prompts and request ids are in
+`Art/Gen/StarShell/fal_manifest.jsonl`. Preview and storyteller art was generated locally with
+Z-Image-Turbo and a ControlNet in ComfyUI. Sound effects generated with fal using
+`fal-ai/elevenlabs/sound-effects/v2`; prompts and request ids are kept in
 `Art/Sounds/candidates/fal_manifest.jsonl`.
 
 Thanks to the authors of every required mod, and to Epicguru for Melee Animation.

@@ -865,6 +865,27 @@ Melee Animation draws a drafted pawn's weapon through its idle animation, which 
 time runs - paused at once, every held weapon, vanilla's included, was absent - so that mode runs
 ~2.5 s before pausing.
 
+### The starShell is the one generated worn sprite - Tools/Clean-GenStarShell.py
+
+The code-drawn starShell was judged "much lower quality" beside The Dead Man's Switch - MobileDragoon
+(the installed mod that builds real suits on the Exosuit Framework), and the user chose
+generate-and-clean-up. It is an exception to "worn apparel does not go through the generative
+pipeline", and it works because an exosuit module does not register against a body type's
+shoulders: it only has to sit in the Dragoon's measured footprint.
+
+- Generated with fal: the front view with `openai/gpt-image-2`, the other facings and the hood and arm
+  with the edit endpoints, the front view as reference so all three match. Prompts and request ids are
+  in `Art/Gen/StarShell/fal_manifest.jsonl`; only the images actually used are kept.
+- **gpt-image-2 on fal no longer takes `background=transparent`** (HTTP 422). Generate on flat white
+  and cut out by border flood fill.
+- **nano-banana's edit kept the front view and bolted a cannon on when asked for a side view.**
+  gpt-image-2's edit endpoint, with "no arms, no weapons" spelled out, gave a true profile.
+- Cleanup: greyscale (the framework's `colorGenerator` tint multiplies everything), fit to the
+  footprint (core y 0.10-0.97 of 512, hood the middle half, arm rotated per facing like the
+  Dragoon's), 6 px black outline at 512. Rerun the script after replacing any source image.
+- Defs: no `drawData` offset on the core (the Dragoon's cores have none) and default scale on the
+  hood; the old `(0,0,0.35)` and `1.6` lifted and inflated the placeholder.
+
 ### THIGAPPE refits apparel it has no data for - opt out with THIGAPPE_IgnoreTag
 
 The user runs [NL] Realistic Body with Apparel Paper Pattern and **THIGAPPE**, which warps any

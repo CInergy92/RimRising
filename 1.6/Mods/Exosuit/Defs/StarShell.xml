@@ -244,11 +244,10 @@
     </thingCategories>
     <apparel>
       <wornGraphicPath>Things/Pawn/Humanlike/Apparel/RR_StarShell/RR_StarShellCore</wornGraphicPath>
+      <!-- No offset: the Dragoon's cores (DMS PV4, FA47) have none. The old
+           (0,0,0.35) lifted the suit off the pawn. -->
       <drawData>
         <scale>2.0</scale>
-        <defaultData>
-          <offset>(0,0,0.35)</offset>
-        </defaultData>
       </drawData>
       <tags>
         <li>RR_StarShell</li>
@@ -324,9 +323,8 @@
     </thingCategories>
     <apparel>
       <wornGraphicPath>Things/Pawn/Humanlike/Apparel/RR_StarShell/RR_StarShellHead</wornGraphicPath>
-      <drawData>
-        <scale>1.6</scale>
-      </drawData>
+      <!-- Default scale, as the Dragoon's helmets: the art fills the middle half
+           of its canvas instead. -->
       <tags>
         <li>RR_StarShell</li>
       </tags>

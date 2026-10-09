@@ -24,7 +24,7 @@ This mod is a work in progress. Worn apparel art is still being refined.
 CREDITS AND DISCLOSURE
 An unofficial fan work inspired by Pierce Brown's Red Rising novels. It is not affiliated with or endorsed by the author or his publishers, and no text or artwork from the books is reproduced; every description and every image is original.
 
-Built with Claude Code (Anthropic). Item, weapon and preview art was generated locally with Z-Image-Turbo and a ControlNet, guided by hand-built procedural silhouettes; icons, worn apparel and terrain are drawn procedurally. Sound effects were generated with fal (fal.ai) using ElevenLabs Sound Effects v2.
+Built with Claude Code (Anthropic). Items, weapons, worn apparel, animals, plants, icons and terrain are drawn procedurally by scripts in the mod's Tools folder. The starShell exosuit was generated with fal (fal.ai) using OpenAI gpt-image-2 and Google nano-banana-2, then cut out, greyscaled and outlined by script. Preview and storyteller art was generated locally with Z-Image-Turbo and a ControlNet. Sound effects were generated with fal (fal.ai) using ElevenLabs Sound Effects v2.
 
 Thanks to the authors of every mod listed above as a requirement, and to Epicguru for Melee Animation, whose override folders made razor support possible without touching their mod.</description>
 
