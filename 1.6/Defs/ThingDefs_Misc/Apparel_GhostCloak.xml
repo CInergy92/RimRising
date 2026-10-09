@@ -178,6 +178,8 @@
         <li>Shell</li>
       </layers>
       <tags>
+        <!-- The Howler kit: RR_Ares_Howler generates from this tag (suggestion 1.9). -->
+        <li>RR_StealthKit</li>
         <li>Cape</li>
         <li>SpacerMilitary</li>
         <!-- THIGAPPE opt-out: we ship our own Realistic Body sprites (1.6/Mods/RealisticBody). -->

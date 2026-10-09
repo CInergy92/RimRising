@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Roles for the Colors between Gold and Red. Suggestion 6.6 plus the two roles from
+  the suggestions' section 3 (the White arbiter and the Obsidian shaman).
+
+  The mid Colors each own a profession in the setting, and until now they had
+  aptitudes and nothing else. A role gives each a seat at the ideoligion table and
+  a reason to recruit one:
+
+    RR_Role_Physician   Yellow    hierarchy    heals
+    RR_Role_Engineer    Orange    hierarchy    builds and fixes
+    RR_Role_Pilot       Blue      hierarchy    flies (the stat it moves is a stand-in;
+                                               see 6.7 in the suggestions doc for what
+                                               a gravship pilot should really read)
+    RR_Role_Arbiter     White     hierarchy    judges, negotiates
+    RR_Role_Shaman      Obsidian  GoldWorship  the tribe's face; its moralist is a
+                                               shaman in RR_GoldWorship's own text
+
+  STRUCTURE mirrored from Roles_OlympicKnights.xml in this folder (itself mirrored
+  from Ideology's Precepts_Role.xml): PreceptRoleSingleBase, RoleRequirement_SameIdeo,
+  RimRising.RoleRequirement_Xenotype, roleRequiredWorkTags, RoleEffect_PawnStatOffset,
+  and the believer counts that file explains at length. Stat names are vanilla and
+  were seen used in RoleEffect_PawnStatOffset or statOffsets in the reference mods
+  and this one: MedicalSurgerySuccessChance, MedicalTendQuality, ConstructionSpeed,
+  WorkSpeedGlobal, NegotiationAbility, SocialImpact, ShootingAccuracyPawn, MoveSpeed.
+  ConstructSuccessChance is vanilla (the construction skill's own stat) but was not
+  seen in a reference file; it is the one stat here to double-check.
+
+  NOT IN requireOne. These are optional roles, like the knights. The lesson behind
+  PreceptNotGuaranteed is about precepts the design depends on; a hierarchy
+  ideoligion without a Yellow physician still works. The knights' base is not
+  reused because its icon and believer counts are the Olympic order's.
+
+  Role nameMakers: none. Vanilla roles without a nameMaker use their label, which is
+  what these want - "Physician", not an invented honorific.
+-->
+<Defs>
+
+  <PreceptDef Abstract="True" Name="RR_ColorRoleBase" ParentName="PreceptRoleSingleBase">
+    <roleRequirements Inherit="False">
+      <li Class="RoleRequirement_SameIdeo">
+        <labelKey>RoleRequirementLabelSameIdeo</labelKey>
+      </li>
+    </roleRequirements>
+    <expectationsOffset>1</expectationsOffset>
+    <impact>Medium</impact>
+    <!-- Same reasoning as the knights: a title has no business lapsing because
+         three people got into a vehicle. -->
+    <activationBelieverCount>3</activationBelieverCount>
+    <deactivationBelieverCount>1</deactivationBelieverCount>
+  </PreceptDef>
+
+  <!-- ============================== hierarchy ============================== -->
+
+  <PreceptDef ParentName="RR_ColorRoleBase">
+    <defName>RR_Role_Physician</defName>
+    <label>Physician</label>
+    <description>A Yellow holds the body's secrets by birth and by law; no other Color is permitted to cut. The physician keeps the believers alive and is the only one of them who has seen what a Gold looks like inside.</description>
+    <iconPath>UI/Roles/RR_Role_Physician</iconPath>
+    <requiredMemes>
+      <li>RR_ColorHierarchy</li>
+    </requiredMemes>
+    <roleRequirements>
+      <li Class="RimRising.RoleRequirement_Xenotype">
+        <xenotypes>
+          <li>RR_Yellow</li>
+        </xenotypes>
+      </li>
+    </roleRequirements>
+    <roleRequiredWorkTags>
+      <li>Caring</li>
+    </roleRequiredWorkTags>
+    <displayOrderInImpact>20</displayOrderInImpact>
+    <roleEffects>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>MedicalSurgerySuccessChance</statDef>
+        <modifier>0.10</modifier>
+      </li>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>MedicalTendQuality</statDef>
+        <modifier>0.15</modifier>
+      </li>
+    </roleEffects>
+  </PreceptDef>
+
+  <PreceptDef ParentName="RR_ColorRoleBase">
+    <defName>RR_Role_Engineer</defName>
+    <label>Engineer</label>
+    <description>An Orange builds what the rest of the Colors stand on. The engineer is the believer the others go to when something stops, and the one who is blamed first when it does.</description>
+    <iconPath>UI/Roles/RR_Role_Engineer</iconPath>
+    <requiredMemes>
+      <li>RR_ColorHierarchy</li>
+    </requiredMemes>
+    <roleRequirements>
+      <li Class="RimRising.RoleRequirement_Xenotype">
+        <xenotypes>
+          <li>RR_Orange</li>
+        </xenotypes>
+      </li>
+    </roleRequirements>
+    <roleRequiredWorkTags>
+      <li>Constructing</li>
+    </roleRequiredWorkTags>
+    <displayOrderInImpact>21</displayOrderInImpact>
+    <roleEffects>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>ConstructionSpeed</statDef>
+        <modifier>0.20</modifier>
+      </li>
+      <!-- VERIFY the stat name: vanilla's construction-success stat. -->
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>ConstructSuccessChance</statDef>
+        <modifier>0.10</modifier>
+      </li>
+    </roleEffects>
+  </PreceptDef>
+
+  <PreceptDef ParentName="RR_ColorRoleBase">
+    <defName>RR_Role_Pilot</defName>
+    <label>Pilot</label>
+    <description>A Blue flies. Nothing moves between worlds without one at the helm, and nothing they fly is ever theirs. The pilot is the believer who knows exactly how far away everything is.</description>
+    <iconPath>UI/Roles/RR_Role_Pilot</iconPath>
+    <requiredMemes>
+      <li>RR_ColorHierarchy</li>
+    </requiredMemes>
+    <roleRequirements>
+      <li Class="RimRising.RoleRequirement_Xenotype">
+        <xenotypes>
+          <li>RR_Blue</li>
+        </xenotypes>
+      </li>
+    </roleRequirements>
+    <displayOrderInImpact>22</displayOrderInImpact>
+    <!--
+      Stand-ins until the gravship stat is known (suggestions 6.7): a pilot is
+      quick and precise. If Odyssey exposes a piloting stat, replace these.
+    -->
+    <roleEffects>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>ShootingAccuracyPawn</statDef>
+        <modifier>2</modifier>
+      </li>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>MoveSpeed</statDef>
+        <modifier>0.1</modifier>
+      </li>
+    </roleEffects>
+  </PreceptDef>
+
+  <PreceptDef ParentName="RR_ColorRoleBase">
+    <defName>RR_Role_Arbiter</defName>
+    <label>Arbiter</label>
+    <description>A White rules on what is lawful, and the ruling holds because every Color fears the Whites more than it fears each other. The arbiter speaks for the believers to outsiders and settles what they cannot settle among themselves.</description>
+    <iconPath>UI/Roles/RR_Role_Arbiter</iconPath>
+    <requiredMemes>
+      <li>RR_ColorHierarchy</li>
+    </requiredMemes>
+    <roleRequirements>
+      <li Class="RimRising.RoleRequirement_Xenotype">
+        <xenotypes>
+          <li>RR_White</li>
+        </xenotypes>
+      </li>
+    </roleRequirements>
+    <roleRequiredWorkTags>
+      <li>Social</li>
+    </roleRequiredWorkTags>
+    <displayOrderInImpact>23</displayOrderInImpact>
+    <roleEffects>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>NegotiationAbility</statDef>
+        <modifier>0.25</modifier>
+      </li>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>SocialImpact</statDef>
+        <modifier>0.15</modifier>
+      </li>
+    </roleEffects>
+  </PreceptDef>
+
+  <!-- ============================= gold worship ============================ -->
+
+  <PreceptDef ParentName="RR_ColorRoleBase">
+    <defName>RR_Role_Shaman</defName>
+    <label>Shaman</label>
+    <description>The one who speaks to the gods on the ice, and tells the tribe what they said. The shaman keeps the old stories, which are not as old as the tribe believes and were not written by whom it believes either.</description>
+    <iconPath>UI/Roles/RR_Role_Shaman</iconPath>
+    <requiredMemes>
+      <li>RR_GoldWorship</li>
+    </requiredMemes>
+    <roleRequirements>
+      <li Class="RimRising.RoleRequirement_Xenotype">
+        <xenotypes>
+          <li>RR_Obsidian</li>
+          <li>RR_Obsidian_Stained</li>
+          <li>RR_Obsidian_Ascomanni</li>
+        </xenotypes>
+      </li>
+    </roleRequirements>
+    <roleRequiredWorkTags>
+      <li>Social</li>
+    </roleRequiredWorkTags>
+    <displayOrderInImpact>24</displayOrderInImpact>
+    <roleEffects>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>SocialImpact</statDef>
+        <modifier>0.20</modifier>
+      </li>
+      <li Class="RoleEffect_PawnStatOffset">
+        <statDef>MedicalTendQuality</statDef>
+        <modifier>0.10</modifier>
+      </li>
+    </roleEffects>
+  </PreceptDef>
+
+</Defs>

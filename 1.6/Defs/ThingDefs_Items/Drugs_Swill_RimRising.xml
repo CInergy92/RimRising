@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Swill. Suggestion 6.3.
+
+  Red moonshine, brewed from whatever the clan can spare. Gives a Red colony a native
+  recreation and a trade good from day one, and a thing the census caravan is pointedly
+  uninterested in.
+
+  STRUCTURE. The drug item is mirrored from Vanilla Brewing Expanded's VBE_Gin
+  (1.6/Defs/ThingDefs_Items/Alcohol_Gin.xml): foodType Fluid/Processed/Liquor, joyKind
+  Chemical, ingestSound Ingest_Beer, the three GiveHediff doers (the shared vanilla
+  AlcoholHigh and AlcoholTolerance plus the drink's own hediff), and CompProperties_Drug
+  on the vanilla Alcohol chemical. Using vanilla's Alcohol chemical means swill shares
+  beer's addiction and withdrawal, which is right - it is just worse beer - and needs
+  no ChemicalDef, NeedDef or withdrawal of its own.
+
+  The recipe is an explicit RecipeDef (below) rather than recipeMaker, because the
+  ingredient is a category; the parent is therefore plain vanilla DrugBase, which VBE's
+  own base derives from. CraftingSpot, no research - a Red clan has a bucket. The ingredient is any raw food by category, fungus included, so it
+  brews underground; VBE's canola/soy filters are done the same way with fixedIngredientFilter.
+
+  NUMBERS. Joy 0.30 against beer's 0.40 and gin's 0.40; mood in the high is a small
+  bonus that turns into a Consciousness penalty at "blind drunk", because that is what
+  it is. MarketValue 7: it should be worth brewing and worth nothing to a Gold.
+-->
+<Defs>
+
+  <ThingDef ParentName="DrugBase">
+    <defName>RR_Swill</defName>
+    <label>swill</label>
+    <description>Red moonshine. Fermented from whatever the clan did not eat that week and run through a still made of drill pipe, it is harsh, cloudy, and the only thing in the mine that is theirs.\n\nIt tastes of rust and the song that goes with it. Nobody above Red has ever been offered a cup.</description>
+    <descriptionHyperlinks>
+      <HediffDef>RR_SwillHigh</HediffDef>
+      <HediffDef>AlcoholAddiction</HediffDef>
+    </descriptionHyperlinks>
+    <graphicData>
+      <texPath>Things/Item/Drug/RR_Swill</texPath>
+      <graphicClass>Graphic_StackCount</graphicClass>
+    </graphicData>
+    <equippedAngleOffset>-150</equippedAngleOffset>
+    <rotatable>false</rotatable>
+    <stackLimit>25</stackLimit>
+    <statBases>
+      <WorkToMake>500</WorkToMake>
+      <DeteriorationRate>0.5</DeteriorationRate>
+      <MarketValue>7</MarketValue>
+      <Mass>0.3</Mass>
+      <Flammability>0.5</Flammability>
+      <Nutrition>0.06</Nutrition>
+    </statBases>
+    <techLevel>Neolithic</techLevel>
+    <ingestible>
+      <foodType>Fluid, Processed, Liquor</foodType>
+      <joyKind>Chemical</joyKind>
+      <joy>0.30</joy>
+      <nurseable>true</nurseable>
+      <drugCategory>Social</drugCategory>
+      <ingestSound>Ingest_Beer</ingestSound>
+      <ingestHoldOffsetStanding>
+        <northDefault>
+          <offset>(0.18,0,0)</offset>
+        </northDefault>
+      </ingestHoldOffsetStanding>
+      <ingestCommandString>Drink {0}</ingestCommandString>
+      <ingestReportString>Drinking {0}.</ingestReportString>
+      <chairSearchRadius>25</chairSearchRadius>
+      <outcomeDoers>
+        <li Class="IngestionOutcomeDoer_GiveHediff">
+          <hediffDef>AlcoholHigh</hediffDef>
+          <severity>0.25</severity>
+          <toleranceChemical>Alcohol</toleranceChemical>
+        </li>
+        <li Class="IngestionOutcomeDoer_GiveHediff">
+          <hediffDef>RR_SwillHigh</hediffDef>
+          <severity>0.25</severity>
+        </li>
+        <li Class="IngestionOutcomeDoer_GiveHediff">
+          <hediffDef>AlcoholTolerance</hediffDef>
+          <toleranceChemical>Alcohol</toleranceChemical>
+          <severity>0.03</severity>
+          <divideByBodySize>true</divideByBodySize>
+          <multiplyByGeneToleranceFactors>true</multiplyByGeneToleranceFactors>
+        </li>
+      </outcomeDoers>
+    </ingestible>
+    <comps>
+      <li Class="CompProperties_Drug">
+        <chemical>Alcohol</chemical>
+        <addictiveness>0.012</addictiveness>
+        <minToleranceToAddict>0.25</minToleranceToAddict>
+        <existingAddictionSeverityOffset>0.20</existingAddictionSeverityOffset>
+        <needLevelOffset>1</needLevelOffset>
+        <listOrder>12</listOrder>
+      </li>
+      <li>
+        <compClass>CompEquippable</compClass>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <!--
+    The recipe is explicit rather than left to recipeMaker, because the ingredient is
+    a CATEGORY with fungus allowed, and recipeMaker only takes a costList of defs.
+    Structure mirrored from RR_MakeCarvingKit in Carving/Carving.xml, which is this
+    mod's explicit RecipeDef; the category and disallowed-category names are vanilla
+    ones already used by this mod's meal filters.
+  -->
+  <RecipeDef>
+    <defName>RR_MakeSwill</defName>
+    <label>brew swill</label>
+    <description>Ferment raw food into swill. Any raw food will do, fungus included.</description>
+    <jobString>Brewing swill.</jobString>
+    <workAmount>500</workAmount>
+    <workSpeedStat>DrugCookingSpeed</workSpeedStat>
+    <effectWorking>Cook</effectWorking>
+    <soundWorking>Recipe_CookMeal</soundWorking>
+    <recipeUsers>
+      <li>CraftingSpot</li>
+      <li>DrugLab</li>
+    </recipeUsers>
+    <ingredients>
+      <li>
+        <filter>
+          <categories>
+            <li>FoodRaw</li>
+          </categories>
+        </filter>
+        <count>0.5</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <categories>
+        <li>FoodRaw</li>
+      </categories>
+      <disallowedCategories>
+        <li>MeatRaw</li>
+        <li>EggsUnfertilized</li>
+        <li>EggsFertilized</li>
+      </disallowedCategories>
+    </fixedIngredientFilter>
+    <products>
+      <RR_Swill>5</RR_Swill>
+    </products>
+    <displayPriority>1650</displayPriority>
+  </RecipeDef>
+
+  <HediffDef>
+    <defName>RR_SwillHigh</defName>
+    <label>swill</label>
+    <labelNoun>a bellyful of swill</labelNoun>
+    <description>Drank swill. Warm, then blurry, then nothing.</description>
+    <hediffClass>Hediff_Alcohol</hediffClass>
+    <defaultLabelColor>(1,0.3,0.3)</defaultLabelColor>
+    <scenarioCanAdd>true</scenarioCanAdd>
+    <isBad>false</isBad>
+    <comps>
+      <li Class="HediffCompProperties_SeverityPerDay">
+        <severityPerDay>-0.9</severityPerDay>
+        <showHoursToRecover>true</showHoursToRecover>
+      </li>
+    </comps>
+    <stages>
+      <li>
+        <label>warm</label>
+        <painFactor>0.9</painFactor>
+      </li>
+      <li>
+        <minSeverity>0.3</minSeverity>
+        <label>cheerful</label>
+        <painFactor>0.8</painFactor>
+      </li>
+      <li>
+        <minSeverity>0.6</minSeverity>
+        <label>blind drunk</label>
+        <painFactor>0.6</painFactor>
+        <capMods>
+          <li>
+            <capacity>Consciousness</capacity>
+            <offset>-0.15</offset>
+          </li>
+        </capMods>
+      </li>
+    </stages>
+  </HediffDef>
+
+</Defs>

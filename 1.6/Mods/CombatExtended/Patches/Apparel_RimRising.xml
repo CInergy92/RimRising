@@ -304,4 +304,16 @@
     </value>
   </Operation>
 
+  <!-- ============================== Howler pelt ============================
+    Stuffed from leather, so its armour is the stuff's and CE already rescales
+    stuffs. Bulk only. -->
+
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_HowlerPelt"]/statBases</xpath>
+    <value>
+      <Bulk>4</Bulk>
+      <WornBulk>1</WornBulk>
+    </value>
+  </Operation>
+
 </Patch>

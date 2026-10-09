@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Buildings. One so far: the clawDrill. Suggestion 6.8.
+
+  The helldiver's rig: a drill operated from inside, driven into rock at speeds that
+  kill the careless. In game, a deep drill built for helium.
+
+  STRUCTURE. Building fields mirrored from Alpha Biomes' AB_CoreSampleDrill
+  (1.6/Defs/ThingDefs_Buildings/Buildings_Production.xml): BuildingBase, Graphic_Single,
+  size, passability, interaction cell, designationCategory, terrainAffordanceNeeded,
+  constructionSkillPrerequisite, minifiedDef, thingCategories, costList, placeWorkers,
+  researchPrerequisites, statBases, Forbiddable/Flickable/Power comps. That def's drill
+  comp is Alpha Biomes' own; this one needs VANILLA'S, and the way vanilla's deep drill
+  declares it is UNVERIFIED FROM HERE. From memory it is a compClass with no properties:
+
+      <li><compClass>CompDeepDrill</compClass></li>
+
+  Confirm against Core/Defs/ThingDefs_Buildings/Buildings_Production.xml (DeepDrill)
+  with Find-VanillaDef.ps1 -DefName DeepDrill before this loads; if the real form is a
+  CompProperties class, swap it in. Same for the thingClass: vanilla's deep drill may
+  be a plain Building, which is what this uses. (BuildingBase and the comp names
+  Forbiddable, Flickable and Power are verified through Alpha Biomes.)
+
+  WHAT MAKES IT A CLAWDRILL. Honestly: not much yet. Vanilla exposes no per-building
+  yield or speed field for deep drilling - speed is the operator's DeepDrillingSpeed
+  stat and yield is the resource's deepCountPerPortion. So this is a deep drill that
+  costs more, draws more power, needs a higher skill and needs the Barrens' research
+  path, with a bigger footprint. The two levers that would make it REAL - a Red
+  bonus to DeepDrillingSpeed (a gene statFactor, blocked on the gene-icon ownership
+  rule) and a yield multiplier (a Building subclass overriding the portion) - are in
+  docs/Opus-Notes.md. Operating it without a Red should be slow, not impossible; the
+  Red bonus does that, not a restriction here.
+-->
+<Defs>
+
+  <ThingDef ParentName="BuildingBase">
+    <defName>RR_ClawDrill</defName>
+    <label>clawDrill</label>
+    <description>A helldiver's drill: a tracked rig the operator rides inside, with a drill head taller than they are and no safety features that would slow it down. It goes into rock faster than any deep drill the Society would sell to an outsider, and it comes out of the ground with whatever was down there.\n\nThe Reds who drive them say the rig can feel the seam. The Reds who stopped driving them are not available for comment.</description>
+    <graphicData>
+      <graphicClass>Graphic_Single</graphicClass>
+      <texPath>Things/Building/RR_ClawDrill</texPath>
+      <drawSize>(2.4,2.4)</drawSize>
+      <drawRotated>false</drawRotated>
+      <shadowData>
+        <volume>(1.6, 0.6, 1.2)</volume>
+        <offset>(0,0,-0.2)</offset>
+      </shadowData>
+    </graphicData>
+    <size>(2,2)</size>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>PassThroughOnly</passability>
+    <pathCost>70</pathCost>
+    <fillPercent>0.6</fillPercent>
+    <hasInteractionCell>true</hasInteractionCell>
+    <interactionCellOffset>(0,0,-2)</interactionCellOffset>
+    <designationCategory>Production</designationCategory>
+    <rotatable>true</rotatable>
+    <terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
+    <constructionSkillPrerequisite>8</constructionSkillPrerequisite>
+    <minifiedDef>MinifiedThing</minifiedDef>
+    <building>
+      <uninstallWork>2400</uninstallWork>
+    </building>
+    <thingCategories>
+      <li>BuildingsProduction</li>
+    </thingCategories>
+    <costList>
+      <Steel>400</Steel>
+      <RR_Ionsteel>40</RR_Ionsteel>
+      <ComponentIndustrial>8</ComponentIndustrial>
+    </costList>
+    <placeWorkers>
+      <li>PlaceWorker_PreventInteractionSpotOverlap</li>
+    </placeWorkers>
+    <researchPrerequisites>
+      <li>DeepDrilling</li>
+    </researchPrerequisites>
+    <statBases>
+      <MaxHitPoints>900</MaxHitPoints>
+      <WorkToBuild>14000</WorkToBuild>
+      <Flammability>0.5</Flammability>
+      <Beauty>-30</Beauty>
+      <Mass>80</Mass>
+    </statBases>
+    <comps>
+      <li Class="CompProperties_Forbiddable"/>
+      <li Class="CompProperties_Flickable"/>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>450</basePowerConsumption>
+      </li>
+      <!-- VERIFY against vanilla's DeepDrill; see the file header. -->
+      <li>
+        <compClass>CompDeepDrill</compClass>
+      </li>
+    </comps>
+  </ThingDef>
+
+</Defs>

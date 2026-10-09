@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Caste marks. Suggestion 1.8.
+
+  Blues shave and tattoo their scalps with the traces of the lattice; Obsidians are
+  stained in patterns their tribe reads; Grays carry their unit on the forearm.
+  Peerless Golds are scarred, and that is done already (Precepts_Scarification.xml).
+
+  HOW THEY ARE ASSIGNED. Per Color, through the pawn kinds: PawnKindDef.styleItemTags
+  (tag, baseWeight, weightFactor - verified on VFE Empire's PawnKinds_Deserter.xml)
+  weights a style tag for pawns generated from that kind, and the tattoos below carry
+  the matching tag. So a Blue helmsman gets a Blue digiTat and an Obsidian a tribal
+  stain, with no C# and no meme involvement. A meme-level styleTags list would hand
+  every hierarchy pawn every mark, which the suggestion flagged as the wrong grain.
+  Colonists and wanderers, as with backstories, are not reached.
+
+  STRUCTURE. styleTags, texPath, label and defName are the HairDef fields from
+  Vanilla Hair Expanded (1.6/Defs/HairDefs/HairsViking.xml); a TattooDef is a StyleItemDef
+  like a HairDef. The one field a tattoo has that a hair does not is tattooType
+  (Face or Body), which is UNVERIFIED from here - no reference mod on GitHub ships a
+  tattoo. Confirm against Ideology/Defs/TattooDefs/ (Find-VanillaDef.ps1 -DefType
+  TattooDef) before this loads. If TattooDef needs anything else, that file is the
+  template; a field error on load names this def.
+
+  TEXTURES are Ideology's tattoo convention: 128x128 overlays per facing
+  (<texPath>_south, _north, _east) matched to the head or body. These are placeholders
+  and need the icon pipeline (New-XenotypeIcons.ps1 owns glyph art; a tattoo is a
+  glyph on skin) - docs/Opus-Notes.md.
+-->
+<Defs>
+
+  <TattooDef>
+    <defName>RR_Tattoo_DigiTat</defName>
+    <label>digiTat</label>
+    <!-- VERIFY field name and values. -->
+    <tattooType>Face</tattooType>
+    <texPath>Things/Pawn/Humanlike/Tattoos/RR_DigiTat</texPath>
+    <styleTags>
+      <li>RR_BlueMarks</li>
+    </styleTags>
+  </TattooDef>
+
+  <TattooDef>
+    <defName>RR_Tattoo_ObsidianStain</defName>
+    <label>tribal stain</label>
+    <tattooType>Body</tattooType>
+    <texPath>Things/Pawn/Humanlike/Tattoos/RR_ObsidianStain</texPath>
+    <styleTags>
+      <li>RR_ObsidianMarks</li>
+    </styleTags>
+  </TattooDef>
+
+  <TattooDef>
+    <defName>RR_Tattoo_ObsidianStainFace</defName>
+    <label>stained brow</label>
+    <tattooType>Face</tattooType>
+    <texPath>Things/Pawn/Humanlike/Tattoos/RR_ObsidianStainFace</texPath>
+    <styleTags>
+      <li>RR_ObsidianMarks</li>
+    </styleTags>
+  </TattooDef>
+
+  <TattooDef>
+    <defName>RR_Tattoo_LegionMark</defName>
+    <label>legion mark</label>
+    <tattooType>Body</tattooType>
+    <texPath>Things/Pawn/Humanlike/Tattoos/RR_LegionMark</texPath>
+    <styleTags>
+      <li>RR_GrayMarks</li>
+    </styleTags>
+  </TattooDef>
+
+</Defs>

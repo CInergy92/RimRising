@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The Institute. Suggestion 2.5, the cheap form.
+
+  The year-long trial every Gold child is put through: dropped into a valley with
+  nothing, hunted by proctors, expected to come out the far side ruling or dead.
+  Here it is a fourth start - six young Golds, no faction help, and the Society's
+  own troops arriving every few days to see what they are made of.
+
+  STRUCTURE mirrored from Scenarios_RimRising.xml in this folder (the Household
+  start for the xenotype page, the Breakout start for the arrival method and no
+  possessions) and from Vanilla Factions Expanded - Tribals' Scenarios.xml for
+  ScenPart_CreateIncident with intervalDays, which is how the proctors keep coming.
+
+  WHY ADULTS, NOT CHILDREN. Biotech children cannot fight, and the Institute is a
+  fight. allowedDevelopmentalStages Adult with the lowest adult ages the pawn
+  configurator gives is as young as it can honestly be. The user's standing rule
+  on under-18 content (CLAUDE.md, working agreements) is not touched by this: the
+  Institute is violence, not anything else, and every pawn is an adult.
+
+  THE RAID INCIDENT. RaidEnemy is vanilla's ordinary raid; which faction sends it
+  is the storyteller's choice, and the Society is the only faction hostile to a
+  colony of Golds who refuse its ladder - or not, if the player adopts it. Pinning
+  the raider to the Society needs an IncidentDef with a fixed faction, which is a
+  QuestScript or a worker field this session could not verify; the generic raid is
+  the honest cheap form, and the letter text below says who it is.
+
+  "Proctors" is a setting term (the Institute's overseers), used the way the mod
+  uses Praetor and Lurcher.
+-->
+<Defs>
+
+  <ScenarioDef>
+    <defName>RR_Scenario_Institute</defName>
+    <label>The Institute</label>
+    <description>Every Gold of consequence went through it: a year in a wilderness with nothing, against every other Gold of their age, watched by proctors who intervene only to make things worse. Those who come out the far side rule. Those who do not are not spoken of.\n\nYou are six of them, on the first morning. There is no colony to go back to and no one is coming to help, because the whole point of the exercise is that no one does.\n\nThe proctors will be along shortly.</description>
+    <scenario>
+      <summary>Six young Golds, nothing else, and the Society arriving every few days to test them.</summary>
+      <parts>
+
+        <li Class="ScenPart_GameStartDialog">
+          <def>GameStartDialog</def>
+          <text>You were dropped at dawn with the clothes you stood in. Somewhere in this valley there is food, iron and shelter, and somewhere there are proctors who are paid to make sure you do not find them easily.\n\nNobody is grading on effort.</text>
+          <closeSound>GameStartSting</closeSound>
+        </li>
+
+        <li Class="ScenPart_ConfigPage_ConfigureStartingPawns_Xenotypes">
+          <def>ConfigurePawnsXenotypes</def>
+          <pawnChoiceCount>10</pawnChoiceCount>
+          <customSummary>Start with six Golds.</customSummary>
+          <xenotypeCounts>
+            <li>
+              <xenotype>RR_Gold</xenotype>
+              <count>6</count>
+              <description>Gold</description>
+              <requiredAtStart>true</requiredAtStart>
+              <allowedDevelopmentalStages>Adult</allowedDevelopmentalStages>
+            </li>
+          </xenotypeCounts>
+        </li>
+
+        <!-- Walked in from the drop point, not crashed. -->
+        <li Class="ScenPart_PlayerPawnsArriveMethod">
+          <def>PlayerPawnsArriveMethod</def>
+          <visible>false</visible>
+          <method>Standing</method>
+        </li>
+
+        <li Class="ScenPart_NoPossessions">
+          <def>NoPossessions</def>
+        </li>
+
+        <!-- The clothes you stood in, and one meal each. -->
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>MealSimple</thingDef>
+          <count>6</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>MeleeWeapon_Knife</thingDef>
+          <stuff>Steel</stuff>
+          <count>2</count>
+        </li>
+
+        <!-- The proctors. Every six days, until you are worth leaving alone. -->
+        <li Class="ScenPart_CreateIncident">
+          <def>CreateIncident</def>
+          <incident>RaidEnemy</incident>
+          <intervalDays>6</intervalDays>
+        </li>
+
+      </parts>
+    </scenario>
+  </ScenarioDef>
+
+</Defs>

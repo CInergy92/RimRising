@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The Howler pelt. Suggestion 6.9.
+
+  The Howlers wear wolf pelts over their armour; it is their uniform and their joke.
+  A cheap shell-layer garment that makes the Howler pawn kind (PawnKinds_RimRising.xml,
+  RR_Ares_Howler) legible from across the map, which is what a uniform is for.
+
+  STRUCTURE mirrored from RR_Apparel_GhostCloak in Apparel_GhostCloak.xml (the other
+  Shell-layer cape in this mod): ApparelMakeableBase, Shell layer, the same
+  bodyPartGroups, shellRenderedBehindHead, Cape tag. Differences: stuffed from leather
+  (stuffCategories Leathery, costStuffCount - the fields vanilla's dusters use, which
+  ApparelMakeableBase expects), a crafting-spot recipe with no research, and no
+  ability. RR_StealthKit is the tag the Howler kind generates from; it is also now on
+  scarabSkin, the demonHelm and the ghostCloak.
+
+  TEXTURES. Worn sprite per body type and facing, through Tools/Draw-PanelArmor.py
+  (the "cloak" design is the nearest: a shoulder mantle over falling panels) - a
+  single pelt draped over the shoulders is the cheapest worn art in the mod, but it
+  is ART, which means the local machine and the test scene. Placeholders are in
+  Textures/ for now; docs/Opus-Notes.md lists the design to add.
+-->
+<Defs>
+
+  <ThingDef ParentName="ApparelMakeableBase">
+    <defName>RR_Apparel_HowlerPelt</defName>
+    <label>Howler pelt</label>
+    <description>A wolf's pelt, or whatever passed for one, thrown over the shoulders and belted at the chest. It keeps out the wind and nothing else, and that is not what it is for.\n\nThe Howlers wear them so that they can be told apart from everyone else on a battlefield, by everyone else on a battlefield. It is a joke they are very serious about.</description>
+    <techLevel>Neolithic</techLevel>
+    <thingCategories>
+      <li>Apparel</li>
+    </thingCategories>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/RR_HowlerPelt/RR_HowlerPelt</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>1.05</drawSize>
+    </graphicData>
+    <stuffCategories>
+      <li>Leathery</li>
+    </stuffCategories>
+    <costStuffCount>45</costStuffCount>
+    <recipeMaker>
+      <recipeUsers Inherit="False">
+        <li>CraftingSpot</li>
+        <li>HandTailoringBench</li>
+        <li>ElectricTailoringBench</li>
+      </recipeUsers>
+      <displayPriority>245</displayPriority>
+    </recipeMaker>
+    <statBases>
+      <MaxHitPoints>100</MaxHitPoints>
+      <WorkToMake>2800</WorkToMake>
+      <Mass>1.6</Mass>
+      <EquipDelay>1.5</EquipDelay>
+      <StuffEffectMultiplierArmor>0.25</StuffEffectMultiplierArmor>
+      <StuffEffectMultiplierInsulation_Cold>1.2</StuffEffectMultiplierInsulation_Cold>
+      <StuffEffectMultiplierInsulation_Heat>0.4</StuffEffectMultiplierInsulation_Heat>
+    </statBases>
+    <apparel>
+      <bodyPartGroups>
+        <li>Torso</li>
+        <li>Neck</li>
+        <li>Shoulders</li>
+      </bodyPartGroups>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/RR_HowlerPelt/RR_HowlerPelt</wornGraphicPath>
+      <shellRenderedBehindHead>true</shellRenderedBehindHead>
+      <canBeDesiredForIdeo>false</canBeDesiredForIdeo>
+      <layers>
+        <li>Shell</li>
+      </layers>
+      <tags>
+        <li>Cape</li>
+        <li>RR_StealthKit</li>
+        <li>THIGAPPE_IgnoreTag</li>
+      </tags>
+    </apparel>
+  </ThingDef>
+
+</Defs>

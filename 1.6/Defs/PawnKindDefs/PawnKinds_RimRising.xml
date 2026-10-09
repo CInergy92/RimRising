@@ -70,6 +70,19 @@
   <!-- Gray: the caste that actually does the Society's daily violence. -->
   <PawnKindDef ParentName="RR_SocietyFighterBase">
     <defName>RR_Society_Legionary</defName>
+    <!-- Caste marks (suggestion 1.8): StyleDefs/Styles_RimRising.xml. -->
+    <styleItemTags>
+      <li>
+        <tag>RR_GrayMarks</tag>
+        <baseWeight>1</baseWeight>
+        <weightFactor>1</weightFactor>
+      </li>
+    </styleItemTags>
+    <!-- Zoladone for the squads (suggestions, section 3): combat-enhancing drugs
+         are picked by the isCombatEnhancingDrug flag, which zoladone carries. -->
+    <chemicalAddictionChance>0.05</chemicalAddictionChance>
+    <combatEnhancingDrugsChance>0.25</combatEnhancingDrugsChance>
+    <combatEnhancingDrugsCount>0~1</combatEnhancingDrugsCount>
     <label>legionary</label>
     <combatPower>70</combatPower>
     <apparelColor>(120,126,133)</apparelColor>
@@ -104,6 +117,19 @@
   <!-- Lurcher: bred to hunt the castes above it. Rare, and pointed. -->
   <PawnKindDef ParentName="RR_SocietyFighterBase">
     <defName>RR_Society_Lurcher</defName>
+    <!-- Caste marks (suggestion 1.8): StyleDefs/Styles_RimRising.xml. -->
+    <styleItemTags>
+      <li>
+        <tag>RR_GrayMarks</tag>
+        <baseWeight>1</baseWeight>
+        <weightFactor>1</weightFactor>
+      </li>
+    </styleItemTags>
+    <!-- Zoladone for the squads (suggestions, section 3): combat-enhancing drugs
+         are picked by the isCombatEnhancingDrug flag, which zoladone carries. -->
+    <chemicalAddictionChance>0.05</chemicalAddictionChance>
+    <combatEnhancingDrugsChance>0.25</combatEnhancingDrugsChance>
+    <combatEnhancingDrugsCount>0~1</combatEnhancingDrugsCount>
     <label>lurcher</label>
     <combatPower>115</combatPower>
     <apparelColor>(96,102,110)</apparelColor>
@@ -140,6 +166,14 @@
   <!-- Obsidian: enormous, close-range, and legally property. -->
   <PawnKindDef ParentName="RR_SocietyFighterBase">
     <defName>RR_Society_Obsidian_Knight</defName>
+    <!-- Caste marks (suggestion 1.8): StyleDefs/Styles_RimRising.xml. -->
+    <styleItemTags>
+      <li>
+        <tag>RR_ObsidianMarks</tag>
+        <baseWeight>1</baseWeight>
+        <weightFactor>1</weightFactor>
+      </li>
+    </styleItemTags>
     <label>obsidian knight</label>
     <combatPower>130</combatPower>
     <apparelColor>(46,44,52)</apparelColor>
@@ -578,6 +612,14 @@
   <!-- A Gray who walked. The Society finds these especially embarrassing. -->
   <PawnKindDef ParentName="RR_AresFighterBase">
     <defName>RR_Ares_Gray_Defector</defName>
+    <!-- Caste marks (suggestion 1.8): StyleDefs/Styles_RimRising.xml. -->
+    <styleItemTags>
+      <li>
+        <tag>RR_GrayMarks</tag>
+        <baseWeight>1</baseWeight>
+        <weightFactor>1</weightFactor>
+      </li>
+    </styleItemTags>
     <label>defector</label>
     <combatPower>85</combatPower>
     <apparelColor>(120,126,133)</apparelColor>
@@ -617,6 +659,14 @@
 
   <PawnKindDef ParentName="RR_AresFighterBase">
     <defName>RR_Ares_Obsidian_Freed</defName>
+    <!-- Caste marks (suggestion 1.8): StyleDefs/Styles_RimRising.xml. -->
+    <styleItemTags>
+      <li>
+        <tag>RR_ObsidianMarks</tag>
+        <baseWeight>1</baseWeight>
+        <weightFactor>1</weightFactor>
+      </li>
+    </styleItemTags>
     <label>freed obsidian</label>
     <combatPower>125</combatPower>
     <apparelColor>(52,50,58)</apparelColor>
@@ -697,6 +747,52 @@
     </backstoryFiltersOverride>
   </PawnKindDef>
 
+  <!--
+    Howler. Suggestion 1.9: the stealth kit existed (scarabSkin, demonHelm,
+    ghostCloak) and nobody spawned in it. A Red/Gray mix, low weight in the Sons of
+    Ares combat group, generating from the RR_StealthKit tag the three pieces and the
+    Howler pelt carry. Whether the AI uses the cloak ability is a separate question;
+    even unused, a raider in a ghostCloak is lootable, which is how a player gets
+    one early.
+  -->
+  <PawnKindDef ParentName="RR_AresFighterBase">
+    <defName>RR_Ares_Howler</defName>
+    <label>howler</label>
+    <combatPower>110</combatPower>
+    <apparelColor>(60,56,64)</apparelColor>
+    <apparelMoney>3000~5000</apparelMoney>
+    <weaponMoney>1200~2600</weaponMoney>
+    <itemQuality>Good</itemQuality>
+    <apparelAllowHeadgearChance>1</apparelAllowHeadgearChance>
+    <apparelTags Inherit="False">
+      <li>RR_StealthKit</li>
+      <li>IndustrialBasic</li>
+    </apparelTags>
+    <weaponTags>
+      <li>RR_RisingWeapon</li>
+      <li>SpacerGun</li>
+    </weaponTags>
+    <skills>
+      <li><skill>Shooting</skill><range>9~15</range></li>
+      <li><skill>Melee</skill><range>7~13</range></li>
+    </skills>
+    <xenotypeSet>
+      <xenotypeChances>
+        <RR_Red>0.5</RR_Red>
+        <RR_Gray>0.5</RR_Gray>
+      </xenotypeChances>
+    </xenotypeSet>
+    <backstoryFiltersOverride>
+      <li>
+        <categories>
+          <li>RR_Rising</li>
+          <li>RR_Red</li>
+          <li>RR_Gray</li>
+        </categories>
+      </li>
+    </backstoryFiltersOverride>
+  </PawnKindDef>
+
   <!-- ========================== Obsidian tribes =========================== -->
 
   <PawnKindDef Name="RR_TribeBase" ParentName="RR_ColorPawnBase" Abstract="True">
@@ -715,6 +811,17 @@
 
   <PawnKindDef ParentName="RR_TribeBase">
     <defName>RR_Tribe_Obsidian_Warrior</defName>
+    <!-- Caste marks (suggestion 1.8): StyleDefs/Styles_RimRising.xml. -->
+    <styleItemTags>
+      <li>
+        <tag>RR_ObsidianMarks</tag>
+        <baseWeight>1</baseWeight>
+        <weightFactor>1</weightFactor>
+      </li>
+    </styleItemTags>
+    <!-- Fever cloud for the war parties (suggestions, section 3). -->
+    <combatEnhancingDrugsChance>0.35</combatEnhancingDrugsChance>
+    <combatEnhancingDrugsCount>0~2</combatEnhancingDrugsCount>
     <label>tribe warrior</label>
     <combatPower>90</combatPower>
     <apparelColor>(60,58,68)</apparelColor>
@@ -749,6 +856,17 @@
 
   <PawnKindDef ParentName="RR_TribeBase">
     <defName>RR_Tribe_Obsidian_Stained</defName>
+    <!-- Caste marks (suggestion 1.8): StyleDefs/Styles_RimRising.xml. -->
+    <styleItemTags>
+      <li>
+        <tag>RR_ObsidianMarks</tag>
+        <baseWeight>1</baseWeight>
+        <weightFactor>1</weightFactor>
+      </li>
+    </styleItemTags>
+    <!-- Fever cloud for the war parties (suggestions, section 3). -->
+    <combatEnhancingDrugsChance>0.35</combatEnhancingDrugsChance>
+    <combatEnhancingDrugsCount>0~2</combatEnhancingDrugsCount>
     <label>stained</label>
     <combatPower>165</combatPower>
     <apparelColor>(40,38,46)</apparelColor>
@@ -794,6 +912,17 @@
 
   <PawnKindDef ParentName="RR_AscomanniBase">
     <defName>RR_Ascomanni_Raider</defName>
+    <!-- Caste marks (suggestion 1.8): StyleDefs/Styles_RimRising.xml. -->
+    <styleItemTags>
+      <li>
+        <tag>RR_ObsidianMarks</tag>
+        <baseWeight>1</baseWeight>
+        <weightFactor>1</weightFactor>
+      </li>
+    </styleItemTags>
+    <!-- Fever cloud for the war parties (suggestions, section 3). -->
+    <combatEnhancingDrugsChance>0.35</combatEnhancingDrugsChance>
+    <combatEnhancingDrugsCount>0~2</combatEnhancingDrugsCount>
     <label>ascomanni raider</label>
     <combatPower>120</combatPower>
     <apparelColor>(64,60,74)</apparelColor>
@@ -829,6 +958,14 @@
 
   <PawnKindDef ParentName="RR_AscomanniBase">
     <defName>RR_Ascomanni_Warlord</defName>
+    <!-- Caste marks (suggestion 1.8): StyleDefs/Styles_RimRising.xml. -->
+    <styleItemTags>
+      <li>
+        <tag>RR_ObsidianMarks</tag>
+        <baseWeight>1</baseWeight>
+        <weightFactor>1</weightFactor>
+      </li>
+    </styleItemTags>
     <label>ascomanni warlord</label>
     <combatPower>210</combatPower>
     <apparelColor>(48,44,60)</apparelColor>
@@ -1095,6 +1232,14 @@
 
   <PawnKindDef ParentName="RR_ColorPawnBase">
     <defName>RR_Society_Blue_Helmsman</defName>
+    <!-- Caste marks (suggestion 1.8): StyleDefs/Styles_RimRising.xml. -->
+    <styleItemTags>
+      <li>
+        <tag>RR_BlueMarks</tag>
+        <baseWeight>1</baseWeight>
+        <weightFactor>1</weightFactor>
+      </li>
+    </styleItemTags>
     <label>helmsman</label>
     <defaultFactionDef>RR_Society</defaultFactionDef>
     <combatPower>30</combatPower>

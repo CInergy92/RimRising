@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Griffin. Suggestion 6.5.
+
+  Bioengineered mounts the Society breeds for its Golds; seen at the Institute and
+  in Society hunting parties. A status animal for a hierarchy colony, and the thing
+  a Red colony remembers a Society raid by.
+
+  STRUCTURE mirrored from Alpha Animals' AA_SandLion (Races_SandLion.xml): a large
+  predator on the vanilla QuadrupedAnimalWithPawsAndTail body, Scratch/Bite/head
+  tools, trainability Advanced, manhunterOnDamageChance 1, the life-stage and sound
+  blocks. Its CompProperties_GasProducer and mod extensions are Alpha Animals' own
+  and are not copied. Leather: Leather_Heavy, a vanilla leather seen on reference
+  animals. Meat is auto-generated as for every animal.
+
+  NOT WILD. No biome lists it; the Society sells it (tradeTags RR_SocietyBeast,
+  bought through StockGenerator_Animals on the quartermaster caravan in
+  TraderKinds_RimRising.xml) and nothing else does. NOT IN RAIDS YET: whether a
+  PawnGroupMaker's options accept an animal kind without a lord-duty complaint is
+  not something this session could verify; docs/Opus-Notes.md has the one-line test.
+  NO FLIGHT: vanilla flight is an Odyssey mechanism and the animal would be gated.
+
+  GRAPHICS declare graphicClass Graphic_Multi inside bodyGraphicData so the tooling
+  treats them as directional sets (see Races_Animal_Pitviper.xml). Textures needed:
+    Things/Pawn/Animal/RR_Griffin/RR_Griffin_{east,north,south}
+    Things/Pawn/Animal/RR_Griffin/RR_Griffin_Dessicated_{east,north,south}
+
+  NUMBERS. Body size 2.2, health scale 2.8, combatPower 320: above a warg, below a
+  thrumbo. Wildness 0.95 so a wild one (there are none) would be untameable, and a
+  bought one is tame already. Gestation 28 and a one-cub litter: the Society does
+  not let these breed freely, and neither should a colony.
+-->
+<Defs>
+
+  <ThingDef ParentName="AnimalThingBase">
+    <defName>RR_Griffin</defName>
+    <label>griffin</label>
+    <description>A Society hunting beast, assembled rather than bred: a cat's body, a raptor's head and forelimbs, and a temperament the Carvers who made it describe as "obedient to the correct person". It is sold only to Gold houses and only by the Society, and it knows the difference between a Gold and anyone else at a distance.\n\nIt does not fly. The wings were a Gold's idea, and the Carvers gave the Gold wings.</description>
+    <statBases>
+      <MoveSpeed>5.6</MoveSpeed>
+      <ComfyTemperatureMin>-20</ComfyTemperatureMin>
+      <ComfyTemperatureMax>50</ComfyTemperatureMax>
+      <MarketValue>2400</MarketValue>
+      <FilthRate>3</FilthRate>
+      <Wildness>0.95</Wildness>
+    </statBases>
+    <tools>
+      <li>
+        <label>left talon</label>
+        <capacities>
+          <li>Scratch</li>
+        </capacities>
+        <power>17</power>
+        <cooldownTime>1.5</cooldownTime>
+        <linkedBodyPartsGroup>FrontLeftPaw</linkedBodyPartsGroup>
+        <surpriseAttack>
+          <extraMeleeDamages>
+            <li>
+              <def>Stun</def>
+              <amount>25</amount>
+            </li>
+          </extraMeleeDamages>
+        </surpriseAttack>
+      </li>
+      <li>
+        <label>right talon</label>
+        <capacities>
+          <li>Scratch</li>
+        </capacities>
+        <power>17</power>
+        <cooldownTime>1.5</cooldownTime>
+        <linkedBodyPartsGroup>FrontRightPaw</linkedBodyPartsGroup>
+        <surpriseAttack>
+          <extraMeleeDamages>
+            <li>
+              <def>Stun</def>
+              <amount>25</amount>
+            </li>
+          </extraMeleeDamages>
+        </surpriseAttack>
+      </li>
+      <li>
+        <label>beak</label>
+        <capacities>
+          <li>Bite</li>
+        </capacities>
+        <power>22</power>
+        <cooldownTime>1.9</cooldownTime>
+        <linkedBodyPartsGroup>Teeth</linkedBodyPartsGroup>
+        <surpriseAttack>
+          <extraMeleeDamages>
+            <li>
+              <def>Stun</def>
+              <amount>20</amount>
+            </li>
+          </extraMeleeDamages>
+        </surpriseAttack>
+      </li>
+      <li>
+        <label>head</label>
+        <capacities>
+          <li>Blunt</li>
+        </capacities>
+        <power>10</power>
+        <cooldownTime>1.75</cooldownTime>
+        <linkedBodyPartsGroup>HeadAttackTool</linkedBodyPartsGroup>
+        <chanceFactor>0.2</chanceFactor>
+      </li>
+    </tools>
+    <race>
+      <body>QuadrupedAnimalWithPawsAndTail</body>
+      <herdAnimal>false</herdAnimal>
+      <predator>true</predator>
+      <maxPreyBodySize>1.5</maxPreyBodySize>
+      <baseBodySize>2.2</baseBodySize>
+      <baseHungerRate>0.45</baseHungerRate>
+      <baseHealthScale>2.8</baseHealthScale>
+      <foodType>CarnivoreAnimal, OvivoreAnimal</foodType>
+      <leatherDef>Leather_Heavy</leatherDef>
+      <trainability>Advanced</trainability>
+      <petness>0.1</petness>
+      <nameOnTameChance>1</nameOnTameChance>
+      <manhunterOnTameFailChance>0.5</manhunterOnTameFailChance>
+      <manhunterOnDamageChance>1</manhunterOnDamageChance>
+      <gestationPeriodDays>28</gestationPeriodDays>
+      <litterSizeCurve>
+        <points>
+          <li>(0.5, 0)</li>
+          <li>(1, 1)</li>
+          <li>(1.5, 0)</li>
+        </points>
+      </litterSizeCurve>
+      <lifeExpectancy>30</lifeExpectancy>
+      <lifeStageAges>
+        <li>
+          <def>AnimalBaby</def>
+          <minAge>0</minAge>
+        </li>
+        <li>
+          <def>AnimalJuvenile</def>
+          <minAge>0.4</minAge>
+        </li>
+        <li>
+          <def>AnimalAdult</def>
+          <minAge>1</minAge>
+        </li>
+      </lifeStageAges>
+      <soundMeleeHitPawn>Pawn_Melee_BigBash_HitPawn</soundMeleeHitPawn>
+      <soundMeleeHitBuilding>Pawn_Melee_BigBash_HitBuilding</soundMeleeHitBuilding>
+      <soundMeleeMiss>Pawn_Melee_BigBash_Miss</soundMeleeMiss>
+    </race>
+    <tradeTags>
+      <li>RR_SocietyBeast</li>
+      <li>AnimalFighter</li>
+    </tradeTags>
+  </ThingDef>
+
+  <PawnKindDef ParentName="AnimalKindBase">
+    <defName>RR_Griffin</defName>
+    <race>RR_Griffin</race>
+    <label>griffin</label>
+    <combatPower>320</combatPower>
+    <ecoSystemWeight>0</ecoSystemWeight>
+    <canArriveManhunter>false</canArriveManhunter>
+    <lifeStages>
+      <li>
+        <label>griffin cub</label>
+        <bodyGraphicData>
+          <texPath>Things/Pawn/Animal/RR_Griffin/RR_Griffin</texPath>
+          <graphicClass>Graphic_Multi</graphicClass>
+          <drawSize>1.3</drawSize>
+        </bodyGraphicData>
+        <dessicatedBodyGraphicData>
+          <texPath>Things/Pawn/Animal/RR_Griffin/RR_Griffin_Dessicated</texPath>
+          <graphicClass>Graphic_Multi</graphicClass>
+          <drawSize>1.3</drawSize>
+        </dessicatedBodyGraphicData>
+      </li>
+      <li>
+        <label>young griffin</label>
+        <bodyGraphicData>
+          <texPath>Things/Pawn/Animal/RR_Griffin/RR_Griffin</texPath>
+          <graphicClass>Graphic_Multi</graphicClass>
+          <drawSize>2.0</drawSize>
+        </bodyGraphicData>
+        <dessicatedBodyGraphicData>
+          <texPath>Things/Pawn/Animal/RR_Griffin/RR_Griffin_Dessicated</texPath>
+          <graphicClass>Graphic_Multi</graphicClass>
+          <drawSize>2.0</drawSize>
+        </dessicatedBodyGraphicData>
+      </li>
+      <li>
+        <bodyGraphicData>
+          <texPath>Things/Pawn/Animal/RR_Griffin/RR_Griffin</texPath>
+          <graphicClass>Graphic_Multi</graphicClass>
+          <drawSize>2.6</drawSize>
+          <shadowData>
+            <volume>(0.4, 0.4, 0.4)</volume>
+            <offset>(0,0,-0.3)</offset>
+          </shadowData>
+        </bodyGraphicData>
+        <dessicatedBodyGraphicData>
+          <texPath>Things/Pawn/Animal/RR_Griffin/RR_Griffin_Dessicated</texPath>
+          <graphicClass>Graphic_Multi</graphicClass>
+          <drawSize>2.6</drawSize>
+        </dessicatedBodyGraphicData>
+      </li>
+    </lifeStages>
+  </PawnKindDef>
+
+</Defs>
