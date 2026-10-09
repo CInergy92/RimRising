@@ -31,8 +31,9 @@
   ideoligion without a Yellow physician still works. The knights' base is not
   reused because its icon and believer counts are the Olympic order's.
 
-  Role nameMakers: none. Vanilla roles without a nameMaker use their label, which is
-  what these want - "Physician", not an invented honorific.
+  Role nameMakers: one fixed name each (RulePacks_ColorRoles.xml) - "Physician",
+  not an invented honorific. A role cannot go without one: Precept_Role.GenerateNameRaw
+  adds def.nameMaker with no null check and throws (RoleMissingNameMaker).
 -->
 <Defs>
 
@@ -55,6 +56,7 @@
   <PreceptDef ParentName="RR_ColorRoleBase">
     <defName>RR_Role_Physician</defName>
     <label>Physician</label>
+    <nameMaker>RR_NamerRole_Physician</nameMaker>
     <description>A Yellow holds the body's secrets by birth and by law; no other Color is permitted to cut. The physician keeps the believers alive and is the only one of them who has seen what a Gold looks like inside.</description>
     <iconPath>UI/Roles/RR_Role_Physician</iconPath>
     <requiredMemes>
@@ -86,6 +88,7 @@
   <PreceptDef ParentName="RR_ColorRoleBase">
     <defName>RR_Role_Engineer</defName>
     <label>Engineer</label>
+    <nameMaker>RR_NamerRole_Engineer</nameMaker>
     <description>An Orange builds what the rest of the Colors stand on. The engineer is the believer the others go to when something stops, and the one who is blamed first when it does.</description>
     <iconPath>UI/Roles/RR_Role_Engineer</iconPath>
     <requiredMemes>
@@ -118,6 +121,7 @@
   <PreceptDef ParentName="RR_ColorRoleBase">
     <defName>RR_Role_Pilot</defName>
     <label>Pilot</label>
+    <nameMaker>RR_NamerRole_Pilot</nameMaker>
     <description>A Blue flies. Nothing moves between worlds without one at the helm, and nothing they fly is ever theirs. The pilot is the believer who knows exactly how far away everything is.</description>
     <iconPath>UI/Roles/RR_Role_Pilot</iconPath>
     <requiredMemes>
@@ -150,6 +154,7 @@
   <PreceptDef ParentName="RR_ColorRoleBase">
     <defName>RR_Role_Arbiter</defName>
     <label>Arbiter</label>
+    <nameMaker>RR_NamerRole_Arbiter</nameMaker>
     <description>A White rules on what is lawful, and the ruling holds because every Color fears the Whites more than it fears each other. The arbiter speaks for the believers to outsiders and settles what they cannot settle among themselves.</description>
     <iconPath>UI/Roles/RR_Role_Arbiter</iconPath>
     <requiredMemes>
@@ -183,6 +188,7 @@
   <PreceptDef ParentName="RR_ColorRoleBase">
     <defName>RR_Role_Shaman</defName>
     <label>Shaman</label>
+    <nameMaker>RR_NamerRole_Shaman</nameMaker>
     <description>The one who speaks to the gods on the ice, and tells the tribe what they said. The shaman keeps the old stories, which are not as old as the tribe believes and were not written by whom it believes either.</description>
     <iconPath>UI/Roles/RR_Role_Shaman</iconPath>
     <requiredMemes>

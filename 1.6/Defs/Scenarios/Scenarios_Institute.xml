@@ -30,7 +30,10 @@
 -->
 <Defs>
 
-  <ScenarioDef>
+  <!-- ScenarioBase supplies playerFaction and surfaceLayer. Without it the game
+       reports "no playerFaction", "no surfaceLayer" and two null parts (Scenario.AllParts
+       yields both before the list). -->
+  <ScenarioDef ParentName="ScenarioBase">
     <defName>RR_Scenario_Institute</defName>
     <label>The Institute</label>
     <description>Every Gold of consequence went through it: a year in a wilderness with nothing, against every other Gold of their age, watched by proctors who intervene only to make things worse. Those who come out the far side rule. Those who do not are not spoken of.\n\nYou are six of them, on the first morning. There is no colony to go back to and no one is coming to help, because the whole point of the exercise is that no one does.\n\nThe proctors will be along shortly.</description>
@@ -88,6 +91,8 @@
           <def>CreateIncident</def>
           <incident>RaidEnemy</incident>
           <intervalDays>6</intervalDays>
+          <!-- Without repeat the part fires once (ScenPart_CreateIncident). -->
+          <repeat>true</repeat>
         </li>
 
       </parts>

@@ -35,7 +35,7 @@ says what to compare.
 | Def | Field | Check against |
 |---|---|---|
 | `RR_Caravan_Society_Census`, `RR_Caravan_Dominion_Census` | `tradeCurrency Favor`, `faction` | `Royalty/Defs/TraderKindDefs/TraderKinds_Caravan_Empire.xml` (tribute collector). If favour currency is Empire-only in code, drop both fields and the caravan pays silver; the ladder then needs another favour source - a design call for the user. |
-| `RR_Helium3` | `deepCommonality`, `deepCountPerPortion`, `deepLumpSizeRange` | `Core/Defs/ThingDefs_Items/Items_Resource_Stuff.xml` (Uranium) |
+| `RR_HeliumThree` | `deepCommonality`, `deepCountPerPortion`, `deepLumpSizeRange` | `Core/Defs/ThingDefs_Items/Items_Resource_Stuff.xml` (Uranium) |
 | `RR_ClawDrill` | `<compClass>CompDeepDrill</compClass>`, thingClass | `Core/Defs/ThingDefs_Buildings/Buildings_Production.xml` (DeepDrill) |
 | `RR_RazorTrialOutcome` | `workerClass RitualOutcomeEffectWorker_FromQuality` | `Ideology/Defs/RitualOutcomeEffectDefs/` - every reference mod uses its own subclass, so the base name is from memory |
 | `RR_Tattoo_*` | `tattooType Face/Body` and the whole TattooDef field set | `Ideology/Defs/TattooDefs/` |
@@ -92,7 +92,7 @@ says what to compare.
   overriding the deep-drill portion is the lever, if wanted.
 - **Pulse armour helium upkeep.** The suggestions doc (2.4) argues against fuel on
   clothing; the honest middle path is `TraumaSuite.cs` restocking stims from a
-  `RR_Helium3` in inventory. **Ask the user before building either.**
+  `RR_HeliumThree` in inventory. **Ask the user before building either.**
 - **Sigil reads.** `RR_Sigils.SigilMismatch(pawn)` exists; nothing calls it yet. The two
   intended readers: the census caravan (a trader-arrival check that refuses to deal, or
   reports a mismatched pawn, when a colonist's paper and body disagree) and the Lurcher

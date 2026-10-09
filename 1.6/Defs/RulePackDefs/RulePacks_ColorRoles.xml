@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Fixed names for the five Color roles (Roles_Colors.xml), the same shape as
+  RulePacks_Knights.xml.
+
+  A role precept MUST name a nameMaker. Decompiled, Precept_Role.GenerateNameRaw
+  adds def.nameMaker to the grammar request with no null check for any role that
+  is not the leader, so a role without one throws during ideoligion generation -
+  it does not fall back to the label. Each pack here resolves r_roleName to the
+  role's plain label, which is what these roles want.
+-->
+<Defs>
+
+  <RulePackDef>
+    <defName>RR_NamerRole_Physician</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_roleName->Physician</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_NamerRole_Engineer</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_roleName->Engineer</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_NamerRole_Pilot</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_roleName->Pilot</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_NamerRole_Arbiter</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_roleName->Arbiter</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>RR_NamerRole_Shaman</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_roleName->Shaman</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+</Defs>

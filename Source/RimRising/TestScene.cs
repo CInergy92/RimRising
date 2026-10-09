@@ -702,7 +702,8 @@ namespace RimRising
         private void CarveTest()
         {
             var carves = DefDatabase<RecipeDef>.AllDefsListForReading
-                .Where(r => r.GetModExtension<CarveTargetExtension>()?.color != null).ToList();
+                .Where(r => r.workerClass == typeof(Recipe_CarveColor) &&
+                            r.GetModExtension<CarveTargetExtension>()?.color != null).ToList();
             foreach (RecipeDef r in carves)
             {
                 XenotypeDef target = r.GetModExtension<CarveTargetExtension>().color;

@@ -30,15 +30,8 @@
   (respectPopulationIntent, countRange), _Animals (maxWildness, checkTemperature,
   tradeTagsSell, kindCountRange? - NOT seen; animals use the tag form only).
 
-  THE FAVOUR CARAVAN IS THE ONE UNVERIFIED THING IN THIS FILE. Royalty's tribute
-  collector is a TraderKindDef that trades in favour and belongs to the Empire; the
-  two fields it uses for that are, from memory, <tradeCurrency>Favor</tradeCurrency>
-  and <faction>Empire</faction>. No mod on GitHub reproduces them. Confirm both
-  against Royalty/Defs/TraderKindDefs/TraderKinds_Caravan_Empire.xml
-  (Find-VanillaDef.ps1 -Contains tradeCurrency) before this loads. If favour
-  currency turns out to be Empire-only in code, the fallback is to drop
-  tradeCurrency and let the census caravan pay silver; the ladder would then need
-  another favour source, which is a design call.
+  The favour caravans were drafted from memory and are now verified against
+  Royalty's tribute collector - see the note above them.
 
   WIRED IN: FactionDefs/Factions_RimRising.xml and Factions_Merchants.xml list these
   under caravanTraderKinds, REPLACING the vanilla outlander entries so the stock IS
@@ -48,32 +41,34 @@
 
   <!-- ====================== the Society: census caravan ==================== -->
 
+  <!--
+    Both census caravans mirror Royalty's Empire_Caravan_TributeCollector (verified
+    2026-10-09): tradeCurrency Favor and faction are real TraderKindDef fields, and
+    favour trading is not Empire-only in code. What an item pays is its
+    RoyalFavorValue STAT (TradeUtility.GetPricePlayerSell), not its market value, and
+    the stat defaults to 0 - so a favour trader must only buy things that carry it.
+    Vanilla's buys slaves (Human: 3) and gold (0.015). Steel, plasteel and uranium
+    carry none and were dropped: the caravan would have taken them for nothing.
+    Ionsteel and helium-3 carry it at gold's rate (Items_*_RimRising.xml).
+    hideThingsNotWillingToTrade and requestable False are the collector's too.
+  -->
   <TraderKindDef>
     <defName>RR_Caravan_Society_Census</defName>
     <label>census caravan</label>
+    <requestable>False</requestable>
     <commonality>1.5</commonality>
-    <!-- VERIFY both fields against Royalty's tribute collector. -->
     <tradeCurrency>Favor</tradeCurrency>
     <faction>RR_Society</faction>
+    <hideThingsNotWillingToTrade>True</hideThingsNotWillingToTrade>
     <stockGenerators>
-      <!-- The Society does not sell. It takes, and it pays in standing. -->
+      <!-- The Society does not sell. It takes, and it pays in standing. Bodies are
+           a tax too. -->
+      <li Class="StockGenerator_BuySlaves" />
       <li Class="StockGenerator_BuyTradeTag">
         <tag>RR_SocietyTribute</tag>
       </li>
       <li Class="StockGenerator_BuySingleDef">
-        <thingDef>Plasteel</thingDef>
-      </li>
-      <li Class="StockGenerator_BuySingleDef">
-        <thingDef>Uranium</thingDef>
-      </li>
-      <li Class="StockGenerator_BuySingleDef">
         <thingDef>Gold</thingDef>
-      </li>
-      <!-- Bodies are a tax too. Ideology slavery already models the Society buying
-           people; respectPopulationIntent false so it always has room for them. -->
-      <li Class="StockGenerator_Slaves">
-        <respectPopulationIntent>false</respectPopulationIntent>
-        <countRange>0~0</countRange>
       </li>
     </stockGenerators>
   </TraderKindDef>
@@ -83,22 +78,15 @@
   <TraderKindDef>
     <defName>RR_Caravan_Dominion_Census</defName>
     <label>Rim census caravan</label>
+    <requestable>False</requestable>
     <commonality>1.2</commonality>
     <tradeCurrency>Favor</tradeCurrency>
     <faction>RR_RimDominion</faction>
+    <hideThingsNotWillingToTrade>True</hideThingsNotWillingToTrade>
     <stockGenerators>
+      <li Class="StockGenerator_BuySlaves" />
       <li Class="StockGenerator_BuyTradeTag">
         <tag>RR_SocietyTribute</tag>
-      </li>
-      <li Class="StockGenerator_BuySingleDef">
-        <thingDef>Steel</thingDef>
-      </li>
-      <li Class="StockGenerator_BuySingleDef">
-        <thingDef>Plasteel</thingDef>
-      </li>
-      <li Class="StockGenerator_Slaves">
-        <respectPopulationIntent>false</respectPopulationIntent>
-        <countRange>0~0</countRange>
       </li>
     </stockGenerators>
   </TraderKindDef>
@@ -174,7 +162,7 @@
         <countRange>40~120</countRange>
       </li>
       <li Class="StockGenerator_SingleDef">
-        <thingDef>RR_Helium3</thingDef>
+        <thingDef>RR_HeliumThree</thingDef>
         <countRange>20~60</countRange>
       </li>
       <li Class="StockGenerator_SingleDef">
@@ -220,7 +208,7 @@
         <countRange>20~60</countRange>
       </li>
       <li Class="StockGenerator_SingleDef">
-        <thingDef>RR_Helium3</thingDef>
+        <thingDef>RR_HeliumThree</thingDef>
         <countRange>10~40</countRange>
       </li>
       <li Class="StockGenerator_SingleDef">
@@ -318,7 +306,7 @@
         <countRange>1~1</countRange>
       </li>
       <li Class="StockGenerator_BuySingleDef">
-        <thingDef>RR_Helium3</thingDef>
+        <thingDef>RR_HeliumThree</thingDef>
       </li>
       <li Class="StockGenerator_BuySingleDef">
         <thingDef>RR_Ionsteel</thingDef>

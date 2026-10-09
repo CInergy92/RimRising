@@ -48,4 +48,30 @@
     </value>
   </Operation>
 
+  <!--
+    Sigil forging (Carving/Sigils.xml): the same surgery wiring, so the same rule -
+    without this the fourteen recipes exist and nobody can ever run them
+    (RecipeUnreachable). Kept out of the carving list above because forging changes
+    the paper, not the pawn.
+  -->
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/ThingDef[defName="Human"]/recipes</xpath>
+    <value>
+      <li>RR_ForgeSigil_Gold</li>
+      <li>RR_ForgeSigil_Silver</li>
+      <li>RR_ForgeSigil_White</li>
+      <li>RR_ForgeSigil_Copper</li>
+      <li>RR_ForgeSigil_Blue</li>
+      <li>RR_ForgeSigil_Yellow</li>
+      <li>RR_ForgeSigil_Green</li>
+      <li>RR_ForgeSigil_Violet</li>
+      <li>RR_ForgeSigil_Orange</li>
+      <li>RR_ForgeSigil_Gray</li>
+      <li>RR_ForgeSigil_Obsidian</li>
+      <li>RR_ForgeSigil_Brown</li>
+      <li>RR_ForgeSigil_Pink</li>
+      <li>RR_ForgeSigil_Red</li>
+    </value>
+  </Operation>
+
 </Patch>

@@ -28,11 +28,11 @@
 <Defs>
 
   <ThingDef ParentName="ResourceBase">
-    <defName>RR_Helium3</defName>
+    <defName>RR_HeliumThree</defName>
     <label>helium-3</label>
     <description>A pressurised canister of the isotope the whole Society runs on: the fuel for its reactors, its warships and its claim on everything else. It comes up out of the ground in a few places, and the people who bring it up are not the ones who are paid for it.\n\nOne canister will not light a room. A thousand will move a fleet.</description>
     <graphicData>
-      <texPath>Things/Item/Resource/RR_Helium3</texPath>
+      <texPath>Things/Item/Resource/RR_HeliumThree</texPath>
       <graphicClass>Graphic_StackCount</graphicClass>
     </graphicData>
     <soundInteract>Metal_Drop</soundInteract>
@@ -44,6 +44,8 @@
       <!-- Between plasteel (9) and uranium (6) per unit is too cheap for a fuel the
            Society wages wars over; this sits at uranium x4 so a stack is worth a trip. -->
       <MarketValue>24</MarketValue>
+      <!-- Favour from a census caravan, at vanilla gold's rate: 0.015 per 10 silver. -->
+      <RoyalFavorValue>0.036</RoyalFavorValue>
       <Mass>0.6</Mass>
       <Flammability>0</Flammability>
       <DeteriorationRate>0.5</DeteriorationRate>

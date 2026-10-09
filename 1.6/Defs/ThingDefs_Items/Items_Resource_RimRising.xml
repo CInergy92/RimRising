@@ -26,6 +26,8 @@
     <statBases>
       <MaxHitPoints>120</MaxHitPoints>
       <MarketValue>18</MarketValue>
+      <!-- Favour from a census caravan, at vanilla gold's rate: 0.015 per 10 silver. -->
+      <RoyalFavorValue>0.027</RoyalFavorValue>
       <Mass>0.5</Mass>
       <Flammability>0.2</Flammability>
       <DeteriorationRate>1.0</DeteriorationRate>

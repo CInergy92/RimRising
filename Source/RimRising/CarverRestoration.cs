@@ -48,8 +48,9 @@ namespace RimRising
             // PreceptComp_UnwillingToDo is only a UI line until code asks: without
             // this a Violet whose ideoligion says "won't carve someone into another
             // Color" took the bill anyway. Colour carves only - restoration is not
-            // the act the precept names.
-            if (__instance.recipe.HasModExtension<CarveTargetExtension>() &&
+            // the act the precept names, and neither is forging a sigil, which
+            // shares the CarveTargetExtension but only rewrites the paper.
+            if (__instance.recipe.workerClass == typeof(Recipe_CarveColor) &&
                 RR_CarveDefOf.RR_ColorCarved != null &&
                 !IdeoUtility.DoerWillingToDo(RR_CarveDefOf.RR_ColorCarved, p))
             {

@@ -35,6 +35,8 @@
 
   <HediffDef>
     <defName>RR_CarvingRecovery</defName>
+    <!-- A hediff with comps must be HediffWithComps, or the comps never run. -->
+    <hediffClass>HediffWithComps</hediffClass>
     <label>carving recovery</label>
     <labelNoun>carving recovery</labelNoun>
     <description>This person has been carved. The new tissue is still knitting to the old, the nerves are still arguing about which body they belong to, and everything hurts. It passes, in a few weeks, for those it passes for.</description>

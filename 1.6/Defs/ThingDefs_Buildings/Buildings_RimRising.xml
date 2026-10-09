@@ -10,16 +10,15 @@
   size, passability, interaction cell, designationCategory, terrainAffordanceNeeded,
   constructionSkillPrerequisite, minifiedDef, thingCategories, costList, placeWorkers,
   researchPrerequisites, statBases, Forbiddable/Flickable/Power comps. That def's drill
-  comp is Alpha Biomes' own; this one needs VANILLA'S, and the way vanilla's deep drill
-  declares it is UNVERIFIED FROM HERE. From memory it is a compClass with no properties:
+  comp is Alpha Biomes' own; this one uses VANILLA'S, verified against
+  Core/Defs/ThingDefs_Buildings/Buildings_Production.xml (DeepDrill) on 2026-10-09:
+  <li Class="CompProperties_DeepDrill" />, plus vanilla's place workers.
 
-      <li><compClass>CompDeepDrill</compClass></li>
-
-  Confirm against Core/Defs/ThingDefs_Buildings/Buildings_Production.xml (DeepDrill)
-  with Find-VanillaDef.ps1 -DefName DeepDrill before this loads; if the real form is a
-  CompProperties class, swap it in. Same for the thingClass: vanilla's deep drill may
-  be a plain Building, which is what this uses. (BuildingBase and the comp names
-  Forbiddable, Flickable and Power are verified through Alpha Biomes.)
+  NOBODY WOULD OPERATE IT WITHOUT C#. Decompiled, WorkGiver_DeepDrill asks only for
+  ThingRequest.ForDef(ThingDefOf.DeepDrill) - the exact vanilla def - so a second
+  drill def is never offered as work. RimRising.WorkGiver_ClawDrill
+  (Source/RimRising/ClawDrill.cs) is the same giver pointed at this def, and the
+  WorkGiverDef RR_DrillClaw below puts it under Mining beside vanilla's.
 
   WHAT MAKES IT A CLAWDRILL. Honestly: not much yet. Vanilla exposes no per-building
   yield or speed field for deep drilling - speed is the operator's DeepDrillingSpeed
@@ -53,7 +52,9 @@
     <pathCost>70</pathCost>
     <fillPercent>0.6</fillPercent>
     <hasInteractionCell>true</hasInteractionCell>
-    <interactionCellOffset>(0,0,-2)</interactionCellOffset>
+    <!-- A 2x2 rect starts at the building's own z (GenAdj.OccupiedRect), so -1 is the
+         cell touching its south edge; -2 left a one-cell gap. -->
+    <interactionCellOffset>(0,0,-1)</interactionCellOffset>
     <designationCategory>Production</designationCategory>
     <rotatable>true</rotatable>
     <terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
@@ -70,9 +71,13 @@
       <RR_Ionsteel>40</RR_Ionsteel>
       <ComponentIndustrial>8</ComponentIndustrial>
     </costList>
+    <!-- Vanilla DeepDrill's three: the first shows the deep resources under the cursor. -->
     <placeWorkers>
+      <li>PlaceWorker_DeepDrill</li>
       <li>PlaceWorker_PreventInteractionSpotOverlap</li>
+      <li>PlaceWorker_InvalidOverSubstructure</li>
     </placeWorkers>
+    <drawPlaceWorkersWhileSelected>true</drawPlaceWorkersWhileSelected>
     <researchPrerequisites>
       <li>DeepDrilling</li>
     </researchPrerequisites>
@@ -90,11 +95,24 @@
         <compClass>CompPowerTrader</compClass>
         <basePowerConsumption>450</basePowerConsumption>
       </li>
-      <!-- VERIFY against vanilla's DeepDrill; see the file header. -->
-      <li>
-        <compClass>CompDeepDrill</compClass>
-      </li>
+      <!-- Vanilla DeepDrill's form, verified. -->
+      <li Class="CompProperties_DeepDrill" />
     </comps>
   </ThingDef>
+
+  <!-- Mirrors vanilla's Drill WorkGiverDef (Core/Defs/WorkGiverDefs/WorkGivers.xml). -->
+  <WorkGiverDef>
+    <defName>RR_DrillClaw</defName>
+    <label>drill at clawDrill</label>
+    <giverClass>RimRising.WorkGiver_ClawDrill</giverClass>
+    <workType>Mining</workType>
+    <priorityInType>50</priorityInType>
+    <verb>drill</verb>
+    <gerund>drilling</gerund>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <canBeDoneByMechs>false</canBeDoneByMechs>
+  </WorkGiverDef>
 
 </Defs>
