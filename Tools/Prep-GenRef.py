@@ -1,0 +1,28 @@
+"""
+Prepare a sprite as a reference image for the generative pipeline: composite it
+onto flat white and upscale to 1024, which is what the image models take best.
+
+    blender -b --factory-startup --python Tools/Prep-GenRef.py -- <in.png> <out.png> [size]
+"""
+import importlib.machinery
+import os
+import sys
+
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+cw = importlib.machinery.SourceFileLoader(
+    "cw", os.path.join(HERE, "Compose-WornApparel.py")).load_module()
+
+if __name__ == "__main__":
+    a = sys.argv[sys.argv.index("--") + 1:]
+    src, dst = os.path.abspath(a[0]), os.path.abspath(a[1])
+    size = int(a[2]) if len(a) > 2 else 1024
+    img = cw.load_rgba(src)
+    img = cw.resize(img, size, size)
+    al = img[..., 3:4]
+    out = np.ones((size, size, 4), np.float32)
+    out[..., :3] = img[..., :3] * al + (1 - al)
+    os.makedirs(os.path.dirname(dst), exist_ok=True)
+    cw.save_png(dst, out)
+    print("WROTE", dst)

@@ -471,10 +471,17 @@ the one to check in game.
 `Tools/New-WornApparel.ps1` derives every shape from these boxes rather than
 hard-coding coordinates, which is what makes one drawing fit six body types.
 
-**Worn apparel does NOT go through the generative pipeline.** It is not judged on
-how good the painting is, it is judged on whether it sits on the body. ControlNet
-moves edges by a few pixels - invisible on an item icon, fatal on a sprite that has
-to register with a shoulder.
+**SUPERSEDED 2026-10-08 - high-detail art IS generative now.** The user's direction:
+"Anything that needs high detail like worn items and weapons need to be generative",
+then "Same with vehicles". Worn apparel, weapons and vehicles are generated (fal) and
+cleaned up by script; code-drawn art is for low-detail things only (loose items, icons,
+glyphs).
+
+The old concern still stands, and is now what the cleanup has to solve: a sprite is
+judged on whether it sits on the body, and a generative model moves edges. So the
+measurements above remain the registration target - generate the detail, then fit the
+result back onto the measured box / the procedural silhouette by script. The starShell
+(`Tools/Clean-GenStarShell.py`) is the first worked example.
 
 The body boxes above are confirmed in play for the adult types, tint included.
 

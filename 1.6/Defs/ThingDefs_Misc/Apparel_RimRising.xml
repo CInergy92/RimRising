@@ -370,6 +370,12 @@
     <graphicData>
       <texPath>Things/Pawn/Humanlike/Apparel/RR_DemonHelm/RR_DemonHelm</texPath>
       <graphicClass>Graphic_Single</graphicClass>
+      <!-- The gold trim is tintable (user's call): masked like pulse armour's
+           plates, dyed to the wearer's caste by CasteArmor.cs (RR_CasteColored).
+           color is the default for a wearer with no Colour - gold, as drawn.
+           Icon mask: RR_DemonHelm_m.png (Graphic_Single's MaskSuffix). -->
+      <shaderType>CutoutComplex</shaderType>
+      <color>(0.86, 0.68, 0.30)</color>
     </graphicData>
     <uiIconScale>1.25</uiIconScale>
     <generateCommonality>0.5</generateCommonality>
@@ -409,11 +415,13 @@
         <li>FullHead</li>
       </bodyPartGroups>
       <wornGraphicPath>Things/Pawn/Humanlike/Apparel/RR_DemonHelm/RR_DemonHelm</wornGraphicPath>
+      <useWornGraphicMask>true</useWornGraphicMask>
       <layers>
         <li>Overhead</li>
       </layers>
       <tags>
         <li>SpacerMilitary</li>
+        <li>RR_CasteColored</li>
       </tags>
       <defaultOutfitTags>
         <li>Soldier</li>

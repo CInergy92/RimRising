@@ -31,3 +31,16 @@ desktop.ini
 
 # Scratch left by an interrupted git filter-branch; never content.
 .git-rewrite/
+
+# Raw generations: about 1 MB each and reproducible from fal_manifest.jsonl. Kept in git:
+# the manifests, orig/ (the fit targets) and the chosen style images.
+Art/Gen/Armor/**/gen*.png
+Art/Gen/Armor/**/ref*.png
+Art/Gen/Armor/**/demon*.png
+Art/Gen/Armor/**/style_*_2.png
+!Art/Gen/Armor/Duro/style_Male_south_2.png
+!Art/Gen/Armor/Cloak/style_Male_south_2.png
+!Art/Gen/Armor/Helm/demonB_south_2.png
+Art/Gen/Weapons/gen_*.png
+Art/Gen/Weapons/ref_*.png
+!Art/Gen/Armor/Pulse/gen_Male_south.png

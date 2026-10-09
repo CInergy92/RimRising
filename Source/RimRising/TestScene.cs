@@ -741,6 +741,11 @@ namespace RimRising
                 dontGiveWeapon: true,
                 forceNoGear: true);
             Pawn p = PawnGenerator.GeneratePawn(req);
+            // forceNoIdeo is NOT enough: a player-faction pawn can still come out
+            // holding the colony's random ideoligion, and when that one carries
+            // the caste precept every pulse and recoil row is refused and drawn
+            // naked ("tried to wear ... but is not allowed to"). Cleared outright.
+            p.ideo?.SetIdeo(null);
             p.story.bodyType = body;
             p.apparel?.DestroyAll();
             p.equipment?.DestroyAllEquipment();
