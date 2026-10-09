@@ -953,6 +953,27 @@ kind is enough to make title-gated apparel wearable at generation.
   ends without firing. The scene puts them back on their marks every round. Casters are rerolled if
   they come out pacifist.
 
+### Vanilla traps found landing the second content pass (2026-10-09)
+
+Each loaded without complaint, or with a log line that does not name the cause:
+
+- **A favour trader pays an item's `RoyalFavorValue` stat**, not its market value
+  (`TradeUtility.GetPricePlayerSell`), and the stat defaults to 0. Only buy things that carry it.
+- **`StockGenerator.countRange` defaults to zero.** An animal stock entry without one never stocks.
+- **`WorkGiver_DeepDrill` requests `ThingDefOf.DeepDrill` by def.** A second drill def needs its
+  own work giver (`ClawDrill.cs`). Assume the same of any vanilla work giver until its
+  `PotentialWorkThingRequest` is read.
+- **A pawn with an ideoligion only gets tattoos its culture or memes tag.** The kind's
+  `styleItemTags` weight within that set; they cannot add to it.
+- **1.6 places deep resources lazily**, when a scanner finds one (`CompDeepScanner`); a fresh
+  map's deep grid is empty. A deep resource is in play if its `deepCommonality` is non-zero.
+- **A ScenarioDef needs `ParentName="ScenarioBase"`** for its player faction and planet layer.
+- **Two `apparelRequired` items on the same layer and body parts** is a config error, and the
+  kind then generates without one of them.
+- **Situational thoughts are cached.** Call `Notify_SituationalThoughtsDirty()` before reading
+  them twice in one tick (`rrtestmode=m12`).
+- `rrtestmode=m12` checks the second content pass in code: 38 logged `M12` lines and a summary.
+
 ### Combat Extended and damage with no verb
 
 CE resolves a **deflected** sharp hit as blunt, taking the blunt penetration from the attacking

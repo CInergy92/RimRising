@@ -1410,8 +1410,39 @@ parses, which is all that can be said from there. Suggestions 1.1, 1.4, 6.1 and 
 
 ## Milestone 12 — the second content pass (drafted in the cloud, 2026-10-09)
 
+### Status after the local session (2026-10-09)
+
+**Built, loads clean, and checked in code:** `rrtestmode=m12` turns the click-list below into
+38 logged checks; **35 pass**. The three that fail are the caste marks, which wait on a design
+call (below). Fixed on the way, each found by the validator, the decompiled game, the first
+load or the test:
+
+| Item | What was wrong |
+|---|---|
+| Colour roles | no `nameMaker`; `Precept_Role.GenerateNameRaw` throws without one |
+| Sigils | the 14 forge recipes were on no pawn (patched onto `Human`) |
+| Griffin | vanilla tools under CE; no `countRange` on its stock (defaults to 0, never sold); `AnimalFighter` tag let outlander caravans sell it |
+| Helium-3 | `RR_Helium3` - a defName may not end in a digit; now `RR_HeliumThree` |
+| Census caravans | favour pays an item's `RoyalFavorValue` stat, default 0: they took steel/plasteel/uranium for nothing. Now mirror the tribute collector |
+| ClawDrill | `WorkGiver_DeepDrill` only asks for vanilla's `DeepDrill` def, so nobody would operate it; new `WorkGiver_ClawDrill` |
+| Institute | no `ScenarioBase` (no faction, no layer, two null parts); the raid needed `repeat` |
+| Carving recovery | comps without `HediffWithComps` |
+| Howlers | the kit was left to the budget (a demonHelm never came up); now `apparelRequired`. The pelt and ghostCloak cannot be worn together - both Shell capes |
+| Heirloom razor | re-declared an inherited weapon class |
+
+**Waiting on the user:**
+- **Caste marks never generate.** A pawn with an ideoligion only gets a tattoo whose tags the
+  ideoligion's culture or memes carry (`IdeoStyleTracker.RecalculateAvailableStyleItems`); the
+  pawn kind's `styleItemTags` only weight what is already allowed. Ours sit on kinds only, so
+  every Society and tribe pawn rolls `NoTattoo`.
+- **Howler cape:** the pelt is required; the ghostCloak only appears on a Howler without one.
+
+Still owed: the art in `docs/Opus-Notes.md` section 3 (slingBlade, Howler pelt, griffin,
+clawDrill, tattoos, role/ritual/issue icons, heirloom razor), and its section 4/5 items, which
+are design calls or new systems.
+
 Every remaining item in `docs/RimRising-Suggestions.md` sections 1, 2, 3 and 6 that could be
-drafted without the game, drafted on `master` by a cloud session. **Nothing has loaded.** Four
+drafted without the game, drafted on `master` by a cloud session. At drafting, nothing had loaded. Four
 C# files are UNBUILT and are referenced from XML, so the mod will throw on load until the DLL
 is rebuilt; `docs/Opus-Notes.md` is the ordered list of what to build, verify and draw, and
 every def's header says what in it is unverified. The Python checker passes; every file

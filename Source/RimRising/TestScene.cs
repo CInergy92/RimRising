@@ -122,6 +122,17 @@ namespace RimRising
                         stage = 20;
                         return;
                     }
+                    if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string m5) && m5 == "m12")
+                    {
+                        // Each check is isolated: one that throws is logged as FAIL
+                        // and the rest still run, and the mode always finishes.
+                        stage = -1;
+                        try { Milestone12(); }
+                        catch (System.Exception e) { Log.Error("[RimRising] M12 harness threw: " + e); }
+                        Log.Message("[RimRising] TESTSCENE DONE (m12)");
+                        if (GenCommandLine.CommandLineArgPassed("rrtestquit")) { Root.Shutdown(); }
+                        return;
+                    }
                     if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string m3) && m3 == "bios")
                     {
                         GenerateBios();
@@ -938,6 +949,355 @@ namespace RimRising
             Log.Message($"[RimRising] NATURE worldgen {barrens.defName} 150x150: haemanthus {flowers}, pitvipers {vipers} " +
                         $"(flower commonality {barrens.CommonalityOfPlant(flower):F2})");
             Current.Game.DeinitAndRemoveMap(gen, false);
+        }
+
+        // ---- rrtestmode=m12: the second content pass, checked in code ----------
+
+        private int m12Ok, m12Fail;
+
+        private void Check(string name, bool ok, string detail)
+        {
+            if (ok) { m12Ok++; } else { m12Fail++; }
+            Log.Message($"[RimRising] M12 {(ok ? "OK  " : "FAIL")} {name}: {detail}");
+        }
+
+        private void Run(string name, System.Action body)
+        {
+            try { body(); }
+            catch (System.Exception e) { Check(name, false, "threw " + e.GetType().Name + ": " + e.Message); }
+        }
+
+        private static Faction FactionOf(string defName) =>
+            Find.FactionManager.AllFactionsListForReading.FirstOrDefault(f => f.def.defName == defName);
+
+        private static Pawn Gen(string kind, Faction fac) =>
+            PawnGenerator.GeneratePawn(new PawnGenerationRequest(DefDatabase<PawnKindDef>.GetNamed(kind), fac,
+                forceGenerateNewPawn: true, developmentalStages: DevelopmentalStage.Adult));
+
+        private Pawn Colonist(XenotypeDef x, Ideo ideo)
+        {
+            Pawn p = PawnGenerator.GeneratePawn(new PawnGenerationRequest(PawnKindDefOf.Colonist, Faction.OfPlayer,
+                forceGenerateNewPawn: true, forcedXenotype: x, forceNoIdeo: true,
+                developmentalStages: DevelopmentalStage.Adult, fixedBiologicalAge: 30f, fixedChronologicalAge: 30f));
+            if (ideo != null) { p.ideo?.SetIdeo(ideo); }
+            return p;
+        }
+
+        private static void Discard(Pawn p)
+        {
+            if (p == null) { return; }
+            if (p.Spawned) { p.DeSpawn(); }
+            if (!p.Dead && !Find.WorldPawns.Contains(p)) { Find.WorldPawns.PassToWorld(p, PawnDiscardDecideMode.Discard); }
+        }
+
+        /// <summary>
+        /// rrtestmode=m12: PROGRESS.md's Milestone 12 click-list, as far as each item
+        /// can be decided from code in a live game. Logs one M12 line per check.
+        /// </summary>
+        private void Milestone12()
+        {
+            Faction society = FactionOf("RR_Society"), ares = FactionOf("RR_SonsOfAres"), tribes = FactionOf("RR_ObsidianTribes");
+            Ideo hierarchy = society?.ideos?.PrimaryIdeo, equality = ares?.ideos?.PrimaryIdeo;
+            Log.Message($"[RimRising] M12 factions: society {society != null} ares {ares != null} tribes {tribes != null}; " +
+                        $"hierarchy ideo '{hierarchy?.name}', equality ideo '{equality?.name}'");
+            XenotypeDef red = DefDatabase<XenotypeDef>.GetNamed("RR_Red"), gold = DefDatabase<XenotypeDef>.GetNamed("RR_Gold");
+
+            // 1. Traders: every RR faction's caravans are ours; census caravans pay favour.
+            Run("1 traders", () =>
+            {
+                foreach (FactionDef fd in DefDatabase<FactionDef>.AllDefs.Where(d => d.defName.StartsWith("RR_") && !d.isPlayer))
+                {
+                    // Other mods patch caravans onto every faction (RJW does); judge only
+                    // what this mod and vanilla put there.
+                    var kinds = (fd.caravanTraderKinds ?? new List<TraderKindDef>())
+                        .Where(k => k.modContentPack == null || k.modContentPack.IsCoreMod || k.modContentPack.IsOfficialMod ||
+                                    k.modContentPack.PackageId == "cinergy92.rimrising").ToList();
+                    bool own = kinds.Count == 0 || kinds.All(k => k.defName.StartsWith("RR_")) || fd.defName == "RR_SonsOfAres";
+                    Check("1 caravans " + fd.defName, own,
+                          kinds.Count == 0 ? "none (no caravans)" : string.Join(", ", kinds.Select(k => k.defName)) +
+                          (fd.defName == "RR_SonsOfAres" ? " (Ares trade as outlanders by design)" : ""));
+                }
+                ThingDef he3 = DefDatabase<ThingDef>.GetNamed("RR_HeliumThree"), ion = DefDatabase<ThingDef>.GetNamed("RR_Ionsteel");
+                foreach (string c in new[] { "RR_Caravan_Society_Census", "RR_Caravan_Dominion_Census" })
+                {
+                    TraderKindDef tk = DefDatabase<TraderKindDef>.GetNamed(c);
+                    Check("1 " + c, tk.tradeCurrency == TradeCurrency.Favor && tk.WillTrade(he3) && tk.WillTrade(ion) &&
+                                    !tk.WillTrade(ThingDefOf.Steel) && !tk.WillTrade(ThingDefOf.Plasteel),
+                          $"currency {tk.tradeCurrency}, buys helium {tk.WillTrade(he3)} ionsteel {tk.WillTrade(ion)} steel {tk.WillTrade(ThingDefOf.Steel)}; " +
+                          $"favour per helium {he3.GetStatValueAbstract(StatDefOf.RoyalFavorValue):F3}, per ionsteel {ion.GetStatValueAbstract(StatDefOf.RoyalFavorValue):F3}");
+                }
+            });
+
+            // 2. Heirloom razor: named, bladelinked, refused to a Red.
+            Run("2 heirloom", () =>
+            {
+                Thing h = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("RR_Weapon_Razor_Heirloom"));
+                string name = h.TryGetComp<CompGeneratedNames>()?.Name;
+                bool link = h.TryGetComp<CompBladelinkWeapon>() != null;
+                Pawn r = Colonist(red, hierarchy), g = Colonist(gold, hierarchy);
+                bool redCan = EquipmentUtility.CanEquip(h, r, out string why), goldCan = EquipmentUtility.CanEquip(h, g);
+                bool whip = h.TryGetComp<CompEquippableAbility>() != null;
+                Check("2 heirloom", !name.NullOrEmpty() && link && !redCan && goldCan,
+                      $"name '{name}', bladelink {link}, Red may equip {redCan} ({why}), Gold may equip {goldCan}, whip ability {whip}");
+                Discard(r); Discard(g);
+            });
+
+            // 3. Trial by razor in the hierarchy ideoligion.
+            Run("3 trial", () =>
+            {
+                bool has = hierarchy != null && hierarchy.PreceptsListForReading.Any(p => p.def.defName == "RR_Ritual_RazorTrial");
+                Check("3 trial by razor", has, $"in '{hierarchy?.name}': {has}");
+            });
+
+            // 4. SlingBlade: craftable with no research; Ares kinds can carry it.
+            Run("4 slingBlade", () =>
+            {
+                ThingDef sb = DefDatabase<ThingDef>.GetNamed("RR_Weapon_SlingBlade");
+                RecipeDef make = DefDatabase<RecipeDef>.AllDefs.FirstOrDefault(r => r.ProducedThingDef == sb);
+                int carried = 0, n = 0;
+                foreach (PawnKindDef k in DefDatabase<PawnKindDef>.AllDefs.Where(k => k.defName.StartsWith("RR_Ares_")))
+                {
+                    for (int i = 0; i < 8; i++) { Pawn p = Gen(k.defName, ares); n++; if (p.equipment?.Primary?.def == sb) { carried++; } Discard(p); }
+                }
+                Check("4 slingBlade", make != null && make.researchPrerequisite == null && (make.researchPrerequisites == null || make.researchPrerequisites.Count == 0),
+                      $"recipe {make?.defName ?? "NONE"} at {string.Join("/", make?.recipeUsers?.Select(u => u.defName) ?? Enumerable.Empty<string>())}, " +
+                      $"research {make?.researchPrerequisite?.defName ?? "none"}; Ares pawns carrying it {carried}/{n}");
+            });
+
+            // 5. Caste marks.
+            Run("5 marks", () =>
+            {
+                foreach (string k in new[] { "RR_Society_Blue_Helmsman", "RR_Tribe_Obsidian_Warrior", "RR_Society_Legionary" })
+                {
+                    Faction f = k.StartsWith("RR_Tribe") ? tribes : society;
+                    var seen = new List<string>();
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Pawn p = Gen(k, f);
+                        string t = (p.style?.FaceTattoo?.defName ?? "") + "|" + (p.style?.BodyTattoo?.defName ?? "");
+                        seen.Add(t);
+                        Discard(p);
+                    }
+                    int marked = seen.Count(s => s.Contains("RR_Tattoo_"));
+                    Check("5 marks " + k, marked >= 5, $"{marked}/10 marked: {string.Join(", ", seen.Distinct())}");
+                }
+            });
+
+            // 6. Howlers.
+            Run("6 howlers", () =>
+            {
+                var outfits = new List<string>();
+                for (int i = 0; i < 6; i++)
+                {
+                    Pawn p = Gen("RR_Ares_Howler", ares);
+                    outfits.Add(string.Join("+", p.apparel.WornApparel.Select(a => a.def.defName.Replace("RR_Apparel_", ""))));
+                    Discard(p);
+                }
+                bool pelt = outfits.All(o => o.Contains("HowlerPelt") && o.Contains("ScarabSkin") && o.Contains("DemonHelm"));
+                Check("6 howler", pelt, string.Join(" ; ", outfits));
+                bool inRaids = ares.def.pawnGroupMakers.Any(g => g.options != null && g.options.Any(o => o.kind.defName == "RR_Ares_Howler"));
+                Check("6 howler in Ares groups", inRaids, inRaids.ToString());
+            });
+
+            // 7. Carving aftermath and the carved pawn's own thought.
+            Run("7 carving", () =>
+            {
+                RecipeDef carve = DefDatabase<RecipeDef>.GetNamed("RR_Carve_Gold");
+                foreach (Ideo ideo in new[] { hierarchy, equality })
+                {
+                    Pawn p = Colonist(red, ideo);
+                    carve.Worker.ApplyOnPawn(p, null, null, new List<Thing>(), null);
+                    bool rec = p.health.hediffSet.hediffs.Any(h => h.def.defName == "RR_CarvingRecovery");
+                    string mem = string.Join(", ", p.needs?.mood?.thoughts?.memories?.Memories?.Select(m => m.def.defName) ?? Enumerable.Empty<string>());
+                    Check("7 carving under '" + ideo?.name + "'", rec && mem.Contains("RR_WasCarved"),
+                          $"reads {RR_CasteIdentity.ColorOf(p)?.defName}, recovery {rec}, memories [{mem}]");
+                    Discard(p);
+                }
+            });
+
+            // 8. Sigils.
+            Run("8 sigils", () =>
+            {
+                Pawn s = Gen("RR_Society_Legionary", society);
+                HediffDef sig = RR_Sigils.SigilOf(s);
+                Hediff sh = s.health.hediffSet.hediffs.FirstOrDefault(h => h.def == sig);
+                Pawn t = Gen("RR_Tribe_Obsidian_Warrior", tribes);
+                Check("8 sigil on Society pawn", sig != null && sig == RR_Sigils.SigilFor(RR_CasteIdentity.ColorOf(s)),
+                      $"{RR_CasteIdentity.ColorOf(s)?.defName} has {sig?.defName ?? "none"} on {sh?.Part?.def.defName ?? "-"}");
+                Check("8 no sigil on tribe pawn", RR_Sigils.SigilOf(t) == null, RR_Sigils.SigilOf(t)?.defName ?? "none");
+                RecipeDef forge = DefDatabase<RecipeDef>.GetNamed("RR_ForgeSigil_Gold");
+                XenotypeDef before = RR_CasteIdentity.ColorOf(s);
+                forge.Worker.ApplyOnPawn(s, null, null, new List<Thing>(), null);
+                Check("8 forge", RR_Sigils.SigilOf(s)?.defName == "RR_Sigil_Gold" && RR_CasteIdentity.ColorOf(s) == before && RR_Sigils.SigilMismatch(s),
+                      $"now {RR_Sigils.SigilOf(s)?.defName}, still reads {RR_CasteIdentity.ColorOf(s)?.defName}, mismatch {RR_Sigils.SigilMismatch(s)}");
+                Discard(s); Discard(t);
+            });
+
+            // 9. Caste labour thoughts.
+            Run("9 labour", () =>
+            {
+                WorkGiverDef research = DefDatabase<WorkGiverDef>.AllDefs.First(w => w.workType == WorkTypeDefOf.Research);
+                WorkGiverDef haul = DefDatabase<WorkGiverDef>.AllDefs.First(w => w.workType == WorkTypeDefOf.Hauling);
+                foreach (Ideo ideo in new[] { hierarchy, equality })
+                {
+                    Pawn p = Colonist(red, ideo);
+                    GenSpawn.Spawn(p, map.Center, map);
+                    string Mood(WorkGiverDef wg)
+                    {
+                        Verse.AI.Job j = JobMaker.MakeJob(JobDefOf.Wait, 600);
+                        j.workGiverDef = wg;
+                        p.jobs.StartJob(j, Verse.AI.JobCondition.InterruptForced);
+                        // Situational thoughts are cached and refreshed on an interval.
+                        p.needs.mood.thoughts.situational.Notify_SituationalThoughtsDirty();
+                        var list = new List<Thought>();
+                        p.needs.mood.thoughts.situational.AppendMoodThoughts(list);
+                        return string.Join(",", list.Where(x => x.def.defName.Contains("CasteLabor") || (x.def.Worker?.GetType().Name.Contains("CasteLabor") ?? false))
+                                                    .Select(x => x.def.defName));
+                    }
+                    string atResearch = Mood(research), atHaul = Mood(haul);
+                    Check("9 labour under '" + ideo?.name + "'", atResearch.Length > 0 && atHaul.Length == 0,
+                          $"Red researching [{atResearch}], hauling [{atHaul}]");
+                    Discard(p);
+                }
+            });
+
+            // 10. Helium-3 under the map.
+            Run("10 helium", () =>
+            {
+                ThingDef he3 = DefDatabase<ThingDef>.GetNamed("RR_HeliumThree");
+                // 1.6 places deep lumps lazily, when a scanner finds one, picking by
+                // deepCommonality (CompDeepScanner.ChooseLumpThingDef). A fresh map's
+                // grid is empty, so judge helium's share of that weighted pick.
+                var pool = DefDatabase<ThingDef>.AllDefs.Where(d => d.deepCommonality > 0f).ToList();
+                float total = pool.Sum(d => d.deepCommonality);
+                Check("10 helium in the deep-lump pool", he3.deepCommonality > 0f,
+                      $"{he3.deepCommonality / total:P0} of finds; pool: {string.Join(", ", pool.Select(d => $"{d.defName} {d.deepCommonality}"))}; " +
+                      $"{he3.deepCountPerPortion} per portion, lumps {he3.deepLumpSizeRange}");
+            });
+
+            // 11. The Institute.
+            Run("11 institute", () =>
+            {
+                ScenarioDef sc = DefDatabase<ScenarioDef>.GetNamed("RR_Scenario_Institute");
+                var errs = sc.scenario.ConfigErrors().ToList();
+                Check("11 institute", errs.Count == 0, errs.Count == 0 ? "no config errors; " + sc.scenario.GetSummary().Replace("\n", " ") : string.Join("; ", errs));
+            });
+
+            // 12. Swill.
+            Run("12 swill", () =>
+            {
+                ThingDef swill = DefDatabase<ThingDef>.GetNamed("RR_Swill");
+                RecipeDef make = DefDatabase<RecipeDef>.AllDefs.FirstOrDefault(r => r.ProducedThingDef == swill);
+                Pawn p = Colonist(red, null);
+                Thing drink = ThingMaker.MakeThing(swill);
+                drink.Ingested(p, 0f);
+                string hed = string.Join(", ", p.health.hediffSet.hediffs.Select(h => h.def.defName));
+                Check("12 swill", make != null && hed.Contains("RR_SwillHigh"),
+                      $"recipe {make?.defName} x{make?.products?.FirstOrDefault()?.count} at {string.Join("/", make?.recipeUsers?.Select(u => u.defName) ?? Enumerable.Empty<string>())}; after drinking [{hed}]");
+                Discard(p);
+            });
+
+            // 13. The Laurel and the census letter: only with a lowColor in the colony.
+            Run("13 letters", () =>
+            {
+                IncidentDef laurel = DefDatabase<IncidentDef>.GetNamed("RR_Incident_LaurelQuota");
+                IncidentDef census = DefDatabase<IncidentDef>.GetNamed("RR_Incident_CensusLetter");
+                // CanFireNow also refuses before def.earliestDay, which a fresh map is
+                // always under; the Color condition lives in CanFireNowSub.
+                var sub = typeof(IncidentWorker).GetMethod("CanFireNowSub",
+                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                bool Can(IncidentDef d) => (bool)sub.Invoke(d.Worker, new object[] { StorytellerUtility.DefaultParmsNow(d.category, map) });
+                var spawned = new List<Pawn>();
+                foreach (Pawn c in map.mapPawns.FreeColonists.ToList()) { c.DeSpawn(); spawned.Add(c); }
+                Pawn g = Colonist(gold, null); GenSpawn.Spawn(g, map.Center, map);
+                bool goldOnlyL = Can(laurel), goldOnlyC = Can(census);
+                Pawn r = Colonist(red, null); GenSpawn.Spawn(r, map.Center + IntVec3.East, map);
+                bool withRedL = Can(laurel), withRedC = Can(census);
+                int before = Find.Storyteller.incidentQueue.Count;
+                bool fired = laurel.Worker.TryExecute(StorytellerUtility.DefaultParmsNow(laurel.category, map));
+                bool queued = Find.Storyteller.incidentQueue.Count == before + 1;
+                Check("13 laurel/census", !goldOnlyL && !goldOnlyC && withRedL && withRedC && fired && queued,
+                      $"Gold-only: laurel {goldOnlyL} census {goldOnlyC}; with a Red: laurel {withRedL} census {withRedC}; " +
+                      $"laurel fired {fired}, award queued {queued} (earliest days: laurel {laurel.earliestDay}, census {census.earliestDay})");
+                Discard(g); Discard(r);
+                foreach (Pawn c in spawned) { GenSpawn.Spawn(c, map.Center + IntVec3.North * 2, map); }
+            });
+
+            // 14. Griffins at the quartermaster.
+            Run("14 griffin", () =>
+            {
+                TraderKindDef qm = DefDatabase<TraderKindDef>.GetNamed("RR_Caravan_Society_Armory");
+                int griffins = 0;
+                for (int i = 0; i < 20; i++)
+                {
+                    foreach (StockGenerator sg in qm.stockGenerators)
+                    {
+                        foreach (Thing t in sg.GenerateThings(map.Tile, society))
+                        {
+                            if (t.def.defName == "RR_Griffin") { griffins++; }
+                            if (t is Pawn pp) { Discard(pp); } else { t.Destroy(); }
+                        }
+                    }
+                }
+                ThingDef gr = DefDatabase<ThingDef>.GetNamed("RR_Griffin");
+                Check("14 griffin", griffins > 0, $"{griffins} griffins in 20 quartermaster stocks; trainability {gr.race.trainability?.defName}");
+            });
+
+            // 15. Colour roles: assignable only to the right Colour.
+            Run("15 roles", () =>
+            {
+                var want = new (string role, string color)[] {
+                    ("RR_Role_Physician", "RR_Yellow"), ("RR_Role_Engineer", "RR_Orange"), ("RR_Role_Pilot", "RR_Blue"),
+                    ("RR_Role_Arbiter", "RR_White"), ("RR_Role_Shaman", "RR_Obsidian") };
+                foreach (var (role, color) in want)
+                {
+                    PreceptDef def = DefDatabase<PreceptDef>.GetNamed(role);
+                    Ideo host = hierarchy;
+                    Precept_Role pr = (Precept_Role)PreceptMaker.MakePrecept(def);
+                    pr.ideo = host;
+                    Pawn right = Colonist(DefDatabase<XenotypeDef>.GetNamed(color), host), wrong = Colonist(red, host);
+                    bool okRight = def.roleRequirements.Where(q => q is RoleRequirement_Xenotype).All(q => q.Met(right, pr));
+                    bool okWrong = def.roleRequirements.Where(q => q is RoleRequirement_Xenotype).All(q => q.Met(wrong, pr));
+                    Check("15 role " + role, okRight && !okWrong, $"{color} meets {okRight}, Red meets {okWrong}; name '{pr.GenerateNameRaw()}'");
+                    Discard(right); Discard(wrong);
+                }
+            });
+
+            // 16. ClawDrill: a colonist will take the job.
+            Run("16 clawDrill", () =>
+            {
+                ThingDef cd = DefDatabase<ThingDef>.GetNamed("RR_ClawDrill");
+                IntVec3 at = map.Center + new IntVec3(6, 0, 6);
+                Clear(CellRect.CenteredOn(at, 3).ClipInsideMap(map));
+                var b = (Building)GenSpawn.Spawn(ThingMaker.MakeThing(cd), at, map, Rot4.North);
+                b.SetFaction(Faction.OfPlayer);
+                b.TryGetComp<CompPowerTrader>().PowerOn = true;
+                Pawn p = map.mapPawns.FreeColonists.First();
+                var wg = new WorkGiver_ClawDrill { def = DefDatabase<WorkGiverDef>.GetNamed("RR_DrillClaw") };
+                bool skip = wg.ShouldSkip(p), job = wg.HasJobOnThing(p, b);
+                Check("16 clawDrill", !skip && job,
+                      $"size {cd.size}, power {cd.GetCompProperties<CompProperties_Power>()?.PowerConsumption}, research {string.Join("/", cd.researchPrerequisites.Select(r => r.defName))}; " +
+                      $"giver skips {skip}, colonist has job {job}, interaction cell {b.InteractionCell - b.Position}");
+                b.Destroy();
+            });
+
+            // 17. Combat drugs.
+            Run("17 drugs", () =>
+            {
+                foreach ((string k, Faction f) in new[] { ("RR_Society_Legionary", society), ("RR_Society_Lurcher", society), ("RR_Tribe_Obsidian_Warrior", tribes) })
+                {
+                    var drugs = new List<string>();
+                    for (int i = 0; i < 20; i++)
+                    {
+                        Pawn p = Gen(k, f);
+                        drugs.AddRange(p.inventory.innerContainer.Where(t => t.def.IsDrug).Select(t => t.def.defName));
+                        Discard(p);
+                    }
+                    Check("17 drugs " + k, drugs.Count > 0, $"{drugs.Count} drugs in 20: {string.Join(", ", drugs.Distinct())}");
+                }
+            });
+
+            Log.Message($"[RimRising] M12 SUMMARY {m12Ok} ok, {m12Fail} fail");
         }
 
         private const int BioSamples = 6;

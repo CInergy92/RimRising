@@ -764,6 +764,21 @@
     <weaponMoney>1200~2600</weaponMoney>
     <itemQuality>Good</itemQuality>
     <apparelAllowHeadgearChance>1</apparelAllowHeadgearChance>
+    <!--
+      The kit is the unit, so it is required rather than left to the budget: in
+      rrtestmode=m12, six tag-and-budget Howlers came out with a pelt once, scarabSkin
+      once and a demonHelm never (cowboy hats from another mod won the headgear roll).
+      apparelRequired is vanilla's field for this (PawnKinds_Breach.xml, the war veil).
+      The pelt, NOT the ghostCloak: both are Shell capes over torso and shoulders, so
+      requiring both is a config error ("required apparel can't be worn together") and
+      the pelt silently never appeared. The pelt is the uniform; the cloak can still
+      come through the RR_StealthKit tag on a Howler that is not wearing one.
+    -->
+    <apparelRequired>
+      <li>RR_Apparel_ScarabSkin</li>
+      <li>RR_Apparel_DemonHelm</li>
+      <li>RR_Apparel_HowlerPelt</li>
+    </apparelRequired>
     <apparelTags Inherit="False">
       <li>RR_StealthKit</li>
       <li>IndustrialBasic</li>

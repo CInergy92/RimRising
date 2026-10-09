@@ -134,6 +134,9 @@
       <!-- A griffin, now and then. Races_Animal_Griffin.xml; sold nowhere else. -->
       <li Class="StockGenerator_Animals">
         <maxWildness>1</maxWildness>
+        <!-- StockGenerator.countRange defaults to ZERO; without this no griffin ever
+             stocks. 0~1: about half of quartermasters bring one. -->
+        <countRange>0~1</countRange>
         <checkTemperature>false</checkTemperature>
         <tradeTagsSell>
           <li>RR_SocietyBeast</li>

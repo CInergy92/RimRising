@@ -151,7 +151,8 @@
     </race>
     <tradeTags>
       <li>RR_SocietyBeast</li>
-      <li>AnimalFighter</li>
+      <!-- Not AnimalFighter: vanilla combat-supplier caravans sell that tag, the Sons
+           of Ares use them, and the griffin is the Society's alone. -->
     </tradeTags>
   </ThingDef>
 
