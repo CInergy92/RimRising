@@ -58,7 +58,9 @@ Plate rate at 30 samples: knights 18/30, Praetors 14/30, Bronzies 23/30. The ear
 
 **RV-10, ordinary razors are Gold-only at generation:** the razor carries a mod-owned `RR_RazorBearer` tag in place of `UltratechMelee`, given to the four Gold/Bronzie kinds. At 30 per kind: knights 0 razors, Praetors 7, Bronzies 3.
 
-Not done: RV-16 (starShell in game), RV-18 (cosmetic).
+**RV-16, checked:** the Exosuit Framework puts `Exosuit.NoGenederApparelExt` on every module (`ModuleApparelBase`), and its transpiler treats those like packs, so no body type is ever in the path. Our `_north/_east/_south` names are correct. In the armour scene the full suit (frame, hood, cannon arm, equipped the way `Building_MaintenanceBay.GearUp` does it) renders with no errors attributable to the mod. Still placeholder art with untuned offsets, which is an art pass rather than a bug.
+
+**RV-18, fixed:** 21 `XenotypeIconDef`s (`RR_Icon_<Color>`, each Color's existing glyph) and `Recipe_CarveColor` sets `iconDef`. `rrtestmode=carve` runs all 15 carve recipes through the real worker: each pawn reads as its Color and shows its own glyph, not Basic.
 
 ---
 

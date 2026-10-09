@@ -45,7 +45,12 @@ namespace RimRising
             // compared earlier; see CLAUDE.md for what that showed.)
             "Apparel_PowerArmor",               // vanilla marine armour
             "Apparel_PowerArmorHelmet",         // vanilla marine helmet
+            // The starShell, only when the Exosuit Framework is active: the core,
+            // with its head and cannon arm added in MakePawn (StarShellParts).
+            "RR_Apparel_StarShellCore",
         };
+
+        private static readonly string[] StarShellParts = { "RR_Apparel_StarShellHead", "RR_Apparel_StarShellCannonArm" };
 
         private static readonly Rot4[] Facings = { Rot4.South, Rot4.East, Rot4.North };
 
@@ -100,6 +105,14 @@ namespace RimRising
                         Find.TickManager.CurTimeSpeed = TimeSpeed.Normal;
                         stage = 10;
                         wait = 60;
+                        return;
+                    }
+                    if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string m2) && m2 == "carve")
+                    {
+                        CarveTest();
+                        Log.Message("[RimRising] TESTSCENE DONE (carve)");
+                        stage = -1;
+                        if (GenCommandLine.CommandLineArgPassed("rrtestquit")) { Root.Shutdown(); }
                         return;
                     }
                     if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string m0) && m0 == "kinds")
@@ -531,6 +544,33 @@ namespace RimRising
             wait = 30;
         }
 
+        /// <summary>
+        /// rrtestmode=carve: carve a Baseliner into every Color through the real
+        /// recipe worker (billDoer null, as dev-mode surgery passes it) and log what
+        /// the pawn reads as afterwards - Color, name, and which icon the UI shows.
+        /// </summary>
+        private void CarveTest()
+        {
+            var carves = DefDatabase<RecipeDef>.AllDefsListForReading
+                .Where(r => r.GetModExtension<CarveTargetExtension>()?.color != null).ToList();
+            foreach (RecipeDef r in carves)
+            {
+                XenotypeDef target = r.GetModExtension<CarveTargetExtension>().color;
+                Pawn p = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+                    PawnKindDefOf.Colonist, Faction.OfPlayer, forceGenerateNewPawn: true,
+                    forcedXenotype: XenotypeDefOf.Baseliner, forceNoIdeo: true,
+                    developmentalStages: DevelopmentalStage.Adult));
+                r.Worker.ApplyOnPawn(p, null, null, new List<Thing>(), null);
+                XenotypeIconDef want = DefDatabase<XenotypeIconDef>.GetNamedSilentFail("RR_Icon_" + target.defName.Substring(3));
+                Texture2D shown = p.genes.XenotypeIcon;
+                Log.Message($"[RimRising] CARVE {r.defName}: reads {RR_CasteIdentity.ColorOf(p)?.defName ?? "-"}, name '{p.genes.xenotypeName}', " +
+                            $"icon {p.genes.iconDef?.defName ?? "-"}, shows own glyph {shown != null && want != null && shown == want.Icon}, " +
+                            $"not Basic {shown != XenotypeIconDefOf.Basic.Icon}");
+                Find.WorldPawns.PassToWorld(p, PawnDiscardDecideMode.Discard);
+            }
+            Log.Message($"[RimRising] CARVE {carves.Count} carve recipes tested");
+        }
+
         private const int KindSamples = 30;
 
         private static readonly string[] Kinds =
@@ -628,6 +668,19 @@ namespace RimRising
                 ap.TryGetComp<CompColorable>()?.SetColor(gold);
             }
             p.apparel.Wear(ap, dropReplacedApparel: false, locked: true);
+            if (armor.defName == "RR_Apparel_StarShellCore")
+            {
+                // Mirrors Exosuit's Building_MaintenanceBay.GearUp: every module
+                // worn locked, then the core notified and its module cache rebuilt.
+                // Reflection, so this assembly takes no compile-time Exosuit reference.
+                foreach (string part in StarShellParts)
+                {
+                    ThingDef pd = DefDatabase<ThingDef>.GetNamedSilentFail(part);
+                    if (pd != null) { p.apparel.Wear((Apparel)ThingMaker.MakeThing(pd), dropReplacedApparel: false, locked: true); }
+                }
+                ap.Notify_Equipped(p);
+                HarmonyLib.AccessTools.Method(ap.GetType(), "ModuleRecache")?.Invoke(ap, null);
+            }
             p.Name = new NameSingle(armor.label.CapitalizeFirst());
             // Not the player's: 105 test colonists filled the colonist bar across
             // the top of every shot. Factionless pawns stay out of it, and the game

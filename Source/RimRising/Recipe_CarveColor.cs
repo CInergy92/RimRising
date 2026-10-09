@@ -45,8 +45,8 @@ namespace RimRising
     ///     their parent was born, not the Color their parent was made. That is the
     ///     cruellest fact in the setting and it falls straight out of the mechanic.
     ///
-    /// Only xenotypeName is set, so the UI reads the new Color while the pawn's
-    /// biology quietly remembers otherwise.
+    /// Only xenotypeName and the Color's icon are set, so the UI reads the new
+    /// Color while the pawn's biology quietly remembers otherwise.
     /// </summary>
     public class Recipe_CarveColor : Recipe_Surgery
     {
@@ -107,6 +107,11 @@ namespace RimRising
             // What the paperwork says. The xenotype itself stays Baseliner - see
             // the class comment on why that matters for inheritance.
             pawn.genes.xenotypeName = target.LabelCap;
+            // And the Color's glyph. Without iconDef, a pawn with a xenotypeName
+            // shows vanilla's generic custom icon (Pawn_GeneTracker.XenotypeIcon);
+            // vanilla's own xenogerm sets this too. Defs in XenotypeIconDefs_RimRising.xml.
+            XenotypeIconDef icon = DefDatabase<XenotypeIconDef>.GetNamedSilentFail("RR_Icon_" + target.defName.Substring(3));
+            if (icon != null) { pawn.genes.iconDef = icon; }
 
             Messages.Message(
                 "RR_CarvingComplete".Translate(

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  One icon per Color, for carved pawns.
+
+  A carving leaves the pawn Baseliner with only xenotypeName set, exactly as
+  vanilla's xenogerm does. Pawn_GeneTracker.XenotypeIcon (decompiled) returns
+  iconDef if set, else XenotypeIconDefOf.Basic for any pawn with a xenotypeName -
+  so without these a carved Gold showed vanilla's generic custom-xenotype icon
+  under the name "Gold". Recipe_CarveColor sets iconDef to RR_Icon_<Color>.
+
+  texPath is each Color's own glyph from XenotypeDefs_Colors.xml, so nothing new
+  is drawn. Side effect, a pleasant one: the Color glyphs also appear in the
+  xenogerm editor's icon picker, so a player-assembled Color can wear its mark.
+
+  Format mirrored from Biotech's XenotypeIconDefs (defName + texPath).
+-->
+<Defs>
+  <XenotypeIconDef>
+    <defName>RR_Icon_Gold</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Gold</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_Bronzie</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Bronzie</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_Silver</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Silver</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_White</defName>
+    <texPath>UI/Icons/Xenotypes/RR_White</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_Copper</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Copper</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_Blue</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Blue</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_Yellow</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Yellow</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_Green</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Green</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_Violet</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Violet</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_Orange</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Orange</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_Gray</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Gray</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_Obsidian</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Obsidian</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_Pink</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Pink</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_Brown</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Brown</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_Red</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Red</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_Green_FulgurBellator</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Green_FulgurBellator</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_Gray_Lurcher</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Gray_Lurcher</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_Obsidian_Stained</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Obsidian_Stained</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_Obsidian_Ascomanni</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Obsidian_Ascomanni</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_Pink_Rose</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Pink_Rose</texPath>
+  </XenotypeIconDef>
+
+  <XenotypeIconDef>
+    <defName>RR_Icon_Red_Ultraheavy</defName>
+    <texPath>UI/Icons/Xenotypes/RR_Red_Ultraheavy</texPath>
+  </XenotypeIconDef>
+
+</Defs>
