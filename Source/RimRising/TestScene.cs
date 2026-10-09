@@ -39,6 +39,7 @@ namespace RimRising
             "RR_Apparel_DuroArmor",
             "RR_Apparel_ScarabSkin",
             "RR_Apparel_GhostCloak",
+            "RR_Apparel_HowlerPelt",            // the Howlers' shoulder mantle
             "RR_Apparel_DemonHelm",             // headgear, on its own
             // ...against vanilla references for scale and line weight. (Alpha
             // Genes, VAE, VFE Classical armour and Royalty's cataphract were
@@ -442,6 +443,35 @@ namespace RimRising
                 }
             }
             shots.Add(("nature", new Vector3(area.minX + 4f, 0f, zn + 0.5f), 0f));
+            // Beasts and buildings, their own row and shot: the griffin against a
+            // thrumbo (both ~2.6 cells adult), south and east, then the clawDrill
+            // beside vanilla's deep drill.
+            int zb = zn - 5;
+            int cb = area.minX;
+            Clear(new CellRect(cb - 1, zb - 3, 30, 7).ClipInsideMap(map));
+            foreach (string kn in new[] { "RR_Griffin", "Thrumbo" })
+            {
+                PawnKindDef kd = DefDatabase<PawnKindDef>.GetNamedSilentFail(kn);
+                if (kd == null) { cb += 6; continue; }
+                foreach (Rot4 rot in new[] { Rot4.South, Rot4.East })
+                {
+                    Pawn an = PawnGenerator.GeneratePawn(new PawnGenerationRequest(kd, null, forceGenerateNewPawn: true));
+                    an.ageTracker.AgeBiologicalTicks = (long)(an.RaceProps.lifeStageAges.Last().minAge * 3600000f) + 60000;
+                    GenSpawn.Spawn(an, new IntVec3(cb + 1, 0, zb), map, rot);
+                    an.Rotation = rot;
+                    cb += 3;
+                }
+            }
+            foreach (string bn in new[] { "RR_ClawDrill", "DeepDrill" })
+            {
+                ThingDef bd = DefDatabase<ThingDef>.GetNamedSilentFail(bn);
+                if (bd == null) { continue; }
+                cb += 1;
+                GenSpawn.Spawn(ThingMaker.MakeThing(bd, bd.MadeFromStuff ? GenStuff.DefaultStuffFor(bd) : null),
+                    new IntVec3(cb, 0, zb), map, Rot4.North);
+                cb += bd.size.x + 1;
+            }
+            shots.Add(("beasts", new Vector3((area.minX + cb) / 2f, 0f, zb + 0.5f), 0f));
             Find.TickManager.CurTimeSpeed = TimeSpeed.Paused;
             Log.Message("[RimRising] TESTSCENE built items: ours " + string.Join(", ", ours.Select(d => d.defName)) +
                         " | vanilla " + string.Join(", ", theirs.Select(d => d.defName)));
@@ -451,6 +481,8 @@ namespace RimRising
         {
             "RR_Weapon_Razor",
             "RR_Weapon_ReaperRazor",
+            "RR_Weapon_Razor_Heirloom",
+            "RR_Weapon_SlingBlade",
             "MeleeWeapon_LongSword",
             "MeleeWeapon_MonoSword",
             "MeleeWeapon_PlasmaSword",

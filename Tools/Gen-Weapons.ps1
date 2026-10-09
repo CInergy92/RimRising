@@ -30,6 +30,10 @@ $weapons = [ordered]@{
         'a razor: a long slender flexible whip-sword blade (like an urumi) of pale polished steel with faint segment joints along it, a brass-fitted dark wrapped grip, a round brass pommel and a small amber thumb stud; lying diagonally from lower-left (pommel) to upper-right (tip)')
     'RR_ReaperRazor' = @('Things\Item\Equipment\WeaponMelee\RR_ReaperRazor',
         'the same kind of razor set into a sickle: a crescent blade of pale polished steel on a short brass-fitted dark grip with a round brass pommel and an amber thumb stud; grip at the lower left')
+    'RR_RazorHeirloom' = @('Things\Item\Equipment\WeaponMelee\RR_RazorHeirloom',
+        'an HEIRLOOM razor of an old Gold house (user, 2026-10-09: Golds put their family history or a great battle on the hilt and blade): the same long slender whip-sword blade (like an urumi) of pale polished steel, its whole length inlaid with an intricate fine GOLD frieze of a battle - tiny warriors, ships and a sun in thin gold lines along the flat of the blade; the hilt and pommel heavy GOLD, densely engraved with a family tree and crest, set with a deep red stone; lying diagonally from lower-left (pommel) to upper-right (tip)')
+    'RR_SlingBlade' = @('Things\Item\Equipment\WeaponMelee\RR_SlingBlade',
+        'a slingBlade, a miner''s tool: a curved hooked steel blade like a sickle, scratched and well sharpened, on a short dark haft wrapped in worn cloth tape with two steel ferrules; haft at the lower left, the hook at the upper right')
     'RR_PulseFist' = @('Things\Item\Equipment\WeaponRanged\RR_PulseFist',
         'a pulseFist: an armoured gold gauntlet worn on the forearm, a closed fist under the housing and a glowing cyan emitter ring at the front; lying horizontal, emitter pointing right')
     'RR_Scorcher' = @('Things\Item\Equipment\WeaponRanged\RR_Scorcher',

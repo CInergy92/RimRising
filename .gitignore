@@ -49,3 +49,9 @@ Art/Gen/Vehicles/**/ref_*.png
 Art/Gen/Vehicles/**/style_*.png
 Art/Gen/Vehicles/**/dj_south.png
 Art/Gen/Vehicles/**/dj_south_2.png
+# Second content pass (2026-10-09): keep the chosen sources a rerun fits from,
+# not the rejected alternates.
+Art/Gen/Animals/**/*_2.png
+Art/Gen/Buildings/**/*_2.png
+Art/Gen/Weapons/rejected/
+!Art/Gen/Armor/Pelt/style_Male_south.png

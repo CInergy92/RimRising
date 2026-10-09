@@ -1,0 +1,13 @@
+{
+  "TextureModID": "cinergy92.rimrising",
+  "ItemDefName": "RR_Weapon_SlingBlade",
+  "ItemType": "ThingDef",
+  "ItemTypeNamespace": "Verse",
+  "OffX": 0.3154,
+  "OffY": 0.1288,
+  "Rotation": 26.0,
+  "HandsMode": 1,
+  "BladeStart": 0.3246,
+  "BladeEnd": 0.6775,
+  "MeleeWeaponType": 2
+}

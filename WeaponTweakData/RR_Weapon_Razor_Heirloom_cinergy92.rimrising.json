@@ -1,0 +1,13 @@
+{
+  "TextureModID": "cinergy92.rimrising",
+  "ItemDefName": "RR_Weapon_Razor_Heirloom",
+  "ItemType": "ThingDef",
+  "ItemTypeNamespace": "Verse",
+  "OffX": 0.3889,
+  "OffY": -0.0071,
+  "Rotation": 45.0,
+  "HandsMode": 1,
+  "BladeStart": 0.1662,
+  "BladeEnd": 1.0373,
+  "MeleeWeaponType": 6
+}
