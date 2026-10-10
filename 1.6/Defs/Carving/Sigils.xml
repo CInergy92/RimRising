@@ -121,4 +121,17 @@
   <RecipeDef ParentName="RR_ForgeSigilBase"><defName>RR_ForgeSigil_Pink</defName><label>forge a Pink sigil</label><description>Rewrite the mark on this person's hand so the registries read Pink.</description><jobString>Forging a Pink sigil.</jobString><modExtensions><li Class="RimRising.CarveTargetExtension"><color>RR_Pink</color></li></modExtensions></RecipeDef>
   <RecipeDef ParentName="RR_ForgeSigilBase"><defName>RR_ForgeSigil_Red</defName><label>forge a Red sigil</label><description>Rewrite the mark on this person's hand so the registries read Red.</description><jobString>Forging a Red sigil.</jobString><modExtensions><li Class="RimRising.CarveTargetExtension"><color>RR_Red</color></li></modExtensions></RecipeDef>
 
+  <!--
+    Starting sigils (ScenPart_Sigils.cs). Mirrors vanilla's ForcedHediff ScenPartDef
+    (Core/Defs/Scenarios/ScenParts_Various.xml): a player pawn modifier.
+  -->
+  <ScenPartDef>
+    <defName>RR_StartingSigils</defName>
+    <label>starting sigils</label>
+    <scenPartClass>RimRising.ScenPart_Sigils</scenPartClass>
+    <category>PlayerPawnModifier</category>
+    <selectionWeight>0</selectionWeight>
+    <summaryPriority>458</summaryPriority>
+  </ScenPartDef>
+
 </Defs>

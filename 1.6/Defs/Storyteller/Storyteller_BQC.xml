@@ -131,6 +131,13 @@
         <minDaysPassed>5</minDaysPassed>
         <mtbDays>4.8</mtbDays>
       </li>
+      <!-- The Board audits: a Lurcher hunt on its own clock, on top of the
+           ThreatBig draw, whenever there is someone to hunt (LurcherHunt.cs).
+           SingleMTB is vanilla's one-incident timer (StorytellerComp_SingleMTB). -->
+      <li Class="StorytellerCompProperties_SingleMTB">
+        <incident>RR_Incident_LurcherHunt</incident>
+        <mtbDays>25</mtbDays>
+      </li>
       <li Class="StorytellerCompProperties_ShipChunkDrop"/>
       <li Class="StorytellerCompProperties_Disease">
         <category>DiseaseHuman</category>

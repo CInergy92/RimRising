@@ -15,14 +15,12 @@
   nothing of its own but stats, graphic, sounds, classes and tools. This def does the
   same, and the tool numbers are the ordinary razor's.
 
-  WHAT IT DOES NOT HAVE: the whip. The ordinary razor replaces its inherited comps
-  with Inherit="False" to swap CompEquippable for CompEquippableAbility; doing that
-  here would discard the parent's bladelink comps too, and their field set is not
-  visible from this session. So the heirloom is the rigid blade only, bonded and
-  named. If CompEquippableAbility can sit beside the inherited comps without
-  doubling CompEquippable, adding the whip is a two-line change - that is the test
-  for Opus in docs/Opus-Notes.md. Until then, the heirloom and the whip are two
-  different razors, which is defensible: an heirloom is carried for what it means.
+  THE WHIP (user, 2026-10-10: every razor has it). The comps are restated with
+  Inherit="False", as on the ordinary razor, to swap CompEquippable for
+  CompEquippableAbility (a subclass - both at once would double the equippable).
+  The restated list is BaseWeapon's (Forbiddable, Styleable) plus
+  BaseWeapon_Bladelink's (CompQuality, BladelinkWeapon with biocodeOnEquip,
+  GeneratedName with NamerWeaponBladelink), read from Core and Royalty.
 
   NEVER CRAFTED. No recipeMaker. generateCommonality low, tradeability None - it is
   found on a dead Olympic Knight or granted by a quest, never built or bought.
@@ -65,6 +63,22 @@
       <li>Melee</li>
       <li>MeleePiercer</li>
     </weaponClasses>
+    <comps Inherit="False">
+      <li Class="CompProperties_EquippableAbility">
+        <abilityDef>RR_RazorWhip</abilityDef>
+      </li>
+      <li Class="CompProperties_Forbiddable"/>
+      <li Class="CompProperties_Styleable"/>
+      <li>
+        <compClass>CompQuality</compClass>
+      </li>
+      <li Class="CompProperties_BladelinkWeapon">
+        <biocodeOnEquip>true</biocodeOnEquip>
+      </li>
+      <li Class="CompProperties_GeneratedName">
+        <nameMaker>NamerWeaponBladelink</nameMaker>
+      </li>
+    </comps>
     <tools>
       <li>
         <label>hilt</label>

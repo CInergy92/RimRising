@@ -73,4 +73,25 @@
     <biostatMet>-3</biostatMet>
   </GeneDef>
 
+  <!--
+    The helldiver's knack (docs/Opus-Notes.md, "Red deep-drilling bonus"): Reds
+    are bred and broken to the drill. DeepDrillingSpeed is a vanilla stat
+    (Core/Defs/Stats/Stats_Pawns_WorkGeneral.xml) and a plain statFactors entry, as
+    RR_Fertility_Reduced above uses one. Both Red xenotypes carry it. Cheap - cpx 1,
+    met 0 - because it is a skill of the hands, not a redesign of the body. The
+    clawDrill is where it pays (Buildings_RimRising.xml).
+  -->
+  <GeneDef>
+    <defName>RR_Helldiver</defName>
+    <label>helldiver</label>
+    <labelShortAdj>helldiver</labelShortAdj>
+    <description>Carriers are bred to the drill: a feel for rock, steady hands under vibration and the nerve to keep a cutting head moving when the seam starts to sing. They run a deep drill half again as fast as anyone else.</description>
+    <iconPath>UI/Icons/Genes/RR_Helldiver</iconPath>
+    <displayCategory>Miscellaneous</displayCategory>
+    <statFactors>
+      <DeepDrillingSpeed>1.5</DeepDrillingSpeed>
+    </statFactors>
+    <biostatCpx>1</biostatCpx>
+  </GeneDef>
+
 </Defs>

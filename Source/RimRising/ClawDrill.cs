@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using RimWorld;
 using Verse;
 using Verse.AI;
+using HarmonyLib;
 
 namespace RimRising
 {
@@ -34,6 +35,24 @@ namespace RimRising
                 }
             }
             return true;
+        }
+    }
+
+    /// <summary>
+    /// The clawDrill brings up half as much again per portion (the user's call,
+    /// 2026-10-10). Decompiled, CompDeepDrill.TryProducePortion takes the portion
+    /// from the deposit at the normal size and then makes a stack of
+    /// RoundRandom(portion * yieldPct): scaling yieldPct here gives more per portion
+    /// without draining the deposit faster - better extraction, same rock.
+    /// </summary>
+    [HarmonyPatch(typeof(CompDeepDrill), "TryProducePortion")]
+    public static class Patch_CompDeepDrill_ClawYield
+    {
+        public const float YieldFactor = 1.5f;
+
+        public static void Prefix(CompDeepDrill __instance, ref float yieldPct)
+        {
+            if (__instance?.parent?.def == RR_ClawDrillDefOf.RR_ClawDrill) { yieldPct *= YieldFactor; }
         }
     }
 

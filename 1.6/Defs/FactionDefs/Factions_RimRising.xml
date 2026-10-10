@@ -157,6 +157,13 @@
         </options>
       </li>
       <li>
+        <!-- The Lurcher hunt (LurcherHunt.cs): only the Society's hunters. -->
+        <kindDef>RR_LurcherHunt</kindDef>
+        <options>
+          <RR_Society_Lurcher>1</RR_Society_Lurcher>
+        </options>
+      </li>
+      <li>
         <kindDef>Trader</kindDef>
         <traders>
           <RR_Society_Silver_Factor>1</RR_Society_Silver_Factor>

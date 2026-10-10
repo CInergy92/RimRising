@@ -79,4 +79,26 @@
     <letterText>The Board of Quality Control has reviewed this settlement's returns and issued its directive for the year.\n\nTarget population, by Color, is attached. Births below target will be noted. Births above target will be noted. The Board thanks the settlement for its continued contribution and reminds it that contribution is not optional.\n\nNo signature. The Board does not sign.</letterText>
   </IncidentDef>
 
+  <!--
+    The Lurcher hunt (LurcherHunt.cs). Shaped like vanilla's RaidEnemy
+    (Core/Defs/Storyteller/Incidents_Map_Threats.xml): ThreatBig, points-scaled, on
+    the home map. It can only fire with a reason (a forged sigil, a lowColor's razor)
+    and the Society hostile, so its baseChance only matters when it applies; the
+    Board of Quality Control also runs it on its own timer (Storyteller_BQC.xml).
+  -->
+  <IncidentDef>
+    <defName>RR_Incident_LurcherHunt</defName>
+    <label>Lurcher hunt</label>
+    <targetTags>
+      <li>Map_PlayerHome</li>
+    </targetTags>
+    <workerClass>RimRising.IncidentWorker_LurcherHunt</workerClass>
+    <baseChance>1.2</baseChance>
+    <category>ThreatBig</category>
+    <pointsScaleable>true</pointsScaleable>
+    <minRefireDays>20</minRefireDays>
+    <letterLabel>Lurchers</letterLabel>
+    <letterDef>ThreatBig</letterDef>
+  </IncidentDef>
+
 </Defs>

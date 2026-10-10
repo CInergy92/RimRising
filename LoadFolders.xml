@@ -82,5 +82,8 @@
       call, 2026-10-09). Optional, descriptions only; not a dependency.
     -->
     <li IfModActive="onyxae.dragonsdescent">1.6/Mods/DragonsDescent</li>
+    <!-- Giddy-Up 2 - Continued: griffins rideable, Obsidian raiders mounted.
+         Optional; not a dependency. -->
+    <li IfModActive="MemeGoddess.GiddyUp">1.6/Mods/GiddyUp</li>
   </v1.6>
 </loadFolders>

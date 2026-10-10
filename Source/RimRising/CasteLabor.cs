@@ -84,4 +84,19 @@ namespace RimRising
                 : ThoughtState.Inactive;
         }
     }
+
+    /// <summary>
+    /// The observer's side (suggestion 2.3, docs/Opus-Notes.md): under "each to their
+    /// trade", a believer thinks less of anyone they see working outside their Color -
+    /// a Red at the research bench, a Gold hauling. Situational social, so it lasts only
+    /// while the other pawn is at it. Same helper as the worker's own thought.
+    /// </summary>
+    public class ThoughtWorker_CasteLaborObserved : ThoughtWorker_Precept_Social
+    {
+        protected override ThoughtState ShouldHaveThought(Pawn p, Pawn otherPawn)
+        {
+            if (p == otherPawn || otherPawn == null || !otherPawn.Spawned) { return ThoughtState.Inactive; }
+            return CasteLabor.WorkingOutsideCaste(otherPawn) ? ThoughtState.ActiveAtStage(0) : ThoughtState.Inactive;
+        }
+    }
 }

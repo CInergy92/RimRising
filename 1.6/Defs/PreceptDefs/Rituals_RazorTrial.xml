@@ -15,12 +15,9 @@
 
   THREE THINGS DIFFER FROM VME, each because VME's version uses a class from its own DLL:
 
-    - the duelists are RitualRoleColonist (used by VFE Empire's rituals), chosen by the
-      player in the dialog, instead of VME's leader-plus-best-fighter roles. Gating
-      them to Gold needs a RitualRoleColonist subclass reading RR_CasteIdentity - one
-      short C# class, listed in docs/Opus-Notes.md. Until then any colonist may be
-      named, and the hierarchy's own razor precept will object if a lowColor is
-      handed a razor for it.
+    - the duelists are RimRising.RitualRoleGold (Source/RimRising/RitualRoleGold.cs):
+      RitualRoleColonist, chosen by the player in the dialog, plus the condition that
+      the pawn reads as Gold or Bronzie through RR_CasteIdentity - carved Golds too.
     - the fight ends with StageEndTrigger_PawnDead on each duelist (seen in VFE
       Tribals' animal rituals), one trigger per role, instead of VME's custom
       DeadDuelEnded. A duel to the death ends when someone dies.
@@ -84,7 +81,7 @@
         <maxCount>1</maxCount>
         <countsAsParticipant>False</countsAsParticipant>
       </li>
-      <li Class="RitualRoleColonist">
+      <li Class="RimRising.RitualRoleGold">
         <label>challenger</label>
         <categoryLabel>duelists</categoryLabel>
         <id>duelist1</id>
@@ -93,7 +90,7 @@
         <ignoreBleeding>true</ignoreBleeding>
         <countsAsParticipant>False</countsAsParticipant>
       </li>
-      <li Class="RitualRoleColonist">
+      <li Class="RimRising.RitualRoleGold">
         <label>challenged</label>
         <categoryLabel>duelists</categoryLabel>
         <id>duelist2</id>

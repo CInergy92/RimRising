@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Giddy-Up 2 - Continued (MemeGoddess.GiddyUp): griffins are ridden (the user's call,
+  2026-10-10; the Valkyrie ride them). OPTIONAL: loaded only with that mod active
+  (LoadFolders.xml); it is not a dependency.
+
+  Read from the mod's own shipped Source:
+  - Setup.BuildMountCache: an animal is mountable when baseBodySize > 1.2
+    (ResourceBank.DefaultSizeThreshold) unless it carries NotMountable; Mountable
+    forces it on. The griffin is body 4, so this is belt and braces - it keeps the
+    griffin rideable if its size is ever tuned down.
+  - AllowedLifeStages / DrawInFront: as Dragons Descent's own Giddy-Up patch uses
+    them. Adults only (life stage index 2); the rider draws in front of the wings.
+  - MountUtility (raider mounts): a FactionDef's FactionRestrictions replaces the
+    animal pool with its lists and mountChance (percent of raiders mounted). With
+    no wild list, only allowedNonWildAnimals is drawn from - griffins only.
+    10%: a mounted war-band leader or two, not a cavalry raid.
+-->
+<Patch>
+
+  <Operation Class="PatchOperationAddModExtension">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="RR_Griffin"]</xpath>
+    <value>
+      <li Class="GiddyUp.Mountable" />
+      <li Class="GiddyUp.DrawInFront" />
+      <li Class="GiddyUp.AllowedLifeStages">
+        <allowedLifeStagesCSV>2</allowedLifeStagesCSV>
+      </li>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAddModExtension">
+    <success>Always</success>
+    <xpath>Defs/FactionDef[defName="RR_ObsidianTribes" or defName="RR_Ascomanni"]</xpath>
+    <value>
+      <li Class="GiddyUp.FactionRestrictions">
+        <allowedNonWildAnimals>
+          <li>RR_Griffin</li>
+        </allowedNonWildAnimals>
+        <mountChance>10</mountChance>
+      </li>
+    </value>
+  </Operation>
+
+</Patch>

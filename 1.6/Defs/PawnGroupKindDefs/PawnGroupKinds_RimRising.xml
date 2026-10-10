@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The Lurcher hunt's own pawn group kind (LurcherHunt.cs). A raid generates from the
+  faction's pawnGroupMaker whose kindDef matches parms.pawnGroupKind, so a kind only
+  the Society carries, holding only Lurchers, makes a Lurcher-only raid. Mirrors
+  vanilla's Combat kind, Core/Defs/Misc/PawnGroupKindDefs/PawnGroupKinds.xml.
+-->
+<Defs>
+
+  <PawnGroupKindDef>
+    <defName>RR_LurcherHunt</defName>
+    <workerClass>PawnGroupKindWorker_Normal</workerClass>
+  </PawnGroupKindDef>
+
+</Defs>

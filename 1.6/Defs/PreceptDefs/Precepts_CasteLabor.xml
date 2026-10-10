@@ -57,6 +57,22 @@
     </stages>
   </ThoughtDef>
 
+  <!-- What a believer thinks of SOMEONE ELSE doing another Color's work
+       (ThoughtWorker_CasteLaborObserved), shaped like RR_Thought_ColorRank. -->
+  <ThoughtDef>
+    <defName>RR_Thought_SawWorkOutsideCaste</defName>
+    <thoughtClass>Thought_SituationalSocial</thoughtClass>
+    <workerClass>RimRising.ThoughtWorker_CasteLaborObserved</workerClass>
+    <validWhileDespawned>false</validWhileDespawned>
+    <stages>
+      <li>
+        <label>doing another Color's work</label>
+        <description>That is not their trade, and they are doing it anyway, in front of everyone.</description>
+        <baseOpinionOffset>-8</baseOpinionOffset>
+      </li>
+    </stages>
+  </ThoughtDef>
+
   <PreceptDef>
     <defName>RR_CasteLabor_Confined</defName>
     <issue>RR_CasteLabor</issue>
@@ -74,6 +90,10 @@
       <li Class="PreceptComp_SituationalThought">
         <thought>RR_Thought_WorkOutsideCaste</thought>
         <description>Working outside one's Color</description>
+      </li>
+      <li Class="PreceptComp_SituationalThought">
+        <thought>RR_Thought_SawWorkOutsideCaste</thought>
+        <description>Someone working outside their Color</description>
       </li>
     </comps>
   </PreceptDef>

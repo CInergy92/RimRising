@@ -95,6 +95,11 @@
           <repeat>true</repeat>
         </li>
 
+        <!-- Each pawn carries the sigil of their true Color (ScenPart_Sigils.cs). -->
+        <li Class="RimRising.ScenPart_Sigils">
+          <def>RR_StartingSigils</def>
+        </li>
+
       </parts>
     </scenario>
   </ScenarioDef>

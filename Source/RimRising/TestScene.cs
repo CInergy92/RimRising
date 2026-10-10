@@ -1219,7 +1219,7 @@ namespace RimRising
                 Pawn r = Colonist(red, hierarchy), g = Colonist(gold, hierarchy);
                 bool redCan = EquipmentUtility.CanEquip(h, r, out string why), goldCan = EquipmentUtility.CanEquip(h, g);
                 bool whip = h.TryGetComp<CompEquippableAbility>() != null;
-                Check("2 heirloom", !name.NullOrEmpty() && link && !redCan && goldCan,
+                Check("2 heirloom", !name.NullOrEmpty() && link && !redCan && goldCan && whip,
                       $"name '{name}', bladelink {link}, Red may equip {redCan} ({why}), Gold may equip {goldCan}, whip ability {whip}");
                 Discard(r); Discard(g);
             });
@@ -1469,13 +1469,14 @@ namespace RimRising
                 foreach ((string k, Faction f) in new[] { ("RR_Society_Legionary", society), ("RR_Society_Lurcher", society), ("RR_Tribe_Obsidian_Warrior", tribes) })
                 {
                     var drugs = new List<string>();
-                    for (int i = 0; i < 20; i++)
+                    // 50, not 20: a Lurcher's drug chance is low enough that 20 drew none once.
+                    for (int i = 0; i < 50; i++)
                     {
                         Pawn p = Gen(k, f);
                         drugs.AddRange(p.inventory.innerContainer.Where(t => t.def.IsDrug).Select(t => t.def.defName));
                         Discard(p);
                     }
-                    Check("17 drugs " + k, drugs.Count > 0, $"{drugs.Count} drugs in 20: {string.Join(", ", drugs.Distinct())}");
+                    Check("17 drugs " + k, drugs.Count > 0, $"{drugs.Count} drugs in 50: {string.Join(", ", drugs.Distinct())}");
                 }
             });
 
@@ -1489,6 +1490,119 @@ namespace RimRising
                 var carved = names.Where(n => DefDatabase<ThingDef>.GetNamedSilentFail(n)?.description?.Contains("Carv") == true).ToList();
                 Check("18 dragons carved", carved.Count == names.Length,
                       $"{carved.Count}/{names.Length} retold; missing: {string.Join(", ", names.Except(carved))}");
+            });
+
+            // ---- Fable's remaining notes (2026-10-10) ----
+
+            // 19. Giddy-Up, when active: griffins rideable, Obsidian factions mount up.
+            Run("19 giddyup", () =>
+            {
+                if (!ModsConfig.IsActive("MemeGoddess.GiddyUp")) { Log.Message("[RimRising] M12 skip 19: Giddy-Up not active"); return; }
+                ThingDef gr = DefDatabase<ThingDef>.GetNamed("RR_Griffin");
+                var cache = HarmonyLib.AccessTools.Field(HarmonyLib.AccessTools.TypeByName("GiddyUp.ModSettings_GiddyUp"), "MountableCache")?.GetValue(null) as HashSet<ushort>;
+                bool mountable = cache != null && cache.Contains(gr.shortHash);
+                bool tribes = DefDatabase<FactionDef>.GetNamed("RR_ObsidianTribes").modExtensions?.Any(e => e.GetType().Name == "FactionRestrictions") == true;
+                Check("19 griffin rideable", mountable && tribes, $"in Giddy-Up's mountable cache {mountable}; tribes mount rules {tribes}");
+            });
+
+            // 20. Trial by razor duelists must be Gold.
+            Run("20 duelists", () =>
+            {
+                RitualRole role = DefDatabase<RitualBehaviorDef>.GetNamed("RR_RazorTrialBehavior").roles.First(r => r.id == "duelist1");
+                Pawn g = Colonist(gold, hierarchy), r = Colonist(red, hierarchy);
+                bool okG = role.AppliesToPawn(g, out string _, TargetInfo.Invalid);
+                bool okR = role.AppliesToPawn(r, out string why, TargetInfo.Invalid);
+                Check("20 Gold-only duelists", okG && !okR, $"role {role.GetType().Name}; Gold {okG}, Red {okR} ({why})");
+                Discard(g); Discard(r);
+            });
+
+            // 21. Helldiver gene, and the clawDrill's 1.5x portions.
+            Run("21 drilling", () =>
+            {
+                Pawn r = Colonist(red, null), b = Colonist(XenotypeDefOf.Baseliner, null);
+                float sr = r.GetStatValue(StatDefOf.DeepDrillingSpeed), sb = b.GetStatValue(StatDefOf.DeepDrillingSpeed);
+                bool gene = r.genes.HasActiveGene(DefDatabase<GeneDef>.GetNamed("RR_Helldiver"));
+                Check("21 helldiver", gene && sr > sb * 1.2f, $"Red has gene {gene}; deep drilling Red {sr:F2} vs baseliner {sb:F2}");
+                Discard(r); Discard(b);
+                var produce = HarmonyLib.AccessTools.Method(typeof(CompDeepDrill), "TryProducePortion");
+                int Yield(string def, IntVec3 at)
+                {
+                    Clear(CellRect.CenteredOn(at, 3).ClipInsideMap(map));
+                    ThingDef d = DefDatabase<ThingDef>.GetNamed(def);
+                    var bld = (Building)GenSpawn.Spawn(ThingMaker.MakeThing(d, d.MadeFromStuff ? GenStuff.DefaultStuffFor(d) : null), at, map, Rot4.North);
+                    bld.SetFaction(Faction.OfPlayer);
+                    map.deepResourceGrid.SetAt(at, ThingDefOf.Steel, 5000);
+                    int before = map.listerThings.ThingsOfDef(ThingDefOf.Steel).Sum(t => t.stackCount);
+                    for (int i = 0; i < 20; i++) { produce.Invoke(bld.GetComp<CompDeepDrill>(), new object[] { 1f, null }); }
+                    int total = map.listerThings.ThingsOfDef(ThingDefOf.Steel).Sum(t => t.stackCount) - before;
+                    foreach (Thing t in map.listerThings.ThingsOfDef(ThingDefOf.Steel).ToList()) { t.Destroy(); }
+                    bld.Destroy();
+                    return total;
+                }
+                int claw = Yield("RR_ClawDrill", map.Center + new IntVec3(8, 0, 8));
+                int deep = Yield("DeepDrill", map.Center + new IntVec3(-8, 0, 8));
+                Check("21 clawDrill yield", claw > deep * 1.35f && claw < deep * 1.65f,
+                      $"20 portions of steel: clawDrill {claw}, deep drill {deep} ({(deep > 0 ? (float)claw / deep : 0):F2}x)");
+            });
+
+            // 22. Starting sigils: true and forged.
+            Run("22 start sigils", () =>
+            {
+                Pawn a = Colonist(red, null);
+                GenSpawn.Spawn(a, map.Center + IntVec3.West * 4, map);
+                var part = new ScenPart_Sigils { def = DefDatabase<ScenPartDef>.GetNamed("RR_StartingSigils") };
+                part.PostGameStart();
+                bool trueOk = RR_Sigils.SigilOf(a) == RR_Sigils.SigilFor(red);
+                var forgedPart = new ScenPart_Sigils { def = DefDatabase<ScenPartDef>.GetNamed("RR_StartingSigils"), forged = true };
+                forgedPart.PostGameStart();
+                bool forgedOk = RR_Sigils.SigilMismatch(a);
+                Check("22 starting sigils", trueOk && forgedOk, $"true part matches {trueOk}; forged part gives {RR_Sigils.SigilOf(a)?.defName} (mismatch {forgedOk})");
+                Discard(a);
+            });
+
+            // 23. Census reads sigils; 24. Lurcher hunt.
+            Run("23 census", () =>
+            {
+                Pawn a = Colonist(red, null);
+                GenSpawn.Spawn(a, map.Center + IntVec3.West * 5, map);
+                RR_Sigils.SetSigil(a, RR_Sigils.SigilFor(gold));
+                if (society.HostileTo(Faction.OfPlayer)) { society.TryAffectGoodwillWith(Faction.OfPlayer, 200, false, false); }
+                int gw = society.PlayerGoodwill;
+                int letters = Find.LetterStack.LettersListForReading.Count;
+                Patch_CensusReadsSigils.Postfix(new IncidentParms { target = map, faction = society }, DefDatabase<TraderKindDef>.GetNamed("RR_Caravan_Society_Census"));
+                Check("23 census discrepancy", society.PlayerGoodwill < gw && Find.LetterStack.LettersListForReading.Count > letters,
+                      $"goodwill {gw} -> {society.PlayerGoodwill}, letter sent {Find.LetterStack.LettersListForReading.Count > letters}");
+
+                society.TryAffectGoodwillWith(Faction.OfPlayer, -200, false, false);
+                IncidentDef hunt = DefDatabase<IncidentDef>.GetNamed("RR_Incident_LurcherHunt");
+                IncidentParms hp = StorytellerUtility.DefaultParmsNow(hunt.category, map);
+                hp.points = 1200f;
+                hp.forced = true;
+                // Drop pods land later; walking in puts the hunters on the map now.
+                hp.raidArrivalMode = PawnsArrivalModeDefOf.EdgeWalkIn;
+                bool can = hunt.Worker.CanFireNow(hp);
+                var beforeSet = new HashSet<Pawn>(map.mapPawns.SpawnedPawnsInFaction(society));
+                bool fired = hunt.Worker.TryExecute(hp);
+                var came = map.mapPawns.SpawnedPawnsInFaction(society).Where(x => !beforeSet.Contains(x)).ToList();
+                Check("24 Lurcher hunt", can && fired && came.Count > 0 && came.All(x => x.kindDef.defName == "RR_Society_Lurcher"),
+                      $"quarry {IncidentWorker_LurcherHunt.Quarry(map)?.LabelShort}; can fire {can}, fired {fired}, {came.Count} pawns: {string.Join(", ", came.Select(x => x.kindDef.defName).Distinct())}");
+                foreach (Pawn x in came) { x.Destroy(); }
+                Discard(a);
+            });
+
+            // 25. Observer: a hierarchy believer thinks less of a Red researching.
+            Run("25 observer", () =>
+            {
+                Pawn w = Colonist(red, hierarchy), o = Colonist(gold, hierarchy);
+                GenSpawn.Spawn(w, map.Center + IntVec3.East * 4, map);
+                GenSpawn.Spawn(o, map.Center + IntVec3.East * 5, map);
+                Verse.AI.Job j = JobMaker.MakeJob(JobDefOf.Wait, 600);
+                j.workGiverDef = DefDatabase<WorkGiverDef>.AllDefs.First(x => x.workType == WorkTypeDefOf.Research);
+                w.jobs.StartJob(j, Verse.AI.JobCondition.InterruptForced);
+                ThoughtDef td = DefDatabase<ThoughtDef>.GetNamed("RR_Thought_SawWorkOutsideCaste");
+                bool active = td.Worker.CurrentSocialState(o, w).Active;
+                Check("25 observer thought", active, $"Gold watching a Red research: {active}; opinion {o.relations.OpinionOf(w)}");
+                Discard(w); Discard(o);
             });
 
             Log.Message($"[RimRising] M12 SUMMARY {m12Ok} ok, {m12Fail} fail");

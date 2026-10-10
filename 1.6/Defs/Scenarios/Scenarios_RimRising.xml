@@ -130,6 +130,11 @@
           <count>40</count>
         </li>
 
+        <!-- Each pawn carries the sigil of their true Color (ScenPart_Sigils.cs). -->
+        <li Class="RimRising.ScenPart_Sigils">
+          <def>RR_StartingSigils</def>
+        </li>
+
       </parts>
     </scenario>
   </ScenarioDef>
@@ -207,6 +212,12 @@
           <def>ScatterThingsNearPlayerStart</def>
           <thingDef>Steel</thingDef>
           <count>60</count>
+        </li>
+
+        <!-- Forged sigils: the paper says another Color (ScenPart_Sigils.cs). -->
+        <li Class="RimRising.ScenPart_Sigils">
+          <def>RR_StartingSigils</def>
+          <forged>true</forged>
         </li>
 
       </parts>
@@ -351,6 +362,12 @@ Outside, the Society is a fact so large it is mistaken for weather. In here it i
           <incident>RaidEnemy</incident>
           <minDays>4</minDays>
           <maxDays>7</maxDays>
+        </li>
+
+        <!-- Forged sigils: the paper says another Color (ScenPart_Sigils.cs). -->
+        <li Class="RimRising.ScenPart_Sigils">
+          <def>RR_StartingSigils</def>
+          <forged>true</forged>
         </li>
 
       </parts>

@@ -298,6 +298,16 @@ $geneGlyphs = [ordered]@{
         Draw-Line -g $g -pen $pen -S $S -x1 0.36 -y1 0.80 -x2 0.64 -y2 0.80
         Draw-Line -g $g -pen $pen -S $S -x1 0.22 -y1 0.72 -x2 0.78 -y2 0.16
     }}
+    # A drill bit going down: a shaft into a point, with the cutting flutes.
+    RR_Helldiver = @{ Color = '#C8503C'; Draw = {
+        param($g,$pen,$brush,$S)
+        Draw-Line -g $g -pen $pen -S $S -x1 0.50 -y1 0.14 -x2 0.50 -y2 0.40
+        Draw-Line -g $g -pen $pen -S $S -x1 0.34 -y1 0.40 -x2 0.66 -y2 0.40
+        Draw-Line -g $g -pen $pen -S $S -x1 0.34 -y1 0.40 -x2 0.50 -y2 0.86
+        Draw-Line -g $g -pen $pen -S $S -x1 0.66 -y1 0.40 -x2 0.50 -y2 0.86
+        Draw-Line -g $g -pen $pen -S $S -x1 0.38 -y1 0.52 -x2 0.62 -y2 0.58
+        Draw-Line -g $g -pen $pen -S $S -x1 0.42 -y1 0.66 -x2 0.58 -y2 0.70
+    }}
     RR_HighbornAppetite = @{ Color = '#E8C24A'; Draw = {
         param($g,$pen,$brush,$S)
         Draw-Arc  -g $g -pen $pen -S $S -cx 0.5 -cy 0.50 -r 0.30 -start 20 -sweep 320

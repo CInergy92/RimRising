@@ -20,15 +20,11 @@
   (Source/RimRising/ClawDrill.cs) is the same giver pointed at this def, and the
   WorkGiverDef RR_DrillClaw below puts it under Mining beside vanilla's.
 
-  WHAT MAKES IT A CLAWDRILL. Honestly: not much yet. Vanilla exposes no per-building
-  yield or speed field for deep drilling - speed is the operator's DeepDrillingSpeed
-  stat and yield is the resource's deepCountPerPortion. So this is a deep drill that
-  costs more, draws more power, needs a higher skill and needs the Barrens' research
-  path, with a bigger footprint. The two levers that would make it REAL - a Red
-  bonus to DeepDrillingSpeed (a gene statFactor, blocked on the gene-icon ownership
-  rule) and a yield multiplier (a Building subclass overriding the portion) - are in
-  docs/Opus-Notes.md. Operating it without a Red should be slow, not impossible; the
-  Red bonus does that, not a restriction here.
+  WHAT MAKES IT A CLAWDRILL (the user's calls, 2026-10-10): each portion comes up 1.5x
+  as big (ClawDrill.cs patches CompDeepDrill.TryProducePortion's yield; the deposit is
+  drained at the normal rate), and Reds carry the helldiver gene, 1.5x deep-drilling
+  speed (GeneDefs_RimRising.xml). It also costs more, draws more power and needs more
+  skill to build.
 -->
 <Defs>
 

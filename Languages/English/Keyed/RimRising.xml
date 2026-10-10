@@ -55,4 +55,17 @@ The suit also seals wounds continuously while worn, which is a separate effect a
   <RR_Setting_WidenFloor>Widen the xenogerm metabolism floor</RR_Setting_WidenFloor>
   <RR_Setting_WidenFloorTip>Lowers the minimum total metabolism a xenogerm may have from -5 to -10, which several Colors need to be assemblable at all. This is a global tuning change: every gene assembler dialog in your game sees the new floor, including other mods'. Turn it off to restore the vanilla -5; takes effect immediately.</RR_Setting_WidenFloorTip>
 
+  <!-- Trial by razor: both duelists must be Gold (RitualRoleGold.cs). -->
+  <RR_RazorTrialGoldOnly>{PAWN_nameDef} is not Gold. A trial by razor is fought between Golds.</RR_RazorTrialGoldOnly>
+  <!-- Starting sigils (ScenPart_Sigils.cs). -->
+  <RR_ScenPartSigilsTrue>Colonists carry the sigil of their true Color.</RR_ScenPartSigilsTrue>
+  <RR_ScenPartSigilsForged>Colonists carry forged sigils.</RR_ScenPartSigilsForged>
+  <!-- The Lurcher hunt (LurcherHunt.cs). -->
+  <RR_LurcherHuntText>Lurchers have come. The Society's hunters do not raid for loot; they have been sent for someone in your colony.</RR_LurcherHuntText>
+  <RR_LurcherHuntTextNamed>Lurchers have come for {PAWN_nameDef}. The Society's hunters do not raid for loot, and they know what {PAWN_pronoun} really is.</RR_LurcherHuntTextNamed>
+  <!-- The census reads sigils (CensusCheck.cs). -->
+  <RR_CensusDiscrepancyLabel>Census discrepancy</RR_CensusDiscrepancyLabel>
+  <RR_CensusDiscrepancyText>The census-takers of {0} have checked the hands of your colonists against the registry, and the paper does not match the person: {1}.
+
+They have written it down. Goodwill lost: {2}.</RR_CensusDiscrepancyText>
 </LanguageData>
