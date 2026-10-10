@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The ripWing (suggestion 2.7; the user's call, 2026-10-10: a full aerial vehicle,
+  and "helium-3 powers ships"). The Society's one-seat fighter: it lifts straight off
+  its pad, flies on the world map, strafes a map from the air and fights on the
+  ground with twin fixed pulse guns.
+
+  ONLY LOADED WITH VEHICLE FRAMEWORK, like the Drachenjaeger (this folder is gated in
+  LoadFolders.xml). The same three cross-referencing defs as Drachenjager.xml, and
+  parented from the framework's own abstracts, never Vanilla Vehicles Expanded's.
+
+  STRUCTURE, verified against the installed framework and VVE's aircraft:
+  - type Air: VehicleDef.type, which VVE writes as its alias vehicleType
+    (decompiled: [LoadAlias("vehicleType")] public VehicleType type).
+  - CompProperties_VehicleLauncher with DefaultTakeoff - the vertical lift VVE's
+    Frog uses - instead of the Warbird's DirectionalTakeoff, which needs a runway.
+    Flecks are the framework's own (Defs/Effects/Fleck_Exhaust.xml).
+  - strafing.turrets names the gun key: CompVehicleLauncher.StrafeTurrets selects
+    turrets by key or groupKey from that list (decompiled).
+  - CompProperties_FueledTravel fuelType RR_HeliumThree: helium-3 is ship fuel.
+  - FlightSpeed / FlightControl component categories as on VVE's Warbird.
+
+  CE: Patches/CombatExtended.xml gives the guns a CE projectile and ammo set.
+-->
+<Defs>
+
+  <!-- ============================== research ============================== -->
+
+  <ResearchProjectDef>
+    <defName>RR_RipWingFlight</defName>
+    <label>ripWing</label>
+    <description>A one-seat fighter built around a helium-3 drive: enough thrust to lift straight off a pad and reach orbit, and a pair of pulse guns in the nose. The Society builds them by the thousand and loses them at about the same rate.\n\nUnlocks the ripWing. It burns helium-3.</description>
+    <tab>RR_Artificer</tab>
+    <baseCost>6000</baseCost>
+    <techLevel>Spacer</techLevel>
+    <prerequisites>
+      <li>RR_NeuralInterface</li>
+    </prerequisites>
+    <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+    <researchViewX>7.00</researchViewX>
+    <researchViewY>3.50</researchViewY>
+  </ResearchProjectDef>
+
+  <!-- ============================= projectile ============================= -->
+
+  <ThingDef ParentName="BaseBullet">
+    <defName>RR_Bullet_RipWingPulse</defName>
+    <label>pulse bolt</label>
+    <graphicData>
+      <texPath>Things/Projectile/RR_ParticleLance</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>0.9</drawSize>
+    </graphicData>
+    <projectile>
+      <damageDef>Bullet</damageDef>
+      <damageAmountBase>18</damageAmountBase>
+      <armorPenetrationBase>0.45</armorPenetrationBase>
+      <stoppingPower>1.5</stoppingPower>
+      <speed>120</speed>
+    </projectile>
+  </ThingDef>
+
+  <!-- ================================ guns ================================ -->
+
+  <Vehicles.VehicleTurretDef ParentName="VehicleTurretBase">
+    <defName>RR_RipWing_PulseGuns</defName>
+    <label>pulse guns</label>
+    <description>Twin pulse guns in the nose, fixed forward: the pilot aims the ship. They draw their charge from the same helium-3 the drive burns.</description>
+    <turretType>Static</turretType>
+    <projectile>RR_Bullet_RipWingPulse</projectile>
+    <reloadTimer>5.0</reloadTimer>
+    <warmUpTimer>0.6</warmUpTimer>
+    <magazineCapacity>48</magazineCapacity>
+    <chargePerAmmoCount>4</chargePerAmmoCount>
+    <genericAmmo>true</genericAmmo>
+    <autoSnapTargeting>true</autoSnapTargeting>
+    <projectileOffset>1.6</projectileOffset>
+    <maxRange>29.9</maxRange>
+    <minRange>1.9</minRange>
+    <fireModes>
+      <li>
+        <shotsPerBurst>8</shotsPerBurst>
+        <ticksBetweenBursts>5</ticksBetweenBursts>
+        <forcedMissRadius>1.4</forcedMissRadius>
+        <label>Burst</label>
+        <texPath>UI/Gizmos/FireRate_Burst</texPath>
+      </li>
+    </fireModes>
+    <!-- Painted on the hull, so no turret graphic (as the Drachenjaeger's guns);
+         the gizmo shows the ship. -->
+    <gizmoIconTexPath>Things/Vehicles/RR_RipWing/RR_RipWing_south</gizmoIconTexPath>
+    <ammunition>
+      <thingDefs>
+        <li>RR_HeliumThree</li>
+      </thingDefs>
+    </ammunition>
+  </Vehicles.VehicleTurretDef>
+
+  <!-- ============================== the ship ============================== -->
+
+  <Vehicles.VehicleDef ParentName="BaseVehiclePawn">
+    <defName>RR_RipWing</defName>
+    <label>ripWing</label>
+    <description>The Society's one-seat fighter: a helium-3 drive with a cockpit on the front and a pair of pulse guns underneath. It lifts straight off a pad, crosses a world in hours and comes down on a battlefield guns first.\n\nBlues are bred to fly them. Everyone else flies them anyway, for a while.</description>
+    <graphicData>
+      <texPath>Things/Vehicles/RR_RipWing/RR_RipWing</texPath>
+      <graphicClass>Vehicles.Graphic_Vehicle</graphicClass>
+      <shaderType>Cutout</shaderType>
+      <drawSize>(5,5)</drawSize>
+    </graphicData>
+    <fillPercent>0.6</fillPercent>
+    <buildDef>RR_RipWing_Blueprint</buildDef>
+    <size>(3,3)</size>
+    <canCaravan>false</canCaravan>
+    <vehicleCategory>Combat</vehicleCategory>
+    <techLevel>Spacer</techLevel>
+    <type>Air</type>
+    <statBases>
+      <ArmorRating_Blunt>0.40</ArmorRating_Blunt>
+      <ArmorRating_Sharp>0.65</ArmorRating_Sharp>
+      <ArmorRating_Heat>1.0</ArmorRating_Heat>
+      <Flammability>0.3</Flammability>
+      <MarketValue>9000</MarketValue>
+    </statBases>
+    <vehicleStats>
+      <Mass>400</Mass>
+      <!-- It taxis badly and flies superbly. -->
+      <MoveSpeed>2.5</MoveSpeed>
+      <CargoCapacity>40</CargoCapacity>
+      <RepairRate>0.5</RepairRate>
+      <FlightSpeed>60</FlightSpeed>
+    </vehicleStats>
+    <race>
+      <baseBodySize>4</baseBodySize>
+    </race>
+    <properties>
+      <defaultImpassable>
+        <li>Biomes</li>
+      </defaultImpassable>
+      <visibilityWeight>4</visibilityWeight>
+      <vehicleJobLimitations>
+        <li>(RepairVehicle, 2)</li>
+      </vehicleJobLimitations>
+      <manhunterTargetsVehicle>false</manhunterTargetsVehicle>
+      <roles>
+        <li>
+          <key>pilot</key>
+          <label>pilot</label>
+          <slots>1</slots>
+          <slotsToOperate>1</slotsToOperate>
+          <hitbox><side>Body</side></hitbox>
+          <handlingTypes>
+            <li>Movement</li>
+            <li>Turret</li>
+          </handlingTypes>
+          <turretIds>
+            <li>pulseGuns</li>
+          </turretIds>
+        </li>
+      </roles>
+    </properties>
+    <!-- A vehicle's health is the sum of these; see Drachenjager.xml. -->
+    <components>
+      <li>
+        <key>Cockpit</key>
+        <label>cockpit</label>
+        <health>120</health>
+        <depth>Internal</depth>
+        <hitbox><side>Front</side></hitbox>
+      </li>
+      <li>
+        <key>Drive</key>
+        <label>helium drive</label>
+        <health>160</health>
+        <priorityStatEfficiency>true</priorityStatEfficiency>
+        <depth>Internal</depth>
+        <hitbox><side>Back</side></hitbox>
+        <categories>
+          <li>MoveSpeed</li>
+          <li>FlightSpeed</li>
+          <li>FlightControl</li>
+        </categories>
+        <reactors>
+          <li Class="Vehicles.Reactor_Explosive">
+            <indicator>VF_Explosive</indicator>
+            <chance>0.3</chance>
+            <healthPercent>0.2</healthPercent>
+            <radius>4</radius>
+            <damageDef>Bomb</damageDef>
+          </li>
+        </reactors>
+      </li>
+      <li>
+        <key>HeliumCell</key>
+        <label>helium cell</label>
+        <health>90</health>
+        <depth>Internal</depth>
+        <hitbox><side>Body</side></hitbox>
+        <categories>
+          <li>FlightSpeed</li>
+        </categories>
+        <reactors>
+          <li Class="Vehicles.Reactor_Explosive">
+            <indicator>VF_Explosive</indicator>
+            <chance>0.25</chance>
+            <healthPercent>0.2</healthPercent>
+            <radius>3</radius>
+            <damageDef>Flame</damageDef>
+          </li>
+        </reactors>
+      </li>
+      <li>
+        <key>LeftWing</key>
+        <label>left wing</label>
+        <health>140</health>
+        <depth>External</depth>
+        <hitbox><side>Left</side></hitbox>
+        <categories>
+          <li>FlightControl</li>
+        </categories>
+      </li>
+      <li>
+        <key>RightWing</key>
+        <label>right wing</label>
+        <health>140</health>
+        <depth>External</depth>
+        <hitbox><side>Right</side></hitbox>
+        <categories>
+          <li>FlightControl</li>
+        </categories>
+      </li>
+      <li>
+        <key>Hull</key>
+        <label>hull</label>
+        <health>260</health>
+        <depth>External</depth>
+        <hitbox><side>Body</side></hitbox>
+      </li>
+      <li>
+        <key>Guns</key>
+        <label>pulse guns</label>
+        <health>80</health>
+        <depth>External</depth>
+        <hitbox><side>Front</side></hitbox>
+      </li>
+    </components>
+    <comps>
+      <li Class="Vehicles.CompProperties_VehicleTurrets">
+        <turrets>
+          <li>
+            <def>RR_RipWing_PulseGuns</def>
+            <key>pulseGuns</key>
+            <parentKey></parentKey>
+            <!-- In the nose: body-relative (0, 1.4), rotated as in Drachenjager.xml. -->
+            <renderProperties>
+              <north>(0, 1.4)</north>
+              <east>(1.4, 0)</east>
+              <south>(0, -1.4)</south>
+              <west>(-1.4, 0)</west>
+            </renderProperties>
+          </li>
+        </turrets>
+      </li>
+      <!-- Helium-3 is ship fuel (the user's call). Capacity and burn sized like VVE's
+           Warbird; helium is denser fuel than chemfuel, so less of it. -->
+      <li Class="Vehicles.CompProperties_FueledTravel">
+        <fuelType>RR_HeliumThree</fuelType>
+        <fuelConsumptionRate>18</fuelConsumptionRate>
+        <fuelCapacity>50</fuelCapacity>
+      </li>
+      <li Class="Vehicles.CompProperties_VehicleLauncher">
+        <fuelConsumptionWorldMultiplier>40</fuelConsumptionWorldMultiplier>
+        <controlInFlight>true</controlInFlight>
+        <strafing>
+          <turrets>
+            <li>pulseGuns</li>
+          </turrets>
+        </strafing>
+        <!-- Straight up and straight down, as VVE's Frog does; no runway. -->
+        <launchProtocol Class="Vehicles.DefaultTakeoff">
+          <launchProperties>
+            <maxTicks>500</maxTicks>
+            <renderShadow>false</renderShadow>
+            <zPositionCurve Class="SmashTools.BezierCurve">
+              <points>
+                <li>(0, 0)</li>
+                <li>(0.3, 0)</li>
+                <li>(0.6, 10)</li>
+                <li>(1, 200)</li>
+              </points>
+            </zPositionCurve>
+            <fleckData>
+              <li>
+                <def>RocketExhaust_Short</def>
+                <angle>177~183</angle>
+                <lockFleckX>false</lockFleckX>
+                <lockFleckZ>false</lockFleckZ>
+                <runOutOfStep>false</runOutOfStep>
+                <originOffset>(0, 0, -0.9)</originOffset>
+                <frequency Class="SmashTools.LinearCurve">
+                  <points>
+                    <li>(0, 0)</li>
+                    <li>(0.15, 250)</li>
+                    <li>(1, 250)</li>
+                  </points>
+                </frequency>
+                <rotationRate>
+                  <points>
+                    <li>(0, 3)</li>
+                    <li>(1, 1)</li>
+                  </points>
+                </rotationRate>
+                <size Class="SmashTools.BezierCurve">
+                  <points>
+                    <li>(0, 1.75)</li>
+                  </points>
+                </size>
+                <speed Class="SmashTools.LinearCurve">
+                  <points>
+                    <li>(0.6, 20)</li>
+                    <li>(1, -25)</li>
+                  </points>
+                </speed>
+              </li>
+              <li>
+                <def>RocketSmoke</def>
+                <angle>0~360</angle>
+                <runOutOfStep>false</runOutOfStep>
+                <frequency Class="SmashTools.BezierCurve">
+                  <points>
+                    <li>(0, 100)</li>
+                    <li>(0.3, 150)</li>
+                    <li>(0.6, 0)</li>
+                  </points>
+                </frequency>
+                <rotationRate>
+                  <points>
+                    <li>(0, 3)</li>
+                    <li>(1, 1)</li>
+                  </points>
+                </rotationRate>
+                <size Class="SmashTools.BezierCurve">
+                  <points>
+                    <li>(0, 3)</li>
+                    <li>(1, 4)</li>
+                  </points>
+                </size>
+                <speed Class="SmashTools.BezierCurve">
+                  <points>
+                    <li>(0, 3)</li>
+                    <li>(1, 2)</li>
+                  </points>
+                </speed>
+              </li>
+            </fleckData>
+          </launchProperties>
+          <landingProperties>
+            <maxTicks>700</maxTicks>
+            <renderShadow>false</renderShadow>
+            <zPositionCurve Class="SmashTools.BezierCurve">
+              <points>
+                <li>(0, 200)</li>
+                <li>(0.4, 10)</li>
+                <li>(0.7, 0)</li>
+                <li>(1, 0)</li>
+              </points>
+            </zPositionCurve>
+            <fleckData>
+              <li>
+                <def>RocketExhaust_Short</def>
+                <angle>177~183</angle>
+                <lockFleckX>false</lockFleckX>
+                <lockFleckZ>false</lockFleckZ>
+                <runOutOfStep>false</runOutOfStep>
+                <originOffset>(0, 0, -0.9)</originOffset>
+                <frequency Class="SmashTools.LinearCurve">
+                  <points>
+                    <li>(0, 250)</li>
+                    <li>(0.7, 250)</li>
+                    <li>(0.8, 0)</li>
+                  </points>
+                </frequency>
+                <rotationRate>
+                  <points>
+                    <li>(0, 3)</li>
+                    <li>(1, 1)</li>
+                  </points>
+                </rotationRate>
+                <size Class="SmashTools.BezierCurve">
+                  <points>
+                    <li>(0, 1.75)</li>
+                  </points>
+                </size>
+                <speed Class="SmashTools.LinearCurve">
+                  <points>
+                    <li>(0, -25)</li>
+                    <li>(0.7, 5)</li>
+                  </points>
+                </speed>
+              </li>
+            </fleckData>
+          </landingProperties>
+        </launchProtocol>
+      </li>
+    </comps>
+  </Vehicles.VehicleDef>
+
+  <!-- ============================ the blueprint ============================ -->
+
+  <Vehicles.VehicleBuildDef ParentName="VehicleBaseBuildable">
+    <defName>RR_RipWing_Blueprint</defName>
+    <label>ripWing</label>
+    <description>A one-seat helium-3 fighter, lifting straight off its pad.</description>
+    <designationCategory>VF_Vehicles</designationCategory>
+    <graphicData>
+      <texPath>Things/Vehicles/RR_RipWing/RR_RipWing</texPath>
+      <graphicClass>Graphic_Multi</graphicClass>
+      <drawSize>(5,5)</drawSize>
+    </graphicData>
+    <statBases>
+      <MaxHitPoints>1000</MaxHitPoints>
+      <WorkToBuild>60000</WorkToBuild>
+      <Flammability>0.3</Flammability>
+    </statBases>
+    <size>(3,3)</size>
+    <researchPrerequisites>
+      <li>RR_RipWingFlight</li>
+    </researchPrerequisites>
+    <costList>
+      <RR_Ionsteel>60</RR_Ionsteel>
+      <Plasteel>220</Plasteel>
+      <ComponentSpacer>14</ComponentSpacer>
+      <RR_HeliumThree>30</RR_HeliumThree>
+      <Steel>300</Steel>
+    </costList>
+    <soundImpactDefault>BulletImpact_Metal</soundImpactDefault>
+    <constructionSkillPrerequisite>9</constructionSkillPrerequisite>
+    <!-- The back-reference the architect gizmo dereferences; see Drachenjager.xml. -->
+    <thingToSpawn>RR_RipWing</thingToSpawn>
+  </Vehicles.VehicleBuildDef>
+
+</Defs>

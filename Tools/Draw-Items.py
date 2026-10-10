@@ -61,6 +61,9 @@ dw.C.update({
     "dark":    (np.array([0.24, 0.24, 0.27]), np.array([0.16, 0.16, 0.19])),
     "leather": (np.array([0.40, 0.31, 0.24]), np.array([0.29, 0.22, 0.17])),
     "field":   (np.array([0.70, 0.92, 0.96]), np.array([0.55, 0.82, 0.88])),
+    "cork":    (np.array([0.60, 0.48, 0.32]), np.array([0.46, 0.36, 0.24])),
+    "he3":     (np.array([0.45, 0.90, 0.95]), np.array([0.30, 0.72, 0.80])),
+    "clay":    (np.array([0.66, 0.46, 0.32]), np.array([0.50, 0.33, 0.22])),
 })
 
 PANEL = 3.0     # per-part ring, in 256-units (1.5 px at 128)
@@ -195,6 +198,27 @@ def vat(X):
         part(X, X.rrect(-0.72, v0, 0.72, v1, 0.10), "dark")
 
 
+def helium_cell(X):
+    """Helium-3: a pressurised steel cell, a glowing cyan window down its side,
+    dark end caps - ship fuel."""
+    body = X.rrect(-0.42, -0.80, 0.42, 0.90, 0.20)
+    part(X, body, "can", X.dark(0.10, 1.0, 0.0))
+    fill(X, X.rrect(-0.16, -0.50, 0.16, 0.62, 0.08) & body, "he3")
+    for v0, v1 in ((-1.02, -0.74), (0.84, 1.08)):
+        part(X, X.rrect(-0.50, v0, 0.50, v1, 0.10), "dark")
+    part(X, X.rrect(-0.14, -1.20, 0.14, -0.98, 0.05), "dark")
+
+
+def swill_jug(X):
+    """Swill: a stoppered clay jug of mine-brewed liquor, a cord round its neck."""
+    body = X.ell(0, 0.30, 0.78, 0.70)
+    part(X, body, "clay", X.dark(0.15, 1.0, 0.0))
+    part(X, X.rrect(-0.26, -0.75, 0.26, -0.25, 0.10), "clay", X.dark(0.0, 1.0, 0.0))
+    part(X, X.rrect(-0.22, -1.00, 0.22, -0.72, 0.08), "cork")
+    part(X, X.rrect(-0.34, -0.42, 0.34, -0.30, 0.04), "cord")
+    fill(X, X.ell(-0.35, 0.05, 0.12, 0.22), "tablet")
+
+
 # ----------------------------------------------------------- single items
 def carving_kit(size=128):
     """A sealed steel tray, violet seal across the lid, three gel phials and a
@@ -297,6 +321,9 @@ STACKED = {
     "Things/Item/Resource/RR_ResFlesh/RR_ResFlesh": (canister, 1.0),
     "Things/Item/Resource/RR_Ionsteel/RR_Ionsteel": (ingot, 1.0),
     "Things/Item/Resource/RR_CarvelingVat/RR_CarvelingVat": (vat, 1.05),
+    # Second content pass: the two Fable placeholders the art pass missed.
+    "Things/Item/Resource/RR_HeliumThree/RR_HeliumThree": (helium_cell, 1.0),
+    "Things/Item/Drug/RR_Swill/RR_Swill": (swill_jug, 1.0),
 }
 
 SINGLE = {

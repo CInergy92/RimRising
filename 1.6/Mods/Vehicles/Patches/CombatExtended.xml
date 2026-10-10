@@ -119,6 +119,32 @@
           </value>
         </li>
 
+        <!--
+          The ripWing's pulse guns: CE's 12x64mm charged set, a heavy charged
+          machine-gun round - lighter than the Drachenjaeger's autocannon. Same two
+          steps: a CE projectile, and the ammo-set extension.
+        -->
+        <li Class="PatchOperationReplace">
+          <success>Always</success>
+          <xpath>Defs/Vehicles.VehicleTurretDef[defName="RR_RipWing_PulseGuns"]/projectile</xpath>
+          <value>
+            <projectile>Bullet_12x64mmCharged</projectile>
+          </value>
+        </li>
+        <li Class="PatchOperationAddModExtension">
+          <success>Always</success>
+          <xpath>Defs/Vehicles.VehicleTurretDef[defName="RR_RipWing_PulseGuns"]</xpath>
+          <value>
+            <li Class="Vehicles.CETurretDataDefModExtension">
+              <ammoSet>AmmoSet_12x64mmCharged</ammoSet>
+              <shotHeight>1.2</shotHeight>
+              <speed>160</speed>
+              <sway>0.4</sway>
+              <spread>0.06</spread>
+            </li>
+          </value>
+        </li>
+
       </operations>
     </match>
   </Operation>

@@ -355,7 +355,9 @@ namespace RimRising
         {
             TargetOrtho = 6.5f;
             System.Type vdef = GenTypes.GetTypeInAnyAssembly("Vehicles.VehicleDef");
-            ThingDef def = vdef == null ? null : GenDefDatabase.GetDef(vdef, "RR_Drachenjager", false) as ThingDef;
+            // rrvehicle=<defName> picks the vehicle; the Drachenjaeger by default.
+            if (!GenCommandLine.TryGetCommandLineArg("rrvehicle", out string vname) || vname.NullOrEmpty()) { vname = "RR_Drachenjager"; }
+            ThingDef def = vdef == null ? null : GenDefDatabase.GetDef(vdef, vname, false) as ThingDef;
             System.Type spawner = GenTypes.GetTypeInAnyAssembly("Vehicles.VehicleSpawner");
             var gen = spawner?.GetMethods().FirstOrDefault(m => m.Name == "GenerateVehicle" && m.GetParameters().Length == 2
                 && m.GetParameters()[1].ParameterType == typeof(Faction));
@@ -374,6 +376,10 @@ namespace RimRising
                 var v = (Pawn)gen.Invoke(null, new object[] { def, Faction.OfPlayer });
                 GenSpawn.Spawn(v, new IntVec3(c.x - 10 + i * 10, 0, c.z), map, rots[i]);
                 v.Rotation = rots[i];
+                if (i == 0)
+                {
+                    Log.Message($"[RimRising] VEHICLE {def.defName} comps: {string.Join(", ", v.AllComps.Select(x => x.GetType().Name))}");
+                }
             }
             shots.Add(("vehicle", new Vector3(c.x + 0.5f, 0f, c.z + 0.5f), 0f));
             Find.TickManager.CurTimeSpeed = TimeSpeed.Paused;
