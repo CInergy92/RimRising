@@ -46,11 +46,11 @@ namespace RimRising
         public static bool EligibleFor(Pawn pawn, RoyalTitleDef title)
         {
             if (pawn == null || title?.tags == null) { return true; }
-            if (title.tags.Contains(Patch_Pawn_RoyaltyTracker_SetTitle.GoldTitleTag))
+            if (Patch_Pawn_RoyaltyTracker_SetTitle.IsGoldRung(title))
             {
                 return RR_XenotypeUtility.IsRulingCaste(pawn);
             }
-            if (title.tags.Contains(Patch_Pawn_RoyaltyTracker_SetTitle.ServiceTitleTag))
+            if (Patch_Pawn_RoyaltyTracker_SetTitle.IsServiceRung(title))
             {
                 return !RR_XenotypeUtility.IsRulingCaste(pawn);
             }
@@ -64,10 +64,7 @@ namespace RimRising
             if (list == null) { return false; }
             for (int i = 0; i < list.Count; i++)
             {
-                var tags = list[i]?.tags;
-                if (tags != null &&
-                    (tags.Contains(Patch_Pawn_RoyaltyTracker_SetTitle.GoldTitleTag) ||
-                     tags.Contains(Patch_Pawn_RoyaltyTracker_SetTitle.ServiceTitleTag)))
+                if (Patch_Pawn_RoyaltyTracker_SetTitle.IsGoldRung(list[i]) || Patch_Pawn_RoyaltyTracker_SetTitle.IsServiceRung(list[i]))
                 {
                     return true;
                 }

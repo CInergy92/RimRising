@@ -298,6 +298,15 @@ $geneGlyphs = [ordered]@{
         Draw-Line -g $g -pen $pen -S $S -x1 0.36 -y1 0.80 -x2 0.64 -y2 0.80
         Draw-Line -g $g -pen $pen -S $S -x1 0.22 -y1 0.72 -x2 0.78 -y2 0.16
     }}
+    # A helm wheel's rim and spokes around a heading line: the bridge.
+    RR_HelmSense = @{ Color = '#5C8CCE'; Draw = {
+        param($g,$pen,$brush,$S)
+        Draw-Ring -g $g -pen $pen -S $S -cx 0.5 -cy 0.52 -r 0.26
+        Draw-Line -g $g -pen $pen -S $S -x1 0.50 -y1 0.14 -x2 0.50 -y2 0.90
+        Draw-Line -g $g -pen $pen -S $S -x1 0.24 -y1 0.52 -x2 0.76 -y2 0.52
+        Draw-Line -g $g -pen $pen -S $S -x1 0.32 -y1 0.34 -x2 0.68 -y2 0.70
+        Draw-Line -g $g -pen $pen -S $S -x1 0.68 -y1 0.34 -x2 0.32 -y2 0.70
+    }}
     # A drill bit going down: a shaft into a point, with the cutting flutes.
     RR_Helldiver = @{ Color = '#C8503C'; Draw = {
         param($g,$pen,$brush,$S)

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The Rim Dominion's own ladder (suggestion 3; names the user's call, 2026-10-10:
+  the Moon Lord ladder). Until now the Dominion conferred the Society's titles, so a
+  Rim Gold climbed Luna's rungs. Favour is already tracked per faction; what makes the
+  ladders separate is that a faction awards every title whose tags its royalTitleTags
+  list, so these carry their own tags and the Dominion lists only them.
+
+  Same shape as RoyalTitles_Gold.xml and RoyalTitles_Service.xml, rung for rung:
+  RR_RimGoldTitle behaves as RR_GoldTitle and RR_RimServiceTitle as RR_ServiceTitle
+  (GoldTitlePatches.cs, TitleLadders.cs). Seniorities interleave the two ladders the
+  same way, and the service top rung carries RR_PlateBearer like the Praetorian.
+-->
+<Defs>
+
+  <RoyalTitleDef Abstract="True" Name="RR_RimGoldTitleBase">
+    <tags>
+      <li>RR_RimGoldTitle</li>
+    </tags>
+    <awardThought>GainedTitle</awardThought>
+    <lostThought>LostTitle</lostThought>
+    <awardWorkerClass>RoyalTitleAwardWorker_Instant</awardWorkerClass>
+  </RoyalTitleDef>
+
+  <RoyalTitleDef Abstract="True" Name="RR_RimServiceTitleBase">
+    <tags>
+      <li>RR_RimServiceTitle</li>
+    </tags>
+    <awardThought>GainedTitle</awardThought>
+    <lostThought>LostTitle</lostThought>
+    <awardWorkerClass>RoyalTitleAwardWorker_Instant</awardWorkerClass>
+  </RoyalTitleDef>
+
+  <!-- ============================== Gold rungs ============================== -->
+
+  <RoyalTitleDef ParentName="RR_RimGoldTitleBase">
+    <defName>RR_Title_Rimborn</defName>
+    <label>Rimborn</label>
+    <description>A Gold of the Rim, born under Jupiter or Saturn and owing nothing yet to anyone but their house. The Core calls it provincial. The Rim calls it the only kind of Gold who has never had to ask Luna's permission for anything.</description>
+    <seniority>0</seniority>
+    <favorCost>1</favorCost>
+    <changeHeirQuestPoints>800</changeHeirQuestPoints>
+    <allowDignifiedMeditationFocus>False</allowDignifiedMeditationFocus>
+    <canBeInherited>False</canBeInherited>
+    <commonality>1.5</commonality>
+  </RoyalTitleDef>
+
+  <RoyalTitleDef ParentName="RR_RimGoldTitleBase">
+    <defName>RR_Title_Lancer</defName>
+    <label>Lancer</label>
+    <description>A sworn blade of a Moon Lord's house: captain, envoy and executioner as the moment requires. Lancers carry their lord's word across the dark between moons, and it is understood that a Lancer's insult is the lord's insult.</description>
+    <seniority>200</seniority>
+    <favorCost>6</favorCost>
+    <minExpectation>Moderate</minExpectation>
+    <changeHeirQuestPoints>1400</changeHeirQuestPoints>
+    <recruitmentResistanceOffset>15</recruitmentResistanceOffset>
+    <canBeInherited>True</canBeInherited>
+    <commonality>3</commonality>
+    <disabledWorkTags>
+      <li>ManualDumb</li>
+    </disabledWorkTags>
+  </RoyalTitleDef>
+
+  <RoyalTitleDef ParentName="RR_RimGoldTitleBase">
+    <defName>RR_Title_MoonLord</defName>
+    <label>Moon Lord</label>
+    <description>Lord of a moon: its mines, its fleet, its law and its dead. The Rim's houses hold their moons the way the Core's hold offices, by inheritance and by force, and a Moon Lord answers to the Dominion's council only because the other Moon Lords insist.</description>
+    <seniority>500</seniority>
+    <favorCost>14</favorCost>
+    <minExpectation>High</minExpectation>
+    <changeHeirQuestPoints>2000</changeHeirQuestPoints>
+    <recruitmentResistanceOffset>35</recruitmentResistanceOffset>
+    <canBeInherited>True</canBeInherited>
+    <commonality>1</commonality>
+    <disabledWorkTags>
+      <li>ManualDumb</li>
+      <li>Cleaning</li>
+      <li>Hauling</li>
+    </disabledWorkTags>
+    <bedroomRequirements>
+      <li Class="RoomRequirement_Area">
+        <area>20</area>
+      </li>
+      <li Class="RoomRequirement_Impressiveness">
+        <impressiveness>30</impressiveness>
+      </li>
+    </bedroomRequirements>
+    <foodRequirement>
+      <minQuality>MealFine</minQuality>
+      <allowedTypes>Processed, Liquor</allowedTypes>
+      <allowedDefs>
+        <li>Ambrosia</li>
+      </allowedDefs>
+    </foodRequirement>
+  </RoyalTitleDef>
+
+  <!-- ============================ service rungs ============================ -->
+
+  <RoyalTitleDef ParentName="RR_RimServiceTitleBase">
+    <defName>RR_Title_RimLegionary</defName>
+    <label>Rim Legionary</label>
+    <description>On the rolls of a Rim house's legion. The Rim fights its wars at the far end of long supply lines, and it has learned to value a soldier who is still there at the end of one.</description>
+    <seniority>100</seniority>
+    <favorCost>2</favorCost>
+    <changeHeirQuestPoints>0</changeHeirQuestPoints>
+  </RoyalTitleDef>
+
+  <RoyalTitleDef ParentName="RR_RimServiceTitleBase">
+    <defName>RR_Title_RimPraetorian</defName>
+    <label>Rim Praetorian</label>
+    <!-- The rung that confers plate, as the Society's Praetorian does. -->
+    <tags Inherit="False">
+      <li>RR_RimServiceTitle</li>
+      <li>RR_PlateBearer</li>
+    </tags>
+    <description>Guard to a Moon Lord's household, armed and armoured at the lord's side. The Rim trusts its Praetorians further than the Core trusts its own, partly from tradition and partly because there is nowhere far enough away to run to.</description>
+    <seniority>300</seniority>
+    <favorCost>8</favorCost>
+    <changeHeirQuestPoints>0</changeHeirQuestPoints>
+    <requiredMinimumApparelQuality>Normal</requiredMinimumApparelQuality>
+  </RoyalTitleDef>
+
+</Defs>

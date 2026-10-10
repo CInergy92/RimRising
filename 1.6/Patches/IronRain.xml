@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Iron Rain (suggestion 2.6): the Society and the Rim Dominion come down from orbit.
+
+  No C# needed after all. Decompiled, PawnsArrivalModeWorker.GetSelectionWeight
+  checks the mode's selectionWeightCurvesPerFaction for the raiding faction FIRST and
+  only falls back to the general curve when there is no entry - vanilla uses exactly
+  this for mechanoids (Core/Defs/Misc/PawnsArrivalModeDefs/PawnsArrivalModes.xml).
+  So each arrival mode gets an entry for our two spacefaring powers: drops several
+  times likelier than vanilla gives anyone (a centre drop at 1000 points weighs 5.0
+  against vanilla's 3.5, a walk-in 0.12 against 0.4), so an Iron Rain on top of the
+  colony is the expected way the Society arrives.
+
+  The tribes need nothing: every drop mode has minTechLevel Industrial and the
+  Obsidian tribes are Neolithic. The Ascomanni, the Sons of Ares and the merchant
+  houses keep vanilla's weights. success Always: a mod that rewrites an arrival mode
+  should not take this file down with it.
+-->
+<Patch>
+
+  <Operation Class="PatchOperationAdd">
+    <success>Always</success>
+    <xpath>Defs/PawnsArrivalModeDef[defName="EdgeWalkIn"]</xpath>
+    <value>
+      <selectionWeightCurvesPerFaction>
+          <li>
+            <faction>RR_Society</faction>
+            <selectionWeightPerPointsCurve>
+              <points>
+                <li>(300, 0.35)</li>
+                <li>(700, 0.12)</li>
+              </points>
+            </selectionWeightPerPointsCurve>
+          </li>
+          <li>
+            <faction>RR_RimDominion</faction>
+            <selectionWeightPerPointsCurve>
+              <points>
+                <li>(300, 0.35)</li>
+                <li>(700, 0.12)</li>
+              </points>
+            </selectionWeightPerPointsCurve>
+          </li>
+      </selectionWeightCurvesPerFaction>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAdd">
+    <success>Always</success>
+    <xpath>Defs/PawnsArrivalModeDef[defName="EdgeWalkInGroups"]</xpath>
+    <value>
+      <selectionWeightCurvesPerFaction>
+          <li>
+            <faction>RR_Society</faction>
+            <selectionWeightPerPointsCurve>
+              <points>
+                <li>(100, 0.0)</li>
+                <li>(300, 0.1)</li>
+                <li>(700, 0.15)</li>
+              </points>
+            </selectionWeightPerPointsCurve>
+          </li>
+          <li>
+            <faction>RR_RimDominion</faction>
+            <selectionWeightPerPointsCurve>
+              <points>
+                <li>(100, 0.0)</li>
+                <li>(300, 0.1)</li>
+                <li>(700, 0.15)</li>
+              </points>
+            </selectionWeightPerPointsCurve>
+          </li>
+      </selectionWeightCurvesPerFaction>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAdd">
+    <success>Always</success>
+    <xpath>Defs/PawnsArrivalModeDef[defName="EdgeDrop"]</xpath>
+    <value>
+      <selectionWeightCurvesPerFaction>
+          <li>
+            <faction>RR_Society</faction>
+            <selectionWeightPerPointsCurve>
+              <points>
+                <li>(300, 0.6)</li>
+                <li>(700, 1.2)</li>
+              </points>
+            </selectionWeightPerPointsCurve>
+          </li>
+          <li>
+            <faction>RR_RimDominion</faction>
+            <selectionWeightPerPointsCurve>
+              <points>
+                <li>(300, 0.6)</li>
+                <li>(700, 1.2)</li>
+              </points>
+            </selectionWeightPerPointsCurve>
+          </li>
+      </selectionWeightCurvesPerFaction>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAdd">
+    <success>Always</success>
+    <xpath>Defs/PawnsArrivalModeDef[defName="EdgeDropGroups"]</xpath>
+    <value>
+      <selectionWeightCurvesPerFaction>
+          <li>
+            <faction>RR_Society</faction>
+            <selectionWeightPerPointsCurve>
+              <points>
+                <li>(100, 0.0)</li>
+                <li>(300, 0.5)</li>
+                <li>(700, 1.2)</li>
+              </points>
+            </selectionWeightPerPointsCurve>
+          </li>
+          <li>
+            <faction>RR_RimDominion</faction>
+            <selectionWeightPerPointsCurve>
+              <points>
+                <li>(100, 0.0)</li>
+                <li>(300, 0.5)</li>
+                <li>(700, 1.2)</li>
+              </points>
+            </selectionWeightPerPointsCurve>
+          </li>
+      </selectionWeightCurvesPerFaction>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAdd">
+    <success>Always</success>
+    <xpath>Defs/PawnsArrivalModeDef[defName="CenterDrop"]/selectionWeightCurvesPerFaction</xpath>
+    <value>
+        <li>
+          <faction>RR_Society</faction>
+          <selectionWeightPerPointsCurve>
+            <points>
+              <li>(300, 0.8)</li>
+              <li>(1000, 5.0)</li>
+            </points>
+          </selectionWeightPerPointsCurve>
+        </li>
+        <li>
+          <faction>RR_RimDominion</faction>
+          <selectionWeightPerPointsCurve>
+            <points>
+              <li>(300, 0.8)</li>
+              <li>(1000, 5.0)</li>
+            </points>
+          </selectionWeightPerPointsCurve>
+        </li>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAdd">
+    <success>Always</success>
+    <xpath>Defs/PawnsArrivalModeDef[defName="RandomDrop"]/selectionWeightCurvesPerFaction</xpath>
+    <value>
+        <li>
+          <faction>RR_Society</faction>
+          <selectionWeightPerPointsCurve>
+            <points>
+              <li>(300, 0.5)</li>
+              <li>(1000, 2.6)</li>
+            </points>
+          </selectionWeightPerPointsCurve>
+        </li>
+        <li>
+          <faction>RR_RimDominion</faction>
+          <selectionWeightPerPointsCurve>
+            <points>
+              <li>(300, 0.5)</li>
+              <li>(1000, 2.6)</li>
+            </points>
+          </selectionWeightPerPointsCurve>
+        </li>
+    </value>
+  </Operation>
+
+</Patch>

@@ -1605,6 +1605,69 @@ namespace RimRising
                 Discard(w); Discard(o);
             });
 
+            // 26. Iron Rain: the Society drops from orbit far more than a vanilla-weighted faction.
+            Run("26 iron rain", () =>
+            {
+                var worker = (IncidentWorker_Raid)IncidentDefOf.RaidEnemy.Worker;
+                float DropShare(Faction f)
+                {
+                    int drops = 0, n = 300;
+                    for (int i = 0; i < n; i++)
+                    {
+                        var parms = new IncidentParms { target = map, faction = f, points = 1500f, raidStrategy = RaidStrategyDefOf.ImmediateAttack };
+                        if (worker.TryResolveRaidArriveMode(parms) && parms.raidArrivalMode != null && !parms.raidArrivalMode.walkIn) { drops++; }
+                    }
+                    return (float)drops / n;
+                }
+                Faction other = Find.FactionManager.AllFactionsListForReading.FirstOrDefault(f =>
+                    !f.IsPlayer && f.def.techLevel >= TechLevel.Industrial && !f.def.defName.StartsWith("RR_") && f.def.humanlikeFaction && !f.Hidden);
+                float soc = DropShare(society), oth = other == null ? -1f : DropShare(other);
+                Check("26 iron rain", soc > 0.75f && (other == null || soc > oth + 0.1f),
+                      $"drop share at 1500 points: Society {soc:P0}, {other?.def.defName ?? "no comparison faction"} {oth:P0}");
+            });
+
+            // 27. Blues and gravships: helm sense raises piloting.
+            Run("27 helm sense", () =>
+            {
+                StatDef pilot = DefDatabase<StatDef>.GetNamedSilentFail("PilotingAbility");
+                if (pilot == null) { Log.Message("[RimRising] M12 skip 27: Odyssey not active"); return; }
+                Pawn b = Colonist(DefDatabase<XenotypeDef>.GetNamed("RR_Blue"), null), o = Colonist(DefDatabase<XenotypeDef>.GetNamed("RR_Orange"), null);
+                float pb = b.GetStatValue(pilot), po = o.GetStatValue(pilot);
+                Check("27 helm sense", b.genes.HasActiveGene(DefDatabase<GeneDef>.GetNamed("RR_HelmSense")) && pb > po,
+                      $"piloting Blue {pb:F2} vs Orange {po:F2}");
+                Discard(b); Discard(o);
+            });
+
+            // 28. The Rim Dominion's own ladder: separate titles, and its knight holds its own rung.
+            Run("28 rim ladder", () =>
+            {
+                Faction dom = FactionOf("RR_RimDominion");
+                if (dom == null)
+                {
+                    dom = FactionGenerator.NewGeneratedFaction(new FactionGeneratorParms(DefDatabase<FactionDef>.GetNamed("RR_RimDominion")));
+                    Find.FactionManager.Add(dom);
+                }
+                var socTitles = DefDatabase<FactionDef>.GetNamed("RR_Society").RoyalTitlesAwardableInSeniorityOrderForReading.Select(t => t.defName).ToList();
+                var domTitles = DefDatabase<FactionDef>.GetNamed("RR_RimDominion").RoyalTitlesAwardableInSeniorityOrderForReading.Select(t => t.defName).ToList();
+                bool apart = socTitles.Count > 0 && domTitles.Count > 0 && !socTitles.Intersect(domTitles).Any();
+                string knight = "no Dominion in world";
+                bool kOk = true;
+                if (dom != null)
+                {
+                    int plate = 0, titled = 0;
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Pawn k = Gen("RR_Dominion_Obsidian_Knight", dom);
+                        if (k.royalty?.GetCurrentTitle(dom)?.defName == "RR_Title_RimPraetorian") { titled++; }
+                        if (k.apparel.WornApparel.Any(x => x.def.apparel?.tags?.Contains(RR_CasteArmor.RestrictedTag) == true)) { plate++; }
+                        Discard(k);
+                    }
+                    knight = $"{titled}/10 Rim Praetorians, {plate}/10 in plate";
+                    kOk = titled >= 8;
+                }
+                Check("28 rim ladder", apart && kOk, $"Society [{string.Join(", ", socTitles)}] / Dominion [{string.Join(", ", domTitles)}]; knights {knight}");
+            });
+
             Log.Message($"[RimRising] M12 SUMMARY {m12Ok} ok, {m12Fail} fail");
         }
 

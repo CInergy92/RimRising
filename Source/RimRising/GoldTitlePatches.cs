@@ -39,6 +39,16 @@ namespace RimRising
     {
         public const string GoldTitleTag = "RR_GoldTitle";
         public const string ServiceTitleTag = "RR_ServiceTitle";
+        // The Rim Dominion's own ladder (RoyalTitles_Rim.xml): same rules, own tags,
+        // so neither power awards the other's titles.
+        public const string RimGoldTitleTag = "RR_RimGoldTitle";
+        public const string RimServiceTitleTag = "RR_RimServiceTitle";
+
+        public static bool IsGoldRung(RoyalTitleDef t) =>
+            t?.tags != null && (t.tags.Contains(GoldTitleTag) || t.tags.Contains(RimGoldTitleTag));
+
+        public static bool IsServiceRung(RoyalTitleDef t) =>
+            t?.tags != null && (t.tags.Contains(ServiceTitleTag) || t.tags.Contains(RimServiceTitleTag));
 
         public static bool Prefix(Pawn_RoyaltyTracker __instance, Faction faction, RoyalTitleDef title)
         {
@@ -52,12 +62,12 @@ namespace RimRising
 
             bool refuse;
             string messageKey;
-            if (title.tags.Contains(GoldTitleTag))
+            if (IsGoldRung(title))
             {
                 refuse = !RR_XenotypeUtility.IsRulingCaste(pawn);
                 messageKey = "RR_CannotHoldGoldTitle";
             }
-            else if (title.tags.Contains(ServiceTitleTag))
+            else if (IsServiceRung(title))
             {
                 refuse = RR_XenotypeUtility.IsRulingCaste(pawn);
                 messageKey = "RR_CannotHoldServiceTitle";

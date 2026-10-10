@@ -260,10 +260,9 @@
     <royalFavorLabel>standing</royalFavorLabel>
     <royalFavorIconPath>UI/Icons/RoyalFavor</royalFavorIconPath>
     <royalTitleTags>
-      <li>RR_GoldTitle</li>
-      <!-- The service ladder Obsidians and Grays climb; see
-           Defs/RoyalTitles/RoyalTitles_Service.xml. -->
-      <li>RR_ServiceTitle</li>
+      <!-- Its own Moon Lord ladder (RoyalTitles_Rim.xml), not the Society's. -->
+      <li>RR_RimGoldTitle</li>
+      <li>RR_RimServiceTitle</li>
     </royalTitleTags>
     <royalTitleInheritanceWorkerClass>RoyalTitleInheritanceWorker</royalTitleInheritanceWorkerClass>
     <!-- REQUIRED alongside the worker class, not optional. Pawn_RoyaltyTracker.SetTitle
@@ -369,7 +368,7 @@
         <commonality>100</commonality>
         <options>
           <RR_Society_Legionary>9</RR_Society_Legionary>
-          <RR_Society_Obsidian_Knight>4</RR_Society_Obsidian_Knight>
+          <RR_Dominion_Obsidian_Knight>4</RR_Dominion_Obsidian_Knight>
           <RR_Society_Bronzie_Officer>2</RR_Society_Bronzie_Officer>
           <RR_Society_Gold_Praetor>0.5</RR_Society_Gold_Praetor>
           <RR_Society_OlympicKnight>0.1</RR_Society_OlympicKnight>
@@ -386,7 +385,7 @@
         </carriers>
         <guards>
           <RR_Society_Legionary>8</RR_Society_Legionary>
-          <RR_Society_Obsidian_Knight>3</RR_Society_Obsidian_Knight>
+          <RR_Dominion_Obsidian_Knight>3</RR_Dominion_Obsidian_Knight>
         </guards>
       </li>
       <li>
@@ -406,7 +405,7 @@
         <kindDef>Settlement</kindDef>
         <options>
           <RR_Society_Legionary>10</RR_Society_Legionary>
-          <RR_Society_Obsidian_Knight>4</RR_Society_Obsidian_Knight>
+          <RR_Dominion_Obsidian_Knight>4</RR_Dominion_Obsidian_Knight>
           <RR_Society_Bronzie_Officer>1.5</RR_Society_Bronzie_Officer>
         </options>
       </li>

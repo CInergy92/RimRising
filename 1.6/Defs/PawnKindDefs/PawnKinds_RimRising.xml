@@ -164,7 +164,7 @@
   </PawnKindDef>
 
   <!-- Obsidian: enormous, close-range, and legally property. -->
-  <PawnKindDef ParentName="RR_SocietyFighterBase">
+  <PawnKindDef ParentName="RR_SocietyFighterBase" Name="RR_ObsidianKnightBase">
     <defName>RR_Society_Obsidian_Knight</defName>
     <!-- Caste marks (suggestion 1.8): StyleDefs/Styles_RimRising.xml. -->
     <styleItemTags>
@@ -215,6 +215,17 @@
         </categories>
       </li>
     </backstoryFiltersOverride>
+  </PawnKindDef>
+
+  <!--
+    The Rim Dominion's knight: the same Obsidian, holding the Rim Praetorian rung of
+    the Dominion's own ladder (RoyalTitles_Rim.xml). The Society's Praetorian is not
+    the Dominion's to give, and the title is what makes the plate wearable.
+  -->
+  <PawnKindDef ParentName="RR_ObsidianKnightBase">
+    <defName>RR_Dominion_Obsidian_Knight</defName>
+    <label>rim knight</label>
+    <titleRequired>RR_Title_RimPraetorian</titleRequired>
   </PawnKindDef>
 
   <!-- Bronzie: Gold enough to command, cheap enough to spend. -->

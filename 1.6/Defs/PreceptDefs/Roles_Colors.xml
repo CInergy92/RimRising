@@ -136,13 +136,15 @@
     </roleRequirements>
     <displayOrderInImpact>22</displayOrderInImpact>
     <!--
-      Stand-ins until the gravship stat is known (suggestions 6.7): a pilot is
-      quick and precise. If Odyssey exposes a piloting stat, replace these.
+      Odyssey's PilotingAbility (Odyssey/Defs/Stats/Stats_Pawns_General.xml) is the
+      stat the gravship launch ritual grades on, so the Pilot raises it. MayRequire
+      on the entry: without Odyssey the role keeps only its speed. Not a gate - any
+      pawn can still fly the ship; a Blue in the seat just flies it better.
     -->
     <roleEffects>
-      <li Class="RoleEffect_PawnStatOffset">
-        <statDef>ShootingAccuracyPawn</statDef>
-        <modifier>2</modifier>
+      <li Class="RoleEffect_PawnStatOffset" MayRequire="Ludeon.RimWorld.Odyssey">
+        <statDef>PilotingAbility</statDef>
+        <modifier>0.3</modifier>
       </li>
       <li Class="RoleEffect_PawnStatOffset">
         <statDef>MoveSpeed</statDef>

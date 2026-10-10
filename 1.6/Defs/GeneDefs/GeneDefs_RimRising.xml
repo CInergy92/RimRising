@@ -94,4 +94,24 @@
     <biostatCpx>1</biostatCpx>
   </GeneDef>
 
+  <!--
+    Blues and gravships (suggestion 6.7). Odyssey's PilotingAbility is a real pawn
+    stat - the one the gravship launch ritual grades on - so the Blue's helm sense is a
+    plain statFactors entry. MayRequire on the value node (CLAUDE.md: MayRequire works
+    on value nodes): without Odyssey the gene is inert rather than an error. A bonus,
+    never a gate: a Red colony with no Blue can still leave.
+  -->
+  <GeneDef>
+    <defName>RR_HelmSense</defName>
+    <label>helm sense</label>
+    <labelShortAdj>helm-born</labelShortAdj>
+    <description>Carriers are grown for the bridge: three-dimensional judgment, reflexes tuned to a ship's response rather than a body's, and an instinct for when a drive is about to fail. They fly better than anyone who merely learned how.</description>
+    <iconPath>UI/Icons/Genes/RR_HelmSense</iconPath>
+    <displayCategory>Miscellaneous</displayCategory>
+    <statFactors>
+      <PilotingAbility MayRequire="Ludeon.RimWorld.Odyssey">1.4</PilotingAbility>
+    </statFactors>
+    <biostatCpx>1</biostatCpx>
+  </GeneDef>
+
 </Defs>

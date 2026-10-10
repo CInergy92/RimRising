@@ -394,6 +394,7 @@
       </li>
     </modExtensions>
     <genes>
+      <li>RR_HelmSense</li>
       <li>Hair_BaldOnly</li>
       <li>Hair_LightBlue</li>
       <li>Eyes_Blue</li>
