@@ -1445,8 +1445,15 @@ marks. All checked in the test scenes.
 biomes, sold by Obsidian hunters and the Society, and in tribe raids (`rrtestmode=raid`: they take
 the assault duty and fight).
 
-Still open from `docs/Opus-Notes.md` sections 4 and 5: design calls and new systems (Lurcher hunt,
-Iron Rain, ripWings, Blues and gravships, the Dominion ladder, the heirloom's whip).
+**Fable's remaining notes, actioned (2026-10-10)** - every item, with the user's calls:
+heirloom whip (every razor has it); Giddy-Up griffins and mounted Obsidian raiders (optional
+folder); Gold-only duelists; the helldiver gene and the clawDrill's 1.5x yield; starting sigils
+(Household and Institute true, Breakout and Rising forged); the Lurcher hunt and the census
+reading sigils; the caste-labour observer thought; Iron Rain (pure XML); Blues' helm sense and
+the Pilot role on Odyssey's PilotingAbility; the Rim Dominion's Moon Lord ladder; the ripWing,
+a helium-3 aerial fighter. Helium-3 is ship fuel, not armour upkeep (the user's call).
+`rrtestmode=m12` covers all of it in code: 49 checks, all passing (the Giddy-Up check skips
+while that mod is not enabled).
 
 Every remaining item in `docs/RimRising-Suggestions.md` sections 1, 2, 3 and 6 that could be
 drafted without the game, drafted on `master` by a cloud session. At drafting, nothing had loaded. Four

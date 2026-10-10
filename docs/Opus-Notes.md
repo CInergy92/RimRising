@@ -9,6 +9,11 @@ carries it.
 Each item says what was done, what is unverified, and exactly what to do. The in-game
 checks are in `docs/PROGRESS.md`, Milestone 12.
 
+
+> **Status, 2026-10-10 (local session):** everything below is done - built, verified against
+> the game, fixed where it was wrong, and checked in code by `rrtestmode=m12`. Design calls went
+> to the user. See `docs/PROGRESS.md`, Milestone 12, for what changed and why.
+
 ---
 
 ## 1. Build the DLL (blocks everything else)

@@ -997,13 +997,35 @@ Each loads from `1.6/Mods/<Mod>/` under `IfModActive` in `LoadFolders.xml`, and 
 | Mod | packageId | What we do |
 |---|---|---|
 | Dragons Descent | `onyxae.dragonsdescent` | Retell its 12 live dragons and drake as Carver-made (descriptions only). Its orange dragon is commented out in its own 1.6 defs. Checked by `rrtestmode=m12` (18). |
-| Giddy-Up 2 - Continued | workshop 3674332861 | Not installed yet. Planned: Obsidians ride griffins. Not needed by anything. |
+| Giddy-Up 2 - Continued | `MemeGoddess.GiddyUp` | Griffins rideable (adults); Obsidian tribes and Ascomanni raid 10% mounted on griffins. `1.6/Mods/GiddyUp`. m12 check 19. |
 
 **Animals in a raid group work** (`rrtestmode=raid`): a griffin in an Obsidian Combat group takes
 `AssaultColony` and fights. But `PawnGroupMakerUtility` multiplies each option's weight by a curve
 on its cost over the dearest affordable option's (0.01 at a fifth), so an expensive animal beside
 cheap warriors needs a tiny weight - 0.6 made raids 30% griffin; 0.06 gives about 4%. A test faction
 that uses goodwill ignores `SetRelationDirect`; lower its goodwill to make it hostile.
+
+### Fable's remaining notes - levers found (2026-10-10)
+
+- **Raid arrival per faction is XML**: `PawnsArrivalModeDef.selectionWeightCurvesPerFaction`
+  is read before the general curve (`PawnsArrivalModeWorker.GetSelectionWeight`). Iron Rain is
+  `Patches/IronRain.xml`; drop modes already need `minTechLevel` Industrial.
+- **A raid of one kind**: give the faction a `pawnGroupMaker` with its own `PawnGroupKindDef`
+  and set `parms.pawnGroupKind` (`LurcherHunt.cs`). Raids preset with a hostile `parms.faction`
+  keep it. A test raid that rolls drop pods has no pawns on the map until they land.
+- **Per-pawn scenario setup** (`ScenPart_Sigils`): vanilla `ScenPart_ForcedHediff` gives every
+  starting pawn the same hediff; a ScenPart subclass acting at `PostGameStart` can follow each
+  pawn's Color.
+- **Odyssey's `PilotingAbility`** is a plain pawn stat - gene `statFactors` and role
+  `RoleEffect_PawnStatOffset`, each behind `MayRequire="Ludeon.RimWorld.Odyssey"`.
+- **A second royal ladder** needs its own title tags: a faction awards every title whose tags
+  its `royalTitleTags` list. `IsGoldRung`/`IsServiceRung` in `GoldTitlePatches.cs` cover both.
+- **Vehicle Framework aircraft**: `type Air` (alias `vehicleType`), `CompProperties_VehicleLauncher`
+  with `DefaultTakeoff` for vertical lift (`DirectionalTakeoff` needs a runway), `strafing.turrets`
+  by turret key. A vehicle's no-fuel overlay draws the FUEL ITEM's icon, so fuel art shows on the
+  ship. Top-down aircraft facings are one image turned (`Fit-GenAircraft.py`).
+- **Giddy-Up 2** ships its source: mountable when `baseBodySize > 1.2` or `GiddyUp.Mountable`;
+  raider mounts per faction via `GiddyUp.FactionRestrictions` (`mountChance` in percent).
 
 ### Combat Extended and damage with no verb
 
