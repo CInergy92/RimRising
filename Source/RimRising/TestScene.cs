@@ -1525,11 +1525,19 @@ namespace RimRising
             // 21. Helldiver gene, and the clawDrill's 1.5x portions.
             Run("21 drilling", () =>
             {
-                Pawn r = Colonist(red, null), b = Colonist(XenotypeDefOf.Baseliner, null);
-                float sr = r.GetStatValue(StatDefOf.DeepDrillingSpeed), sb = b.GetStatValue(StatDefOf.DeepDrillingSpeed);
-                bool gene = r.genes.HasActiveGene(DefDatabase<GeneDef>.GetNamed("RR_Helldiver"));
-                Check("21 helldiver", gene && sr > sb * 1.2f, $"Red has gene {gene}; deep drilling Red {sr:F2} vs baseliner {sb:F2}");
-                Discard(r); Discard(b);
+                // The same pawn with and without the gene, at a fixed skill: comparing two
+                // random pawns once failed on a Red who rolled poor at mining.
+                Pawn r = Colonist(red, null);
+                r.skills.GetSkill(SkillDefOf.Mining).Level = 10;
+                GeneDef hd = DefDatabase<GeneDef>.GetNamed("RR_Helldiver");
+                bool gene = r.genes.HasActiveGene(hd);
+                float with = r.GetStatValue(StatDefOf.DeepDrillingSpeed, cacheStaleAfterTicks: 0);
+                Gene g0 = r.genes.GetGene(hd);
+                if (g0 != null) { r.genes.RemoveGene(g0); }
+                float without = r.GetStatValue(StatDefOf.DeepDrillingSpeed, cacheStaleAfterTicks: 0);
+                Check("21 helldiver", gene && without > 0f && Mathf.Abs(with / without - 1.5f) < 0.05f,
+                      $"Red has gene {gene}; deep drilling {with:F2} with, {without:F2} without ({(without > 0 ? with / without : 0):F2}x)");
+                Discard(r);
                 var produce = HarmonyLib.AccessTools.Method(typeof(CompDeepDrill), "TryProducePortion");
                 int Yield(string def, IntVec3 at)
                 {
@@ -1672,6 +1680,27 @@ namespace RimRising
                     kOk = titled >= 8;
                 }
                 Check("28 rim ladder", apart && kOk, $"Society [{string.Join(", ", socTitles)}] / Dominion [{string.Join(", ", domTitles)}]; knights {knight}");
+            });
+
+            // 29. Gravships burn helium-3: the tanks take helium, not chemfuel, ten units a canister.
+            Run("29 gravship fuel", () =>
+            {
+                ThingDef tankDef = DefDatabase<ThingDef>.GetNamedSilentFail("ChemfuelTank");
+                if (tankDef == null) { Log.Message("[RimRising] M12 skip 29: Odyssey not active"); return; }
+                ThingDef he3 = DefDatabase<ThingDef>.GetNamed("RR_HeliumThree");
+                IntVec3 at = map.Center + new IntVec3(-8, 0, -8);
+                Clear(CellRect.CenteredOn(at, 3).ClipInsideMap(map));
+                var tank = (ThingWithComps)GenSpawn.Spawn(ThingMaker.MakeThing(tankDef, tankDef.MadeFromStuff ? GenStuff.DefaultStuffFor(tankDef) : null), at, map);
+                var rf = tank.GetComp<CompRefuelable>();
+                bool takesHe = rf.Props.fuelFilter.Allows(he3), takesChem = rf.Props.fuelFilter.Allows(ThingDefOf.Chemfuel);
+                float before = rf.Fuel;
+                Thing cans = ThingMaker.MakeThing(he3); cans.stackCount = 5;
+                GenSpawn.Spawn(cans, at + IntVec3.North * 3, map);
+                rf.Refuel(new List<Thing> { cans });
+                float gained = rf.Fuel - before;
+                Check("29 gravship helium", takesHe && !takesChem && Mathf.Abs(gained - 50f) < 0.5f,
+                      $"{tankDef.label}: takes helium {takesHe}, chemfuel {takesChem}; 5 canisters gave {gained:F0} fuel");
+                tank.Destroy();
             });
 
             Log.Message($"[RimRising] M12 SUMMARY {m12Ok} ok, {m12Fail} fail");

@@ -12,7 +12,6 @@
 
     1.6/Mods/RimJobWorld      IfModActive="rim.job.world"
     1.6/Mods/Anomaly          IfModActive="Ludeon.RimWorld.Anomaly"
-    1.6/Mods/Odyssey          IfModActive="Ludeon.RimWorld.Odyssey"
 -->
 <loadFolders>
   <v1.6>
@@ -85,5 +84,7 @@
     <!-- Giddy-Up 2 - Continued: griffins rideable, Obsidian raiders mounted.
          Optional; not a dependency. -->
     <li IfModActive="MemeGoddess.GiddyUp">1.6/Mods/GiddyUp</li>
+    <!-- Odyssey: gravships burn helium-3 (Patches/Gravship_Helium.xml). -->
+    <li IfModActive="Ludeon.RimWorld.Odyssey">1.6/Mods/Odyssey</li>
   </v1.6>
 </loadFolders>

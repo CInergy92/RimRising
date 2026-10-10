@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Gravships burn helium-3 (the user's call, 2026-10-10: "helium-3 powers ships").
+  Loaded only with Odyssey (LoadFolders.xml).
+
+  Odyssey fuels a gravship from its fuel tanks - ChemfuelTank and LargeChemfuelTank,
+  Odyssey/Defs/ThingDefs_Buildings/Buildings_Gravship.xml - each a
+  CompProperties_Refuelable whose fuelFilter names Chemfuel. Swapping the filter is
+  the whole change; the engine and thrusters only read the tanks' fuel.
+
+  VALUE, not a straight swap. Chemfuel is worth 2.3, helium-3 24 (about 10x), and
+  helium-3 comes only from deep drilling and trade. fuelMultiplier (a real
+  CompProperties_Refuelable field, used by vanilla's turrets) makes one canister ten
+  units of fuel, so a launch costs about what it did in silver terms - helium is
+  scarcer, not dearer. The tanks keep their defNames; labels say what they hold.
+
+  success Always throughout: another mod reshaping the tanks should not take this
+  file down.
+-->
+<Patch>
+
+  <Operation Class="PatchOperationReplace">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="ChemfuelTank" or defName="LargeChemfuelTank"]/comps/li[@Class="CompProperties_Refuelable"]/fuelFilter</xpath>
+    <value>
+      <fuelFilter>
+        <thingDefs>
+          <li>RR_HeliumThree</li>
+        </thingDefs>
+      </fuelFilter>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAdd">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="ChemfuelTank" or defName="LargeChemfuelTank"]/comps/li[@Class="CompProperties_Refuelable"]</xpath>
+    <value>
+      <fuelMultiplier>10</fuelMultiplier>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="ChemfuelTank" or defName="LargeChemfuelTank"]/comps/li[@Class="CompProperties_Refuelable"]/fuelLabel</xpath>
+    <value>
+      <fuelLabel>Helium-3</fuelLabel>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="ChemfuelTank" or defName="LargeChemfuelTank"]/comps/li[@Class="CompProperties_Refuelable"]/fuelGizmoLabel</xpath>
+    <value>
+      <fuelGizmoLabel>Helium-3</fuelGizmoLabel>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="ChemfuelTank"]/label</xpath>
+    <value>
+      <label>small helium-3 tank</label>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="ChemfuelTank"]/description</xpath>
+    <value>
+      <description>A pressurised helium-3 tank that feeds a gravship's thrusters. Each canister loaded holds ten units of fuel.</description>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="LargeChemfuelTank"]/label</xpath>
+    <value>
+      <label>large helium-3 tank</label>
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationReplace">
+    <success>Always</success>
+    <xpath>Defs/ThingDef[defName="LargeChemfuelTank"]/description</xpath>
+    <value>
+      <description>A large pressurised helium-3 tank that feeds a gravship's thrusters. Each canister loaded holds ten units of fuel.</description>
+    </value>
+  </Operation>
+
+</Patch>

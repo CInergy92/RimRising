@@ -1024,6 +1024,9 @@ that uses goodwill ignores `SetRelationDirect`; lower its goodwill to make it ho
   with `DefaultTakeoff` for vertical lift (`DirectionalTakeoff` needs a runway), `strafing.turrets`
   by turret key. A vehicle's no-fuel overlay draws the FUEL ITEM's icon, so fuel art shows on the
   ship. Top-down aircraft facings are one image turned (`Fit-GenAircraft.py`).
+- **Gravships burn helium-3** (the user's call): Odyssey's two fuel tanks' `fuelFilter` swapped
+  in `1.6/Mods/Odyssey/Patches/Gravship_Helium.xml`, with `fuelMultiplier 10` so a canister (24
+  silver) is worth ten units of fuel, as ten of chemfuel (2.3 each). m12 check 29.
 - **Giddy-Up 2** ships its source: mountable when `baseBodySize > 1.2` or `GiddyUp.Mountable`;
   raider mounts per faction via `GiddyUp.FactionRestrictions` (`mountChance` in percent).
 
