@@ -345,6 +345,14 @@ namespace RimRising
                         Pawn p = MakePawn(body, defs[a], gold);
                         if (p == null) { continue; }
                         GenSpawn.Spawn(p, cell, map, facing);
+                        // -rrdrafted: drafted colonists instead of factionless pawns, for
+                        // anything drawn only when drafted (pulse armour's helm).
+                        if (GenCommandLine.CommandLineArgPassed("rrdrafted"))
+                        {
+                            p.SetFaction(Faction.OfPlayer);
+                            PawnComponentsUtility.AddAndRemoveDynamicComponents(p);
+                            if (p.drafter != null) { p.drafter.Drafted = true; }
+                        }
                         p.Rotation = facing;
                         p.Drawer?.renderer?.SetAllGraphicsDirty();
                     }

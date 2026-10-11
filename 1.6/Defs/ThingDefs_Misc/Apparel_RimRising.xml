@@ -192,6 +192,25 @@
       -->
       <parentTagDef>ApparelBody</parentTagDef>
       <!--
+        The helm, drawn only while sealed for a fight: drafted, or an NPC on an
+        assault duty (Source/RimRising/PulseHelm.cs, which also hides the hair, beard
+        and eyes under it). One generated texture per facing with a dye mask, tinted
+        with the suit's own colour. baseLayer is absolute: the head apparel root is 70
+        (Core PawnRenderTreeDefs.xml) and hats stack upward from there.
+        Field set mirrored from CE's VFE Medieval 2 shield patch, the one apparel
+        renderNodeProperties example on disk.
+      -->
+      <renderNodeProperties>
+        <li>
+          <debugLabel>RR pulse helm</debugLabel>
+          <nodeClass>RimRising.PawnRenderNode_PulseHelm</nodeClass>
+          <workerClass>RimRising.PawnRenderNodeWorker_PulseHelm</workerClass>
+          <texPath>Things/Pawn/Humanlike/Apparel/RR_PulseHelm/RR_PulseHelm</texPath>
+          <parentTagDef>ApparelHead</parentTagDef>
+          <baseLayer>78</baseLayer>
+        </li>
+      </renderNodeProperties>
+      <!--
         Keeps the gold trim and the teal emitters out of the caste dye.
         CompColorable multiplies the WHOLE texture by one colour, so without this
         a Gold's suit came out gold-on-gold with no accent left.
