@@ -208,6 +208,11 @@
           <texPath>Things/Pawn/Humanlike/Apparel/RR_PulseHelm/RR_PulseHelm</texPath>
           <parentTagDef>ApparelHead</parentTagDef>
           <baseLayer>78</baseLayer>
+          <!-- 0.9: full size it read big beside the demonHelm, mostly from the crest and
+               neck seal; narrower than this and the head shows at the sides. -->
+          <drawData>
+            <scale>0.9</scale>
+          </drawData>
         </li>
       </renderNodeProperties>
       <!--
