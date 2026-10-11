@@ -87,6 +87,7 @@
       <AimingDelayFactor>-0.20</AimingDelayFactor>
       <SlaveSuppressionOffset MayRequire="Ludeon.RimWorld.Ideology">-0.3</SlaveSuppressionOffset>
       <VacuumResistance MayRequire="Ludeon.RimWorld.Odyssey">0.5</VacuumResistance>
+      <ToxicEnvironmentResistance>0.8</ToxicEnvironmentResistance>
     </equippedStatOffsets>
     <tradeTags>
       <li>HiTechArmor</li>
@@ -161,9 +162,15 @@
         <li>Neck</li>
         <li>Shoulders</li>
         <li>Arms</li>
+        <li>Hands</li>
         <li>Legs</li>
+        <li>Feet</li>
         <li>FullHead</li>
       </bodyPartGroups>
+      <!-- Sealed suit with the helm built in: it filters air the way a gas mask
+           does (Biotech's Apparel_GasMask and Odyssey's vac helmet both pair
+           ToxicEnvironmentResistance 0.8 with this flag). -->
+      <immuneToToxGasExposure>true</immuneToToxGasExposure>
       <wornGraphicPath>Things/Pawn/Humanlike/Apparel/RR_PulseArmor/RR_PulseArmor</wornGraphicPath>
       <!--
         NOT Overhead, even though this covers FullHead. Overhead attaches the
@@ -850,14 +857,17 @@ Given room to climb they will carry the wearer clean off the map and set them do
       <countsAsClothingForNudity>false</countsAsClothingForNudity>
       <careIfWornByCorpse>false</careIfWornByCorpse>
       <scoreOffset>4</scoreOffset>
-      <!-- Feet: free in this mod, so these stack with a full suit rather than
-           competing with it for the Legs group. -->
+      <!-- Feet, on OnSkin: pulse armour now seals the feet on Middle and Shell,
+           and two items sharing a layer and a body part group cannot be worn
+           together (ApparelUtility.CanWearTogether). OnSkin keeps the boots
+           stacking with every suit. They are not drawn, so the layer's draw
+           order does not matter. -->
       <bodyPartGroups>
         <li>Feet</li>
       </bodyPartGroups>
       <!-- No wornGraphicPath on purpose. They are not drawn on the pawn. -->
       <layers>
-        <li>Middle</li>
+        <li>OnSkin</li>
       </layers>
       <tags>
         <li>RR_GravBoots</li>
@@ -977,7 +987,7 @@ Given room to climb they will carry the wearer clean off the map and set them do
         <li>Feet</li>
       </bodyPartGroups>
       <layers>
-        <li>Middle</li>
+        <li>OnSkin</li>
       </layers>
       <tags>
         <li>RR_GravBoots</li>

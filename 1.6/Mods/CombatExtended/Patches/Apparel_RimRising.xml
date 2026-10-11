@@ -45,6 +45,19 @@
     <value>
       <Bulk>110</Bulk>
       <WornBulk>16</WornBulk>
+      <!-- The integrated helm's optics: CE's marine helmet is 0.6, its recon
+           helmet 0.7 (Patches/Core/ThingDefs_Misc/Apparel_Hats.xml). -->
+      <NightVisionEfficiency_Apparel>0.7</NightVisionEfficiency_Apparel>
+    </value>
+  </Operation>
+
+  <!-- Suit comms: CE's radio flag, as it gives the recon helmet. -->
+  <Operation Class="PatchOperationAddModExtension">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_PulseArmor"]</xpath>
+    <value>
+      <li Class="CombatExtended.ApparelDefExtension">
+        <isRadioPack>true</isRadioPack>
+      </li>
     </value>
   </Operation>
 
@@ -90,6 +103,19 @@
     <value>
       <Bulk>8</Bulk>
       <WornBulk>2</WornBulk>
+      <!-- Night and thermal sight, the helm's whole purpose: above CE's recon
+           helmet (0.7), the best optic CE ships. -->
+      <NightVisionEfficiency_Apparel>0.85</NightVisionEfficiency_Apparel>
+    </value>
+  </Operation>
+
+  <!-- The helm's comms: CE's radio flag, as it gives the recon helmet. -->
+  <Operation Class="PatchOperationAddModExtension">
+    <xpath>Defs/ThingDef[defName="RR_Apparel_DemonHelm"]</xpath>
+    <value>
+      <li Class="CombatExtended.ApparelDefExtension">
+        <isRadioPack>true</isRadioPack>
+      </li>
     </value>
   </Operation>
 

@@ -1475,14 +1475,19 @@ namespace RimRising
                 foreach ((string k, Faction f) in new[] { ("RR_Society_Legionary", society), ("RR_Society_Lurcher", society), ("RR_Tribe_Obsidian_Warrior", tribes) })
                 {
                     var drugs = new List<string>();
+                    int dry = 0;
                     // 50, not 20: a Lurcher's drug chance is low enough that 20 drew none once.
                     for (int i = 0; i < 50; i++)
                     {
                         Pawn p = Gen(k, f);
+                        // Vanilla gives no combat drugs to a teetotaler, and whether the
+                        // faction's ideoligion forbids drugs is rolled at worldgen.
+                        if (p.IsTeetotaler()) { dry++; }
                         drugs.AddRange(p.inventory.innerContainer.Where(t => t.def.IsDrug).Select(t => t.def.defName));
                         Discard(p);
                     }
-                    Check("17 drugs " + k, drugs.Count > 0, $"{drugs.Count} drugs in 50: {string.Join(", ", drugs.Distinct())}");
+                    if (dry > 40 && drugs.Count == 0) { Log.Message($"[RimRising] M12 skip 17 {k}: {dry}/50 teetotal under this world's ideoligion"); continue; }
+                    Check("17 drugs " + k, drugs.Count > 0, $"{drugs.Count} drugs in 50 ({dry} teetotal): {string.Join(", ", drugs.Distinct())}");
                 }
             });
 
@@ -1527,7 +1532,10 @@ namespace RimRising
             {
                 // The same pawn with and without the gene, at a fixed skill: comparing two
                 // random pawns once failed on a Red who rolled poor at mining.
+                // Also a Red who can mine at all: a backstory that disables mining
+                // floors the stat for both readings (0.10 and 0.10, seen once).
                 Pawn r = Colonist(red, null);
+                for (int t = 0; t < 20 && r.WorkTypeIsDisabled(WorkTypeDefOf.Mining); t++) { Discard(r); r = Colonist(red, null); }
                 r.skills.GetSkill(SkillDefOf.Mining).Level = 10;
                 GeneDef hd = DefDatabase<GeneDef>.GetNamed("RR_Helldiver");
                 bool gene = r.genes.HasActiveGene(hd);
@@ -1634,7 +1642,10 @@ namespace RimRising
                     return (float)drops / n;
                 }
                 Faction other = Find.FactionManager.AllFactionsListForReading.FirstOrDefault(f =>
-                    !f.IsPlayer && f.def.techLevel >= TechLevel.Industrial && !f.def.defName.StartsWith("RR_") && f.def.humanlikeFaction && !f.Hidden);
+                    !f.IsPlayer && f.def.techLevel >= TechLevel.Industrial && !f.def.defName.StartsWith("RR_") && f.def.humanlikeFaction && !f.Hidden
+                    // Not the Empire: vanilla already drops it from orbit (83% seen), so it
+                    // is no baseline for a Society-only arrival curve.
+                    && f.def.RoyalTitlesAwardableInSeniorityOrderForReading.Count == 0);
                 float soc = DropShare(society), oth = other == null ? -1f : DropShare(other);
                 Check("26 iron rain", soc > 0.75f && (other == null || soc > oth + 0.1f),
                       $"drop share at 1500 points: Society {soc:P0}, {other?.def.defName ?? "no comparison faction"} {oth:P0}");
@@ -1701,6 +1712,38 @@ namespace RimRising
                 Check("29 gravship helium", takesHe && !takesChem && Mathf.Abs(gained - 50f) < 0.5f,
                       $"{tankDef.label}: takes helium {takesHe}, chemfuel {takesChem}; 5 canisters gave {gained:F0} fuel");
                 tank.Destroy();
+            });
+
+            // 30. Pulse armour seals the whole body like a gas mask and still takes boots;
+            //     under CE the helms carry night vision and comms.
+            Run("30 sealed suit", () =>
+            {
+                ThingDef pulseDef = DefDatabase<ThingDef>.GetNamed("RR_Apparel_PulseArmor");
+                ThingDef helmDef = DefDatabase<ThingDef>.GetNamed("RR_Apparel_DemonHelm");
+                Pawn p = Colonist(DefDatabase<XenotypeDef>.GetNamed("RR_Gold"), null);
+                p.apparel.DestroyAll();
+                var pulse = (Apparel)ThingMaker.MakeThing(pulseDef);
+                p.apparel.Wear(pulse, false, true);
+                var ends = p.health.hediffSet.GetNotMissingParts().Where(r => r.def.defName == "Hand" || r.def.defName == "Foot").ToList();
+                bool covered = ends.Count == 4 && ends.All(r => pulseDef.apparel.CoversBodyPart(r));
+                bool gasProof = !GasUtility.IsAffectedByExposure(p);
+                float tox = p.GetStatValue(StatDefOf.ToxicEnvironmentResistance);
+                bool boots = ApparelUtility.CanWearTogether(pulseDef, DefDatabase<ThingDef>.GetNamed("RR_Apparel_GravBoots"), p.RaceProps.body)
+                          && ApparelUtility.CanWearTogether(pulseDef, DefDatabase<ThingDef>.GetNamed("RR_Apparel_SkipBoots"), p.RaceProps.body);
+                string ce = "CE not active";
+                bool ceOk = true;
+                StatDef nv = DefDatabase<StatDef>.GetNamedSilentFail("NightVisionEfficiency_Apparel");
+                if (nv != null)
+                {
+                    bool Radio(ThingDef d) => d.modExtensions?.Any(e => e.GetType().Name == "ApparelDefExtension"
+                        && e.GetType().GetField("isRadioPack")?.GetValue(e) is bool b && b) == true;
+                    float nh = helmDef.GetStatValueAbstract(nv), np = pulseDef.GetStatValueAbstract(nv);
+                    ceOk = nh >= 0.8f && np >= 0.6f && Radio(helmDef) && Radio(pulseDef);
+                    ce = $"night vision helm {nh:F2} suit {np:F2}, radio helm {Radio(helmDef)} suit {Radio(pulseDef)}";
+                }
+                Check("30 sealed suit", covered && gasProof && tox >= 0.8f && boots && ceOk,
+                      $"hands+feet covered {covered} ({ends.Count} parts), tox gas immune {gasProof}, toxic resistance {tox:F2}, boots fit {boots}; {ce}");
+                Discard(p);
             });
 
             Log.Message($"[RimRising] M12 SUMMARY {m12Ok} ok, {m12Fail} fail");

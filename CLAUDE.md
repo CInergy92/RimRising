@@ -1027,6 +1027,15 @@ that uses goodwill ignores `SetRelationDirect`; lower its goodwill to make it ho
 - **Gravships burn helium-3** (the user's call): Odyssey's two fuel tanks' `fuelFilter` swapped
   in `1.6/Mods/Odyssey/Patches/Gravship_Helium.xml`, with `fuelMultiplier 10` so a canister (24
   silver) is worth ten units of fuel, as ten of chemfuel (2.3 each). m12 check 29.
+- **Pulse armour is a sealed suit**: Hands and Feet coverage, `immuneToToxGasExposure` plus
+  ToxicEnvironmentResistance 0.8 (Biotech's gas mask and Odyssey's vac helmet both pair the two).
+  Covering Feet on Middle would have blocked the gravBoots (`ApparelUtility.CanWearTogether`:
+  shared layer plus shared group), so the boots moved to OnSkin. m12 check 30.
+- **Night vision and comms are CE stats, not vanilla**: `NightVisionEfficiency_Apparel` in
+  statBases (CE marine helmet 0.6, recon 0.7) and `CombatExtended.ApparelDefExtension`
+  `isRadioPack`. Vanilla has no apparel darkness lever; only the gene field `ignoreDarkness`.
+- **CE can draw apparel only while drafted**: `CombatExtended.PawnRenderNodeWorker_Drafted` on an
+  apparel `renderNodeProperties` entry (CE's VFE Medieval 2 shield patch). Unused so far.
 - **Giddy-Up 2** ships its source: mountable when `baseBodySize > 1.2` or `GiddyUp.Mountable`;
   raider mounts per faction via `GiddyUp.FactionRestrictions` (`mountChance` in percent).
 
