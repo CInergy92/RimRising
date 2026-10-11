@@ -37,6 +37,21 @@ Each is loaded only if you already run it; nothing else changes without it.
 | Alpha Animals | Carvelings, grown in Carver vats |
 | Melee Animation | idle, attack and execution animations for both razors |
 
+### Extras: Cinergy's CE Patches (local)
+
+`Extras/CinergyCEPatches` is a **separate mod**, kept in this repo but not part of RimRising and
+not published with it. It holds Combat Extended patches for two third-party mods CE does not
+cover, **MUGB Goblin** and **Mutagen and Mutation**:
+
+- every melee tool becomes a CE tool (unpatched, CE throws an error on every swing);
+- their armour, helmets and shields are rescaled into CE units, and their gear gets Bulk;
+- ranged weapons are left alone, because both mods fire their own projectile code.
+
+Each patch applies only when its target mod is active; CE is required. To install, link or copy
+the folder into `RimWorld/Mods` and enable "Cinergy's CE Patches (local)". After either target mod
+updates, regenerate with `python Extras/CinergyCEPatches/Tools/gen_patches.py`. The test-scene
+mode `rrtestmode=cetools` lists any weapon in the load order that still lacks CE tools.
+
 ## Install
 
 Subscribe on the Steam Workshop, or copy this folder's shipped content into
