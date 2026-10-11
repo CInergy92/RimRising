@@ -131,6 +131,15 @@ namespace RimRising
                         stage = 30;
                         return;
                     }
+                    if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string m7) && m7 == "cetools")
+                    {
+                        stage = -1;
+                        try { BuildCeTools(); }
+                        catch (System.Exception e) { Log.Error("[RimRising] CETOOLS build threw: " + e); return; }
+                        Find.TickManager.CurTimeSpeed = TimeSpeed.Superfast;
+                        stage = 40;
+                        return;
+                    }
                     if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string m5) && m5 == "m12")
                     {
                         // Each check is isolated: one that throws is logged as FAIL
@@ -182,6 +191,9 @@ namespace RimRising
                     WhipStep();
                     return;
 
+                case 40:
+                    CeToolsStep();
+                    return;
                 case 20:
                     NatureStep();
                     return;
@@ -1157,6 +1169,71 @@ namespace RimRising
 
         private static Faction FactionOf(string defName) =>
             Find.FactionManager.AllFactionsListForReading.FirstOrDefault(f => f.def.defName == defName);
+
+        // ---- rrtestmode=cetools: which mods still have vanilla tools under CE ----------
+        //
+        // Under Combat Extended every <tools> entry on a weapon must be a ToolCE, or each
+        // swing throws inside Verb_MeleeAttackCE and the log names no mod (CLAUDE.md).
+        // This lists every ThingDef with a non-ToolCE tool, by mod, then has pawns fight
+        // with each weapon of the mods named by rrcemods (packageIds, comma-separated)
+        // for a while; the log is then read for melee exceptions.
+
+        private readonly List<(Pawn a, Pawn b)> cePairs = new List<(Pawn, Pawn)>();
+        private int ceTicks;
+
+        private void BuildCeTools()
+        {
+            var bad = DefDatabase<ThingDef>.AllDefsListForReading
+                .Where(d => d.race == null && d.tools != null && d.tools.Any(t => t != null && t.GetType().Name != "ToolCE"))
+                .GroupBy(d => d.modContentPack?.Name ?? "?").OrderByDescending(g => g.Count());
+            int total = 0;
+            foreach (var g in bad)
+            {
+                total += g.Count();
+                Log.Message($"[RimRising] CETOOLS UNPATCHED {g.Key}: {g.Count()} defs ({string.Join(", ", g.Take(6).Select(d => d.defName))})");
+            }
+            Log.Message($"[RimRising] CETOOLS UNPATCHED TOTAL {total}");
+            GenCommandLine.TryGetCommandLineArg("rrcemods", out string mods);
+            var want = (mods ?? "").ToLowerInvariant().Split(',').Where(x => x.Length > 0).ToList();
+            var weapons = DefDatabase<ThingDef>.AllDefsListForReading
+                .Where(d => d.IsWeapon && d.tools != null && d.race == null && !d.IsApparel
+                            && want.Any(w => (d.modContentPack?.PackageId ?? "").ToLowerInvariant().Contains(w)))
+                .Take(40).ToList();
+            IntVec3 c = map.Center;
+            Clear(CellRect.CenteredOn(c, 22).ClipInsideMap(map));
+            for (int i = 0; i < weapons.Count; i++)
+            {
+                IntVec3 at = c + new IntVec3(-18 + (i % 8) * 5, 0, -16 + (i / 8) * 6);
+                Pawn a = Colonist(XenotypeDefOf.Baseliner, null), b = Colonist(XenotypeDefOf.Baseliner, null);
+                a.equipment.DestroyAllEquipment(); b.equipment.DestroyAllEquipment();
+                ThingDef wd = weapons[i];
+                var w = (ThingWithComps)ThingMaker.MakeThing(wd, wd.MadeFromStuff ? GenStuff.DefaultStuffFor(wd) : null);
+                a.equipment.AddEquipment(w);
+                GenSpawn.Spawn(a, at, map); GenSpawn.Spawn(b, at + IntVec3.East, map);
+                cePairs.Add((a, b));
+                Log.Message($"[RimRising] CETOOLS FIGHTER {wd.defName} ({wd.modContentPack?.Name}) tools: {string.Join(", ", wd.tools.Select(t => t.label + ":" + t.GetType().Name))}");
+            }
+            ceTicks = 0;
+        }
+
+        private void CeToolsStep()
+        {
+            ceTicks++;
+            foreach (var (a, b) in cePairs)
+            {
+                if (a.Dead || b.Dead || !a.Spawned || !b.Spawned || a.Downed || b.Downed) { continue; }
+                if (a.CurJobDef != JobDefOf.AttackMelee)
+                {
+                    a.jobs.StartJob(JobMaker.MakeJob(JobDefOf.AttackMelee, b), Verse.AI.JobCondition.InterruptForced);
+                }
+            }
+            if (ceTicks < 600) { return; }
+            stage = -1;
+            int hurt = cePairs.Count(p => p.b.Dead || p.b.health.hediffSet.hediffs.Any(h => h is Hediff_Injury));
+            Log.Message($"[RimRising] CETOOLS FIGHT {cePairs.Count} pairs, {hurt} defenders wounded");
+            Log.Message("[RimRising] TESTSCENE DONE (cetools)");
+            if (GenCommandLine.CommandLineArgPassed("rrtestquit")) { Root.Shutdown(); }
+        }
 
         private static Pawn Gen(string kind, Faction fac) =>
             PawnGenerator.GeneratePawn(new PawnGenerationRequest(DefDatabase<PawnKindDef>.GetNamed(kind), fac,

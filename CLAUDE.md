@@ -1036,6 +1036,11 @@ that uses goodwill ignores `SetRelationDirect`; lower its goodwill to make it ho
   `isRadioPack`. Vanilla has no apparel darkness lever; only the gene field `ignoreDarkness`.
 - **CE can draw apparel only while drafted**: `CombatExtended.PawnRenderNodeWorker_Drafted` on an
   apparel `renderNodeProperties` entry (CE's VFE Medieval 2 shield patch). Unused so far.
+- **`rrtestmode=cetools`** lists every ThingDef, from any mod, with a non-ToolCE tool, then makes
+  pawns melee with each weapon of the mods in `rrcemods=<packageId,...>` for 600 ticks. CE's
+  weapon auto-patcher is OFF by default (its race auto-patcher is on). To test a mod that is not in
+  the user's list without touching it, copy `Config/` to a scratch folder, add the mod to that
+  copy's ModsConfig.xml and launch with `-savedatafolder=<that folder>`.
 - **Giddy-Up 2** ships its source: mountable when `baseBodySize > 1.2` or `GiddyUp.Mountable`;
   raider mounts per faction via `GiddyUp.FactionRestrictions` (`mountChance` in percent).
 
