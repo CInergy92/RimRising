@@ -1035,7 +1035,15 @@ that uses goodwill ignores `SetRelationDirect`; lower its goodwill to make it ho
   statBases (CE marine helmet 0.6, recon 0.7) and `CombatExtended.ApparelDefExtension`
   `isRadioPack`. Vanilla has no apparel darkness lever; only the gene field `ignoreDarkness`.
 - **CE can draw apparel only while drafted**: `CombatExtended.PawnRenderNodeWorker_Drafted` on an
-  apparel `renderNodeProperties` entry (CE's VFE Medieval 2 shield patch). Unused so far.
+  apparel `renderNodeProperties` entry (CE's VFE Medieval 2 shield patch). Not used: CE's
+  `PawnRenderNode_Apparel` takes its graphic class from the ITEM graphicData (Graphic_Single
+  for pulse armour), so it cannot load a per-facing helm.
+- **Pulse armour's helm draws only while sealed** (drafted, or an NPC whose job or duty shows the
+  weapon): `PulseHelm.cs`, wired by the suit's `apparel/renderNodeProperties`. Apparel render nodes
+  are built with the 3-arg constructor and `apparel` assigned after
+  (`DynamicPawnRenderNodeSetup_Apparel`); `baseLayer` is absolute (head apparel root 70). Hair,
+  beard and eyes are hidden by a postfix on `PawnRenderTree.AdjustParms`. Check it with
+  `-rrdrafted` on the armour scene.
 - **`rrtestmode=cetools`** lists every ThingDef, from any mod, with a non-ToolCE tool, then makes
   pawns melee with each weapon of the mods in `rrcemods=<packageId,...>` for 600 ticks. CE's
   weapon auto-patcher is OFF by default (its race auto-patcher is on). To test a mod that is not in
