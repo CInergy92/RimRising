@@ -1215,6 +1215,27 @@ namespace RimRising
             }
             Log.Message($"[RimRising] CETOOLS UNPATCHED TOTAL {total}");
 
+            // rrcecheck=<defName,...>: the LOADED armour and bulk of each, to prove a patch
+            // applied - the patch mod's operations are success=Always, so a stale XPath is silent.
+            if (GenCommandLine.TryGetCommandLineArg("rrcecheck", out string checks))
+            {
+                string[] stats = { "ArmorRating_Sharp", "ArmorRating_Blunt", "StuffEffectMultiplierArmor", "Bulk", "WornBulk" };
+                foreach (string name in checks.Split(',').Where(x => x.Length > 0))
+                {
+                    ThingDef td = DefDatabase<ThingDef>.GetNamedSilentFail(name);
+                    HediffDef hd = DefDatabase<HediffDef>.GetNamedSilentFail(name);
+                    string vals = td != null
+                        ? string.Join(" ", stats.Select(st => DefDatabase<StatDef>.GetNamedSilentFail(st)).Where(sd => sd != null && td.statBases != null && td.statBases.Any(m => m.stat == sd))
+                              .Select(sd => sd.defName + "=" + td.statBases.First(m => m.stat == sd).value.ToString("0.##"))) +
+                          (td.tools != null ? " tools=" + string.Join("/", td.tools.Select(t => t.GetType().Name)) : "")
+                        : hd != null
+                            ? string.Join(" ", hd.stages?.SelectMany(sg => sg.statOffsets ?? new List<StatModifier>()).Where(m => m.stat.defName.StartsWith("ArmorRating"))
+                                  .Select(m => m.stat.defName + "=" + m.value.ToString("0.##")) ?? Enumerable.Empty<string>())
+                            : "NOT LOADED";
+                    Log.Message($"[RimRising] CETOOLS CHECK {name}: {vals}");
+                }
+            }
+
             GenCommandLine.TryGetCommandLineArg("rrcemods", out string mods);
             var want = (mods ?? "").ToLowerInvariant().Split(',').Where(x => x.Length > 0).ToList();
             foreach (ThingDef d in DefDatabase<ThingDef>.AllDefsListForReading)
