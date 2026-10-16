@@ -1,6 +1,6 @@
 # RimRising
 
-A total conversion for **RimWorld 1.6** built around an engineered caste hierarchy: fourteen Colors,
+A total conversion for **RimWorld 1.6 and 1.7** built around an engineered caste hierarchy: fourteen Colors,
 each an inheritable xenotype with its own capabilities and costs, held together by a social order
 the game actually enforces.
 
