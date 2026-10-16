@@ -68,6 +68,20 @@
         <li>givenM->Rurik</li>
         <li>givenM->Aslak</li>
         <li>givenM->Hrolf</li>
+        <li>givenM->Arnbjorn</li>
+        <li>givenM->Eskil</li>
+        <li>givenM->Frodi</li>
+        <li>givenM->Geir</li>
+        <li>givenM->Hallgrim</li>
+        <li>givenM->Ingvar</li>
+        <li>givenM->Jorund</li>
+        <li>givenM->Kari</li>
+        <li>givenM->Ormar</li>
+        <li>givenM->Sverre</li>
+        <li>givenM->Toke</li>
+        <li>givenM->Ulfar</li>
+        <li>givenM->Vestein</li>
+        <li>givenM->Yngvar</li>
 
         <li>givenF->Brynja</li>
         <li>givenF->Sigrun</li>
@@ -85,7 +99,23 @@
         <li>givenF->Hilde</li>
         <li>givenF->Oddny</li>
         <li>givenF->Svala</li>
+        <li>givenF->Alfhild</li>
+        <li>givenF->Bergljot</li>
+        <li>givenF->Dagny</li>
+        <li>givenF->Freydis</li>
+        <li>givenF->Gyda</li>
+        <li>givenF->Hallveig</li>
+        <li>givenF->Inga</li>
+        <li>givenF->Jorunn</li>
+        <li>givenF->Katla</li>
+        <li>givenF->Saga</li>
+        <li>givenF->Signy</li>
+        <li>givenF->Thorunn</li>
+        <li>givenF->Unn</li>
+        <li>givenF->Vigdis</li>
 
+        <!-- 30 x 28 = 840 names per sex. At 16 x 14 = 224 a 3000-point raid test of 350 tribe
+             pawns ran the pool dry ("Could not get new name"); used names are not reused. -->
         <!-- The father. Patronymics are built on these, never on the given list. -->
         <li>father->Orm</li>
         <li>father->Thorv</li>
@@ -101,6 +131,20 @@
         <li>father->Hask</li>
         <li>father->Vigg</li>
         <li>father->Rand</li>
+        <li>father->Bjorn</li>
+        <li>father->Hrafn</li>
+        <li>father->Sven</li>
+        <li>father->Gud</li>
+        <li>father->Ketil</li>
+        <li>father->Ottar</li>
+        <li>father->Hall</li>
+        <li>father->Einar</li>
+        <li>father->Asmund</li>
+        <li>father->Trygg</li>
+        <li>father->Skuli</li>
+        <li>father->Bard</li>
+        <li>father->Hogn</li>
+        <li>father->Vemund</li>
       </rulesStrings>
     </rulePack>
   </RulePackDef>

@@ -20,7 +20,7 @@ endorsed by the author or his publishers. No text or artwork from the books is r
 
 ## Requirements
 
-- RimWorld **1.6** with **Royalty, Ideology and Biotech**.
+- RimWorld **1.6 or 1.7** with **Royalty, Ideology and Biotech**.
 - Required mods (RimWorld lists any that are missing): Harmony, Vanilla Expanded Framework,
   [NL] Facial Animation, [BT] EyeGenes2, Expanded Biotech Style Genes AiO, EBSG Framework,
   Alpha Genes, Expanded Archite Genes, Biotech Capacitor Genes, Lifespan Expectancy Genes.

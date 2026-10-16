@@ -13,17 +13,17 @@ the field.
 
 | Thing | Value |
 |---|---|
-| Game version | `1.6.4871 rev590` (from `Version.txt`) |
+| Game version | `1.7.4980 rev60` (from `Version.txt`; was 1.6.4871 rev590 until 2026-10-15) |
 | Game install | `D:\SteamLibrary\steamapps\common\RimWorld` |
 | Mods folder | `D:\SteamLibrary\steamapps\common\RimWorld\Mods` (confirmed by user) |
 | Vanilla defs | `<install>\Data\{Core,Royalty,Ideology,Biotech,Anomaly,Odyssey}\Defs\` |
-| Player log | `%USERPROFILE%\AppData\LocalLow\Ludeon Studios\RimWorld by Ludeon Studios\Player.log` |
+| Player log | 1.6: `%USERPROFILE%\AppData\LocalLow\Ludeon Studios\RimWorld by Ludeon Studios\Player.log`. 1.7: the log goes to **stdout** - capture it when launching (`RimWorld.exe ... > log.txt`); no file was written under `-savedatafolder`. Where it goes in normal play is unverified. |
 | Mod config | `...\RimWorld by Ludeon Studios\Config\ModsConfig.xml` |
 | packageId | `cinergy92.rimrising` |
 | DLC owned | All five, all active |
 
-Vanilla index size, as a sanity check for the validator: **11,586 defNames, 838 `Name=` abstract
-defs, across 1,558 XML files.** If `Test-ModDefs.ps1` reports numbers far off these, the game
+Vanilla index size, as a sanity check for the validator: **11,702 defNames, 838 `Name=` abstract
+defs, across 1,562 XML files** (1.7.4980; 1.6 was 11,586 across 1,558). If `Test-ModDefs.ps1` reports numbers far off these, the game
 updated or the scan is broken.
 
 ---
@@ -546,7 +546,7 @@ negative-tested as they were added (see PROGRESS).
 
 It exists and looks authoritative, but holds only **43 sample `.cs` files** Ludeon ships as modding
 examples. There is no `XenotypeDef.cs`, no `GeneDef.cs`. Field verification comes from vanilla XML,
-or from decompiling `RimWorldWin64_Data\Managed\Assembly-CSharp.dll` with `ilspycmd` — install and
+or from decompiling `Assembly-CSharp.dll` (1.7: in the install root; 1.6: `RimWorldWin64_Data\Managed\`) with `ilspycmd` — install and
 usage are under "Dependencies" above (the version must be pinned; the unpinned install fails).
 
 ### associatedMemes does not make a precept happen
@@ -793,7 +793,8 @@ or has despawned. `[MeleeAnim] <pawn> has bad job: Wait_Combat. Cancelling anima
 with `-rrtestscene`. Run:
 
 ```
-RimWorldWin64.exe -quicktest -rrtestscene rrtestout=<dir> -rrtestquit -screen-fullscreen 0 -screen-width 1920 -screen-height 1080
+RimWorld.exe -quicktest -rrtestscene rrtestout=<dir> -rrtestquit > log.txt      # 1.7
+RimWorldWin64.exe ... -screen-fullscreen 0 -screen-width 1920 -screen-height 1080   # 1.6 (Unity)
 ```
 
 `-quicktest` is RimWorld's own flag (`Verse.QuickStarter`): a fresh map with the current mod list,
@@ -1094,6 +1095,30 @@ itself if and when the mod is published to the Workshop. Package ID is separate 
 or `sed`.
 
 ---
+
+## RimWorld 1.7 (2026-10-15)
+
+1.7 left Unity. It runs on .NET 10 under Ludeon's own engine (Waylith, Vulkan) and a patched
+runtime, WaylithClr, whose `RimWorld.runtimeconfig.json` is built for old mods: `UnityEngine*`
+assemblies redirect to `UnityStubs.dll`, and binding, member signatures and access checks are lax.
+Verified, not assumed:
+
+- **RimRising's 1.6-built DLL runs unchanged on 1.7** - Harmony patches, the pulse-helm render node,
+  the reflection in `BiostatRangePatch`. `m12` 50/50, `bios` 33/33, `kinds`, `whip`, `nature`,
+  `raid` and the drafted armour scene all clean. It is still compiled against `Krafs.Rimworld.Ref`
+  1.6; rebuild against 1.7 only if something actually breaks.
+- **`LoadFolders.xml` has a `<v1.7>` block** listing the same folders as `<v1.6>`. Without 1.7 in
+  About.xml `supportedVersions` the mod still loads but is tagged "(incompatible version)".
+- **The validator passes against 1.7 vanilla** (`-RefreshVanillaCache`): no def we reference was
+  renamed or removed.
+- **1.7 RESETS a ModsConfig.xml written by an older version** ("Mods config data is from version
+  1.6.4871 rev590 while we are running 1.7.4980 rev60. Resetting."). An isolated test config must
+  carry `<version>1.7.4980 rev60</version>`. The user's own list needs reapplying in RimSort.
+- **Kill test instances by command line, never by image name.** The exe is `RimWorld.exe`; filter
+  `Win32_Process` on the `-savedatafolder` path so a game the user has open is never touched.
+- The camera will not zoom in past 5 cells half-height without Camera+, so test screenshots are
+  wider than the 2.7 the scene asks for.
+- Not ours, seen on 1.7: VEF fails a Harmony patch on `Building_GravEngine.GetOrbitalWarnings`.
 
 ## Working agreements
 
