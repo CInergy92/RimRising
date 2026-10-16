@@ -1178,16 +1178,25 @@ namespace RimRising
         private static Faction FactionOf(string defName) =>
             Find.FactionManager.AllFactionsListForReading.FirstOrDefault(f => f.def.defName == defName);
 
-        // ---- rrtestmode=cetools: which mods still have vanilla tools under CE ----------
+        // ---- rrtestmode=cetools: every weapon in the load order, under CE ----------------
         //
         // Under Combat Extended every <tools> entry on a weapon must be a ToolCE, or each
         // swing throws inside Verb_MeleeAttackCE and the log names no mod (CLAUDE.md).
-        // This lists every ThingDef with a non-ToolCE tool, by mod, then has pawns fight
-        // with each weapon of the mods named by rrcemods (packageIds, comma-separated)
-        // for a while; the log is then read for melee exceptions.
+        //
+        // 1. Lists every ThingDef with a non-ToolCE tool, by mod.
+        // 2. Tests every pawn-equippable weapon (or only the mods in rrcemods=<packageId,...>)
+        //    in waves: each weapon with tools does melee, each ranged weapon fires, at a
+        //    drafted target. The wielder is NAMED after the weapon's defName, so an
+        //    "Exception ticking <name>" line in the log names the weapon outright.
+        // 3. Logs one "CETOOLS RESULT" line per test: weapon | mod | melee/ranged | outcome.
+        // Ranged weapons get CE ammo through reflection (CompAmmoUser.ResetAmmoCount, plus a
+        // stack of the current ammo set's first ammo in inventory for magazine-less guns).
 
-        private readonly List<(Pawn a, Pawn b)> cePairs = new List<(Pawn, Pawn)>();
-        private int ceTicks;
+        private readonly List<(ThingDef def, bool ranged)> ceQueue = new List<(ThingDef, bool)>();
+        private readonly List<(ThingDef def, bool ranged, Pawn a, Pawn b)> ceWave = new List<(ThingDef, bool, Pawn, Pawn)>();
+        private int ceNext, ceWaveStart, ceWaveNo;
+        private CellRect ceArea;
+        private const int CeWaveSize = 56, CeWaveTicks = 600;
 
         private void BuildCeTools()
         {
@@ -1198,47 +1207,145 @@ namespace RimRising
             foreach (var g in bad)
             {
                 total += g.Count();
+                foreach (ThingDef d in g)
+                {
+                    Log.Message($"[RimRising] CETOOLS UNPATCHED-DEF {d.defName} | {g.Key} | {string.Join(", ", d.tools.Where(t => t != null && t.GetType().Name != "ToolCE").Select(t => t.label))}");
+                }
                 Log.Message($"[RimRising] CETOOLS UNPATCHED {g.Key}: {g.Count()} defs ({string.Join(", ", g.Take(6).Select(d => d.defName))})");
             }
             Log.Message($"[RimRising] CETOOLS UNPATCHED TOTAL {total}");
+
             GenCommandLine.TryGetCommandLineArg("rrcemods", out string mods);
             var want = (mods ?? "").ToLowerInvariant().Split(',').Where(x => x.Length > 0).ToList();
-            var weapons = DefDatabase<ThingDef>.AllDefsListForReading
-                .Where(d => d.IsWeapon && d.tools != null && d.race == null && !d.IsApparel
-                            && want.Any(w => (d.modContentPack?.PackageId ?? "").ToLowerInvariant().Contains(w)))
-                .Take(40).ToList();
-            IntVec3 c = map.Center;
-            Clear(CellRect.CenteredOn(c, 22).ClipInsideMap(map));
-            for (int i = 0; i < weapons.Count; i++)
+            foreach (ThingDef d in DefDatabase<ThingDef>.AllDefsListForReading)
             {
-                IntVec3 at = c + new IntVec3(-18 + (i % 8) * 5, 0, -16 + (i / 8) * 6);
-                Pawn a = Colonist(XenotypeDefOf.Baseliner, null), b = Colonist(XenotypeDefOf.Baseliner, null);
-                a.equipment.DestroyAllEquipment(); b.equipment.DestroyAllEquipment();
-                ThingDef wd = weapons[i];
-                var w = (ThingWithComps)ThingMaker.MakeThing(wd, wd.MadeFromStuff ? GenStuff.DefaultStuffFor(wd) : null);
-                a.equipment.AddEquipment(w);
-                GenSpawn.Spawn(a, at, map); GenSpawn.Spawn(b, at + IntVec3.East, map);
-                cePairs.Add((a, b));
-                Log.Message($"[RimRising] CETOOLS FIGHTER {wd.defName} ({wd.modContentPack?.Name}) tools: {string.Join(", ", wd.tools.Select(t => t.label + ":" + t.GetType().Name))}");
+                if (!d.IsWeapon || d.IsApparel || d.race != null) { continue; }
+                if (want.Count > 0 && !want.Any(w => (d.modContentPack?.PackageId ?? "").ToLowerInvariant().Contains(w))) { continue; }
+                string why = null;
+                if (d.equipmentType != EquipmentType.Primary || !d.HasComp(typeof(CompEquippable))) { why = "not pawn-equippable"; }
+                else if (d.destroyOnDrop) { why = "destroyOnDrop (turret, mech or ability weapon)"; }
+                else if (d.weaponTags != null && d.weaponTags.Contains("TurretGun")) { why = "turret gun"; }
+                if (why != null)
+                {
+                    Log.Message($"[RimRising] CETOOLS RESULT {d.defName} | {d.modContentPack?.Name ?? "?"} | - | SKIP {why}");
+                    continue;
+                }
+                if (d.tools != null && d.tools.Count > 0) { ceQueue.Add((d, false)); }
+                if (d.IsRangedWeapon) { ceQueue.Add((d, true)); }
             }
-            ceTicks = 0;
+            // Every melee test before any ranged one: gas grenades leave clouds that broke
+            // bystanders in the first full run and charged their errors to whoever stood there.
+            var melee = ceQueue.Where(q => !q.ranged).ToList();
+            ceQueue.RemoveAll(q => !q.ranged);
+            ceQueue.InsertRange(0, melee);
+            foreach (var (qd, qr) in ceQueue)
+            {
+                Log.Message($"[RimRising] CETOOLS QUEUED {qd.defName} | {qd.modContentPack?.Name ?? "?"} | {(qr ? "ranged" : "melee")}");
+            }
+            Log.Message($"[RimRising] CETOOLS QUEUE {ceQueue.Count} tests ({ceQueue.Count(q => !q.ranged)} melee, {ceQueue.Count(q => q.ranged)} ranged) in waves of {CeWaveSize}");
+            ceArea = CellRect.CenteredOn(map.Center, 38).ClipInsideMap(map);
+            ceNext = 0;
+            StartCeWave();
+        }
+
+        private void StartCeWave()
+        {
+            Clear(ceArea);
+            ceWave.Clear();
+            ceWaveNo++;
+            int n = 0;
+            while (ceNext < ceQueue.Count && n < CeWaveSize)
+            {
+                var (d, ranged) = ceQueue[ceNext++];
+                IntVec3 at = new IntVec3(ceArea.minX + 2 + (n % 8) * 9, 0, ceArea.minZ + 2 + (n / 8) * 10);
+                n++;
+                try
+                {
+                    Pawn a = Colonist(XenotypeDefOf.Baseliner, null), b = Colonist(XenotypeDefOf.Baseliner, null);
+                    a.Name = new NameSingle(d.defName);
+                    b.Name = new NameSingle("target of " + d.defName);
+                    a.equipment.DestroyAllEquipment(); b.equipment.DestroyAllEquipment();
+                    // A pawn incapable of violence never attacks; reroll (the whip scene does the same).
+                    for (int t = 0; t < 10 && a.WorkTagIsDisabled(WorkTags.Violent); t++) { Discard(a); a = Colonist(XenotypeDefOf.Baseliner, null); a.Name = new NameSingle(d.defName); a.equipment.DestroyAllEquipment(); }
+                    var w = (ThingWithComps)ThingMaker.MakeThing(d, d.MadeFromStuff ? GenStuff.DefaultStuffFor(d) : null);
+                    a.equipment.AddEquipment(w);
+                    GenSpawn.Spawn(a, at, map);
+                    GenSpawn.Spawn(b, at + new IntVec3(ranged ? 5 : 1, 0, 0), map);
+                    if (ranged) { LoadCeAmmo(a, w); }
+                    a.drafter.Drafted = true;
+                    b.drafter.Drafted = true;
+                    ceWave.Add((d, ranged, a, b));
+                }
+                catch (System.Exception e)
+                {
+                    Log.Message($"[RimRising] CETOOLS RESULT {d.defName} | {d.modContentPack?.Name ?? "?"} | {(ranged ? "ranged" : "melee")} | SETUP-THREW {e.GetType().Name}: {e.Message} @ {e.StackTrace?.Split((char)10).FirstOrDefault()?.Trim()}");
+                }
+            }
+            ceWaveStart = Find.TickManager.TicksGame;
+            Log.Message($"[RimRising] CETOOLS WAVE {ceWaveNo} start: {ceWave.Count} pairs, {ceNext}/{ceQueue.Count} queued");
+        }
+
+        private static void LoadCeAmmo(Pawn p, ThingWithComps w)
+        {
+            ThingComp comp = w.AllComps.FirstOrDefault(c => c.GetType().Name == "CompAmmoUser");
+            if (comp == null) { return; }
+            try
+            {
+                object set = comp.GetType().GetProperty("CurAmmoSet")?.GetValue(comp);
+                var types = set?.GetType().GetField("ammoTypes")?.GetValue(set) as System.Collections.IList;
+                if (types != null && types.Count > 0)
+                {
+                    object link = types[0];
+                    var ammo = link.GetType().GetField("ammo")?.GetValue(link) as ThingDef;
+                    if (ammo != null)
+                    {
+                        Thing stack = ThingMaker.MakeThing(ammo);
+                        stack.stackCount = Mathf.Max(1, Mathf.Min(ammo.stackLimit, 60));
+                        p.inventory.innerContainer.TryAdd(stack);
+                    }
+                }
+                comp.GetType().GetMethod("ResetAmmoCount")?.Invoke(comp, new object[] { null });
+            }
+            catch (System.Exception e)
+            {
+                Log.Message($"[RimRising] CETOOLS ammo for {w.def.defName} threw {e.GetType().Name}: {e.Message}");
+            }
         }
 
         private void CeToolsStep()
         {
-            ceTicks++;
-            foreach (var (a, b) in cePairs)
+            int elapsed = Find.TickManager.TicksGame - ceWaveStart;
+            foreach (var (d, ranged, a, b) in ceWave)
             {
                 if (a.Dead || b.Dead || !a.Spawned || !b.Spawned || a.Downed || b.Downed) { continue; }
-                if (a.CurJobDef != JobDefOf.AttackMelee)
+                JobDef want = ranged ? JobDefOf.AttackStatic : JobDefOf.AttackMelee;
+                if (a.CurJobDef != want)
                 {
-                    a.jobs.StartJob(JobMaker.MakeJob(JobDefOf.AttackMelee, b), Verse.AI.JobCondition.InterruptForced);
+                    try { a.jobs.StartJob(JobMaker.MakeJob(want, b), Verse.AI.JobCondition.InterruptForced); }
+                    catch (System.Exception) { }
                 }
             }
-            if (ceTicks < 600) { return; }
+            if (elapsed < CeWaveTicks) { return; }
+            foreach (var (d, ranged, a, b) in ceWave)
+            {
+                bool hurt = b.Dead || b.health.hediffSet.hediffs.Any(h => h is Hediff_Injury);
+                float shots = a.records?.GetValue(RecordDefOf.ShotsFired) ?? 0f;
+                string outcome = ranged
+                    ? (shots > 0 || hurt ? $"OK fired {shots:F0}, target hurt {hurt}" : "NO-SHOT")
+                    : (hurt ? "OK hit" : "NO-HIT");
+                if (a.Dead) { outcome += " (wielder died)"; }
+                Log.Message($"[RimRising] CETOOLS RESULT {d.defName} | {d.modContentPack?.Name ?? "?"} | {(ranged ? "ranged" : "melee")} | {outcome}");
+            }
+            foreach (var (d, ranged, a, b) in ceWave)
+            {
+                foreach (Pawn p in new[] { a, b })
+                {
+                    try { if (!p.Destroyed) { p.Destroy(); } } catch (System.Exception) { }
+                }
+            }
+            if (ceNext < ceQueue.Count) { StartCeWave(); return; }
             stage = -1;
-            int hurt = cePairs.Count(p => p.b.Dead || p.b.health.hediffSet.hediffs.Any(h => h is Hediff_Injury));
-            Log.Message($"[RimRising] CETOOLS FIGHT {cePairs.Count} pairs, {hurt} defenders wounded");
+            Log.Message($"[RimRising] CETOOLS DONE {ceWaveNo} waves");
             Log.Message("[RimRising] TESTSCENE DONE (cetools)");
             if (GenCommandLine.CommandLineArgPassed("rrtestquit")) { Root.Shutdown(); }
         }
