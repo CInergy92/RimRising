@@ -47,7 +47,8 @@ cover, **MUGB Goblin** and **Mutagen and Mutation**:
 - their armour, helmets and shields are rescaled into CE units, and their gear gets Bulk;
 - ranged weapons are left alone, because both mods fire their own projectile code.
 
-Each patch applies only when its target mod is active; CE is required. To install, link or copy
+Each patch applies only when its target mod is active; CE is required. Supports 1.6 and 1.7 (checked on 1.7.4980:
+37 converted weapons fought with no melee errors). To install, link or copy
 the folder into `RimWorld/Mods` and enable "Cinergy's CE Patches (local)". After either target mod
 updates, regenerate with `python Extras/CinergyCEPatches/Tools/gen_patches.py`. The test-scene
 mode `rrtestmode=cetools` lists any weapon in the load order that still lacks CE tools.
