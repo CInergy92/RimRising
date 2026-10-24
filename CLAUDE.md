@@ -13,7 +13,7 @@ the field.
 
 | Thing | Value |
 |---|---|
-| Game version | `1.7.4980 rev60` (from `Version.txt`; was 1.6.4871 rev590 until 2026-10-15) |
+| Game version | `1.7.4985 rev1269` (from `Version.txt`; 1.7.4980 rev60 on 2026-10-15, 1.6.4871 rev590 before) |
 | Game install | `D:\SteamLibrary\steamapps\common\RimWorld` |
 | Mods folder | `D:\SteamLibrary\steamapps\common\RimWorld\Mods` (confirmed by user) |
 | Vanilla defs | `<install>\Data\{Core,Royalty,Ideology,Biotech,Anomaly,Odyssey}\Defs\` |

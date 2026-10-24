@@ -5,6 +5,7 @@
   <packageId>cinergy92.rimrising</packageId>
   <modIconPath>UI/RimRisingModIcon</modIconPath>
   <modVersion>0.9.0</modVersion>
+  <url>https://github.com/CInergy92/RimRising</url>
   <description>A total conversion built around an engineered caste hierarchy: fourteen Colors, each a xenotype with its own capabilities and its own costs, bound together by a social order that gives the hierarchy real mechanical weight.
 
 WHAT IT ADDS
@@ -30,7 +31,7 @@ OPTIONAL - each part loads only if you already run that mod:
 - Odyssey: gravships burn helium-3.
 
 VERSIONS
-Built and tested on RimWorld 1.6. Also loads and passes its tests on 1.7 (1.7.4980), but several of the required mods have not yet released 1.7 versions of their own.
+Built and tested on RimWorld 1.6. Also loads and passes its tests on 1.7 (1.7.4985), but several of the required mods have not yet released 1.7 versions of their own.
 
 This mod is a work in progress.
 
@@ -41,7 +42,7 @@ This mod was made with heavy use of generative AI. Specifically:
 - 3 images were generated locally with Z-Image-Turbo and a ControlNet: the preview image and the storyteller portrait.
 - The other 131 images - item icons, xenotype and UI icons, tattoos, the pitviper and haemanthus, the mod icon, biome textures and effects - were drawn by scripts, with no image model involved.
 - The razor's whip-lash sound was generated with ElevenLabs Sound Effects v2 on fal.
-The full asset-by-asset list ships with the mod in About/AI_DISCLOSURE.txt.
+The full asset-by-asset list ships with the mod in About/AI_DISCLOSURE.txt, and the source - code, tools and the generation logs with every prompt and model - is public at https://github.com/CInergy92/RimRising .
 
 CREDITS
 A love letter to Pierce Brown's Red Rising saga, from a massive fan. Thank you, Pierce Brown, for the Society, the Institute, the Rising and every Color in between - for books that took a Red from the mines of Mars to the stars and never let go. This mod exists because those books would not leave me alone. If you have not read them, start with Red Rising.

@@ -109,7 +109,8 @@ An unofficial fan work inspired by Pierce Brown's Red Rising novels; not affilia
 by the author or his publishers. No text or artwork from the books is reproduced.
 
 This mod was made with heavy use of generative AI. The exact, asset-by-asset account ships with the
-mod in [`About/AI_DISCLOSURE.txt`](About/AI_DISCLOSURE.txt). In short:
+mod in [`About/AI_DISCLOSURE.txt`](About/AI_DISCLOSURE.txt), and this repository is public so the
+generation logs can be checked. In short:
 
 - **Code and text:** written by Claude (Anthropic) through Claude Code, under the author's direction:
   the C# assembly, every XML def and patch, every in-game string, and the tooling in `Tools/`.

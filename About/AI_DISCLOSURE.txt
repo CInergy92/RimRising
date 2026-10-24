@@ -65,5 +65,5 @@ NOT IN THIS MOD
    The optional "Cinergy's CE Patches" kept in the same source repository is a separate mod and is
    not part of this upload.
 
-Generation logs (prompts, models and request ids) are kept with the source art in the project
-repository under Art/; they do not ship with the mod.
+Generation logs (prompts, models and request ids) are kept with the source art in the public
+project repository under Art/ - https://github.com/CInergy92/RimRising - and do not ship with the mod.
