@@ -31,11 +31,15 @@ Each is loaded only if you already run it; nothing else changes without it.
 
 | Mod | Adds |
 |---|---|
-| Combat Extended | CE stats for the weapons, the vehicle turrets, and pulse armour, demonHelm and scarabSkin (the remaining armour pieces are not yet CE-patched) |
+| Combat Extended | CE stats for every weapon, armour piece and vehicle turret |
 | Exosuit Framework | the starShell |
-| Vehicle Framework | the Drachenjäger |
+| Vehicle Framework | the Drachenjäger walker and the ripWing aerial fighter |
 | Alpha Animals | Carvelings, grown in Carver vats |
-| Melee Animation | idle, attack and execution animations for both razors |
+| Melee Animation | idle, attack and execution animations for the razors |
+| [NL] Realistic Body | armour sprites with greaves for its body shapes |
+| Giddy-Up 2 - Continued | rideable griffins; Obsidian raiders ride them |
+| Dragons Descent | its dragons retold as Carver-made (descriptions only) |
+| Odyssey | gravships burn helium-3 |
 
 ### Extras: Cinergy's CE Patches (local)
 
@@ -97,16 +101,31 @@ rule as a procedure, with a per-type table of what to open.
 `Source/RimRising` holds the C# assembly. `CLAUDE.md` records every verified engine convention
 the project relies on, `docs/DESIGN.md` the content design, and `docs/PROGRESS.md` milestone status.
 
-## Credits
+## Credits and AI disclosure
 
-Built with Claude Code (Anthropic). Items, weapons, worn apparel, animals, plants, icons and
-terrain are drawn procedurally by scripts in `Tools/` (`Draw-Items.py`, `Draw-Weapons.py`,
-`Draw-Ranged.py`, `Draw-PanelArmor.py`, `Draw-Nature.py` and others). The starShell exosuit was
-generated with fal (fal.ai) using `openai/gpt-image-2` and `fal-ai/nano-banana-2/edit`, then cut
-out, greyscaled and outlined by `Tools/Clean-GenStarShell.py`; prompts and request ids are in
-`Art/Gen/StarShell/fal_manifest.jsonl`. Preview and storyteller art was generated locally with
-Z-Image-Turbo and a ControlNet in ComfyUI. Sound effects generated with fal using
-`fal-ai/elevenlabs/sound-effects/v2`; prompts and request ids are kept in
-`Art/Sounds/candidates/fal_manifest.jsonl`.
+A love letter to Pierce Brown's Red Rising saga, from a massive fan. Thank you, Pierce Brown, for the Society, the Institute, the Rising and every Color in between - for books that took a Red from the mines of Mars to the stars and never let go. This mod exists because those books would not leave me alone. If you have not read them, start with Red Rising.
+
+An unofficial fan work inspired by Pierce Brown's Red Rising novels; not affiliated with or endorsed
+by the author or his publishers. No text or artwork from the books is reproduced.
+
+This mod was made with heavy use of generative AI. The exact, asset-by-asset account ships with the
+mod in [`About/AI_DISCLOSURE.txt`](About/AI_DISCLOSURE.txt). In short:
+
+- **Code and text:** written by Claude (Anthropic) through Claude Code, under the author's direction:
+  the C# assembly, every XML def and patch, every in-game string, and the tooling in `Tools/`.
+  Models: Claude Opus 5, Opus 5.5, Fable 5 and Fable 5.1 (see the co-author lines in the history).
+  The author directed the design, made the lore and balance calls, chose which generated art to keep,
+  and play-tested the mod over several weeks.
+- **229 of 363 images:** generated on fal with OpenAI `openai/gpt-image-2` (and its edit endpoint),
+  then cut out, fitted, tint-masked and outlined by `Tools/Clean-GenWorn.py` and siblings: all worn
+  armour and helms, the weapons, both vehicles, the griffin and the clawDrill. The starShell also
+  used `fal-ai/nano-banana-2/edit`. Prompts, models and request ids: `Art/Gen/**/fal_manifest.jsonl`.
+- **3 images:** generated locally with Z-Image-Turbo and a ControlNet in ComfyUI (the preview image
+  and the storyteller portrait).
+- **131 images:** drawn by scripts with no image model (`Draw-Items.py`, `Draw-PanelArmor.py`,
+  `Draw-Nature.py`, `New-XenotypeIcons.ps1`, `New-CasteMarks.ps1` and others): item icons,
+  xenotype and UI icons, tattoos, the pitviper and haemanthus, the mod icon, biomes and effects.
+- **1 sound:** generated on fal with `fal-ai/elevenlabs/sound-effects/v2`
+  (`Art/Sounds/candidates/fal_manifest.jsonl`).
 
 Thanks to the authors of every required mod, and to Epicguru for Melee Animation.

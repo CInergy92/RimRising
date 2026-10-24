@@ -100,6 +100,10 @@ $excludeFiles = @(
     '*.user'
     '.gitignore'
     '.gitattributes'
+    # Written into About/ by RimWorld's Workshop uploader (decompiled: ModMetaData.PublishedFileIdPath)
+    # and needed by every later upload to update the same item. /XF also keeps /MIR from purging
+    # it, so a publish after the first upload does not orphan the Workshop item.
+    'PublishedFileId.txt'
 )
 
 $robocopyArgs = @(
