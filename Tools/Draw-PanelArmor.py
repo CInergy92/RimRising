@@ -415,8 +415,24 @@ def duro_armor(fr, facing, body_mask, legs=None):
         P.append((mask, tone, side if side is not None else np.zeros_like(mask)))
 
     big = getattr(fr, "body", None) in ("Fat", "Hulk")
+    # FEMALE gets tassets. Her waist is narrow at the belt and her hips flare just
+    # below it, so the bare cuirass looked a size too small, the hips bulging past
+    # its bottom edge (the user's call, 2026-10-24: "riveted steel tassets"). Two
+    # lames per hip, hung from the belt and shaped to the padded hip outline.
+    hips = getattr(fr, "body", None) == "Female"
     # The body outline padded out a little: plate stands proud of what it covers.
-    hug = cw.dilate(body_mask, 2.0 * SS) if big else None
+    hug = cw.dilate(body_mask, 2.0 * SS) if (big or hips) else None
+
+    def tassets():
+        if not hips:
+            return
+        gap = (np.abs(fr.u - 0.5) < 0.035) if facing != "east" else np.zeros_like(body_mask)
+        for v0, v1 in ((0.66, 0.80), (0.77, 0.91)):
+            lame = cw.blur(cw.blur((hug & (fr.v >= v0) & (fr.v <= v1) & ~gap).astype(np.float32),
+                                   fr.px(0.02)), fr.px(0.02)) > 0.5
+            side = (plane_split(fr, lame, 1.0, 0.0, 0.5) if facing != "east"
+                    else plane_split(fr, lame, 0.0, 1.0, v0 + (v1 - v0) * 0.6))
+            add(lame, "steel", side)
 
     def follow(mask, v0, v1):
         """On a big body, widen mask to the padded body between v0 and v1."""
@@ -430,6 +446,7 @@ def duro_armor(fr, facing, body_mask, legs=None):
         cuirass = follow(cuirass, 0.22, 0.68)
         # The pressed ridge down the middle IS the plane break: left lit, right dark.
         add(cuirass, "steel", plane_split(fr, cuirass, 1.0, 0.0, 0.5))
+        tassets()
         belt = poly(fr, [(0.20, 0.62), (0.80, 0.62), (0.78, 0.70), (0.22, 0.70)], round_=0.015)
         add(follow(belt, 0.62, 0.70) & (fr.v >= 0.615) & (fr.v <= 0.705), "strap")
         if facing == "south":
@@ -444,6 +461,7 @@ def duro_armor(fr, facing, body_mask, legs=None):
         cuirass = poly(fr, [(0.08, 0.10), (0.78, 0.08), (1.02, 0.26), (0.96, 0.52), (0.82, 0.68), (0.14, 0.68)], round_=0.06)
         cuirass = follow(cuirass, 0.22, 0.68)
         add(cuirass, "steel", plane_split(fr, cuirass, 0.0, 1.0, 0.40))
+        tassets()
         belt = poly(fr, [(0.12, 0.62), (0.86, 0.62), (0.84, 0.70), (0.14, 0.70)], round_=0.015)
         add(follow(belt, 0.62, 0.70) & (fr.v >= 0.615) & (fr.v <= 0.705), "strap")
         cap = ellipse(fr, 0.44, 0.12, 0.22, 0.12)

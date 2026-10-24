@@ -8,7 +8,8 @@
 - The Obsidian face mark is now a chevron on the brow. The old band across the eyes looked like a
   blindfold and spilled past the edge of the head.
 - duroArmor fits Fat and Hulk bodies: the cuirass and belt now follow the body down to the belt,
-  where before a narrow plate sat on the belly with the body bulging past it.
+  where before a narrow plate sat on the belly with the body bulging past it. On Female it gains
+  riveted steel tassets over the hips, which flared out below the bare cuirass.
 
 ## 1.0.0 - first public release
 
