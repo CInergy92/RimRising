@@ -4,7 +4,7 @@
   <author>cinergy92</author>
   <packageId>cinergy92.rimrising</packageId>
   <modIconPath>UI/RimRisingModIcon</modIconPath>
-  <modVersion>0.9.0</modVersion>
+  <modVersion>1.0.0</modVersion>
   <url>https://github.com/CInergy92/RimRising</url>
   <description>A total conversion built around an engineered caste hierarchy: fourteen Colors, each a xenotype with its own capabilities and its own costs, bound together by a social order that gives the hierarchy real mechanical weight.
 
@@ -32,8 +32,6 @@ OPTIONAL - each part loads only if you already run that mod:
 
 VERSIONS
 Built and tested on RimWorld 1.6. Also loads and passes its tests on 1.7 (1.7.4985), but several of the required mods have not yet released 1.7 versions of their own.
-
-This mod is a work in progress.
 
 AI DISCLOSURE
 This mod was made with heavy use of generative AI. Specifically:
