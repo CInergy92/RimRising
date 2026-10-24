@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
@@ -29,7 +30,11 @@ namespace RimRising
                 || (p.mindState?.duty?.def?.alwaysShowWeapon ?? false);
         }
 
-        private static readonly Dictionary<ThingDef, bool> hasHelm = new Dictionary<ThingDef, bool>();
+        // Concurrent: AdjustParms runs inside PawnRenderTree.ParallelPreDraw, so several
+        // pawns reach this at once. A plain Dictionary written from two threads corrupted
+        // (1.7, 2026-10-24: every drafted pawn in rrtestmode=weapons stopped rendering, and
+        // each later lookup threw "Operations that change non-concurrent collections").
+        private static readonly ConcurrentDictionary<ThingDef, bool> hasHelm = new ConcurrentDictionary<ThingDef, bool>();
 
         public static bool WearsHelm(Pawn p)
         {
@@ -37,12 +42,8 @@ namespace RimRising
             if (worn == null) { return false; }
             for (int i = 0; i < worn.Count; i++)
             {
-                ThingDef d = worn[i].def;
-                if (!hasHelm.TryGetValue(d, out bool yes))
-                {
-                    yes = d.apparel?.RenderNodeProperties?.Any(n => n.nodeClass == typeof(PawnRenderNode_PulseHelm)) == true;
-                    hasHelm[d] = yes;
-                }
+                bool yes = hasHelm.GetOrAdd(worn[i].def, d =>
+                    d.apparel?.RenderNodeProperties?.Any(n => n.nodeClass == typeof(PawnRenderNode_PulseHelm)) == true);
                 if (yes) { return true; }
             }
             return false;

@@ -1055,12 +1055,12 @@ namespace RimRising
                         forceGenerateNewPawn: true, developmentalStages: DevelopmentalStage.Adult, fixedBiologicalAge: 30f, fixedChronologicalAge: 30f));
                     p.apparel?.DestroyAll();
                     p.equipment?.DestroyAllEquipment();
-                    Dress(p);
+                    Dress(p, shirt: false);
                     p.story.hairDef = HairDefOf.Bald;
                     GenSpawn.Spawn(p, new IntVec3(area.minX + 1 + k * 2, 0, area.maxZ - 1 - f * 2), map, Facings[f]);
                     p.Rotation = Facings[f];
                     p.Drawer.renderer.SetAllGraphicsDirty();
-                    Log.Message($"[RimRising] MARKS {kinds[k]} {Facings[f]}: face {p.style?.FaceTattoo?.defName}, body {p.style?.BodyTattoo?.defName}");
+                    Log.Message($"[RimRising] MARKS {kinds[k]} {Facings[f]}: face {p.style?.FaceTattoo?.defName}, body {p.style?.BodyTattoo?.defName}, wearing {string.Join(",", p.apparel?.WornApparel.Select(a => a.def.defName) ?? Enumerable.Empty<string>())}");
                 }
             }
             Find.TickManager.CurTimeSpeed = TimeSpeed.Paused;
@@ -2031,17 +2031,22 @@ namespace RimRising
         }
 
         // Plain vanilla trousers and shirt under whatever the scene shows, so no test pawn
-        // is drawn naked (the user's call, 2026-10-24, for the Workshop gallery). Each piece
+        // is drawn naked (the user's call, 2026-10-24, for the Workshop gallery). Vanilla
+        // never draws trousers - they have no worn texture - so only the shirt shows;
+        // for bare-skin shots, launch without Realistic Body's detailed bodies. Each piece
         // is worn only where ApparelUtility.CanWearTogether allows it beside what is already
         // on, so it never displaces the armour being shown. -rrbare turns it off for
         // judging how armour sits on the bare body.
         private static readonly string[] Modest = { "Apparel_Pants", "Apparel_BasicShirt" };
 
-        private static void Dress(Pawn p)
+        // shirt: false for the caste-marks scene, whose body tattoos (chest chevrons,
+        // the arm tally) a shirt would hide; every mark sits above the waist.
+        private static void Dress(Pawn p, bool shirt = true)
         {
             if (p?.apparel == null || GenCommandLine.CommandLineArgPassed("rrbare")) { return; }
             foreach (string name in Modest)
             {
+                if (!shirt && name == "Apparel_BasicShirt") { continue; }
                 ThingDef d = DefDatabase<ThingDef>.GetNamedSilentFail(name);
                 if (d == null) { continue; }
                 if (p.apparel.WornApparel.Any(w => !ApparelUtility.CanWearTogether(w.def, d, p.RaceProps.body))) { continue; }

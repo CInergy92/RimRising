@@ -1136,6 +1136,15 @@ Verified, not assumed:
   1.6 needs the loose files. `Publish-Mod.ps1`'s `/MIR` removes baked packs from the Mods copy.
 - **Add Camera+ (`brrainz.cameraplus`) to an isolated test config** for screenshots at the scene's
   2.7-cell zoom; without it 1.7's camera stops at 5.
+- **Render-path code runs on several threads at once.** `PawnRenderTree.ParallelPreDraw` calls
+  `AdjustParms` (and anything patched under it) from worker threads. A plain static `Dictionary`
+  cache there corrupted, every later lookup threw "Operations that change non-concurrent
+  collections", and drafted pawns stopped drawing (`PulseHelm.cs`, fixed 2026-10-24 with a
+  `ConcurrentDictionary`). Anything shared and mutable on the draw path must be concurrent,
+  `[ThreadStatic]` or built once before play.
+- **Vanilla never draws trousers** - `Apparel_Pants` has no worn graphic. For gallery shots that
+  show bare skin (caste marks), launch an isolated config **without Realistic Body**, whose bodies
+  are far more detailed than vanilla's plain shapes.
 
 ## Working agreements
 

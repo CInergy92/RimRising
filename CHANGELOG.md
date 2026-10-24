@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Fixed: drafting several pawns at once could stop pawns from drawing and flood the log with
+  "Operations that change non-concurrent collections must have exclusive access". The pulse-helm
+  check kept a cache that RimWorld's parallel pawn drawing wrote from several threads at once.
+- The Obsidian face mark is now a chevron on the brow. The old band across the eyes looked like a
+  blindfold and spilled past the edge of the head.
+
 ## 1.0.0 - first public release
 
 The first Steam Workshop release, after a several-week playtest.
