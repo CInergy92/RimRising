@@ -1,5 +1,7 @@
 # RimRising
 
+**[Get it on the Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3826500705)** - or download the mod folder from the [latest release](https://github.com/CInergy92/RimRising/releases/latest).
+
 A total conversion for **RimWorld 1.6 and 1.7** built around an engineered caste hierarchy: fourteen Colors,
 each an inheritable xenotype with its own capabilities and costs, held together by a social order
 the game actually enforces.
@@ -72,7 +74,7 @@ turns the log into a per-mod report; the latest is `Extras/CinergyCEPatches/AUDI
 
 ## Install
 
-Subscribe on the Steam Workshop, or copy this folder's shipped content into
+Subscribe on the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3826500705), or copy this folder's shipped content into
 `RimWorld/Mods/RimRising`. Load it after everything in the requirements list.
 
 ## Troubleshooting
