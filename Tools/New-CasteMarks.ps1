@@ -89,19 +89,23 @@ New-Mark 'RR_DigiTat' 'north' { param($g)
 }
 
 # ------------------------------------------------------- stained brow (Obsidian)
-# A dark band across the eyes, ear to ear, and three stripes down the chin.
+# One downward chevron in the middle of the forehead.
+#
+# Keep face marks on the forehead. Two lessons from rrtestmode=marks (2026-10-24):
+#  - the face is NOT clipped to the head's outline: strokes past the jaw draw on the
+#    neck and collar (the first design, a band across the eyes ear to ear, read as a
+#    blindfold and "goes off their skin" - the user);
+#  - head shapes vary (Facial Animation draws its own), so the lower face moves from
+#    pawn to pawn. Cheek streaks at y 0.62-0.68 sat on the cheeks of one head and on
+#    the neck of the next. The forehead, y 0.42-0.47, is skin on every head seen.
 New-Mark 'RR_ObsidianStainFace' 'south' { param($g)
-    P $g $Black @(@(0.28,0.44), @(0.72,0.44), @(0.72,0.53), @(0.28,0.53))
-    foreach ($x in @(0.44, 0.50, 0.56)) { L $g $Black 0.024 @(@($x,0.60), @($x,0.70)) }
+    L $g $Black 0.026 @(@(0.445,0.43), @(0.50,0.468), @(0.555,0.43))
 }
 New-Mark 'RR_ObsidianStainFace' 'east' { param($g)
-    P $g $Black @(@(0.36,0.44), @(0.72,0.44), @(0.72,0.53), @(0.36,0.53))
-    L $g $Black 0.024 @(@(0.62,0.60), @(0.62,0.70))
+    L $g $Black 0.026 @(@(0.56,0.43), @(0.60,0.465), @(0.64,0.435))
 }
-New-Mark 'RR_ObsidianStainFace' 'north' { param($g)
-    # The band runs all the way round, so its back shows under the hair line.
-    P $g $Black @(@(0.28,0.46), @(0.72,0.46), @(0.72,0.53), @(0.28,0.53))
-}
+# From behind the face is hidden; nothing shows.
+New-Mark 'RR_ObsidianStainFace' 'north' { param($g) }
 
 # ------------------------------------------------------- tribal stain (Obsidian)
 # Chevron bands across the chest and shoulders; on the back, the same bands.
