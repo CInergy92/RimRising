@@ -14,6 +14,11 @@ Publishing is the author's call and is done by hand from inside RimWorld. This p
    `*.md` files are not shipped, and the Workshop description plus `About/AI_DISCLOSURE.txt`
    cover what a README would.
 4. Launch once with your normal mod list and check the log for red errors from RimRising.
+5. Scan the shipped folder for personal data - it must print nothing:
+   `grep -r -l -a -i -E "<your email>|<your name>" "<RimWorld>/Mods/RimRising"`.
+   The lint above does not look for this. On 2026-10-24 it caught `.git-rewrite/`, left by an
+   abandoned history rewrite and holding the personal email, mirrored into the Mods copy;
+   `Publish-Mod.ps1` now excludes it and `.claude/`.
 
 ## Uploading (first time)
 
@@ -47,5 +52,5 @@ update the description by hand.
 
 ## Updating later
 
-Run steps 1-4, then **Update on Steam Workshop** from the same in-game Mods menu, and write the
+Run steps 1-5, then **Update on Steam Workshop** from the same in-game Mods menu, and write the
 change notes in the dialog Steam shows. Bump `modVersion` in `About/About.xml` first.

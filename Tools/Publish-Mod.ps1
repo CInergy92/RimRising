@@ -82,6 +82,9 @@ $excludeDirs = @(
     '.git'
     '.github'
     '.vs'
+    '.claude'       # Claude Code project skills - dev tooling, not mod content
+    '.git-rewrite'  # left behind by an abandoned git filter-branch; holds commit records
+                    # with the author's personal email, and once reached the Mods copy
     'Source'
     'docs'
     'Tools'
