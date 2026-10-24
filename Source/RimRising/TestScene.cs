@@ -245,6 +245,11 @@ namespace RimRising
                         if (GenCommandLine.CommandLineArgPassed("rrtestquit")) { Root.Shutdown(); }
                         return;
                     }
+                    // Alerts ("Need medicine" and the like) sit over the right edge of the
+                    // shot. StorytellerDef.disableAlerts makes AlertsReadoutUpdate clear them
+                    // all; F11's screenshot mode would also drop the pawn labels. Test process
+                    // only - the def is never saved.
+                    Find.Storyteller.def.disableAlerts = true;
                     Find.CameraDriver.SetRootPosAndSize(shots[shotIndex].centre, bestRoot);
                     stage = 2;
                     wait = 15;
@@ -592,6 +597,7 @@ namespace RimRising
                     var eq = (ThingWithComps)ThingMaker.MakeThing(defs[a], stuff);
                     p.equipment.DestroyAllEquipment();
                     p.equipment.AddEquipment(eq);
+                    Dress(p);
                     p.Name = new NameSingle(defs[a].label.CapitalizeFirst());
                     GenSpawn.Spawn(p, new IntVec3(area.minX + a, 0, z), map, held[r]);
                     p.drafter.Drafted = true;
@@ -1049,6 +1055,7 @@ namespace RimRising
                         forceGenerateNewPawn: true, developmentalStages: DevelopmentalStage.Adult, fixedBiologicalAge: 30f, fixedChronologicalAge: 30f));
                     p.apparel?.DestroyAll();
                     p.equipment?.DestroyAllEquipment();
+                    Dress(p);
                     p.story.hairDef = HairDefOf.Bald;
                     GenSpawn.Spawn(p, new IntVec3(area.minX + 1 + k * 2, 0, area.maxZ - 1 - f * 2), map, Facings[f]);
                     p.Rotation = Facings[f];
@@ -2023,6 +2030,26 @@ namespace RimRising
             Log.Message($"[RimRising] BIOS SUMMARY {total - bad}/{total} kinds clean");
         }
 
+        // Plain vanilla trousers and shirt under whatever the scene shows, so no test pawn
+        // is drawn naked (the user's call, 2026-10-24, for the Workshop gallery). Each piece
+        // is worn only where ApparelUtility.CanWearTogether allows it beside what is already
+        // on, so it never displaces the armour being shown. -rrbare turns it off for
+        // judging how armour sits on the bare body.
+        private static readonly string[] Modest = { "Apparel_Pants", "Apparel_BasicShirt" };
+
+        private static void Dress(Pawn p)
+        {
+            if (p?.apparel == null || GenCommandLine.CommandLineArgPassed("rrbare")) { return; }
+            foreach (string name in Modest)
+            {
+                ThingDef d = DefDatabase<ThingDef>.GetNamedSilentFail(name);
+                if (d == null) { continue; }
+                if (p.apparel.WornApparel.Any(w => !ApparelUtility.CanWearTogether(w.def, d, p.RaceProps.body))) { continue; }
+                ThingDef stuff = d.MadeFromStuff ? GenStuff.DefaultStuffFor(d) : null;
+                p.apparel.Wear((Apparel)ThingMaker.MakeThing(d, stuff), dropReplacedApparel: false, locked: true);
+            }
+        }
+
         private Pawn MakePawn(BodyTypeDef body, ThingDef armor, Color gold)
         {
             var req = new PawnGenerationRequest(
@@ -2083,6 +2110,7 @@ namespace RimRising
                 ap.Notify_Equipped(p);
                 HarmonyLib.AccessTools.Method(ap.GetType(), "ModuleRecache")?.Invoke(ap, null);
             }
+            Dress(p);
             p.Name = new NameSingle(armor.label.CapitalizeFirst());
             // Not the player's: 105 test colonists filled the colonist bar across
             // the top of every shot. Factionless pawns stay out of it, and the game
