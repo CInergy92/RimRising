@@ -402,17 +402,36 @@ def duro_armor(fr, facing, body_mask, legs=None):
     steel with a pressed centre ridge, a leather belt, small caps set close to the
     neck. No suit is drawn under it - whatever the pawn wears shows below and
     around it, which is what makes it read as cheap kit over clothes. Torso and
-    shoulders only, so it never has legs."""
+    shoulders only, so it never has legs.
+
+    BIG BODIES follow the body. The cuirass tapers to the belt, which fits a waist
+    that narrows (Male, Female, Thin). Fat's belly and Hulk's waist WIDEN there, so
+    on them the tapered plate sat on the body like a small box, with the belly or
+    shirt bulging past it on both sides (judged in the armour scene, 2026-10-24).
+    On Fat and Hulk the plate and belt take the body's own width down to the belt."""
     P = []
 
     def add(mask, tone, side=None):
         P.append((mask, tone, side if side is not None else np.zeros_like(mask)))
 
+    big = getattr(fr, "body", None) in ("Fat", "Hulk")
+    # The body outline padded out a little: plate stands proud of what it covers.
+    hug = cw.dilate(body_mask, 2.0 * SS) if big else None
+
+    def follow(mask, v0, v1):
+        """On a big body, widen mask to the padded body between v0 and v1."""
+        if not big:
+            return mask
+        band = hug & (fr.v >= v0) & (fr.v <= v1)
+        return cw.blur(cw.blur((mask | band).astype(np.float32), fr.px(0.03)), fr.px(0.03)) > 0.5
+
     if facing in ("south", "north"):
         cuirass = poly(fr, [(0.08, 0.10), (0.92, 0.10), (0.90, 0.40), (0.78, 0.68), (0.22, 0.68), (0.10, 0.40)], round_=0.05)
+        cuirass = follow(cuirass, 0.22, 0.68)
         # The pressed ridge down the middle IS the plane break: left lit, right dark.
         add(cuirass, "steel", plane_split(fr, cuirass, 1.0, 0.0, 0.5))
-        add(poly(fr, [(0.20, 0.62), (0.80, 0.62), (0.78, 0.70), (0.22, 0.70)], round_=0.015), "strap")
+        belt = poly(fr, [(0.20, 0.62), (0.80, 0.62), (0.78, 0.70), (0.22, 0.70)], round_=0.015)
+        add(follow(belt, 0.62, 0.70) & (fr.v >= 0.615) & (fr.v <= 0.705), "strap")
         if facing == "south":
             add(poly(fr, [(0.45, 0.62), (0.55, 0.62), (0.55, 0.70), (0.45, 0.70)], round_=0.01), "trim")
             add(ellipse(fr, 0.5, 0.08, 0.17, 0.08), "suit")       # neck opening
@@ -423,8 +442,10 @@ def duro_armor(fr, facing, body_mask, legs=None):
             add(cap, "steel", plane_split(fr, cap, 1.0, 0.0, cu))
     else:
         cuirass = poly(fr, [(0.08, 0.10), (0.78, 0.08), (1.02, 0.26), (0.96, 0.52), (0.82, 0.68), (0.14, 0.68)], round_=0.06)
+        cuirass = follow(cuirass, 0.22, 0.68)
         add(cuirass, "steel", plane_split(fr, cuirass, 0.0, 1.0, 0.40))
-        add(poly(fr, [(0.12, 0.62), (0.86, 0.62), (0.84, 0.70), (0.14, 0.70)], round_=0.015), "strap")
+        belt = poly(fr, [(0.12, 0.62), (0.86, 0.62), (0.84, 0.70), (0.14, 0.70)], round_=0.015)
+        add(follow(belt, 0.62, 0.70) & (fr.v >= 0.615) & (fr.v <= 0.705), "strap")
         cap = ellipse(fr, 0.44, 0.12, 0.22, 0.12)
         add(cap, "steel", plane_split(fr, cap, 0.0, 1.0, 0.14))
     return P
@@ -580,6 +601,7 @@ def draw(design, body, facing, box=None, rb=False):
         box = _scaled_box(HEAD_BOX, HELM_SCALE)
     box = box or cw.BOXES[body][kind]
     fr = Frame(box, cw.BOXES["Male"][kind])
+    fr.body = body
     n = CANVAS * SS
 
     # The body outline, from the compositor's fitted beans, as the suit layer.
