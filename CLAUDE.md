@@ -1119,6 +1119,23 @@ Verified, not assumed:
 - The camera will not zoom in past 5 cells half-height without Camera+, so test screenshots are
   wider than the 2.7 the scene asks for.
 - Not ours, seen on 1.7: VEF fails a Harmony patch on `Building_GravEngine.GetOrbitalWarnings`.
+- **In normal 1.7 play the log is `<save data>\Logs\Player.log`** (previous run: `Player-prev.log`).
+  `Get-ModLoadErrors.ps1 -LogPath` reads it.
+- **Decompile 1.7 with ilspycmd 9.1**, not the pinned 8.2, which throws on its assembly
+  ("Argument must be between 0 and 2. (Parameter 'fieldCount')"). Install it to a scratch path:
+  `dotnet tool install ilspycmd --version 9.1.0.7988 --tool-path <dir> --add-source https://api.nuget.org/v3/index.json`.
+  Mod-loading and Workshop code lives partly in `RimWorld.dll` (namespace `RimWorldWaylith`), not
+  only `Assembly-CSharp.dll`.
+- **Asset packs** - 1.7's upload dialog offers "Build asset pack". It packs each load folder's
+  textures and sounds into `Assets.zip` (+ `.fingerprint`, `.roles`, `.stamps`) in that folder. Bake
+  without uploading: `RimWorld.exe -BakeModAssetPacks=<mod root>` (`;`-separated for several), which
+  exits 0 on success (`RimWorldWaylith.ModAssetPackBake`). Verified 2026-10-24: RimRising bakes
+  clean (root 308 entries, Realistic Body 54), and with every loose `Textures`/`Sounds` folder
+  hidden the armour scene rendered correctly from packs alone - the Realistic Body override
+  survives, because each load folder gets its own pack. Keep "Don't upload source textures" OFF:
+  1.6 needs the loose files. `Publish-Mod.ps1`'s `/MIR` removes baked packs from the Mods copy.
+- **Add Camera+ (`brrainz.cameraplus`) to an isolated test config** for screenshots at the scene's
+  2.7-cell zoom; without it 1.7's camera stops at 5.
 
 ## Working agreements
 

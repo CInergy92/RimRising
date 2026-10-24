@@ -31,6 +31,13 @@ Publishing is the author's call and is done by hand from inside RimWorld. This p
 4. On the new Workshop page, set the visibility (it starts private or hidden, depending on Steam)
    and check the description.
 
+## The 1.7 upload options
+
+- **Build asset pack: on.** Tested 2026-10-24 with `-BakeModAssetPacks` and the loose files hidden:
+  everything renders from the packs, Realistic Body greaves included.
+- **Don't upload source textures: OFF.** 1.6 players need the loose image and sound files.
+- **Tag as translation: off.**
+
 ## What RimWorld sends (decompiled, `Workshop.SetWorkshopItemDataFrom`)
 
 - **Title** and **preview image** (`About/Preview.png`, 640x360, 405 KB) on every upload.
