@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.1 - 2026-10-24
 
 - Fixed: drafting several pawns at once could stop pawns from drawing and flood the log with
   "Operations that change non-concurrent collections must have exclusive access". The pulse-helm
