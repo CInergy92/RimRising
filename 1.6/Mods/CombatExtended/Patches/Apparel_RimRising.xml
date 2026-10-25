@@ -11,6 +11,8 @@
 
   Scaled against CE's own figures for marine armor - Sharp 20, Blunt 45, Bulk 100,
   WornBulk 15, Mass 50 - with each piece placed relative to that.
+  Re-checked against CE-Continued master on 2026-10-25 (Apparel_Various.xml,
+  ApparelArmorPowerBase): unchanged, plus CarryWeight 80 / CarryBulk 10.
 
   Bulk is CE's encumbrance system and has no vanilla equivalent, so every piece
   needs it or it weighs nothing to carry.
@@ -203,8 +205,9 @@
 
   <!-- ============================== duroArmor ===============================
 
-    Stamped plate for Grays. CE's flak vest is Sharp 10 / Blunt 20 with no helmet;
-    duro sits there, which keeps the scorcher-versus-duro fight real and the
+    Stamped plate for Grays. CE's armor vest (vanilla flak vest) is no longer a fixed
+    rating: CE-Continued gives it StuffEffectMultiplierArmor 8 and lets the stuff
+    decide. Sharp 10 / Blunt 22 is roughly a steel one, and duro sits there, which keeps the scorcher-versus-duro fight real and the
     razor-versus-duro fight a formality, exactly as the vanilla numbers do.
   -->
 

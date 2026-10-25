@@ -136,5 +136,5 @@ says what to compare.
 
 ## 6. CE numbers are first placements
 
-Heirloom razor (copied from the razor), slingBlade (under CE's gladius), Howler pelt (bulk
+Heirloom razor (CE's bladelink x1.21 convention), slingBlade (CE gladius band, re-checked 2026-10-25), Howler pelt (bulk
 only; armour is the leather's). Judge in play, as with the armour pass.

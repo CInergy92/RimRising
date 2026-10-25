@@ -379,8 +379,12 @@
   </Operation>
 
   <!-- ============================ heirloom razor ===========================
-    The same blade as RR_Weapon_Razor, bonded. Numbers copied from the razor's
-    patch above so the two cannot drift. -->
+    CE's own convention for persona blades (Royalty/Patches/Royalty/ThingDefs_Misc/
+    Weapons_RoyaltyBladelinkMelee.xml): the bladelink monosword is the monosword
+    with penetration x1.21, power +3 and cooldowns x0.89 (edge Sharp 18 -> 21.78,
+    point 25 -> 30.24, cooldown 0.83 -> 0.74). Applied to the razor's numbers above
+    rather than copying them flat, so the bonded blade is better in the same way a
+    vanilla persona weapon is. -->
 
   <Operation Class="PatchOperationReplace">
     <xpath>Defs/ThingDef[defName="RR_Weapon_Razor_Heirloom"]/tools</xpath>
@@ -392,9 +396,9 @@
             <li>Blunt</li>
           </capacities>
           <power>4</power>
-          <cooldownTime>1.30</cooldownTime>
+          <cooldownTime>1.16</cooldownTime>
           <chanceFactor>0.1</chanceFactor>
-          <armorPenetrationBlunt>0.85</armorPenetrationBlunt>
+          <armorPenetrationBlunt>1.03</armorPenetrationBlunt>
           <linkedBodyPartsGroup>Handle</linkedBodyPartsGroup>
         </li>
         <li Class="CombatExtended.ToolCE">
@@ -402,10 +406,10 @@
           <capacities>
             <li>Cut</li>
           </capacities>
-          <power>40</power>
-          <cooldownTime>0.70</cooldownTime>
-          <armorPenetrationBlunt>3.80</armorPenetrationBlunt>
-          <armorPenetrationSharp>26.50</armorPenetrationSharp>
+          <power>43</power>
+          <cooldownTime>0.62</cooldownTime>
+          <armorPenetrationBlunt>4.60</armorPenetrationBlunt>
+          <armorPenetrationSharp>32.07</armorPenetrationSharp>
           <linkedBodyPartsGroup>Edge</linkedBodyPartsGroup>
         </li>
         <li Class="CombatExtended.ToolCE">
@@ -414,17 +418,22 @@
             <li>Stab</li>
           </capacities>
           <power>18</power>
-          <cooldownTime>0.82</cooldownTime>
-          <armorPenetrationBlunt>1.30</armorPenetrationBlunt>
-          <armorPenetrationSharp>34.00</armorPenetrationSharp>
+          <cooldownTime>0.73</cooldownTime>
+          <armorPenetrationBlunt>1.57</armorPenetrationBlunt>
+          <armorPenetrationSharp>41.14</armorPenetrationSharp>
         </li>
       </tools>
     </value>
   </Operation>
 
   <!-- ============================== slingBlade =============================
-    A curved steel cutting tool. Placed under CE's gladius: sharp penetration in
-    the low teens of millimetres, blunt modest. First placement - judge in play. -->
+    Calibrated against CE's own vanilla melee (Patches/Core/ThingDefs_Misc/
+    Weapons_Melee.xml, CE-Continued master 2026-10-25): gladius edge 20 / 1.34s /
+    Sharp 0.43 / Blunt 0.956, point 27 / 1.44s / Sharp 0.48; longsword point Sharp
+    2.0. Those are stuffed and steel's MeleePenetrationFactor is the default 1, so a
+    steel tool sits in the same band. The first placement here was 12-14 mm sharp -
+    twenty to thirty times a CE gladius, i.e. an industrial tool cutting like a
+    monosword (CE 18/25). Now gladius-class, slightly weaker: it is a tool. -->
 
   <Operation Class="PatchOperationReplace">
     <xpath>Defs/ThingDef[defName="RR_Weapon_SlingBlade"]/tools</xpath>
@@ -435,10 +444,10 @@
           <capacities>
             <li>Blunt</li>
           </capacities>
-          <power>5</power>
-          <cooldownTime>1.40</cooldownTime>
+          <power>3</power>
+          <cooldownTime>1.44</cooldownTime>
           <chanceFactor>0.15</chanceFactor>
-          <armorPenetrationBlunt>1.20</armorPenetrationBlunt>
+          <armorPenetrationBlunt>0.50</armorPenetrationBlunt>
           <linkedBodyPartsGroup>Handle</linkedBodyPartsGroup>
         </li>
         <li Class="CombatExtended.ToolCE">
@@ -446,10 +455,10 @@
           <capacities>
             <li>Cut</li>
           </capacities>
-          <power>16</power>
-          <cooldownTime>1.10</cooldownTime>
-          <armorPenetrationBlunt>1.50</armorPenetrationBlunt>
-          <armorPenetrationSharp>12.00</armorPenetrationSharp>
+          <power>18</power>
+          <cooldownTime>1.40</cooldownTime>
+          <armorPenetrationBlunt>0.90</armorPenetrationBlunt>
+          <armorPenetrationSharp>0.40</armorPenetrationSharp>
           <linkedBodyPartsGroup>Edge</linkedBodyPartsGroup>
         </li>
         <li Class="CombatExtended.ToolCE">
@@ -457,10 +466,10 @@
           <capacities>
             <li>Stab</li>
           </capacities>
-          <power>12</power>
-          <cooldownTime>1.25</cooldownTime>
-          <armorPenetrationBlunt>0.90</armorPenetrationBlunt>
-          <armorPenetrationSharp>14.00</armorPenetrationSharp>
+          <power>14</power>
+          <cooldownTime>1.50</cooldownTime>
+          <armorPenetrationBlunt>0.40</armorPenetrationBlunt>
+          <armorPenetrationSharp>0.45</armorPenetrationSharp>
         </li>
       </tools>
     </value>
