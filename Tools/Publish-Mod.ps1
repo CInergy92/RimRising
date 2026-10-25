@@ -89,7 +89,7 @@ $excludeDirs = @(
     'docs'
     'Tools'
     'Art'           # silhouette masters and generated candidates, not shipped art
-    'Extras'        # separate local mods kept in this repo (CE patches); not part of RimRising
+    'Extras'        # local-only side mods, gitignored and never part of RimRising
     'obj'
     'bin'
 )

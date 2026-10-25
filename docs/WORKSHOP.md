@@ -7,7 +7,7 @@ Publishing is the author's call and is done by hand from inside RimWorld. This p
 1. `pwsh -File Tools/Test-ModDefs.ps1` - must say PASSED.
 2. `pwsh -File Tools/Publish-Mod.ps1` - mirrors the shipped content into `RimWorld/Mods/RimRising`.
    RimWorld uploads from that folder, not from the repo. Source, docs, tools, the source art under
-   `Art/` (with its generation logs) and `Extras/` (the separate CE patch mod) never ship.
+   `Art/` (with its generation logs) and `Extras/` (local-only side mods, gitignored) never ship.
 3. Lint the shipped folder against vanilla only:
    `um publish check "<RimWorld>/Mods/RimRising" --game "<RimWorld>/Data"`.
    Last result (2026-10-24): 554 files, 0 failures. The single warning, "no README", is expected:

@@ -43,35 +43,6 @@ Each is loaded only if you already run it; nothing else changes without it.
 | Dragons Descent | its dragons retold as Carver-made (descriptions only) |
 | Odyssey | gravships burn helium-3 |
 
-### Extras: Cinergy's CE Patches (local)
-
-`Extras/CinergyCEPatches` is a **separate mod**, kept in this repo but not part of RimRising and
-not published with it. It patches third-party mods for Combat Extended where CE does not, or
-where CE's own patch leaves a crash:
-
-| Mod | What is patched |
-|---|---|
-| MUGB Goblin | melee tools as CE tools; armour, helmets and shields in CE units; Bulk; the crossbow, repeating crossbow, warbow and staff sling made CE weapons (they crashed on every shot) |
-| Mutagen and Mutation | melee tools; its five gas clouds recategorised so CE's gas check stops crashing every pawn inside one |
-| Petification | its seven impact weapons; collar and mask armour in CE units |
-| RimJobWorld - Gasses | the four launchers' stock and barrel attacks |
-| Big and Small - Genes & More | the giant sword only (the rest is already CE-patched) |
-| VFE Classical | the handheld scorpion fires CE's scorpion bolts (CE's own patch left it crashing) |
-| Unlimited Cumworks | the three guns' grip and barrel attacks |
-| High Heels of Rim | all 13 heels' armour in CE units |
-| RJW Menstruation Cycle | the two absorber pads' armour |
-| Big and Small - Framework, RJW Genes | natural armour granted by a hediff, at CE's own race scale |
-
-Each patch applies only when its target mod is active; CE is required. Supports 1.6 and 1.7
-(checked on 1.7.4980). To install, link or copy the folder into `RimWorld/Mods` and enable
-"Cinergy's CE Patches (local)". After a target mod updates, regenerate the generated files with
-`python Extras/CinergyCEPatches/Tools/gen_patches.py`; the `*_Ranged`, `*_Gas`, `*_Scorpion` and
-`CE_PawnArmourHediffs.xml` files are hand-written.
-
-`rrtestmode=cetools` audits a whole load order: it lists every weapon without CE tools, then makes
-every pawn-equippable weapon fight or fire and names any that throws. `Tools/audit_report.py`
-turns the log into a per-mod report; the latest is `Extras/CinergyCEPatches/AUDIT.md`.
-
 ## Install
 
 Subscribe on the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3826500705), or copy this folder's shipped content into
