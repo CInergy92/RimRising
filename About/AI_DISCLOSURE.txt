@@ -13,8 +13,8 @@ WHO DID WHAT
   play-test of my own that ran over several weeks.
 - Claude (Anthropic), through Claude Code, wrote all of the code and all of the text: the C#
   assembly, every XML def and patch, and every in-game label, description, backstory, name list
-  and letter. Models used across the project: Claude Opus 5, Claude Opus 5.5, Claude Fable 5 and
-  Claude Fable 5.1. Claude also wrote the image-processing and drawing scripts described below.
+  and letter. Models used across the project: Claude Opus 5, Claude Opus 5.5, Claude Fable 5,
+  Claude Fable 5.1 and Claude Fable 5.2. Claude also wrote the image-processing and drawing scripts described below.
 - No text or artwork from the Red Rising novels is reproduced. All descriptions are original
   writing, and the caste sigils are original geometric marks deliberately kept unlike the
   published ones.

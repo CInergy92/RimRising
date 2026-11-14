@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The campaign's three scripted raids (Source/RimRising/Campaign.cs, CampaignRaid.cs)
+  and the letter def its offers arrive as.
+
+  SHAPE mirrored from RR_Incident_LurcherHunt in Incidents_RimRising.xml, itself
+  shaped like vanilla's RaidEnemy (Core/Defs/Storyteller/Incidents_Map_Threats.xml):
+  ThreatBig, points-scaled, on the home map.
+
+  ONLY THE DIRECTOR FIRES THESE. baseChance is 0, and the worker's CanFireNowSub
+  refuses anything not forced, so no storyteller - ours, vanilla's or another mod's -
+  can send one into a game that is not running the campaign.
+
+  THE NUMBERS live in CampaignRaidExtension so they are tuned here, not in C#:
+    pointsFactor   times the storyteller's own threat points for the colony right now
+                   (never below what the group needs to field anyone)
+    arrivalMode    forced; left out, the usual weighted pick applies (which for the
+                   Society already favours drops - Patches/IronRain.xml)
+    groupKind      a pawn group only the Society carries (Factions_RimRising.xml)
+    textKey        Languages/English/Keyed/RimRising.xml
+-->
+<Defs>
+
+  <!-- Act: the reprisal. A detachment, not an army: it is a punishment. -->
+  <IncidentDef>
+    <defName>RR_Incident_CampaignReprisal</defName>
+    <label>Society reprisal</label>
+    <targetTags>
+      <li>Map_PlayerHome</li>
+    </targetTags>
+    <workerClass>RimRising.IncidentWorker_CampaignRaid</workerClass>
+    <baseChance>0</baseChance>
+    <category>ThreatBig</category>
+    <pointsScaleable>true</pointsScaleable>
+    <letterLabel>Reprisal</letterLabel>
+    <letterDef>ThreatBig</letterDef>
+    <modExtensions>
+      <li Class="RimRising.CampaignRaidExtension">
+        <pointsFactor>0.6</pointsFactor>
+        <arrivalMode>EdgeWalkIn</arrivalMode>
+        <groupKind>RR_CampaignDetachment</groupKind>
+        <textKey>RR_Campaign_ReprisalText</textKey>
+        <textKeyQuotaMissed>RR_Campaign_ReprisalTextShort</textKeyQuotaMissed>
+      </li>
+    </modExtensions>
+  </IncidentDef>
+
+  <!-- Act: the rising. The local garrison, at full ordinary strength. -->
+  <IncidentDef>
+    <defName>RR_Incident_CampaignGarrison</defName>
+    <label>Society garrison assault</label>
+    <targetTags>
+      <li>Map_PlayerHome</li>
+    </targetTags>
+    <workerClass>RimRising.IncidentWorker_CampaignRaid</workerClass>
+    <baseChance>0</baseChance>
+    <category>ThreatBig</category>
+    <pointsScaleable>true</pointsScaleable>
+    <letterLabel>The garrison</letterLabel>
+    <letterDef>ThreatBig</letterDef>
+    <modExtensions>
+      <li Class="RimRising.CampaignRaidExtension">
+        <pointsFactor>1.0</pointsFactor>
+        <textKey>RR_Campaign_GarrisonText</textKey>
+      </li>
+    </modExtensions>
+  </IncidentDef>
+
+  <!-- Act: the Rain. Down from orbit, onto the colony itself. -->
+  <IncidentDef>
+    <defName>RR_Incident_CampaignRain</defName>
+    <label>Iron Rain</label>
+    <targetTags>
+      <li>Map_PlayerHome</li>
+    </targetTags>
+    <workerClass>RimRising.IncidentWorker_CampaignRaid</workerClass>
+    <baseChance>0</baseChance>
+    <category>ThreatBig</category>
+    <pointsScaleable>true</pointsScaleable>
+    <letterLabel>Iron Rain</letterLabel>
+    <letterDef>ThreatBig</letterDef>
+    <modExtensions>
+      <li Class="RimRising.CampaignRaidExtension">
+        <pointsFactor>1.5</pointsFactor>
+        <arrivalMode>CenterDrop</arrivalMode>
+        <textKey>RR_Campaign_RainText</textKey>
+      </li>
+    </modExtensions>
+  </IncidentDef>
+
+  <!--
+    An offer the player may take or refuse (ChoiceLetter_CampaignOffer). Mirrors
+    vanilla's AcceptJoiner in Core/Defs/Misc/LetterDefs/CustomChoiceLetters.xml,
+    parent and all.
+  -->
+  <LetterDef ParentName="CustomChoiceLetterBase">
+    <defName>RR_CampaignOffer</defName>
+    <letterClass>RimRising.ChoiceLetter_CampaignOffer</letterClass>
+  </LetterDef>
+
+</Defs>

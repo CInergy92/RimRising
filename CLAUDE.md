@@ -13,7 +13,7 @@ the field.
 
 | Thing | Value |
 |---|---|
-| Game version | `1.7.4985 rev1269` (from `Version.txt`; 1.7.4980 rev60 on 2026-10-15, 1.6.4871 rev590 before) |
+| Game version | `1.7.5005 rev1082` (from `Version.txt`; 1.7.4985 rev1269 on 2026-10-24, 1.7.4980 rev60 on 2026-10-15, 1.6.4871 rev590 before) |
 | Game install | `D:\SteamLibrary\steamapps\common\RimWorld` |
 | Mods folder | `D:\SteamLibrary\steamapps\common\RimWorld\Mods` (confirmed by user) |
 | Vanilla defs | `<install>\Data\{Core,Royalty,Ideology,Biotech,Anomaly,Odyssey}\Defs\` |
@@ -1145,6 +1145,45 @@ Verified, not assumed:
 - **Vanilla never draws trousers** - `Apparel_Pants` has no worn graphic. For gallery shots that
   show bare skin (caste marks), launch an isolated config **without Realistic Body**, whose bodies
   are far more detailed than vanilla's plain shapes.
+
+## The campaign (2026-11-14)
+
+`RR_Scenario_Quota` tells a story in acts; `GameComponent_Campaign` (`Source/RimRising/Campaign.cs`)
+is the director. The user's four calls are in PROGRESS, Milestone 13, and at the top of that file:
+original generated hero, structure only, refusable offers, a scenario of its own. Do not add book
+character names or retell scenes.
+
+Verified on 1.7.5005, each by decompiling or by test:
+
+- **Every `GameComponent` subclass is instantiated automatically**, on new games and old saves
+  (`Game.FillComponents`, through a `(Game)` constructor). No def, no registration. So the
+  component must be inert by default: its act is `None` unless `ScenPart_Campaign` starts it.
+- **`-quicktest` hard-codes Crashlanded** (`Root_Play.SetupForQuickTestPlay`). `rrscenario=<defName>`
+  (a Harmony prefix at the bottom of `TestScene.cs`, dormant without the argument) starts any
+  scenario unattended. Use it to test a start for real.
+- **A scenario's opening dialog pauses the game.** A check made at the start of a test sees no
+  power tick yet; judge power after time has run.
+- **A scripted raid from one faction**: preset `parms.faction` (it must be HOSTILE, or
+  `TryResolveRaidFaction` picks someone else), `parms.points` (only unset points are filled) and
+  `parms.raidArrivalMode` (returned as-is). Clamp points to
+  `faction.def.MinPointsToGeneratePawnGroup(kind)` or a poor colony's raid fails to generate.
+- **An accept-or-refuse letter** is a `ChoiceLetter` subclass with its own `LetterDef`
+  (`ParentName="CustomChoiceLetterBase"`, as vanilla's AcceptJoiner). Vanilla's answers through
+  quest signals; ours calls the director. It survives save and load (`rrtestmode=campaignsave`).
+- **A deep seam can be planted**: `map.deepResourceGrid.SetAt(cell, def, count)`. `CompDeepDrill`
+  reads the grid; no scanner is involved.
+- **`ColorOf` asks the xenogenes before birth.** `Recipe_CarveColor` leaves the birth xenotype in
+  place, so a born Red carved Gold read as Red until a complete Color in the xenogenes was made to
+  win. The carve test had only ever carved a Baseliner. Test identity on a pawn born a Color.
+
+Test modes: `rrtestmode=campaign` (every act in code, 18 checks), `rrtestmode=campaignstart
+rrscenario=RR_Scenario_Quota` (the real start, then two game days on the clock, 6 checks),
+`rrtestmode=campaignsave` (save mid-story, reload, answer the letter, 3 checks). Each logs
+`CAMPAIGN OK/FAIL` lines and a `CAMPAIGN SUMMARY`.
+
+Tuning without a rebuild: the quota and its days are fields on the scenario part in
+`Scenarios_Campaign.xml`; each raid's strength, arrival and pawn group are in
+`Incidents_Campaign.xml`. The waits between acts are constants at the top of `Campaign.cs`.
 
 ## Working agreements
 

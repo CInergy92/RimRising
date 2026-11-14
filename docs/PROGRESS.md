@@ -1531,6 +1531,70 @@ Rain, 2.7 ripWings, 6.7 Blues and gravships, the Dominion's own ladder.
 17. **Combat drugs.** Society legionaries should sometimes arrive carrying zoladone; tribe
     warriors fever cloud.
 
+## Milestone 13 — the campaign (2026-11-14)
+
+A story spine for one scenario, built and tested locally on 1.7.5005.
+
+### The user's calls
+
+- The hero is an **original** carved Red with a **generated** name. No character name from the books.
+- The books' arc as **structure** only: quota, injustice, carving, hunt, rising, Rain. No scene
+  retold; every word original.
+- **Offers, refusable.** Key beats arrive as accept-or-refuse letters. Refusing the stranger ends
+  the story quietly; refusing recruits costs only the recruits.
+- A **fifth scenario** of its own. The other four starts stay sandboxes.
+
+### What was built
+
+- `RR_Scenario_Quota`, "The Quota (campaign)" (`Defs/Scenarios/Scenarios_Campaign.xml`): four Reds
+  with true sigils, Electricity and DeepDrilling known, and the campaign switched on.
+- `GameComponent_Campaign` (`Source/RimRising/Campaign.cs`): one act at a time, each moving on when
+  its condition is met. Acts: Opening, Quota, Reprisal, Contact (offer), Hero, Hunt, Rising (two
+  offers with the garrison between them), Rain, Won. Inert in every other scenario and old save.
+- The clan's rig: a clawDrill over a seeded helium-3 seam with a wood-fired generator, placed at
+  game start, so the quota is work the colony can do from the first day.
+- `IncidentWorker_CampaignRaid` (`CampaignRaid.cs`) and three incident defs
+  (`Incidents_Campaign.xml`): reprisal (0.6x points, Grays under a Bronzie, walk-in), garrison
+  (1.0x), Iron Rain (1.5x, forced centre drop). Only the director can fire them.
+- `ChoiceLetter_CampaignOffer` and its LetterDef: the accept-or-refuse letters.
+- The stranger: born Red, carved Gold, a razor, a Red sigil that no longer matches. Arrives
+  downed in a drop pod. The existing Lurcher hunt comes for that mismatch six days later.
+
+### A bug this found
+
+`RR_CasteIdentity.ColorOf` asked birth first, so a pawn BORN a Color and carved into another with
+`Recipe_CarveColor` still read as its birth Color. The carve test only ever carved a Baseliner.
+Fixed: a complete Color in the xenogenes wins over the birth xenotype.
+
+### Tests (all on 1.7.5005, isolated config)
+
+| Mode | Result |
+|---|---|
+| `rrtestmode=campaign` | 18/18: the identity fix, then every act driven in code, both refusal paths |
+| `rrtestmode=campaignstart rrscenario=RR_Scenario_Quota` | 6/6: the real start; the game's own clock delivers the quota on day 2; the rig is powered and drilling |
+| `rrtestmode=campaignsave` | 3/3: saved with an offer unanswered, reloaded, answered |
+| `rrtestmode=m12` | 50/50 after the identity fix |
+| `rrtestmode=carve` | all 15 recipes still read as their Color |
+
+### Not yet judged in play
+
+- **Pacing and difficulty.** The waits (2 days to the quota, 12 to mine it, 2 to the reprisal, 6 to
+  the hunt, 5 to the garrison, 3 of warning before the Rain) and the raid strengths are first
+  guesses. They are constants at the top of `Campaign.cs` and fields in `Incidents_Campaign.xml`.
+- **The quota's size.** 900 canisters in 12 days, from a measured ~90 a day with one Red on the
+  rig. Tuned in `Scenarios_Campaign.xml`.
+- **The reprisal against four Reds with slingBlades.** At minimum strength it was one legionary in
+  the test colony; a richer colony draws more.
+
+### What to click in game
+
+1. New colony, scenario **The Quota (campaign)**. A clawDrill and a generator stand near the start.
+2. Day 2: the quota letter. Put a Red on the rig; keep the generator fed with wood.
+3. Day 14: the tithe letter (met or missed), then two days later the reprisal.
+4. Beat it: the Sons of Ares' offer arrives. Accept, and a pod comes down with the stranger.
+5. Check the stranger: named Gold on the Bio tab, a Red sigil in the Health tab, a razor equipped.
+6. Six days on: Lurchers. Then the offers, the garrison, the warning, the Rain, the closing letter.
+
 ## Known errors
 
 None outstanding. One found and fixed on first load — see "First in-game load" above.

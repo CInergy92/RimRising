@@ -12,4 +12,14 @@
     <workerClass>PawnGroupKindWorker_Normal</workerClass>
   </PawnGroupKindDef>
 
+  <!--
+    The campaign's reprisal (CampaignRaid.cs): a detachment of Grays under a Bronzie,
+    nothing heavier. The same trick as the hunt above - a kind only the Society
+    carries (Factions_RimRising.xml).
+  -->
+  <PawnGroupKindDef>
+    <defName>RR_CampaignDetachment</defName>
+    <workerClass>PawnGroupKindWorker_Normal</workerClass>
+  </PawnGroupKindDef>
+
 </Defs>

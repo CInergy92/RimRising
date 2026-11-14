@@ -159,6 +159,46 @@ namespace RimRising
                         if (GenCommandLine.CommandLineArgPassed("rrtestquit")) { Root.Shutdown(); }
                         return;
                     }
+                    if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string m8) && m8 == "campaign")
+                    {
+                        // Two halves: the stranger arrives by drop pod, so time has to
+                        // run between them (stage 50 waits for the landing).
+                        stage = -1;
+                        try { CampaignTestStart(); }
+                        catch (System.Exception e) { Log.Error("[RimRising] CAMPAIGN harness threw: " + e); }
+                        Find.TickManager.CurTimeSpeed = TimeSpeed.Superfast;
+                        campFrames = 0;
+                        stage = 50;
+                        return;
+                    }
+                    if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string m9) && m9 == "campaignstart")
+                    {
+                        stage = -1;
+                        try { CampaignStartChecks(); }
+                        catch (System.Exception e) { Log.Error("[RimRising] CAMPAIGN harness threw: " + e); }
+                        Find.TickManager.CurTimeSpeed = TimeSpeed.Ultrafast;
+                        campFrames = 0;
+                        stage = 51;
+                        return;
+                    }
+                    if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string m10) && m10 == "campaignsave")
+                    {
+                        stage = -1;
+                        if (campSaved)
+                        {
+                            try { CampaignSaveAfter(); }
+                            catch (System.Exception e) { Log.Error("[RimRising] CAMPAIGN harness threw: " + e); }
+                            Log.Message("[RimRising] TESTSCENE DONE (campaignsave)");
+                            if (GenCommandLine.CommandLineArgPassed("rrtestquit")) { Root.Shutdown(); }
+                            return;
+                        }
+                        try { CampaignSaveBefore(); }
+                        catch (System.Exception e) { Log.Error("[RimRising] CAMPAIGN harness threw: " + e); }
+                        Find.TickManager.CurTimeSpeed = TimeSpeed.Superfast;
+                        campFrames = 0;
+                        stage = 52;
+                        return;
+                    }
                     if (GenCommandLine.TryGetCommandLineArg("rrtestmode", out string m0) && m0 == "kinds")
                     {
                         // No pictures: generation is judged from the log.
@@ -196,6 +236,59 @@ namespace RimRising
                     return;
                 case 20:
                     NatureStep();
+                    return;
+
+                case 50:
+                    // rrtestmode=campaign: wait for the stranger's pod, then finish.
+                    campFrames++;
+                    Pawn stranger = RR_Campaign.Director?.hero;
+                    if (stranger != null && !stranger.Spawned && !stranger.Dead && campFrames < 3000) { return; }
+                    stage = -1;
+                    Find.TickManager.CurTimeSpeed = TimeSpeed.Paused;
+                    try { CampaignTestAfterLanding(); }
+                    catch (System.Exception e) { Log.Error("[RimRising] CAMPAIGN harness threw: " + e); }
+                    Log.Message("[RimRising] TESTSCENE DONE (campaign)");
+                    if (GenCommandLine.CommandLineArgPassed("rrtestquit")) { Root.Shutdown(); }
+                    return;
+
+                case 51:
+                    // rrtestmode=campaignstart: the game's own clock brings the quota letter.
+                    campFrames++;
+                    GameComponent_Campaign dir = RR_Campaign.Director;
+                    if (dir != null && dir.act == GameComponent_Campaign.Act.Opening && campFrames < 40000)
+                    {
+                        Find.TickManager.CurTimeSpeed = TimeSpeed.Ultrafast;
+                        return;
+                    }
+                    stage = -1;
+                    Find.TickManager.CurTimeSpeed = TimeSpeed.Paused;
+                    CCheck("S5 the clock delivers the quota", dir != null && dir.act == GameComponent_Campaign.Act.Quota && HasLetter("RR_Campaign_QuotaLabel"),
+                           $"act {dir?.act} on day {GenDate.DaysPassedFloat:F1} after {campFrames} frames; quota letter {HasLetter("RR_Campaign_QuotaLabel")}");
+                    Thing rig51 = map.listerThings.ThingsOfDef(DefDatabase<ThingDef>.GetNamed("RR_ClawDrill")).FirstOrDefault();
+                    CompPowerTrader power51 = rig51?.TryGetComp<CompPowerTrader>();
+                    CompDeepDrill drill51 = rig51?.TryGetComp<CompDeepDrill>();
+                    int mined = map.listerThings.ThingsOfDef(DefDatabase<ThingDef>.GetNamed("RR_HeliumThree")).Sum(t => t.stackCount);
+                    CCheck("S6 the rig works", power51 != null && power51.PowerOn && drill51 != null && drill51.CanDrillNow(),
+                           $"powered {power51?.PowerOn}, can drill {drill51?.CanDrillNow()}; the clan mined {mined} helium-3 unprompted in two days");
+                    Log.Message($"[RimRising] CAMPAIGN SUMMARY {campOk} ok, {campFail} fail");
+                    Log.Message("[RimRising] TESTSCENE DONE (campaignstart)");
+                    if (GenCommandLine.CommandLineArgPassed("rrtestquit")) { Root.Shutdown(); }
+                    return;
+
+                case 52:
+                    // rrtestmode=campaignsave: wait for the stranger's pod, then save and load.
+                    campFrames++;
+                    Pawn landing = RR_Campaign.Director?.hero;
+                    if (landing != null && !landing.Spawned && !landing.Dead && campFrames < 3000) { return; }
+                    stage = -1;
+                    Find.TickManager.CurTimeSpeed = TimeSpeed.Paused;
+                    try { CampaignSaveAndLoad(); }
+                    catch (System.Exception e)
+                    {
+                        Log.Error("[RimRising] CAMPAIGN harness threw: " + e);
+                        Log.Message("[RimRising] TESTSCENE DONE (campaignsave, failed)");
+                        if (GenCommandLine.CommandLineArgPassed("rrtestquit")) { Root.Shutdown(); }
+                    }
                     return;
 
                 case 30:
@@ -1969,6 +2062,301 @@ namespace RimRising
             Log.Message($"[RimRising] M12 SUMMARY {m12Ok} ok, {m12Fail} fail");
         }
 
+        // ---- rrtestmode=campaign: the story, driven act by act in code ---------------
+
+        // Static: rrtestmode=campaignsave reloads the game, which makes a new MapComponent.
+        private static int campOk, campFail;
+        private int campFrames;
+
+        private void CCheck(string name, bool ok, string detail)
+        {
+            if (ok) { campOk++; } else { campFail++; }
+            Log.Message($"[RimRising] CAMPAIGN {(ok ? "OK  " : "FAIL")} {name}: {detail}");
+        }
+
+        private void CRun(string name, System.Action body)
+        {
+            try { body(); }
+            catch (System.Exception e) { CCheck(name, false, "threw " + e.GetType().Name + ": " + e.Message); }
+        }
+
+        private void ClearSociety()
+        {
+            Faction society = GameComponent_Campaign.Society;
+            foreach (Pawn p in map.mapPawns.AllPawnsSpawned.Where(x => x.Faction == society).ToList()) { p.Destroy(); }
+            // Raiders still in the air would land in the middle of a later act's checks.
+            foreach (Thing pod in map.listerThings.ThingsOfDef(ThingDefOf.DropPodIncoming).ToList()) { pod.Destroy(); }
+        }
+
+        private static bool HasLetter(string labelKey) =>
+            Find.LetterStack.LettersListForReading.Any(l => l.Label.ToString() == labelKey.Translate().ToString());
+
+        /// <summary>
+        /// rrtestmode=campaign, first half: the identity fix the story depends on, then
+        /// the acts from the start to the stranger's arrival. Every wait is skipped
+        /// (GameComponent_Campaign.DebugSkipWaits) and each raid is cleared by hand, so
+        /// forty days of story run in one frame. The stranger arrives by drop pod, so
+        /// the second half (CampaignTestAfterLanding) runs once the pod is down.
+        /// </summary>
+        private void CampaignTestStart()
+        {
+            GameComponent_Campaign d = RR_Campaign.Director;
+            XenotypeDef red = DefDatabase<XenotypeDef>.GetNamed("RR_Red"), gold = DefDatabase<XenotypeDef>.GetNamed("RR_Gold");
+            ThingDef he3 = DefDatabase<ThingDef>.GetNamed("RR_HeliumThree"), drillDef = DefDatabase<ThingDef>.GetNamed("RR_ClawDrill");
+
+            CCheck("0 inert outside the campaign", d != null && d.act == GameComponent_Campaign.Act.None && !d.Running,
+                   $"component {d != null}, act {d?.act}, running {d?.Running}");
+            if (d == null) { return; }
+
+            // 1. A pawn BORN a Color and carved into another reads as the carved Color.
+            CRun("1 identity", () =>
+            {
+                RecipeDef carveGold = DefDatabase<RecipeDef>.AllDefsListForReading.First(r =>
+                    r.workerClass == typeof(Recipe_CarveColor) && r.GetModExtension<CarveTargetExtension>()?.color == gold);
+                Pawn p = PawnGenerator.GeneratePawn(new PawnGenerationRequest(PawnKindDefOf.Colonist, Faction.OfPlayer,
+                    forceGenerateNewPawn: true, forcedXenotype: red, forceNoIdeo: true, developmentalStages: DevelopmentalStage.Adult));
+                XenotypeDef before = RR_CasteIdentity.ColorOf(p);
+                carveGold.Worker.ApplyOnPawn(p, null, null, new List<Thing>(), null);
+                CCheck("1 born Red carved Gold", before == red && RR_CasteIdentity.ColorOf(p) == gold && p.genes.Xenotype == red &&
+                       RR_CasteIdentity.IsRulingCaste(p) && !carveGold.Worker.AvailableOnNow(p),
+                       $"read {before?.defName} before, {RR_CasteIdentity.ColorOf(p)?.defName} after; birth xenotype still {p.genes.Xenotype?.defName}; " +
+                       $"ruling caste {RR_CasteIdentity.IsRulingCaste(p)}; carve-to-Gold still offered {carveGold.Worker.AvailableOnNow(p)}");
+                Discard(p);
+
+                // A born Gold with ONE stray xenogene is still a Gold: only a whole Color counts.
+                Pawn g = PawnGenerator.GeneratePawn(new PawnGenerationRequest(PawnKindDefOf.Colonist, Faction.OfPlayer,
+                    forceGenerateNewPawn: true, forcedXenotype: gold, forceNoIdeo: true, developmentalStages: DevelopmentalStage.Adult));
+                GeneDef stray = red.genes.FirstOrDefault(x => !gold.genes.Contains(x));
+                if (stray != null) { g.genes.AddGene(stray, xenogene: true); }
+                CCheck("1 born Gold, one stray xenogene", RR_CasteIdentity.ColorOf(g) == gold,
+                       $"reads {RR_CasteIdentity.ColorOf(g)?.defName} with xenogene {stray?.defName ?? "-"}");
+                Discard(g);
+            });
+
+            // 2. The start: the rig over a seeded seam, and two quiet days.
+            CRun("2 begin", () =>
+            {
+                d.Begin(map);
+                Thing rig = map.listerThings.ThingsOfDef(drillDef).FirstOrDefault(t => t.Faction == Faction.OfPlayer);
+                Thing gen = map.listerThings.ThingsOfDef(DefDatabase<ThingDef>.GetNamed("WoodFiredGenerator")).FirstOrDefault(t => t.Faction == Faction.OfPlayer);
+                bool seam = rig != null && map.deepResourceGrid.ThingDefAt(rig.Position) == he3 && map.deepResourceGrid.CountAt(rig.Position) > 0;
+                map.powerNetManager.UpdatePowerNetsAndConnections_First();
+                CompPowerTrader power = rig?.TryGetComp<CompPowerTrader>();
+                CompRefuelable fuel = gen?.TryGetComp<CompRefuelable>();
+                CCheck("2 rig placed", d.act == GameComponent_Campaign.Act.Opening && rig != null && gen != null && seam && power?.PowerNet != null && fuel != null && fuel.HasFuel,
+                       $"act {d.act}; clawDrill {rig != null} at {rig?.Position}; seam under it {seam} ({(rig == null ? 0 : map.deepResourceGrid.CountAt(rig.Position))}); " +
+                       $"generator {gen != null}, fuelled {fuel?.HasFuel}; drill on a power net {power?.PowerNet != null}");
+            });
+
+            // 3. The quota letter, then the tithe with the quota met.
+            CRun("3 quota", () =>
+            {
+                d.DebugSkipWaits(); d.Step();
+                CCheck("3 quota letter", d.act == GameComponent_Campaign.Act.Quota && HasLetter("RR_Campaign_QuotaLabel"), $"act {d.act}");
+
+                int put = GameComponent_Campaign.QuotaAmount + 30;
+                for (int left = put; left > 0; left -= he3.stackLimit)
+                {
+                    Thing stack = ThingMaker.MakeThing(he3);
+                    stack.stackCount = Mathf.Min(left, he3.stackLimit);
+                    GenPlace.TryPlaceThing(stack, map.Center, map, ThingPlaceMode.Near);
+                }
+                d.DebugSkipWaits(); d.Step();
+                int remain = map.listerThings.ThingsOfDef(he3).Sum(t => t.stackCount);
+                CCheck("3 tithe taken", d.act == GameComponent_Campaign.Act.Reprisal && d.quotaMet && remain == 30 && HasLetter("RR_Campaign_QuotaMetLabel"),
+                       $"act {d.act}, quota met {d.quotaMet}, {put} canisters on the map, {remain} left after the tithe");
+            });
+
+            // 4. The reprisal: only the director can fire it; the Society turns hostile; Grays walk in.
+            CRun("4 reprisal", () =>
+            {
+                IncidentDef rep = DefDatabase<IncidentDef>.GetNamed("RR_Incident_CampaignReprisal");
+                IncidentParms unforced = StorytellerUtility.DefaultParmsNow(rep.category, map);
+                bool refuses = !rep.Worker.CanFireNow(unforced);
+                d.DebugSkipWaits(); d.Step();
+                Faction society = GameComponent_Campaign.Society;
+                List<Pawn> raiders = map.mapPawns.AllPawnsSpawned.Where(p => p.Faction == society).ToList();
+                CCheck("4 reprisal", d.act == GameComponent_Campaign.Act.ReprisalFight && refuses && society != null &&
+                       society.HostileTo(Faction.OfPlayer) && raiders.Count > 0 && raiders.All(p => p.kindDef.defName == "RR_Society_Legionary" || p.kindDef.defName == "RR_Society_Bronzie_Officer"),
+                       $"act {d.act}; unforced fire refused {refuses}; Society hostile {society?.HostileTo(Faction.OfPlayer)}; " +
+                       $"{raiders.Count} raiders: {string.Join(", ", raiders.GroupBy(p => p.kindDef.defName).Select(g => g.Count() + " " + g.Key))}");
+                CCheck("4 raid not over while they stand", !d.RaidOver(map) || raiders.Count == 0, $"RaidOver {d.RaidOver(map)} with {raiders.Count} standing");
+                ClearSociety();
+            });
+
+            // 5. The offer; refusing ends the story; accepting brings the stranger.
+            CRun("5 contact", () =>
+            {
+                d.DebugSkipWaits(); d.Step();
+                var offer = Find.LetterStack.LettersListForReading.OfType<ChoiceLetter_CampaignOffer>().FirstOrDefault(l => l.beat == "contact");
+                CCheck("5 offer letter", d.act == GameComponent_Campaign.Act.ContactPending && offer != null && offer.Choices.Count() == 3 && !offer.CanDismissWithRightClick,
+                       $"act {d.act}; offer letter {offer != null}, {offer?.Choices.Count()} choices, right-click dismiss {offer?.CanDismissWithRightClick}");
+
+                d.Resolve("contact", false);
+                CCheck("5 refusing ends it", d.act == GameComponent_Campaign.Act.Ended && !d.Running && d.hero == null && HasLetter("RR_Campaign_DeclinedLabel"),
+                       $"act {d.act}, running {d.Running}, hero {d.hero != null}");
+
+                d.DebugReset(GameComponent_Campaign.Act.ContactPending);
+                d.quotaMet = true;
+                d.Resolve("contact", true);
+                Pawn h = d.hero;
+                bool razor = h?.equipment?.Primary?.def.defName == "RR_Weapon_Razor";
+                CCheck("5 the stranger", d.act == GameComponent_Campaign.Act.Hero && h != null && h.Faction == Faction.OfPlayer && h.genes.Xenotype == red &&
+                       RR_CasteIdentity.ColorOf(h) == gold && RR_Sigils.SigilMismatch(h) && RR_Sigils.ColorOfSigil(RR_Sigils.SigilOf(h)) == red &&
+                       razor && h.Downed && !h.Dead && h.ageTracker.AgeBiologicalYears >= 18,
+                       $"act {d.act}; {h?.Name?.ToStringFull ?? "-"}, age {h?.ageTracker.AgeBiologicalYears}, born {h?.genes.Xenotype?.defName}, reads {RR_CasteIdentity.ColorOf(h)?.defName}, " +
+                       $"sigil {RR_Sigils.SigilOf(h)?.defName} (mismatch {(h == null ? false : RR_Sigils.SigilMismatch(h))}), razor {razor}, downed {h?.Downed}, dead {h?.Dead}");
+            });
+        }
+
+        /// <summary>rrtestmode=campaign, second half: from the hunt to the closing letter.</summary>
+        private void CampaignTestAfterLanding()
+        {
+            GameComponent_Campaign d = RR_Campaign.Director;
+            Pawn h = d.hero;
+            CCheck("6 pod landed", h != null && h.Spawned && !h.Dead, $"stranger spawned {h?.Spawned} after {campFrames} frames, dead {h?.Dead}");
+
+            // 6. The hunt comes for the stranger and nobody else.
+            CRun("6 hunt", () =>
+            {
+                Pawn quarry = IncidentWorker_LurcherHunt.Quarry(map);
+                d.DebugSkipWaits(); d.Step();
+                CCheck("6 hunt", d.act == GameComponent_Campaign.Act.HuntFight && quarry == h,
+                       $"act {d.act}; quarry {quarry?.LabelShort ?? "-"} is the stranger {quarry == h}");
+                ClearSociety();
+            });
+
+            // 7. The rising: two offers, a garrison between them.
+            CRun("7 rising", () =>
+            {
+                int before = map.mapPawns.FreeColonistsSpawnedCount;
+                d.DebugSkipWaits(); d.Step();
+                bool offered = Find.LetterStack.LettersListForReading.OfType<ChoiceLetter_CampaignOffer>().Any(l => l.beat == "wave1");
+                d.Resolve("wave1", true);
+                int obsidians = map.mapPawns.FreeColonistsSpawned.Count(p => p.kindDef.defName == "RR_Ares_Obsidian_Freed");
+                CCheck("7 Obsidians join", offered && d.act == GameComponent_Campaign.Act.Garrison && obsidians == 2 &&
+                       map.mapPawns.FreeColonistsSpawnedCount == before + 2,
+                       $"offer {offered}; act {d.act}; {obsidians} freed Obsidians; colonists {before} -> {map.mapPawns.FreeColonistsSpawnedCount}");
+
+                d.DebugSkipWaits(); d.Step();
+                CCheck("7 garrison", d.act == GameComponent_Campaign.Act.GarrisonFight, $"act {d.act}");
+                ClearSociety();
+
+                d.DebugSkipWaits(); d.Step();
+                bool offered2 = Find.LetterStack.LettersListForReading.OfType<ChoiceLetter_CampaignOffer>().Any(l => l.beat == "wave2");
+                // Refused this time: the recruits are lost and the story goes on.
+                int mid = map.mapPawns.FreeColonistsSpawnedCount;
+                d.Resolve("wave2", false);
+                CCheck("7 refusing recruits costs only them", offered2 && d.act == GameComponent_Campaign.Act.RainWarned &&
+                       map.mapPawns.FreeColonistsSpawnedCount == mid && HasLetter("RR_Campaign_RainWarningLabel"),
+                       $"offer {offered2}; act {d.act}; colonists {mid} -> {map.mapPawns.FreeColonistsSpawnedCount}");
+            });
+
+            // 8. The Rain comes down, and surviving it ends the story.
+            CRun("8 rain", () =>
+            {
+                d.DebugSkipWaits(); d.Step();
+                int pods = map.listerThings.ThingsOfDef(ThingDefOf.DropPodIncoming).Count;
+                CCheck("8 Iron Rain", d.act == GameComponent_Campaign.Act.RainFight && pods > 0, $"act {d.act}; {pods} drop pods in the air");
+                ClearSociety();
+
+                d.DebugSkipWaits(); d.Step();
+                CCheck("8 won", d.act == GameComponent_Campaign.Act.Won && !d.Running && HasLetter("RR_Campaign_WonLabel"), $"act {d.act}, running {d.Running}");
+            });
+
+            Log.Message($"[RimRising] CAMPAIGN SUMMARY {campOk} ok, {campFail} fail");
+        }
+
+        /// <summary>
+        /// rrtestmode=campaignstart, with rrscenario=RR_Scenario_Quota: the campaign's
+        /// REAL start. The other campaign mode calls the director by hand; this one
+        /// checks what the scenario itself produced, then lets the game's own clock
+        /// run until the quota letter arrives (stage 51), which is the proof that
+        /// GameComponentTick drives the acts.
+        /// </summary>
+        private void CampaignStartChecks()
+        {
+            GameComponent_Campaign d = RR_Campaign.Director;
+            XenotypeDef red = DefDatabase<XenotypeDef>.GetNamed("RR_Red");
+            ScenarioDef want = DefDatabase<ScenarioDef>.GetNamed("RR_Scenario_Quota");
+            List<Pawn> clan = map.mapPawns.FreeColonistsSpawned.ToList();
+            List<ScenPart> parts = Find.Scenario.AllParts.ToList();
+
+            CCheck("S1 scenario", Find.Scenario == want.scenario && parts.All(p => p != null) && parts.Any(p => p is ScenPart_Campaign),
+                   $"running '{Find.Scenario.name}', {parts.Count} parts, null parts {parts.Count(p => p == null)}, campaign part {parts.Any(p => p is ScenPart_Campaign)}");
+            CCheck("S2 the clan", clan.Count == 4 && clan.All(p => RR_CasteIdentity.ColorOf(p) == red && p.ageTracker.AgeBiologicalYears >= 18) &&
+                   clan.All(p => RR_Sigils.SigilOf(p) != null && !RR_Sigils.SigilMismatch(p)),
+                   $"{clan.Count} colonists: {string.Join(", ", clan.Select(p => RR_CasteIdentity.ColorOf(p)?.defName + " age " + p.ageTracker.AgeBiologicalYears + " sigil " + (RR_Sigils.SigilOf(p)?.defName ?? "none")))}");
+            CCheck("S3 research", DefDatabase<ResearchProjectDef>.GetNamed("Electricity").IsFinished && DefDatabase<ResearchProjectDef>.GetNamed("DeepDrilling").IsFinished,
+                   $"Electricity {DefDatabase<ResearchProjectDef>.GetNamed("Electricity").IsFinished}, DeepDrilling {DefDatabase<ResearchProjectDef>.GetNamed("DeepDrilling").IsFinished}");
+
+            Thing rig = map.listerThings.ThingsOfDef(DefDatabase<ThingDef>.GetNamed("RR_ClawDrill")).FirstOrDefault();
+            // Power is judged later (S6): the opening dialog has the game paused here,
+            // so no power tick has run yet.
+            CCheck("S4 story started", d != null && d.act == GameComponent_Campaign.Act.Opening && rig != null && rig.Faction == Faction.OfPlayer &&
+                   IncidentWorker_LurcherHunt.Quarry(map) == null,
+                   $"act {d?.act}; rig {rig != null} at {rig?.Position}; Lurcher quarry {IncidentWorker_LurcherHunt.Quarry(map)?.LabelShort ?? "none"}");
+        }
+
+        // rrtestmode=campaignsave survives a reload, so what it expects to find is static.
+        private static bool campSaved;
+        private static string campSavedHero;
+        private const string CampSaveName = "rr_campaign_test";
+
+        /// <summary>
+        /// rrtestmode=campaignsave: the story saved and loaded in the middle. Brings the
+        /// stranger in, lets the pod land (stage 52), runs to the first recruits' offer
+        /// and SAVES with that offer unanswered; then loads the save and checks that the
+        /// act, the stranger and the letter all came back, and that the letter still
+        /// works when answered. A pending offer and a pawn reference are exactly what a
+        /// GameComponent loses when ExposeData is wrong.
+        /// </summary>
+        private void CampaignSaveBefore()
+        {
+            GameComponent_Campaign d = RR_Campaign.Director;
+            d.Begin(map);
+            d.DebugReset(GameComponent_Campaign.Act.ContactPending);
+            d.quotaMet = true;
+            // The Society must be hostile for the hunt, as it is by then in a real game.
+            Faction society = GameComponent_Campaign.Society;
+            society?.TryAffectGoodwillWith(Faction.OfPlayer, -200, canSendMessage: false, canSendHostilityLetter: false);
+            d.Resolve("contact", true);
+        }
+
+        private void CampaignSaveAndLoad()
+        {
+            GameComponent_Campaign d = RR_Campaign.Director;
+            d.DebugSkipWaits(); d.Step();        // the hunt
+            ClearSociety();
+            d.DebugSkipWaits(); d.Step();        // the first offer of recruits
+            bool letter = Find.LetterStack.LettersListForReading.OfType<ChoiceLetter_CampaignOffer>().Any(l => l.beat == "wave1");
+            CCheck("V1 before saving", d.act == GameComponent_Campaign.Act.Wave1Pending && d.hero != null && d.hero.Spawned && letter,
+                   $"act {d.act}; stranger {d.hero?.LabelShort ?? "-"} spawned {d.hero?.Spawned}; offer pending {letter}");
+            campSavedHero = d.hero?.ThingID;
+            campSaved = true;
+            GameDataSaveLoader.SaveGame(CampSaveName);
+            GameDataSaveLoader.LoadGame(CampSaveName);
+        }
+
+        private void CampaignSaveAfter()
+        {
+            GameComponent_Campaign d = RR_Campaign.Director;
+            var offer = Find.LetterStack.LettersListForReading.OfType<ChoiceLetter_CampaignOffer>().FirstOrDefault(l => l.beat == "wave1");
+            CCheck("V2 after loading", d != null && d.act == GameComponent_Campaign.Act.Wave1Pending && d.quotaMet && d.hero != null &&
+                   d.hero.ThingID == campSavedHero && RR_CasteIdentity.ColorOf(d.hero)?.defName == "RR_Gold" && offer != null,
+                   $"act {d?.act}; quota met {d?.quotaMet}; stranger {d?.hero?.LabelShort ?? "-"} is the same pawn {d?.hero?.ThingID == campSavedHero}, " +
+                   $"reads {RR_CasteIdentity.ColorOf(d?.hero)?.defName}; offer letter back {offer != null}");
+            if (offer != null)
+            {
+                int before = map.mapPawns.FreeColonistsSpawnedCount;
+                offer.Choices.First().action();
+                CCheck("V3 the reloaded letter still answers", d.act == GameComponent_Campaign.Act.Garrison &&
+                       map.mapPawns.FreeColonistsSpawnedCount == before + 2 && !Find.LetterStack.LettersListForReading.Contains(offer),
+                       $"act {d.act}; colonists {before} -> {map.mapPawns.FreeColonistsSpawnedCount}; letter gone {!Find.LetterStack.LettersListForReading.Contains(offer)}");
+            }
+            Log.Message($"[RimRising] CAMPAIGN SUMMARY {campOk} ok, {campFail} fail");
+        }
+
         private const int BioSamples = 6;
 
         /// <summary>
@@ -2145,6 +2533,40 @@ namespace RimRising
             float pct = GenLocalDate.DayPercent(map);
             float ahead = (0.5f - pct + 1f) % 1f;
             Find.TickManager.DebugSetTicksGame(Find.TickManager.TicksGame + (int)(ahead * GenDate.TicksPerDay));
+        }
+    }
+
+    /// <summary>
+    /// rrscenario=&lt;ScenarioDef defName&gt; makes -quicktest start that scenario. Vanilla's
+    /// Root_Play.SetupForQuickTestPlay (decompiled, 1.7.5005) hard-codes Crashlanded, so
+    /// no scenario of ours could be started unattended. This replaces the method body
+    /// line for line with the one def swapped. Dormant without the argument.
+    /// </summary>
+    [HarmonyLib.HarmonyPatch(typeof(Root_Play), "SetupForQuickTestPlay")]
+    public static class Patch_QuickTestScenario
+    {
+        public static bool Prefix()
+        {
+            if (!GenCommandLine.TryGetCommandLineArg("rrscenario", out string name)) { return true; }
+            ScenarioDef def = DefDatabase<ScenarioDef>.GetNamedSilentFail(name);
+            if (def == null)
+            {
+                Log.Error("[RimRising] rrscenario: no ScenarioDef named " + name + "; starting Crashlanded.");
+                return true;
+            }
+            Current.ProgramState = ProgramState.Entry;
+            Game.ClearCaches();
+            Current.Game = new Game();
+            Current.Game.InitData = new GameInitData();
+            Current.Game.Scenario = def.scenario;
+            Find.Scenario.PreConfigure();
+            Current.Game.storyteller = new Storyteller(StorytellerDefOf.Cassandra, DifficultyDefOf.Rough);
+            Current.Game.World = WorldGenerator.GenerateWorld(0.3f, GenText.RandomSeedString(), OverallRainfall.Normal,
+                OverallTemperature.Normal, OverallPopulation.Normal, LandmarkDensity.Normal);
+            Find.GameInitData.ChooseRandomStartingTile();
+            Find.GameInitData.mapSize = 250;
+            Find.Scenario.PostIdeoChosen();
+            return false;
         }
     }
 }

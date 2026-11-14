@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The Quota: the campaign start. The fifth scenario, and the only one with a story.
+
+  The other four starts are sandboxes and stay that way (the user's call,
+  2026-11-14). This one switches on GameComponent_Campaign through ScenPart_Campaign
+  (Source/RimRising/Campaign.cs), which then tells a story in acts: a quota, a
+  reprisal, a stranger, a hunt, a rising, the Rain. Every act waits for its own
+  condition, and the key beats are offers the player may refuse.
+
+  WHAT IS DIFFERENT FROM "UP FROM THE MINE", and why:
+
+  - TRUE SIGILS, not forged ones. The Lurcher hunt comes for a sigil that does not
+    match its bearer. Breakout's Reds carry forged paper from the first day, so the
+    hunters would already be coming before the story gave them a reason. Here the
+    clan is exactly what its paper says, and the mismatch walks in later.
+  - A WORKING RIG. The quota is helium-3, a deep resource. The director places a
+    clawDrill over a seeded seam with a wood-fired generator beside it, and the two
+    research projects below are what a clan that runs such a rig already knows.
+    Without that the quota would be a letter about work nobody could do.
+  - FOUR REDS, fed and supplied. A clan on its claim, not survivors of a flood.
+
+  STRUCTURE mirrored from Scenarios_RimRising.xml in this folder (Breakout for the
+  xenotype page, arrival method and starting things; Household for
+  ScenPart_StartingResearch). ScenPartDef mirrored from RR_StartingSigils in
+  Defs/Carving/Sigils.xml; category Rule is what vanilla's own CreateIncident part
+  uses (Core/Defs/Scenarios/ScenParts_Various.xml). Electricity and DeepDrilling are
+  vanilla research defNames, checked in Core/Defs/ResearchProjectDefs.
+
+  All text is original. "The Laurel", "helldiver" and "clan" are setting terms, used
+  the way the mod already uses them; no scene from the books is retold.
+-->
+<Defs>
+
+  <ScenPartDef>
+    <defName>RR_CampaignPart</defName>
+    <label>the campaign</label>
+    <scenPartClass>RimRising.ScenPart_Campaign</scenPartClass>
+    <category>Rule</category>
+    <selectionWeight>0</selectionWeight>
+    <summaryPriority>459</summaryPriority>
+  </ScenPartDef>
+
+  <ScenarioDef ParentName="ScenarioBase">
+    <defName>RR_Scenario_Quota</defName>
+    <label>The Quota (campaign)</label>
+    <description>Four Reds, a drill, and a number.
+
+The clan has worked this claim for longer than anyone in it has been alive. The helium comes up, the Society's tithe-men take it away, and every quarter there is a notice: the clan that beats its quota wins the Laurel. Extra rations. Better quarters. Proof that the work is seen.
+
+Your clan has never won it. This quarter, people have started saying it out loud - that this time the numbers are there, if everyone digs.
+
+This start tells a story. It unfolds in acts as your colony lives through them, and the turning points arrive as offers you are free to refuse. Refuse the important one and the story ends quietly; the colony carries on as an ordinary one.</description>
+    <scenario>
+      <summary>A Red mining clan, a helium quota, and what comes of meeting it. A story told in acts.</summary>
+      <parts>
+
+        <li Class="ScenPart_GameStartDialog">
+          <def>GameStartDialog</def>
+          <text>The rig is already warm. It is always already warm.
+
+Somewhere above you, people you will never meet have decided how much helium this ground owes them. The number will arrive in a day or two, the way it always does, and the clan will do what it has always done.
+
+Dig. That part, at least, you know how to do.</text>
+          <closeSound>GameStartSting</closeSound>
+        </li>
+
+        <li Class="ScenPart_ConfigPage_ConfigureStartingPawns_Xenotypes">
+          <def>ConfigurePawnsXenotypes</def>
+          <pawnChoiceCount>10</pawnChoiceCount>
+          <customSummary>Start with four Reds.</customSummary>
+          <xenotypeCounts>
+            <li>
+              <xenotype>RR_Red</xenotype>
+              <count>4</count>
+              <description>Red</description>
+              <requiredAtStart>true</requiredAtStart>
+              <allowedDevelopmentalStages>Adult</allowedDevelopmentalStages>
+            </li>
+          </xenotypeCounts>
+        </li>
+
+        <li Class="ScenPart_PlayerPawnsArriveMethod">
+          <def>PlayerPawnsArriveMethod</def>
+          <visible>false</visible>
+          <method>Standing</method>
+        </li>
+
+        <!-- What a clan that runs a rig already knows. -->
+        <li Class="ScenPart_StartingResearch">
+          <def>StartingResearch</def>
+          <project>Electricity</project>
+        </li>
+        <li Class="ScenPart_StartingResearch">
+          <def>StartingResearch</def>
+          <project>DeepDrilling</project>
+        </li>
+
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>RR_Weapon_SlingBlade</thingDef>
+          <count>4</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>MealSimple</thingDef>
+          <count>30</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>MedicineHerbal</thingDef>
+          <count>10</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Steel</thingDef>
+          <count>250</count>
+        </li>
+        <!-- The generator beside the rig burns wood; this is its first fortnight. -->
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>WoodLog</thingDef>
+          <count>400</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>ComponentIndustrial</thingDef>
+          <count>6</count>
+        </li>
+
+        <!-- True sigils: the clan is what its paper says (ScenPart_Sigils.cs). -->
+        <li Class="RimRising.ScenPart_Sigils">
+          <def>RR_StartingSigils</def>
+        </li>
+
+        <!-- The story itself (Campaign.cs). -->
+        <!-- quota: canisters of helium-3 owed; quotaDays: days to mine them. Measured
+             in rrtestmode=campaignstart, one Red on the rig brings up about 90 a day,
+             so 900 in twelve days wants someone drilling most of the time. -->
+        <li Class="RimRising.ScenPart_Campaign">
+          <def>RR_CampaignPart</def>
+          <quota>900</quota>
+          <quotaDays>12</quotaDays>
+        </li>
+
+      </parts>
+    </scenario>
+  </ScenarioDef>
+
+</Defs>

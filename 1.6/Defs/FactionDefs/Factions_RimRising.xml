@@ -164,6 +164,14 @@
         </options>
       </li>
       <li>
+        <!-- The campaign's reprisal (CampaignRaid.cs): Grays under a Bronzie. -->
+        <kindDef>RR_CampaignDetachment</kindDef>
+        <options>
+          <RR_Society_Legionary>10</RR_Society_Legionary>
+          <RR_Society_Bronzie_Officer>1</RR_Society_Bronzie_Officer>
+        </options>
+      </li>
+      <li>
         <kindDef>Trader</kindDef>
         <traders>
           <RR_Society_Silver_Factor>1</RR_Society_Silver_Factor>

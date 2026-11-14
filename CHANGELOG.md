@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+- New scenario, **The Quota (campaign)**: a story told in acts. Four Reds on a helium claim are set
+  a quota; meeting it or not, the Laurel goes elsewhere, and what follows is a reprisal, an offer
+  from the Sons of Ares, a Red carved Gold with a sigil that no longer matches, the Lurchers that
+  come for it, recruits, the garrison, and an Iron Rain. Each act waits for its own condition,
+  never a calendar. The turning points are accept-or-refuse letters: refusing the stranger ends
+  the story quietly and the colony plays on as a sandbox. The other four scenarios are unchanged,
+  and the campaign does nothing in them or in existing saves.
+- Fixed: a pawn BORN a Color and carved into another with the Carver's surgery still read as its
+  birth Color - to the razor lock, the title ladders, the armour lock and the sigil check alike.
+  A Red carved Gold now reads as Gold. (Carving a Baseliner already worked.)
+
 ## 1.0.1 - 2026-10-24
 
 - Fixed: drafting several pawns at once could stop pawns from drawing and flood the log with

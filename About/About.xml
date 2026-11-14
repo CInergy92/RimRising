@@ -12,7 +12,8 @@ WHAT IT ADDS
 - Fourteen Colors as inheritable xenotypes, plus Bronzies and six sub-strains (21 in all), ranked by a ladder the game enforces: caste labour, deference, caste marks imposed by Color.
 - Carving: a Violet Carver can regrow a lost limb, cut away scarring, rebuild fertility so people can cross Colors, or remake someone into another Color entirely.
 - Razors with a whip form, pulse armour with a sealed helm that closes when drafted, recoil armour, scarabSkin, the demonHelm, gravBoots, the aegis and an automated trauma suite.
-- Seven factions, three ideoligion memes, the Society's two title ladders and the Rim Dominion's own, four scenarios, two biomes, a storyteller, and the Lurcher hunt.
+- Seven factions, three ideoligion memes, the Society's two title ladders and the Rim Dominion's own, five scenarios, two biomes, a storyteller, and the Lurcher hunt.
+- A story campaign, "The Quota": a Red mining clan, a helium quota, and what comes of meeting it, told in acts. Its turning points are offers you may refuse.
 - Griffins, pitvipers and the haemanthus; the clawDrill; helium-3 as a deep resource.
 - Drugs from the source: zoladone, mjolnir-6, nazopran, god's bread, fever cloud and swill.
 
@@ -35,7 +36,7 @@ Built and tested on RimWorld 1.6. Also loads and passes its tests on 1.7 (1.7.49
 
 AI DISCLOSURE
 This mod was made with heavy use of generative AI. Specifically:
-- All code and all text - the C# assembly, every XML def and patch, and every in-game label, description, backstory and name list - was written by Claude (Anthropic) through Claude Code, under my direction. Models: Claude Opus 5, Opus 5.5, Fable 5 and Fable 5.1. I directed the design, made the lore and balance calls, chose which generated art to keep, and play-tested it myself over several weeks.
+- All code and all text - the C# assembly, every XML def and patch, and every in-game label, description, backstory and name list - was written by Claude (Anthropic) through Claude Code, under my direction. Models: Claude Opus 5, Opus 5.5, Fable 5, Fable 5.1 and Fable 5.2. I directed the design, made the lore and balance calls, chose which generated art to keep, and play-tested it myself over several weeks.
 - 229 of the 363 images were generated with OpenAI gpt-image-2 on fal (fal.ai) and then cut out, fitted to the body, tint-masked and outlined by script: all worn armour (pulse, recoil, scarabSkin, ghost cloak, duroArmor, Howler pelt), the demonHelm and pulse helm, the weapons (razors, slingBlade, pulseFist, scorcher, pulse cannon), the Drachenjaeger and ripWing, the griffin and the clawDrill. The starShell (12 of them) also used Google nano-banana-2.
 - 3 images were generated locally with Z-Image-Turbo and a ControlNet: the preview image and the storyteller portrait.
 - The other 131 images - item icons, xenotype and UI icons, tattoos, the pitviper and haemanthus, the mod icon, biome textures and effects - were drawn by scripts, with no image model involved.

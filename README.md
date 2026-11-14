@@ -18,7 +18,10 @@ endorsed by the author or his publishers. No text or artwork from the books is r
   gravBoots that launch across the world map, the aegis, pulseFist and scorcher.
 - **Society** — seven factions, three ideoligion memes with their precepts, two caste-locked title ladders, a storyteller.
 - **Drugs** — zoladone, mjolnir-6, nazopran, god's bread and fever cloud.
-- **World** — three scenarios and two biomes.
+- **World** — five scenarios and two biomes.
+- **Campaign** — "The Quota", a fifth start that tells a story in acts: a Red mining clan, a helium
+  quota, a reprisal, a carved stranger, a hunt, a rising and an Iron Rain. Each act waits for the
+  colony, and the turning points are offers the player may refuse.
 
 ## Requirements
 
@@ -87,7 +90,7 @@ generation logs can be checked. In short:
 
 - **Code and text:** written by Claude (Anthropic) through Claude Code, under the author's direction:
   the C# assembly, every XML def and patch, every in-game string, and the tooling in `Tools/`.
-  Models: Claude Opus 5, Opus 5.5, Fable 5 and Fable 5.1 (see the co-author lines in the history).
+  Models: Claude Opus 5, Opus 5.5, Fable 5, Fable 5.1 and Fable 5.2 (see the co-author lines in the history).
   The author directed the design, made the lore and balance calls, chose which generated art to keep,
   and play-tested the mod over several weeks.
 - **229 of 363 images:** generated on fal with OpenAI `openai/gpt-image-2` (and its edit endpoint),

@@ -68,4 +68,139 @@ The suit also seals wounds continuously while worn, which is a separate effect a
   <RR_CensusDiscrepancyText>The census-takers of {0} have checked the hands of your colonists against the registry, and the paper does not match the person: {1}.
 
 They have written it down. Goodwill lost: {2}.</RR_CensusDiscrepancyText>
+
+  <!-- ===== The campaign (Campaign.cs, CampaignRaid.cs; scenario RR_Scenario_Quota) ===== -->
+  <RR_ScenPartCampaign>A story unfolds in acts. Its turning points are offers you may refuse.</RR_ScenPartCampaign>
+
+  <!-- Act: the quota. {0} canisters, {1} days. -->
+  <RR_Campaign_QuotaLabel>The quota</RR_Campaign_QuotaLabel>
+  <RR_Campaign_QuotaText>The notice has come, on the same grey paper as every quarter.
+
+The clan's quota is {0} canisters of helium-3, due in {1} days. The clan that beats its quota wins the Laurel: rations, quarters, the Society's regard.
+
+The seam runs under the rig. The rig needs someone at its controls and wood in its generator. Whatever helium-3 is on your claim when the tithe-men come will be counted.
+
+Everyone says this is the quarter. Everyone has said it before.</RR_Campaign_QuotaText>
+
+  <!-- {0} = quota. -->
+  <RR_Campaign_QuotaMetLabel>The Laurel</RR_Campaign_QuotaMetLabel>
+  <RR_Campaign_QuotaMetText>The tithe-men counted {0} canisters, wrote the number down, and loaded every one of them.
+
+Then they read out the award. The Laurel has gone to another clan - one that mined less than yours did, and that the overseers find easier to deal with. It was decided before the quarter began. It is always decided before the quarter begins.
+
+The clan dug until its hands split, met the number, and has been told that meeting it was never the point. People are saying so, loudly, where the tithe-men can hear.
+
+That will be remembered. So will who said it.</RR_Campaign_QuotaMetText>
+
+  <!-- {0} = canisters found, {1} = quota. -->
+  <RR_Campaign_QuotaShortLabel>Quota missed</RR_Campaign_QuotaShortLabel>
+  <RR_Campaign_QuotaShortText>The tithe-men counted {0} canisters against a quota of {1}, and took all of them.
+
+The Laurel has gone to another clan. It would have gone to another clan regardless - the older Reds say it is decided before the quarter begins - but a shortfall is a different matter. A shortfall is written down as idleness, and the Society has a procedure for idleness.
+
+Nobody has said what the procedure is. Everybody seems to know.</RR_Campaign_QuotaShortText>
+
+  <!-- Act: the reprisal. Raid letter text; the second is used when the quota was missed. -->
+  <RR_Campaign_ReprisalText>The clan complained about the Laurel, and somebody wrote the complaint down.
+
+A detachment of Grays is coming up the road to explain, in the only language the Society uses with Reds, that the award was fair. They have not come to count canisters. They have come to be seen doing it.
+
+After today the Society will not be a distant thing that sends paper. It will be an enemy, because it has decided that you are one.</RR_Campaign_ReprisalText>
+  <RR_Campaign_ReprisalTextShort>The shortfall has been assessed, and the assessment is arriving on foot.
+
+A detachment of Grays is coming up the road to correct the clan's idleness. Nobody on the claim was idle. That has never been the kind of fact that matters.
+
+After today the Society will not be a distant thing that sends paper. It will be an enemy, because it has decided that you are one.</RR_Campaign_ReprisalTextShort>
+
+  <!-- Act: the contact. An offer; refusing ends the story. -->
+  <RR_Campaign_ContactLabel>An offer, by hand</RR_Campaign_ContactLabel>
+  <RR_Campaign_ContactText>A stranger was waiting at the edge of the claim after the fighting. No sigil showing. Hands like yours.
+
+The message is short. There are people who watched what the Society did here, and they are called the Sons of Ares, and they have someone who needs to disappear for a while - hurt, hunted, and worth more to the Society dead than your whole clan is worth alive. They will drop this person at your door if you say yes.
+
+They are honest about the price. Whoever comes looking will come looking here.
+
+If you refuse, they will not ask twice, and the clan's life goes on as it was.
+
+Accept: the stranger arrives, wounded, and the story continues.
+Refuse: the story ends here. Your colony plays on as an ordinary one.</RR_Campaign_ContactText>
+
+  <RR_Campaign_DeclinedLabel>The offer is withdrawn</RR_Campaign_DeclinedLabel>
+  <RR_Campaign_DeclinedText>The stranger nodded, as though it were the answer most people give, and walked back the way they had come.
+
+Nobody will ask again. Whatever was going to begin here will begin somewhere else, with someone else's clan, or not at all.
+
+The claim is quiet. The rig is still warm.</RR_Campaign_DeclinedText>
+
+  <!-- Act: the hero. {PAWN} is the stranger. -->
+  <RR_Campaign_HeroLabel>The stranger</RR_Campaign_HeroLabel>
+  <RR_Campaign_HeroText>A pod has come down hard near the claim, and {PAWN_nameDef} is in it - wounded, unconscious, and nothing like what the message led you to expect.
+
+The build is a Gold's: the height, the bones, the eyes. A razor is strapped to {PAWN_possessive} arm. But the sigil on {PAWN_possessive} hand is a Red's, and the calluses under it are a helldiver's.
+
+Someone took a Red apart and carved a Gold out of the pieces. The Society believes that cannot be done. It is the reason {PAWN_nameDef} is worth hiding, and the reason hiding {PAWN_objective} will not work for long: a hand that says Red on a body that says Gold is exactly what the Lurchers are sent to find.
+
+Get {PAWN_objective} to a bed.</RR_Campaign_HeroText>
+
+  <!-- Act: the rising. Two offers of recruits; refusing costs only the recruits. -->
+  <RR_Campaign_Wave1Label>They heard</RR_Campaign_Wave1Label>
+  <RR_Campaign_Wave1Text>Word of what happened to the Lurchers has travelled faster than anyone can explain.
+
+Two Obsidians are at the edge of the claim. They were bred to believe Golds are gods, and they have just learned that hunters sent by gods can be beaten by miners. The Sons of Ares cut their collars a month ago and have had nowhere to send them since.
+
+They are not asking for much. They are asking whether it is true.
+
+Accept: two freed Obsidians join the colony.
+Refuse: they move on. The story continues either way.</RR_Campaign_Wave1Text>
+
+  <RR_Campaign_Wave2Label>Defectors</RR_Campaign_Wave2Label>
+  <RR_Campaign_Wave2Text>The garrison that marched on you did not all march home, and not all of the missing are dead.
+
+Two Grays have walked in with their rifles reversed, and an Orange who kept the garrison's machines running has come with them, carrying most of a toolkit that is not theirs. They were ordered to burn a mining clan and found they would rather not.
+
+The Sons of Ares vouch for them. A Gray who changes sides once is a risk. A colony that turns away rifles before what is coming is a bigger one.
+
+Accept: two Gray defectors and an Orange saboteur join the colony.
+Refuse: they go on to the Sons of Ares. The story continues either way.</RR_Campaign_Wave2Text>
+
+  <!-- {0} = how many, {1} = the pawn kind's label. -->
+  <RR_Campaign_RecruitsLabel>New arrivals</RR_Campaign_RecruitsLabel>
+  <RR_Campaign_RecruitsText>They have come in from the edge of the claim: {0} more for the colony ({1}). They are yours now, and so is whatever follows them.</RR_Campaign_RecruitsText>
+
+  <RR_Campaign_GarrisonText>A mining clan has killed the Society's hunters and is sheltering something the Society wants. That is no longer a matter for a detachment.
+
+The district garrison has been turned out in strength. Their orders are not to punish the claim. Their orders are to end it.</RR_Campaign_GarrisonText>
+
+  <!-- Act: the Rain. {0} = days of warning. -->
+  <RR_Campaign_RainWarningLabel>Ships overhead</RR_Campaign_RainWarningLabel>
+  <RR_Campaign_RainWarningText>The Sons of Ares have sent one line, and it is not an offer.
+
+A Society warship has taken up station above the claim. A garrison was lost here; that is now a Gold's embarrassment, and Golds settle embarrassments personally. They will not march. They will come down from orbit, onto your roofs, in about {0} days.
+
+They call it an Iron Rain. No colony of lowColors has ever been worth one before.
+
+Build what you can. Arm everyone. This is the last thing they have to throw.</RR_Campaign_RainWarningText>
+
+  <RR_Campaign_RainText>The sky is full of falling steel.
+
+This is an Iron Rain: the Society coming down out of orbit onto the heads of people it has decided must not exist. There is no line to hold and no road to watch. They are landing among you.
+
+Everything the clan has done since the quota comes down to this hour.</RR_Campaign_RainText>
+
+  <!-- The end. {PAWN} is the stranger, if still alive. -->
+  <RR_Campaign_WonLabel>After the Rain</RR_Campaign_WonLabel>
+  <RR_Campaign_WonText>The last of them is down, and the ship above the claim has gone.
+
+It will be reported as a withdrawal. Everyone who matters will know what it was: the Society dropped its best onto a mining clan, and the mining clan is still here. {PAWN_nameDef} is still here. A thing the Golds said could not be made, standing in the wreckage of the thing they said could not be stopped.
+
+There will be other clans. Some of them are already asking how it was done.
+
+The story told here is finished. The colony is yours, for as long as you can keep it.</RR_Campaign_WonText>
+  <RR_Campaign_WonTextNoHero>The last of them is down, and the ship above the claim has gone.
+
+It will be reported as a withdrawal. Everyone who matters will know what it was: the Society dropped its best onto a mining clan, and the mining clan is still here. The stranger they came for did not live to see it. It turns out not to have depended on one person after all.
+
+There will be other clans. Some of them are already asking how it was done.
+
+The story told here is finished. The colony is yours, for as long as you can keep it.</RR_Campaign_WonTextNoHero>
 </LanguageData>
