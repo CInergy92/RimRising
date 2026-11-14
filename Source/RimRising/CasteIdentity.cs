@@ -108,8 +108,21 @@ namespace RimRising
         {
             if (pawn?.genes == null) { return null; }
 
-            // Born to it. The overwhelmingly common case, and cheap.
+            // Carved over a birth Color. Recipe_CarveColor leaves Pawn.genes.Xenotype
+            // alone, so a pawn BORN a Color and carved into another keeps the birth
+            // xenotype with the new Color's whole gene set laid over it as xenogenes.
+            // Asked birth-first, a Red carved Gold read as Red to every check in the
+            // mod - the one pawn the setting is about (found 2026-11-14; the carve
+            // test only ever carved a Baseliner). A complete Color in the xenogenes is
+            // the carver's work and wins. Only pawns with xenogenes pay for the check.
             XenotypeDef born = pawn.genes.Xenotype;
+            if (IsColor(born) && pawn.genes.Xenogenes.Count > 0)
+            {
+                XenotypeDef carved = ColorFromGenes(pawn.genes.Xenogenes);
+                if (carved != null) { return carved; }
+            }
+
+            // Born to it. The overwhelmingly common case, and cheap.
             if (IsColor(born)) { return born; }
 
             // Carved, or otherwise assembled. Only baseliners can be - anyone with a
@@ -117,7 +130,7 @@ namespace RimRising
             // alone rather than being sorted onto a ladder they never heard of.
             if (born != null && born != XenotypeDefOf.Baseliner) { return null; }
 
-            return ColorFromGenes(pawn);
+            return ColorFromGenes(pawn.genes.GenesListForReading);
         }
 
         /// <summary>
@@ -126,11 +139,10 @@ namespace RimRising
         /// they were born - a carved Red still has a Red's history in them, which is
         /// the entire tragedy of the thing and is not a reason to fail the match.
         /// </summary>
-        private static XenotypeDef ColorFromGenes(Pawn pawn)
+        private static XenotypeDef ColorFromGenes(List<Gene> held)
         {
             EnsureBuilt();
 
-            List<Gene> held = pawn.genes.GenesListForReading;
             if (held == null || held.Count == 0) { return null; }
 
             // One reusable set, not a fresh allocation: this runs inside
