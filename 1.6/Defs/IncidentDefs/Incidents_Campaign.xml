@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
-  The campaign's three scripted raids (Source/RimRising/Campaign.cs, CampaignRaid.cs)
+  The campaign's four scripted raids (Source/RimRising/Campaign.cs, CampaignRaid.cs)
   and the letter def its offers arrive as.
 
   SHAPE mirrored from RR_Incident_LurcherHunt in Incidents_RimRising.xml, itself
@@ -16,6 +16,7 @@
                    (never below what the group needs to field anyone)
     arrivalMode    forced; left out, the usual weighted pick applies (which for the
                    Society already favours drops - Patches/IronRain.xml)
+    minPoints      a floor under pointsFactor's result, however poor the colony
     groupKind      a pawn group only the Society carries (Factions_RimRising.xml)
     textKey        Languages/English/Keyed/RimRising.xml
 -->
@@ -84,6 +85,32 @@
         <pointsFactor>1.5</pointsFactor>
         <arrivalMode>CenterDrop</arrivalMode>
         <textKey>RR_Campaign_RainText</textKey>
+      </li>
+    </modExtensions>
+  </IncidentDef>
+
+  <!-- Second arc: the Praetor. Golds come in person, with Obsidians at their backs. -->
+  <IncidentDef>
+    <defName>RR_Incident_CampaignPraetor</defName>
+    <label>Praetor's assault</label>
+    <targetTags>
+      <li>Map_PlayerHome</li>
+    </targetTags>
+    <workerClass>RimRising.IncidentWorker_CampaignRaid</workerClass>
+    <baseChance>0</baseChance>
+    <category>ThreatBig</category>
+    <pointsScaleable>true</pointsScaleable>
+    <letterLabel>The Praetor</letterLabel>
+    <letterDef>ThreatBig</letterDef>
+    <modExtensions>
+      <li Class="RimRising.CampaignRaidExtension">
+        <pointsFactor>1.8</pointsFactor>
+        <!-- A Praetor costs 240 and the Society's maxPawnCostPerTotalPointsCurve only
+             allows that from about 600 points. In a poor test colony this raid was one
+             Obsidian Knight and no Gold at all. -->
+        <minPoints>800</minPoints>
+        <groupKind>RR_CampaignPraetor</groupKind>
+        <textKey>RR_Campaign_PraetorText</textKey>
       </li>
     </modExtensions>
   </IncidentDef>

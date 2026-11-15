@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The tithe depot: the world-map site the campaign's second arc sends the colony to
+  take (Source/RimRising/Campaign.cs, MakeDepot).
+
+  MIRRORED from vanilla's BanditCamp, Core/Defs/Sites/Parts/BanditCamp.xml: a
+  SitePartDef parented on Outpost (Core/Defs/Sites/Parts/Outpost.xml) plus the two
+  GenStepDefs that link the outpost generator and its power to it. GenStep_Outpost
+  (decompiled, 1.7.5005) garrisons the map from the site's faction - the Society -
+  through its Settlement pawn group, at the site part's threat points.
+
+  WHY A PART OF OUR OWN rather than BanditCamp itself: the label. A site is named
+  after its main part, and the Society does not keep bandit camps.
+
+  tags Inherit="False" with one tag nobody else asks for: vanilla's quests pick site
+  parts by tag (Outpost's own list names five quests), and none of them should be
+  able to put a tithe depot under an item stash.
+-->
+<Defs>
+
+  <SitePartDef ParentName="Outpost">
+    <defName>RR_TitheDepot</defName>
+    <label>tithe depot</label>
+    <description>Where a district's helium-3 waits for the ships: the Society's tithe, stacked and guarded.</description>
+    <arrivedLetter>The tithe depot is ahead. The Society's guards have not been told to expect a mining clan.</arrivedLetter>
+    <gravShipsCanLandOn>true</gravShipsCanLandOn>
+    <tags Inherit="False">
+      <li>RR_TitheDepot</li>
+    </tags>
+  </SitePartDef>
+
+  <GenStepDef>
+    <defName>RR_TitheDepot</defName>
+    <linkWithSite>RR_TitheDepot</linkWithSite>
+    <order>400</order>
+    <genStep Class="GenStep_Outpost"/>
+  </GenStepDef>
+
+  <GenStepDef>
+    <defName>RR_TitheDepotPower</defName>
+    <linkWithSite>RR_TitheDepot</linkWithSite>
+    <order>401</order>
+    <genStep Class="GenStep_Power"/>
+  </GenStepDef>
+
+</Defs>

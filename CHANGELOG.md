@@ -8,7 +8,11 @@
   come for it, recruits, the garrison, and an Iron Rain. After the Rain comes a short epilogue -
   Reds from other claims, a merchant house's offer, a price on the stranger - and a last choice
   of what the claim becomes: a free clan, an ally of the Sons of Ares, or under the Rim Dominion's
-  protection. Each act waits for its own condition, never a calendar. The turning points are accept-or-refuse letters: refusing the stranger ends
+  protection. Then a second arc, in which the colony attacks for once: an offer to take the
+  district's tithe depot (a Society site on the world map, thirty days to take it), Golds coming
+  in person when it falls, and the Society's terms - be written off as an exhausted claim and
+  left alone, or burn the ledger and stay at war. Each act waits for its own condition, never a
+  calendar. The turning points are accept-or-refuse letters: refusing the stranger ends
   the story quietly and the colony plays on as a sandbox. The other four scenarios are unchanged,
   and the campaign does nothing in them or in existing saves.
 - Fixed: a pawn BORN a Color and carved into another with the Carver's surgery still read as its

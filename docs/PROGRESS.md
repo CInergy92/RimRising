@@ -1576,6 +1576,25 @@ A story spine for one scenario, built and tested locally on 1.7.5005.
   Dominion means that answer is not shown.
 - A game that had already reached Won before this was added stays finished.
 
+### The second arc (added the same day, on the user's call)
+
+The colony goes on the attack. Same rules: original text, structure only, refusable.
+
+- **The depot (an offer).** Eight days after the ending, the claim's patron - the Sons of Ares
+  while they are on speaking terms, otherwise the Rim Dominion - points at the district's tithe
+  depot. Refusing finishes the story. With no patron, or a Society no longer at war, the story
+  finishes quietly instead.
+- **The site.** `RR_TitheDepot` (`Defs/Sites/Sites_Campaign.xml`), a SitePartDef parented on
+  vanilla's Outpost, 4-12 tiles away, garrisoned from the Society's Settlement group at 0.8x the
+  colony's threat points and never under 600. Thirty days to take it. It counts as taken when a
+  colonist is on its map and vanilla's own "all enemies defeated" test passes; 600 helium-3 is
+  then dropped at home. If the site times out first, the story finishes.
+- **The Praetor.** Four days later, `RR_Incident_CampaignPraetor`: 1.8x points, never under 800,
+  from a pawn group of Praetors, Obsidian Knights and the odd Olympic Knight.
+- **Terms (a choice).** Let the ledger stand: the Society becomes neutral, which also stops the
+  Lurcher hunts (their worker needs hostility), and the Sons of Ares think much less of the
+  colony. Burn the ledger: the war goes on and the Sons of Ares think more of it.
+
 ### A bug this found
 
 `RR_CasteIdentity.ColorOf` asked birth first, so a pawn BORN a Color and carved into another with
@@ -1586,7 +1605,7 @@ Fixed: a complete Color in the xenogenes wins over the birth xenotype.
 
 | Mode | Result |
 |---|---|
-| `rrtestmode=campaign` | 26/26: the identity fix, then every act driven in code, both refusal paths, the epilogue, all three endings |
+| `rrtestmode=campaign` | 38/38: the identity fix, every act driven in code, the refusal paths, the epilogue, all three endings, and the second arc - the depot's real map generated and its garrison read, the Praetor group sampled, both terms |
 | `rrtestmode=campaignstart rrscenario=RR_Scenario_Quota` | 6/6: the real start; the game's own clock delivers the quota on day 2; the rig is powered and drilling |
 | `rrtestmode=campaignsave` | 3/3: saved with an offer unanswered, reloaded, answered |
 | `rrtestmode=m12` | 50/50 after the identity fix |
@@ -1610,8 +1629,11 @@ Fixed: a complete Color in the xenogenes wins over the birth xenotype.
 4. Beat it: the Sons of Ares' offer arrives. Accept, and a pod comes down with the stranger.
 5. Check the stranger: named Gold on the Bio tab, a Red sigil in the Health tab, a razor equipped.
 6. Six days on: Lurchers. Then the offers, the garrison, the warning, the Rain.
-7. After the Rain: the other clan's offer, the merchant house, the price letter, and the last
-   choice with its closing letter.
+7. After the Rain: the other clan's offer, the merchant house, the price letter, and the
+   choice of what the claim becomes.
+8. Eight days later: the depot offer. Accept, find the tithe depot on the world map, send a
+   caravan and clear it. Helium pods come down at home.
+9. Four days after that: the Praetor's raid. Then the terms, and the closing letter.
 
 ## Known errors
 

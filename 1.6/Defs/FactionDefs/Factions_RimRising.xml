@@ -172,6 +172,15 @@
         </options>
       </li>
       <li>
+        <!-- The campaign's Praetor raid (CampaignRaid.cs): Golds and their Obsidians. -->
+        <kindDef>RR_CampaignPraetor</kindDef>
+        <options>
+          <RR_Society_Gold_Praetor>10</RR_Society_Gold_Praetor>
+          <RR_Society_Obsidian_Knight>10</RR_Society_Obsidian_Knight>
+          <RR_Society_OlympicKnight>1</RR_Society_OlympicKnight>
+        </options>
+      </li>
+      <li>
         <kindDef>Trader</kindDef>
         <traders>
           <RR_Society_Silver_Factor>1</RR_Society_Silver_Factor>

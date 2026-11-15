@@ -22,4 +22,13 @@
     <workerClass>PawnGroupKindWorker_Normal</workerClass>
   </PawnGroupKindDef>
 
+  <!--
+    The campaign's second arc: Golds come in person. Praetors with Obsidians at
+    their backs, and now and then an Olympic Knight.
+  -->
+  <PawnGroupKindDef>
+    <defName>RR_CampaignPraetor</defName>
+    <workerClass>PawnGroupKindWorker_Normal</workerClass>
+  </PawnGroupKindDef>
+
 </Defs>

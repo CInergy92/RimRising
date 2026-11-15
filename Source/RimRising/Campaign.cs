@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
+using RimWorld.Planet;
 using UnityEngine;
 using Verse;
 
@@ -42,7 +43,17 @@ namespace RimRising
     ///                keeps coming for a mismatched sigil, and forging one ends it.
     ///   Ending       one last choice of what the claim becomes: a free clan, an ally
     ///                of the Sons of Ares, or under the Rim Dominion's protection.
-    ///   Won          the closing letter for that choice. Play continues.
+    ///   SECOND ARC   (the user's call, 2026-11-14) the colony goes on the attack.
+    ///   Depot        eight days on, the claim's patron - the Sons of Ares, or the Rim
+    ///                Dominion if that was the ending - points at the district's tithe
+    ///                depot. An offer; refusing finishes the story. Accepting puts a
+    ///                Society site on the world map (Defs/Sites/Sites_Campaign.xml) with
+    ///                thirty days to take it. Taking it sends the helium home.
+    ///   Praetor      Golds come in person: Praetors with Obsidians at their backs.
+    ///   Terms        the Society offers to write the claim off as exhausted. Accept and
+    ///                it is neutral, which also ends the Lurcher hunts; refuse and the
+    ///                war goes on with the Sons of Ares closer.
+    ///   Won          the closing letter. Play continues.
     ///
     /// Engine facts this leans on, each decompiled on 1.7.5005: Game.FillComponents
     /// instantiates every GameComponent subclass through a (Game) constructor, on new
@@ -59,12 +70,18 @@ namespace RimRising
             // The epilogue and the ending. Added after Won and Ended on purpose: the act
             // is saved by name, so order does not matter to a save, and a game that had
             // already reached Won stays finished.
-            Aftermath, ClansPending, HouseWait, HousePending, PriceWait, ChoiceWait, ChoicePending
+            Aftermath, ClansPending, HouseWait, HousePending, PriceWait, ChoiceWait, ChoicePending,
+            // The second arc.
+            Interlude, DepotPending, Depot, PraetorWait, PraetorFight, TermsPending
         }
 
         private const int Day = 60000;
         private const int OpeningDays = 2, ReprisalDays = 2, HuntDays = 6, GarrisonDays = 5, RainDays = 3;
         private const int AftermathDays = 4, HouseDays = 5, PriceDays = 3, ChoiceDays = 4;
+        private const int InterludeDays = 8, DepotDays = 30, PraetorDays = 4;
+        /// <summary>Canisters sent home when the depot falls: the tithe, back.</summary>
+        public const int DepotHelium = 600;
+        private const float DepotMinPoints = 600f;
 
         // The quota's two numbers live on the scenario part, so they are tuned in
         // Scenarios_Campaign.xml. Measured in rrtestmode=campaignstart: four Reds left
@@ -82,6 +99,9 @@ namespace RimRising
         public Pawn hero;
         /// <summary>What the claim became: "free", "ares" or "dominion". Null until chosen.</summary>
         public string ending;
+        /// <summary>The tithe depot on the world map, while the second arc wants it taken.</summary>
+        public Site depot;
+        public bool depotTaken;
         private int nextTick, raidTick;
 
         public GameComponent_Campaign(Game game) { }
@@ -96,6 +116,8 @@ namespace RimRising
             Scribe_Values.Look(ref raidTick, "rrCampaignRaidTick", 0);
             Scribe_References.Look(ref hero, "rrCampaignHero");
             Scribe_Values.Look(ref ending, "rrCampaignEnding");
+            Scribe_References.Look(ref depot, "rrCampaignDepot");
+            Scribe_Values.Look(ref depotTaken, "rrCampaignDepotTaken", false);
         }
 
         public override void GameComponentTick()
@@ -112,6 +134,21 @@ namespace RimRising
         public static Faction Society => FactionOf("RR_Society");
         public static Faction Ares => FactionOf("RR_SonsOfAres");
         public static Faction Dominion => FactionOf("RR_RimDominion");
+
+        /// <summary>
+        /// Who speaks for the second arc: the Sons of Ares while they are on speaking
+        /// terms, otherwise the Rim Dominion. Null when the claim has nobody.
+        /// </summary>
+        public static Faction Patron
+        {
+            get
+            {
+                Faction ares = Ares, dominion = Dominion;
+                if (ares != null && !ares.HostileTo(Faction.OfPlayer)) { return ares; }
+                if (dominion != null && !dominion.HostileTo(Faction.OfPlayer)) { return dominion; }
+                return null;
+            }
+        }
 
         /// <summary>The merchant house that makes the offer: one that is not at war with the colony.</summary>
         public static Faction House
@@ -306,7 +343,58 @@ namespace RimRising
                     if (Dominion != null) { answers.Add("dominion"); }
                     SendOffer("ending", "RR_Campaign_EndingLabel", "RR_Campaign_EndingText".Translate(), null, answers);
                     return;
+
+                case Act.Interlude:
+                    if (Now < nextTick) { return; }
+                    Faction patron = Patron, target = Society;
+                    // The second arc needs someone to bring the word and a Society still
+                    // at war with the claim. Without both, the story is simply over.
+                    if (patron == null || target == null || !target.HostileTo(Faction.OfPlayer))
+                    {
+                        Finish("RR_Campaign_QuietText");
+                        return;
+                    }
+                    act = Act.DepotPending;
+                    SendOffer("depot", "RR_Campaign_DepotLabel", "RR_Campaign_DepotText".Translate(patron.Name, DepotDays), patron);
+                    return;
+
+                case Act.Depot:
+                    if (depot == null || depot.Destroyed)
+                    {
+                        // Timed out, or gone some other way, with the garrison unbeaten.
+                        depot = null;
+                        Finish("RR_Campaign_DepotLostText");
+                        return;
+                    }
+                    if (!depot.HasMap || depot.Map.mapPawns.FreeColonistsSpawnedCount == 0) { return; }
+                    // Vanilla's own test for a cleared site (Site.CheckAllEnemiesDefeated).
+                    if (GenHostility.AnyHostileActiveThreatToPlayer(depot.Map, countDormantPawnsAsHostile: true, canBeFogged: true)) { return; }
+                    depotTaken = true;
+                    depot.GetComponent<TimeoutComp>()?.StopTimeout();
+                    DropHelium(map, DepotHelium);
+                    act = Act.PraetorWait;
+                    nextTick = Now + PraetorDays * Day;
+                    Find.LetterStack.ReceiveLetter("RR_Campaign_DepotTakenLabel".Translate(),
+                        "RR_Campaign_DepotTakenText".Translate(DepotHelium), LetterDefOf.PositiveEvent, new LookTargets(depot));
+                    return;
+
+                case Act.PraetorWait:
+                    if (Now >= nextTick) { StartRaid(map, "RR_Incident_CampaignPraetor", Act.PraetorFight); }
+                    return;
+
+                case Act.PraetorFight:
+                    if (!RaidOver(map)) { return; }
+                    act = Act.TermsPending;
+                    SendOffer("terms", "RR_Campaign_TermsLabel", "RR_Campaign_TermsText".Translate(), Society, new List<string> { "truce", "burn" });
+                    return;
             }
+        }
+
+        /// <summary>The story is over: a last letter, and nothing runs after it.</summary>
+        private void Finish(string textKey)
+        {
+            act = Act.Won;
+            Send("RR_Campaign_FinishedLabel", textKey.Translate(), LetterDefOf.NeutralEvent);
         }
 
         private void ToPrice()
@@ -411,8 +499,45 @@ namespace RimRising
                         Dominion?.TryAffectGoodwillWith(Faction.OfPlayer, 200, canSendMessage: false, canSendHostilityLetter: false);
                         Ares?.TryAffectGoodwillWith(Faction.OfPlayer, -60, canSendMessage: false, canSendHostilityLetter: false);
                     }
-                    act = Act.Won;
+                    act = Act.Interlude;
+                    nextTick = Now + InterludeDays * Day;
                     Send("RR_Campaign_EndLabel", ("RR_Campaign_End_" + answer).Translate(), LetterDefOf.PositiveEvent);
+                    return;
+
+                case "depot":
+                    if (act != Act.DepotPending) { return; }
+                    if (!accepted) { Finish("RR_Campaign_DepotRefusedText"); return; }
+                    depot = MakeDepot(map);
+                    if (depot == null) { Finish("RR_Campaign_QuietText"); return; }
+                    depotTaken = false;
+                    act = Act.Depot;
+                    Find.LetterStack.ReceiveLetter("RR_Campaign_DepotMarkedLabel".Translate(),
+                        "RR_Campaign_DepotMarkedText".Translate(DepotDays), LetterDefOf.NeutralEvent, new LookTargets(depot));
+                    return;
+
+                case "terms":
+                    if (act != Act.TermsPending) { return; }
+                    Faction society = Society;
+                    if (answer == "truce" && society != null)
+                    {
+                        // Back to exactly neutral. Goodwill first, then the relation itself
+                        // if the thresholds did not carry it (CampaignRaid.cs does the
+                        // same in the other direction).
+                        society.TryAffectGoodwillWith(Faction.OfPlayer, -society.PlayerGoodwill, canSendMessage: false, canSendHostilityLetter: false);
+                        if (society.HostileTo(Faction.OfPlayer))
+                        {
+                            society.SetRelationDirect(Faction.OfPlayer, FactionRelationKind.Neutral, canSendHostilityLetter: false);
+                        }
+                        Ares?.TryAffectGoodwillWith(Faction.OfPlayer, -40, canSendMessage: false, canSendHostilityLetter: false);
+                        ending = "truce";
+                    }
+                    else
+                    {
+                        Ares?.TryAffectGoodwillWith(Faction.OfPlayer, 30, canSendMessage: false, canSendHostilityLetter: false);
+                        ending = "burn";
+                    }
+                    act = Act.Won;
+                    Send("RR_Campaign_FinishedLabel", ("RR_Campaign_Terms_" + ending).Translate(), LetterDefOf.PositiveEvent);
                     return;
 
                 case "contact":
@@ -540,6 +665,44 @@ namespace RimRising
             DropPodUtility.DropThingsNear(DropCellFinder.TradeDropSpot(map), map, things, forbid: false);
         }
 
+        /// <summary>
+        /// The tithe depot: a Society outpost within caravan range, to be taken inside
+        /// DepotDays. Garrisoned by GenStep_Outpost from the Society's Settlement group
+        /// at four-fifths of the colony's current threat points (SitePartWorker_Outpost
+        /// raises that to the group's minimum by itself). Null if there is no tile or
+        /// the Society is not at war with the claim.
+        /// </summary>
+        public static Site MakeDepot(Map map)
+        {
+            Faction society = Society;
+            SitePartDef part = DefDatabase<SitePartDef>.GetNamedSilentFail("RR_TitheDepot");
+            if (society == null || part == null || !society.HostileTo(Faction.OfPlayer)) { return null; }
+            if (!TileFinder.TryFindNewSiteTile(out PlanetTile tile, map.Tile, 4, 12)) { return null; }
+
+            // Never fewer than DepotMinPoints: in a poor test colony the depot was held
+            // by one legionary, which is not a depot.
+            float points = Mathf.Max(StorytellerUtility.DefaultThreatPointsNow(map) * 0.8f, DepotMinPoints);
+            Site site = SiteMaker.MakeSite(part, tile, society, true, points);
+            site.customLabel = "RR_Campaign_DepotName".Translate();
+            site.GetComponent<TimeoutComp>()?.StartTimeout(DepotDays * Day);
+            Find.WorldObjects.Add(site);
+            return site;
+        }
+
+        public static void DropHelium(Map map, int count)
+        {
+            ThingDef he3 = DefDatabase<ThingDef>.GetNamedSilentFail("RR_HeliumThree");
+            if (he3 == null) { return; }
+            List<Thing> things = new List<Thing>();
+            for (int left = count; left > 0; left -= he3.stackLimit)
+            {
+                Thing t = ThingMaker.MakeThing(he3);
+                t.stackCount = Mathf.Min(left, he3.stackLimit);
+                things.Add(t);
+            }
+            DropPodUtility.DropThingsNear(DropCellFinder.TradeDropSpot(map), map, things, forbid: false);
+        }
+
         // ------------------------------------------------------------------ raids
 
         private void StartRaid(Map map, string incidentDefName, Act fightAct)
@@ -618,6 +781,8 @@ namespace RimRising
             act = to;
             hero = null;
             ending = null;
+            depot = null;
+            depotTaken = false;
             quotaMet = false;
             nextTick = 0;
             raidTick = 0;

@@ -251,7 +251,7 @@ Belong to nobody: nothing changes.
 Stand with the Sons of Ares: they become your allies.
 Take the Rim Dominion's hand: it becomes your ally, and the Sons of Ares think much less of you.
 
-Whichever you choose ends the story told here.</RR_Campaign_EndingText>
+Whichever you choose, the claim will have to live with it.</RR_Campaign_EndingText>
   <RR_Campaign_Option_free>Belong to nobody</RR_Campaign_Option_free>
   <RR_Campaign_Option_ares>Stand with the Sons of Ares</RR_Campaign_Option_ares>
   <RR_Campaign_Option_dominion>Take the Rim Dominion's hand</RR_Campaign_Option_dominion>
@@ -263,19 +263,110 @@ No banner goes up over the rig. No sigil is painted on the gate. The clan digs, 
 
 It may not last. Nothing like it has, yet.
 
-The story told here is finished. The colony is yours, for as long as you can keep it.</RR_Campaign_End_free>
+For now, the claim is quiet.</RR_Campaign_End_free>
   <RR_Campaign_End_ares>The answer went back to the Sons of Ares the same night: yes, and openly.
 
 They are your allies now. Their people will come when you call and trade when you ask, and the Society will never again mistake this claim for a mining clan with a grievance. It is a piece of the Rising with a map reference.
 
 That was always the risk. It was also always the point.
 
-The story told here is finished. The colony is yours, for as long as you can keep it.</RR_Campaign_End_ares>
+For now, the claim is quiet.</RR_Campaign_End_ares>
   <RR_Campaign_End_dominion>The Dominion's envoy bowed, a little, which Golds do not do to Reds, and left with the claim's answer.
 
 The Rim Dominion is your ally now, and its ships are a thing the Society must think about before it thinks about you. The Sons of Ares have been told. Their reply was one word and it was not a kind one.
 
 The clan has a protector. It has not yet learned what protectors cost.
 
-The story told here is finished. The colony is yours, for as long as you can keep it.</RR_Campaign_End_dominion>
+For now, the claim is quiet.</RR_Campaign_End_dominion>
+
+  <!-- ===== The second arc: the depot, the Praetor, the terms (Campaign.cs) ===== -->
+  <RR_Campaign_FinishedLabel>The claim</RR_Campaign_FinishedLabel>
+  <RR_Campaign_QuietText>No more word comes.
+
+The roads are quiet and the sky is empty. Whatever the Society means to do about the claim, it is not doing it this season.
+
+The story told here is finished. The colony is yours, for as long as you can keep it.</RR_Campaign_QuietText>
+
+  <!-- {0} = the patron faction's name, {1} = days to take the depot. -->
+  <RR_Campaign_DepotLabel>Where the helium goes</RR_Campaign_DepotLabel>
+  <RR_Campaign_DepotText>A runner from {0} has brought a map with one mark on it.
+
+Every canister the tithe-men ever took from this district went to the same place first: a depot a few days' travel from the claim, where the helium waits for the ships. Yours is in it. So is every other clan's.
+
+Since the Rain it is held by what the garrison had left. That will not stay true. In about {1} days the next ship comes, the stacks go up to orbit, and the guard is doubled.
+
+Until now the Society has always come to you.
+
+Accept: the depot is marked on the world map. Send a caravan and take it within {1} days.
+Refuse: the story ends here. Your colony plays on as an ordinary one.</RR_Campaign_DepotText>
+  <RR_Campaign_DepotName>tithe depot</RR_Campaign_DepotName>
+
+  <!-- {0} = days. -->
+  <RR_Campaign_DepotMarkedLabel>The tithe depot</RR_Campaign_DepotMarkedLabel>
+  <RR_Campaign_DepotMarkedText>The depot is marked on the world map. It is a Society outpost: walls, a garrison, and the district's helium stacked inside.
+
+Form a caravan and attack it. Kill or drive off everyone holding it. You have about {0} days before the ship comes for the stacks.
+
+Leave enough people behind to hold the claim. The Society has not stopped looking at it.</RR_Campaign_DepotMarkedText>
+
+  <RR_Campaign_DepotRefusedText>The runner folded the map and took it away again.
+
+It was a great deal to ask of a clan that has already been asked for everything. The helium will go up to the ships as it always has, and the claim will go on being a place that survived.
+
+The story told here is finished. The colony is yours, for as long as you can keep it.</RR_Campaign_DepotRefusedText>
+
+  <RR_Campaign_DepotLostText>The ship came for the stacks.
+
+The depot is empty now, and the helium that was in it is somewhere above the sky. There will be another quarter and another tithe, somewhere, from someone. The chance to take this one back has gone.
+
+The story told here is finished. The colony is yours, for as long as you can keep it.</RR_Campaign_DepotLostText>
+
+  <!-- {0} = canisters sent home. -->
+  <RR_Campaign_DepotTakenLabel>The depot is yours</RR_Campaign_DepotTakenLabel>
+  <RR_Campaign_DepotTakenText>The last of the guard is down, and the stacks are still here.
+
+Row on row of canisters, each stencilled with the mark of the clan it was taken from. Some of the marks are yours. Most belong to clans who will find out, in the next few days, that a tithe can be taken back.
+
+{0} canisters are on their way to the claim by pod. The rest is going home to whoever dug it.
+
+Bring your people back. Nobody takes a Gold's helium and is left to enjoy it.</RR_Campaign_DepotTakenText>
+
+  <RR_Campaign_PraetorText>They have not sent Grays this time.
+
+A Praetor has come down in person, with peers at the shoulder and Obsidians at the back. Golds do not do this for a mining clan. They do it when the alternative is explaining, to other Golds, how a mining clan emptied a depot.
+
+These are the people the whole hierarchy exists to produce. Everything below them was built so that this fight would never have to happen.
+
+It is happening.</RR_Campaign_PraetorText>
+
+  <RR_Campaign_TermsLabel>Terms</RR_Campaign_TermsLabel>
+  <RR_Campaign_TermsText>A White has come under a flag of truce, alone, carrying a ledger.
+
+The Society does not surrender, and this is not a surrender. It is an entry. The claim is to be recorded as exhausted: seam dry, clan dispersed, nothing of value remaining. Nobody is sent to an exhausted claim. No tithe-men, no garrison, no hunters. On paper, you would stop existing, and in practice you would be left alone.
+
+All it needs is that you let the entry stand.
+
+The Sons of Ares have already said what they think of a Rising that signs the Society's books.
+
+Let the ledger stand: the Society becomes neutral. With no war, the Lurchers stop coming. The Sons of Ares think much less of you.
+Burn the ledger: the war goes on. The Sons of Ares think more of you.
+
+Whichever you choose ends the story told here.</RR_Campaign_TermsText>
+  <RR_Campaign_Option_truce>Let the ledger stand</RR_Campaign_Option_truce>
+  <RR_Campaign_Option_burn>Burn the ledger</RR_Campaign_Option_burn>
+
+  <RR_Campaign_Terms_truce>The White closed the ledger and went back down the road.
+
+Somewhere a clerk has written that this ground is finished, and for the first time in eight hundred years a lie in the Society's books is working in a Red's favour. The rig is running. The seam is nowhere near dry. Officially, nobody is here to see it.
+
+It is a quiet kind of freedom, and it was bought with a signature the Sons of Ares will not forget.
+
+The story told here is finished. The colony is yours, for as long as you can keep it.</RR_Campaign_Terms_truce>
+  <RR_Campaign_Terms_burn>The ledger burned well. The White watched it go and said nothing, which Whites are trained to do.
+
+There will be no entry. The claim stays on the Society's maps as what it is: a place where the hierarchy was told no, and then told no again by people it had already sent Golds to kill.
+
+They will be back. They know where you are. So, now, does everyone else.
+
+The story told here is finished. The colony is yours, for as long as you can keep it.</RR_Campaign_Terms_burn>
 </LanguageData>

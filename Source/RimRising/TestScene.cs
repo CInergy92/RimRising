@@ -2330,13 +2330,13 @@ namespace RimRising
 
                 d.Resolve("ending", "dominion");
                 int aresAfterDominion = ares?.PlayerGoodwill ?? 0;
-                CCheck("10 the Dominion's hand", d.act == GameComponent_Campaign.Act.Won && !d.Running && d.ending == "dominion" && dominion != null &&
+                CCheck("10 the Dominion's hand", d.act == GameComponent_Campaign.Act.Interlude && d.Running && d.ending == "dominion" && dominion != null &&
                        dominion.PlayerRelationKind == FactionRelationKind.Ally && HasLetter("RR_Campaign_EndLabel"),
                        $"act {d.act}, ending {d.ending}; Rim Dominion {dominion?.PlayerRelationKind} ({dominion?.PlayerGoodwill}); Sons of Ares now {aresAfterDominion}");
 
                 d.DebugReset(GameComponent_Campaign.Act.ChoicePending);
                 d.Resolve("ending", "ares");
-                CCheck("10 the Sons of Ares", d.act == GameComponent_Campaign.Act.Won && d.ending == "ares" && ares != null &&
+                CCheck("10 the Sons of Ares", d.act == GameComponent_Campaign.Act.Interlude && d.ending == "ares" && ares != null &&
                        ares.PlayerRelationKind == FactionRelationKind.Ally,
                        $"act {d.act}, ending {d.ending}; Sons of Ares {ares?.PlayerRelationKind} ({ares?.PlayerGoodwill})");
 
@@ -2351,7 +2351,112 @@ namespace RimRising
 
                 d.DebugReset(GameComponent_Campaign.Act.ChoicePending);
                 d.Resolve("ending", "something else");
-                CCheck("10 anything else is the free clan", d.act == GameComponent_Campaign.Act.Won && d.ending == "free", $"act {d.act}, ending {d.ending}");
+                CCheck("10 anything else is the free clan", d.act == GameComponent_Campaign.Act.Interlude && d.ending == "free", $"act {d.act}, ending {d.ending}");
+            });
+
+            // 11. The second arc: the depot on the world map, the Praetor, the terms.
+            CRun("11 second arc", () =>
+            {
+                Faction society = GameComponent_Campaign.Society, ares = GameComponent_Campaign.Ares;
+                d.DebugSkipWaits(); d.Step();
+                var offer = Find.LetterStack.LettersListForReading.OfType<ChoiceLetter_CampaignOffer>().FirstOrDefault(l => l.beat == "depot");
+                CCheck("11 depot offered", d.act == GameComponent_Campaign.Act.DepotPending && offer != null && GameComponent_Campaign.Patron == ares,
+                       $"act {d.act}; offer {offer != null}; patron {GameComponent_Campaign.Patron?.Name ?? "none"}");
+
+                d.Resolve("depot", false);
+                CCheck("11 refusing the depot finishes it", d.act == GameComponent_Campaign.Act.Won && !d.Running && d.depot == null, $"act {d.act}, depot {d.depot != null}");
+
+                // One way the depot ends: the ship comes first (the site times out).
+                d.DebugReset(GameComponent_Campaign.Act.DepotPending);
+                d.Resolve("depot", true);
+                RimWorld.Planet.Site first = d.depot;
+                if (first != null) { first.Destroy(); }
+                d.Step();
+                CCheck("11 depot lost to the clock", first != null && d.act == GameComponent_Campaign.Act.Won && d.depot == null && !d.depotTaken,
+                       $"a depot was made {first != null}; act {d.act}, depot {d.depot != null}");
+
+                d.DebugReset(GameComponent_Campaign.Act.DepotPending);
+                d.Resolve("depot", true);
+                RimWorld.Planet.Site site = d.depot;
+                RimWorld.Planet.TimeoutComp timeout = site?.GetComponent<RimWorld.Planet.TimeoutComp>();
+                int dist = site == null ? -1 : Find.WorldGrid.TraversalDistanceBetween(map.Tile, site.Tile);
+                CCheck("11 depot on the world map", d.act == GameComponent_Campaign.Act.Depot && site != null && Find.WorldObjects.Contains(site) &&
+                       site.Faction == society && site.MainSitePartDef.defName == "RR_TitheDepot" && timeout != null && timeout.Active && dist >= 4 && dist <= 12,
+                       $"act {d.act}; site '{site?.Label}' of {site?.Faction?.Name}, part {site?.MainSitePartDef?.defName}, {dist} tiles away, " +
+                       $"timeout {(timeout == null ? "none" : (timeout.TicksLeft / 60000f).ToString("F0") + " days")}");
+                if (site == null) { return; }
+
+                // The real thing: generate the depot's map the way a caravan arriving does
+                // (CaravanArrivalAction_VisitSite.DoEnter), and see who is holding it.
+                Map dm = GetOrGenerateMapUtility.GetOrGenerateMap(site.Tile, site.PreferredMapSize, null);
+                List<Pawn> guards = dm.mapPawns.AllPawnsSpawned.Where(p => p.Faction == society).ToList();
+                CCheck("11 depot garrisoned", dm != null && guards.Count >= 3 && GenHostility.AnyHostileActiveThreatToPlayer(dm, true, true),
+                       $"map {dm?.Size}; {guards.Count} Society guards: {string.Join(", ", guards.GroupBy(p => p.kindDef.defName).Select(g => g.Count() + " " + g.Key))}");
+
+                d.Step();
+                bool waitsForCaravan = d.act == GameComponent_Campaign.Act.Depot;
+                Pawn scout = PawnGenerator.GeneratePawn(new PawnGenerationRequest(PawnKindDefOf.Colonist, Faction.OfPlayer,
+                    forceGenerateNewPawn: true, developmentalStages: DevelopmentalStage.Adult));
+                GenSpawn.Spawn(scout, CellFinderLoose.RandomCellWith(c => c.Standable(dm) && !c.Fogged(dm), dm), dm);
+                d.Step();
+                CCheck("11 not taken while it is held", waitsForCaravan && d.act == GameComponent_Campaign.Act.Depot && !d.depotTaken,
+                       $"act {d.act} with a colonist there and {guards.Count} guards standing");
+
+                foreach (Thing t in dm.listerThings.AllThings.Where(t => t.Faction == society).ToList())
+                {
+                    if (!t.Destroyed) { t.Destroy(); }
+                }
+                int podsBefore = map.listerThings.ThingsOfDef(ThingDefOf.DropPodIncoming).Count;
+                d.Step();
+                int pods = map.listerThings.ThingsOfDef(ThingDefOf.DropPodIncoming).Count - podsBefore;
+                CCheck("11 depot taken", d.act == GameComponent_Campaign.Act.PraetorWait && d.depotTaken && pods > 0 && !timeout.Active &&
+                       HasLetter("RR_Campaign_DepotTakenLabel"),
+                       $"act {d.act}; taken {d.depotTaken}; {pods} helium pods coming down at home; timeout stopped {!timeout.Active}");
+
+                // Who is in the Praetor's raid, judged on the group itself: the raid may
+                // arrive by drop pod, where nobody can be counted. Ten groups at the
+                // incident's minimum strength.
+                IncidentDef praetorDef = DefDatabase<IncidentDef>.GetNamed("RR_Incident_CampaignPraetor");
+                CampaignRaidExtension praetorExt = praetorDef.GetModExtension<CampaignRaidExtension>();
+                int withGold = 0, samples = 10;
+                List<string> seen = new List<string>();
+                for (int i = 0; i < samples; i++)
+                {
+                    var gp = new PawnGroupMakerParms { groupKind = praetorExt.groupKind, faction = society, points = praetorExt.minPoints, tile = map.Tile, inhabitants = false };
+                    List<Pawn> group = PawnGroupMakerUtility.GeneratePawns(gp).ToList();
+                    if (group.Any(p => p.kindDef.defName == "RR_Society_Gold_Praetor" || p.kindDef.defName == "RR_Society_OlympicKnight")) { withGold++; }
+                    if (i == 0) { seen = group.GroupBy(p => p.kindDef.defName).Select(g => g.Count() + " " + g.Key).ToList(); }
+                    foreach (Pawn p in group) { Discard(p); }
+                }
+                CCheck("11 Golds come in person", withGold >= 8,
+                       $"{withGold} of {samples} groups at {praetorExt.minPoints} points held a Gold; the first was {string.Join(", ", seen)}");
+
+                d.DebugSkipWaits(); d.Step();
+                List<Pawn> lance = map.mapPawns.AllPawnsSpawned.Where(p => p.Faction == society).ToList();
+                CCheck("11 the Praetor", d.act == GameComponent_Campaign.Act.PraetorFight,
+                       $"act {d.act}; on the ground now: {(lance.Count == 0 ? "none yet (dropping)" : string.Join(", ", lance.GroupBy(p => p.kindDef.defName).Select(g => g.Count() + " " + g.Key)))}");
+                ClearSociety();
+
+                d.DebugSkipWaits(); d.Step();
+                var terms = Find.LetterStack.LettersListForReading.OfType<ChoiceLetter_CampaignOffer>().FirstOrDefault(l => l.beat == "terms");
+                CCheck("11 terms offered", d.act == GameComponent_Campaign.Act.TermsPending && terms != null && terms.answers.SequenceEqual(new[] { "truce", "burn" }),
+                       $"act {d.act}; answers [{(terms?.answers == null ? "-" : string.Join(", ", terms.answers))}]");
+
+                int aresWas = ares?.PlayerGoodwill ?? 0;
+                d.Resolve("terms", "burn");
+                CCheck("11 burning the ledger", d.act == GameComponent_Campaign.Act.Won && d.ending == "burn" && society.HostileTo(Faction.OfPlayer) &&
+                       (ares?.PlayerGoodwill ?? 0) >= aresWas && HasLetter("RR_Campaign_FinishedLabel"),
+                       $"act {d.act}, ending {d.ending}; Society hostile {society.HostileTo(Faction.OfPlayer)}; Sons of Ares {aresWas} -> {ares?.PlayerGoodwill}");
+
+                d.DebugReset(GameComponent_Campaign.Act.TermsPending);
+                d.hero = h;
+                bool huntedBefore = IncidentWorker_LurcherHunt.Quarry(map) != null;
+                d.Resolve("terms", "truce");
+                // The Lurcher hunt's worker refuses unless the Society is hostile
+                // (IncidentWorker_LurcherHunt.CanFireNowSub), so neutral means no more hunts.
+                CCheck("11 letting the ledger stand", d.act == GameComponent_Campaign.Act.Won && d.ending == "truce" && !society.HostileTo(Faction.OfPlayer) &&
+                       society.PlayerRelationKind == FactionRelationKind.Neutral,
+                       $"act {d.act}, ending {d.ending}; Society {society.PlayerRelationKind} ({society.PlayerGoodwill}); a quarry is still here {huntedBefore}");
             });
 
             Log.Message($"[RimRising] CAMPAIGN SUMMARY {campOk} ok, {campFail} fail");

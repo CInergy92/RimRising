@@ -1187,7 +1187,22 @@ Verified on 1.7.5005, each by decompiling or by test:
   which starts at 13 - in vanilla and in every start here. Test with `DevelopmentalStage.Adult()`,
   not an age. The campaign's stranger is generated at 20-27 on purpose.
 
-Test modes: `rrtestmode=campaign` (every act in code, the epilogue and all three endings, 26 checks), `rrtestmode=campaignstart
+- **A world-map site of our own** is a `SitePartDef` parented on vanilla's `Outpost` plus two
+  `GenStepDef`s with `linkWithSite` (mirror `Core/Defs/Sites/Parts/BanditCamp.xml`), made with
+  `SiteMaker.MakeSite(part, tile, faction, true, threatPoints)` and `Find.WorldObjects.Add`.
+  `GenStep_Outpost` garrisons it from the faction's **Settlement** pawn group. Give it
+  `tags Inherit="False"` or vanilla quests can pick it. The site's `TimeoutComp` is already on
+  the vanilla Site def; `StartTimeout` and `StopTimeout` are all it needs.
+- **A site is cleared** when `GenHostility.AnyHostileActiveThreatToPlayer(map, true, true)` is
+  false - vanilla's own test in `Site.CheckAllEnemiesDefeated`. A test can generate the site's
+  map exactly as an arriving caravan does:
+  `GetOrGenerateMapUtility.GetOrGenerateMap(site.Tile, site.PreferredMapSize, null)`.
+- **Points floors matter.** Raid and site strength scale with colony wealth, and a poor colony
+  got a depot held by one legionary and a "Praetor" raid with no Praetor (a 240-point pawn needs
+  about 600 points before `maxPawnCostPerTotalPointsCurve` allows it). Give anything that must
+  be a real fight a minimum.
+
+Test modes: `rrtestmode=campaign` (every act in code, the epilogue, all three endings and the second arc, 38 checks), `rrtestmode=campaignstart
 rrscenario=RR_Scenario_Quota` (the real start, then two game days on the clock, 6 checks),
 `rrtestmode=campaignsave` (save mid-story, reload, answer the letter, 3 checks). Each logs
 `CAMPAIGN OK/FAIL` lines and a `CAMPAIGN SUMMARY`.

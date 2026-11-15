@@ -13,6 +13,8 @@ namespace RimRising
     {
         /// <summary>Times the storyteller's own threat points for the colony right now.</summary>
         public float pointsFactor = 1f;
+        /// <summary>Never fewer points than this, however poor the colony.</summary>
+        public float minPoints;
         /// <summary>Forced arrival mode; null leaves it to the usual weighted pick.</summary>
         public PawnsArrivalModeDef arrivalMode;
         /// <summary>A pawn group only the Society carries; null means its Combat group.</summary>
@@ -76,7 +78,7 @@ namespace RimRising
                 // fails to generate and the act never starts.
                 points = Mathf.Max(points, parms.faction.def.MinPointsToGeneratePawnGroup(parms.pawnGroupKind ?? PawnGroupKindDefOf.Combat) * 1.05f);
             }
-            parms.points = points;
+            parms.points = Mathf.Max(points, ext?.minPoints ?? 0f);
             return base.TryExecuteWorker(parms);
         }
 
