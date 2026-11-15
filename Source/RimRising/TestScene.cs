@@ -1946,7 +1946,8 @@ namespace RimRising
                 var worker = (IncidentWorker_Raid)IncidentDefOf.RaidEnemy.Worker;
                 float DropShare(Faction f)
                 {
-                    int drops = 0, n = 300;
+                    // 2000 draws: at 300 the noise (about 3 points) was the size of the margin.
+                    int drops = 0, n = 2000;
                     for (int i = 0; i < n; i++)
                     {
                         var parms = new IncidentParms { target = map, faction = f, points = 1500f, raidStrategy = RaidStrategyDefOf.ImmediateAttack };
@@ -1960,7 +1961,10 @@ namespace RimRising
                     // is no baseline for a Society-only arrival curve.
                     && f.def.RoyalTitlesAwardableInSeniorityOrderForReading.Count == 0);
                 float soc = DropShare(society), oth = other == null ? -1f : DropShare(other);
-                Check("26 iron rain", soc > 0.75f && (other == null || soc > oth + 0.1f),
+                // The margin is 4 points, not 10: against a faction that already favours
+                // drops at 1500 points (an Alpha Genes outlander union, 81%) the true gap
+                // is about 10, and a 10-point threshold failed on noise.
+                Check("26 iron rain", soc > 0.75f && (other == null || soc > oth + 0.04f),
                       $"drop share at 1500 points: Society {soc:P0}, {other?.def.defName ?? "no comparison faction"} {oth:P0}");
             });
 
@@ -1971,8 +1975,12 @@ namespace RimRising
                 if (pilot == null) { Log.Message("[RimRising] M12 skip 27: Odyssey not active"); return; }
                 Pawn b = Colonist(DefDatabase<XenotypeDef>.GetNamed("RR_Blue"), null), o = Colonist(DefDatabase<XenotypeDef>.GetNamed("RR_Orange"), null);
                 float pb = b.GetStatValue(pilot), po = o.GetStatValue(pilot);
-                Check("27 helm sense", b.genes.HasActiveGene(DefDatabase<GeneDef>.GetNamed("RR_HelmSense")) && pb > po,
-                      $"piloting Blue {pb:F2} vs Orange {po:F2}");
+                // Judged on the gene's own factor, not on Blue > Orange: the two pawns are
+                // random, and a skilled Orange out-flew a Blue once (1.52 against 1.23).
+                GeneDef helm = DefDatabase<GeneDef>.GetNamed("RR_HelmSense");
+                float factor = helm.statFactors?.FirstOrDefault(m => m.stat == pilot)?.value ?? 1f;
+                Check("27 helm sense", b.genes.HasActiveGene(helm) && !o.genes.HasActiveGene(helm) && factor > 1f,
+                      $"helm sense multiplies piloting by {factor:F2}; this Blue {pb:F2}, this Orange {po:F2}");
                 Discard(b); Discard(o);
             });
 
@@ -2261,7 +2269,89 @@ namespace RimRising
                 ClearSociety();
 
                 d.DebugSkipWaits(); d.Step();
-                CCheck("8 won", d.act == GameComponent_Campaign.Act.Won && !d.Running && HasLetter("RR_Campaign_WonLabel"), $"act {d.act}, running {d.Running}");
+                CCheck("8 the Rain beaten", d.act == GameComponent_Campaign.Act.Aftermath && d.Running && HasLetter("RR_Campaign_WonLabel"), $"act {d.act}, still running {d.Running}");
+            });
+
+            // A quicktest world holds only the factions a start REQUIRES (the Society, the
+            // Sons of Ares). A normal new game also has one merchant house of each kind and
+            // the Rim Dominion (startingCountAtWorldCreation defaults to 1), so make them.
+            foreach (string name in new[] { "RR_SunIndustries", "RR_RimDominion" })
+            {
+                Faction f = FactionOf(name);
+                if (f == null)
+                {
+                    f = FactionGenerator.NewGeneratedFaction(new FactionGeneratorParms(DefDatabase<FactionDef>.GetNamed(name)));
+                    Find.FactionManager.Add(f);
+                }
+                f.TryAffectGoodwillWith(Faction.OfPlayer, -f.PlayerGoodwill, canSendMessage: false, canSendHostilityLetter: false);
+            }
+
+            // 9. The epilogue: other clans, a merchant house, the price on the stranger.
+            CRun("9 epilogue", () =>
+            {
+                int before = map.mapPawns.FreeColonistsSpawnedCount;
+                d.DebugSkipWaits(); d.Step();
+                bool clans = Find.LetterStack.LettersListForReading.OfType<ChoiceLetter_CampaignOffer>().Any(l => l.beat == "clans");
+                d.Resolve("clans", true);
+                int supplyPods = map.listerThings.ThingsOfDef(ThingDefOf.DropPodIncoming).Count;
+                CCheck("9 other clans", clans && d.act == GameComponent_Campaign.Act.HouseWait &&
+                       map.mapPawns.FreeColonistsSpawnedCount == before + 2 && supplyPods > 0,
+                       $"offer {clans}; act {d.act}; colonists {before} -> {map.mapPawns.FreeColonistsSpawnedCount}; {supplyPods} supply pods in the air");
+
+                Faction house = GameComponent_Campaign.House, ares = GameComponent_Campaign.Ares;
+                int houseWas = house?.PlayerGoodwill ?? 0, aresWas = ares?.PlayerGoodwill ?? 0;
+                d.DebugSkipWaits(); d.Step();
+                bool offer = Find.LetterStack.LettersListForReading.OfType<ChoiceLetter_CampaignOffer>().Any(l => l.beat == "house");
+                d.Resolve("house", true);
+                int traders = house == null ? 0 : map.mapPawns.AllPawnsSpawned.Count(p => p.Faction == house);
+                CCheck("9 merchant house", house != null && offer && d.act == GameComponent_Campaign.Act.PriceWait &&
+                       house.PlayerGoodwill > houseWas && ares != null && traders > 0 &&
+                       // Vanilla adds up to a quarter to a change that moves a faction back toward
+                       // its natural goodwill (Faction.CalculateAdjustedGoodwillChange), so -10 can be -12.
+                       ares.PlayerGoodwill <= aresWas - 10 && ares.PlayerGoodwill >= aresWas - 13,
+                       $"{house?.Name ?? "no house"}: offer {offer}; act {d.act}; goodwill {houseWas} -> {house?.PlayerGoodwill}; " +
+                       $"Sons of Ares {aresWas} -> {ares?.PlayerGoodwill}; {traders} of the house's caravan on the map");
+
+                bool mismatch = h != null && !h.Dead && RR_Sigils.SigilMismatch(h);
+                d.DebugSkipWaits(); d.Step();
+                CCheck("9 price on the stranger", d.act == GameComponent_Campaign.Act.ChoiceWait && HasLetter("RR_Campaign_PriceLabel") == mismatch,
+                       $"act {d.act}; sigil still mismatched {mismatch}; price letter {HasLetter("RR_Campaign_PriceLabel")}");
+            });
+
+            // 10. The ending: three answers, each with its own consequence.
+            CRun("10 ending", () =>
+            {
+                Faction ares = GameComponent_Campaign.Ares, dominion = GameComponent_Campaign.Dominion;
+                d.DebugSkipWaits(); d.Step();
+                var choice = Find.LetterStack.LettersListForReading.OfType<ChoiceLetter_CampaignOffer>().FirstOrDefault(l => l.beat == "ending");
+                CCheck("10 the choice", d.act == GameComponent_Campaign.Act.ChoicePending && choice != null && choice.answers != null &&
+                       choice.answers.SequenceEqual(new[] { "free", "ares", "dominion" }) && choice.Choices.Count() == 4,
+                       $"act {d.act}; answers [{(choice?.answers == null ? "-" : string.Join(", ", choice.answers))}]; {choice?.Choices.Count()} buttons with postpone");
+
+                d.Resolve("ending", "dominion");
+                int aresAfterDominion = ares?.PlayerGoodwill ?? 0;
+                CCheck("10 the Dominion's hand", d.act == GameComponent_Campaign.Act.Won && !d.Running && d.ending == "dominion" && dominion != null &&
+                       dominion.PlayerRelationKind == FactionRelationKind.Ally && HasLetter("RR_Campaign_EndLabel"),
+                       $"act {d.act}, ending {d.ending}; Rim Dominion {dominion?.PlayerRelationKind} ({dominion?.PlayerGoodwill}); Sons of Ares now {aresAfterDominion}");
+
+                d.DebugReset(GameComponent_Campaign.Act.ChoicePending);
+                d.Resolve("ending", "ares");
+                CCheck("10 the Sons of Ares", d.act == GameComponent_Campaign.Act.Won && d.ending == "ares" && ares != null &&
+                       ares.PlayerRelationKind == FactionRelationKind.Ally,
+                       $"act {d.act}, ending {d.ending}; Sons of Ares {ares?.PlayerRelationKind} ({ares?.PlayerGoodwill})");
+
+                // No Dominion in the world: that answer costs nothing and allies nobody.
+                d.DebugReset(GameComponent_Campaign.Act.ChoicePending);
+                int aresBefore = ares?.PlayerGoodwill ?? 0;
+                if (dominion != null) { dominion.defeated = true; }
+                d.Resolve("ending", "dominion");
+                CCheck("10 no Dominion to take the hand of", d.ending == "free" && (ares?.PlayerGoodwill ?? 0) == aresBefore,
+                       $"ending {d.ending}; Sons of Ares {aresBefore} -> {ares?.PlayerGoodwill}");
+                if (dominion != null) { dominion.defeated = false; }
+
+                d.DebugReset(GameComponent_Campaign.Act.ChoicePending);
+                d.Resolve("ending", "something else");
+                CCheck("10 anything else is the free clan", d.act == GameComponent_Campaign.Act.Won && d.ending == "free", $"act {d.act}, ending {d.ending}");
             });
 
             Log.Message($"[RimRising] CAMPAIGN SUMMARY {campOk} ok, {campFail} fail");
@@ -2284,7 +2374,9 @@ namespace RimRising
 
             CCheck("S1 scenario", Find.Scenario == want.scenario && parts.All(p => p != null) && parts.Any(p => p is ScenPart_Campaign),
                    $"running '{Find.Scenario.name}', {parts.Count} parts, null parts {parts.Count(p => p == null)}, campaign part {parts.Any(p => p is ScenPart_Campaign)}");
-            CCheck("S2 the clan", clan.Count == 4 && clan.All(p => RR_CasteIdentity.ColorOf(p) == red && p.ageTracker.AgeBiologicalYears >= 18) &&
+            CCheck("S2 the clan", clan.Count == 4 && // Adult by the game's own stage, which Biotech starts at 13 - the same rule as
+                   // every other start here and in vanilla. One clan rolled a 14-year-old.
+                   clan.All(p => RR_CasteIdentity.ColorOf(p) == red && p.DevelopmentalStage.Adult()) &&
                    clan.All(p => RR_Sigils.SigilOf(p) != null && !RR_Sigils.SigilMismatch(p)),
                    $"{clan.Count} colonists: {string.Join(", ", clan.Select(p => RR_CasteIdentity.ColorOf(p)?.defName + " age " + p.ageTracker.AgeBiologicalYears + " sigil " + (RR_Sigils.SigilOf(p)?.defName ?? "none")))}");
             CCheck("S3 research", DefDatabase<ResearchProjectDef>.GetNamed("Electricity").IsFinished && DefDatabase<ResearchProjectDef>.GetNamed("DeepDrilling").IsFinished,

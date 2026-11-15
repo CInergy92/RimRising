@@ -1560,6 +1560,22 @@ A story spine for one scenario, built and tested locally on 1.7.5005.
 - The stranger: born Red, carved Gold, a razor, a Red sigil that no longer matches. Arrives
   downed in a drop pod. The existing Lurcher hunt comes for that mismatch six days later.
 
+### After the Rain (added the same day, on the user's go-ahead)
+
+- **Epilogue.** Four days on, two Reds from another claim offer to join and bring a pod of
+  supplies. Five days later a merchant house (Sun Industries, else Julii, whichever is not
+  hostile) offers trade: +50 goodwill and a caravan at once, at a small cost with the Sons of
+  Ares. Then a letter: the Society has put a price on the stranger. That one is only a letter -
+  the Lurcher hunt already keeps coming for a mismatched sigil - and it tells the player that
+  forging a sigil ends it.
+- **The ending.** One last letter with up to three answers: belong to nobody (nothing changes),
+  stand with the Sons of Ares (ally), or take the Rim Dominion's hand (ally, and the Sons of Ares
+  think much less of the colony). Each has its own closing letter. An answer naming a faction
+  the world does not have is treated as the free clan.
+- A beat whose faction is missing is skipped, never stalled: no house means no offer; no
+  Dominion means that answer is not shown.
+- A game that had already reached Won before this was added stays finished.
+
 ### A bug this found
 
 `RR_CasteIdentity.ColorOf` asked birth first, so a pawn BORN a Color and carved into another with
@@ -1570,7 +1586,7 @@ Fixed: a complete Color in the xenogenes wins over the birth xenotype.
 
 | Mode | Result |
 |---|---|
-| `rrtestmode=campaign` | 18/18: the identity fix, then every act driven in code, both refusal paths |
+| `rrtestmode=campaign` | 26/26: the identity fix, then every act driven in code, both refusal paths, the epilogue, all three endings |
 | `rrtestmode=campaignstart rrscenario=RR_Scenario_Quota` | 6/6: the real start; the game's own clock delivers the quota on day 2; the rig is powered and drilling |
 | `rrtestmode=campaignsave` | 3/3: saved with an offer unanswered, reloaded, answered |
 | `rrtestmode=m12` | 50/50 after the identity fix |
@@ -1593,7 +1609,9 @@ Fixed: a complete Color in the xenogenes wins over the birth xenotype.
 3. Day 14: the tithe letter (met or missed), then two days later the reprisal.
 4. Beat it: the Sons of Ares' offer arrives. Accept, and a pod comes down with the stranger.
 5. Check the stranger: named Gold on the Bio tab, a Red sigil in the Health tab, a razor equipped.
-6. Six days on: Lurchers. Then the offers, the garrison, the warning, the Rain, the closing letter.
+6. Six days on: Lurchers. Then the offers, the garrison, the warning, the Rain.
+7. After the Rain: the other clan's offer, the merchant house, the price letter, and the last
+   choice with its closing letter.
 
 ## Known errors
 

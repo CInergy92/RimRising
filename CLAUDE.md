@@ -1176,7 +1176,18 @@ Verified on 1.7.5005, each by decompiling or by test:
   place, so a born Red carved Gold read as Red until a complete Color in the xenogenes was made to
   win. The carve test had only ever carved a Baseliner. Test identity on a pawn born a Color.
 
-Test modes: `rrtestmode=campaign` (every act in code, 18 checks), `rrtestmode=campaignstart
+- **Goodwill changes are not exact.** `Faction.CalculateAdjustedGoodwillChange` adds up to a
+  quarter to any change that moves a faction back TOWARD its natural goodwill, so a coded -10 can
+  land as -12. Test goodwill as a range, never an exact number.
+- **A quicktest world holds only the factions a start REQUIRES** (`requiredCountAtGameStart`: the
+  Society and the Sons of Ares). A normal new game also gets one of every other faction
+  (`startingCountAtWorldCreation` defaults to 1). A test that needs the Rim Dominion or a merchant
+  house must generate it; a beat that needs one must skip cleanly when it is absent.
+- **Starting pawns can be 13.** `allowedDevelopmentalStages Adult` means Biotech's adult stage,
+  which starts at 13 - in vanilla and in every start here. Test with `DevelopmentalStage.Adult()`,
+  not an age. The campaign's stranger is generated at 20-27 on purpose.
+
+Test modes: `rrtestmode=campaign` (every act in code, the epilogue and all three endings, 26 checks), `rrtestmode=campaignstart
 rrscenario=RR_Scenario_Quota` (the real start, then two game days on the clock, 6 checks),
 `rrtestmode=campaignsave` (save mid-story, reload, answer the letter, 3 checks). Each logs
 `CAMPAIGN OK/FAIL` lines and a `CAMPAIGN SUMMARY`.

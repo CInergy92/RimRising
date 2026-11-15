@@ -35,7 +35,14 @@ namespace RimRising
     ///   Rising       freed Obsidians offer to join; the garrison answers; Gray and
     ///                Orange defectors offer to join. Refusing recruits costs only them.
     ///   Rain         a warning, then an Iron Rain: a forced centre drop.
-    ///   Won          a closing letter. Play continues.
+    ///   Epilogue     what the win leaves behind (the user's go-ahead, 2026-11-14):
+    ///                Reds from other claims offer to join and bring supplies; a
+    ///                merchant house offers trade; the Society puts a price on the
+    ///                stranger, which is only a letter - the Lurcher hunt already
+    ///                keeps coming for a mismatched sigil, and forging one ends it.
+    ///   Ending       one last choice of what the claim becomes: a free clan, an ally
+    ///                of the Sons of Ares, or under the Rim Dominion's protection.
+    ///   Won          the closing letter for that choice. Play continues.
     ///
     /// Engine facts this leans on, each decompiled on 1.7.5005: Game.FillComponents
     /// instantiates every GameComponent subclass through a (Game) constructor, on new
@@ -48,11 +55,16 @@ namespace RimRising
         public enum Act
         {
             None, Opening, Quota, Reprisal, ReprisalFight, ContactPending, Hero, HuntFight,
-            Wave1Pending, Garrison, GarrisonFight, Wave2Pending, RainWarned, RainFight, Won, Ended
+            Wave1Pending, Garrison, GarrisonFight, Wave2Pending, RainWarned, RainFight, Won, Ended,
+            // The epilogue and the ending. Added after Won and Ended on purpose: the act
+            // is saved by name, so order does not matter to a save, and a game that had
+            // already reached Won stays finished.
+            Aftermath, ClansPending, HouseWait, HousePending, PriceWait, ChoiceWait, ChoicePending
         }
 
         private const int Day = 60000;
         private const int OpeningDays = 2, ReprisalDays = 2, HuntDays = 6, GarrisonDays = 5, RainDays = 3;
+        private const int AftermathDays = 4, HouseDays = 5, PriceDays = 3, ChoiceDays = 4;
 
         // The quota's two numbers live on the scenario part, so they are tuned in
         // Scenarios_Campaign.xml. Measured in rrtestmode=campaignstart: four Reds left
@@ -68,6 +80,8 @@ namespace RimRising
         public Act act = Act.None;
         public bool quotaMet;
         public Pawn hero;
+        /// <summary>What the claim became: "free", "ares" or "dominion". Null until chosen.</summary>
+        public string ending;
         private int nextTick, raidTick;
 
         public GameComponent_Campaign(Game game) { }
@@ -81,6 +95,7 @@ namespace RimRising
             Scribe_Values.Look(ref nextTick, "rrCampaignNextTick", 0);
             Scribe_Values.Look(ref raidTick, "rrCampaignRaidTick", 0);
             Scribe_References.Look(ref hero, "rrCampaignHero");
+            Scribe_Values.Look(ref ending, "rrCampaignEnding");
         }
 
         public override void GameComponentTick()
@@ -96,6 +111,21 @@ namespace RimRising
 
         public static Faction Society => FactionOf("RR_Society");
         public static Faction Ares => FactionOf("RR_SonsOfAres");
+        public static Faction Dominion => FactionOf("RR_RimDominion");
+
+        /// <summary>The merchant house that makes the offer: one that is not at war with the colony.</summary>
+        public static Faction House
+        {
+            get
+            {
+                foreach (string name in new[] { "RR_SunIndustries", "RR_JuliiIndustries" })
+                {
+                    Faction f = FactionOf(name);
+                    if (f != null && !f.HostileTo(Faction.OfPlayer)) { return f; }
+                }
+                return null;
+            }
+        }
 
         // ------------------------------------------------------------------ start
 
@@ -232,12 +262,57 @@ namespace RimRising
 
                 case Act.RainFight:
                     if (!RaidOver(map)) { return; }
-                    act = Act.Won;
+                    act = Act.Aftermath;
+                    nextTick = Now + AftermathDays * Day;
                     Send("RR_Campaign_WonLabel",
                          hero != null && !hero.Dead ? "RR_Campaign_WonText".Translate(hero.Named("PAWN")) : "RR_Campaign_WonTextNoHero".Translate(),
                          LetterDefOf.PositiveEvent);
                     return;
+
+                case Act.Aftermath:
+                    if (Now < nextTick) { return; }
+                    act = Act.ClansPending;
+                    SendOffer("clans", "RR_Campaign_ClansLabel", "RR_Campaign_ClansText".Translate(), Ares);
+                    return;
+
+                case Act.HouseWait:
+                    if (Now < nextTick) { return; }
+                    Faction house = House;
+                    // No house on speaking terms (or none in this world): the beat is skipped.
+                    if (house == null) { ToPrice(); return; }
+                    act = Act.HousePending;
+                    SendOffer("house", "RR_Campaign_HouseLabel", "RR_Campaign_HouseText".Translate(house.Name), house);
+                    return;
+
+                case Act.PriceWait:
+                    if (Now < nextTick) { return; }
+                    // Only a letter. The hunt itself is RR_Incident_LurcherHunt, which already
+                    // fires for as long as a colonist's sigil does not match; this tells the
+                    // player so, and that a forged sigil is the way out.
+                    if (hero != null && !hero.Dead && RR_Sigils.SigilMismatch(hero))
+                    {
+                        Find.LetterStack.ReceiveLetter("RR_Campaign_PriceLabel".Translate(),
+                            "RR_Campaign_PriceText".Translate(hero.Named("PAWN")), LetterDefOf.NegativeEvent, hero);
+                    }
+                    act = Act.ChoiceWait;
+                    nextTick = Now + ChoiceDays * Day;
+                    return;
+
+                case Act.ChoiceWait:
+                    if (Now < nextTick) { return; }
+                    act = Act.ChoicePending;
+                    List<string> answers = new List<string> { "free" };
+                    if (Ares != null) { answers.Add("ares"); }
+                    if (Dominion != null) { answers.Add("dominion"); }
+                    SendOffer("ending", "RR_Campaign_EndingLabel", "RR_Campaign_EndingText".Translate(), null, answers);
+                    return;
             }
+        }
+
+        private void ToPrice()
+        {
+            act = Act.PriceWait;
+            nextTick = Now + PriceDays * Day;
         }
 
         private void OfferWave1()
@@ -276,13 +351,70 @@ namespace RimRising
 
         // ---------------------------------------------------------------- answers
 
-        /// <summary>The player's answer to an offer letter (ChoiceLetter_CampaignOffer).</summary>
-        public void Resolve(string beat, bool accepted)
+        public const string Accept = "accept", Refuse = "refuse";
+
+        public void Resolve(string beat, bool accepted) => Resolve(beat, accepted ? Accept : Refuse);
+
+        /// <summary>
+        /// The player's answer to an offer letter (ChoiceLetter_CampaignOffer): "accept"
+        /// or "refuse" for most, and one of "free", "ares", "dominion" for the ending.
+        /// </summary>
+        public void Resolve(string beat, string answer)
         {
             Map map = Find.AnyPlayerHomeMap;
             if (map == null) { return; }
+            bool accepted = answer == Accept;
             switch (beat)
             {
+                case "clans":
+                    if (act != Act.ClansPending) { return; }
+                    if (accepted)
+                    {
+                        SpawnRecruits(map, "RR_Ares_Red_Fighter", 2);
+                        DropSupplies(map);
+                    }
+                    act = Act.HouseWait;
+                    nextTick = Now + HouseDays * Day;
+                    return;
+
+                case "house":
+                    if (act != Act.HousePending) { return; }
+                    Faction house = House;
+                    if (accepted && house != null)
+                    {
+                        house.TryAffectGoodwillWith(Faction.OfPlayer, 50, canSendMessage: false, canSendHostilityLetter: false);
+                        Ares?.TryAffectGoodwillWith(Faction.OfPlayer, -10, canSendMessage: false, canSendHostilityLetter: false);
+                        // Their first caravan, now. If it cannot come (a hostile lord on
+                        // the map, no entry cell) the goodwill still stands.
+                        IncidentParms trade = StorytellerUtility.DefaultParmsNow(IncidentDefOf.TraderCaravanArrival.category, map);
+                        trade.faction = house;
+                        trade.forced = true;
+                        IncidentDefOf.TraderCaravanArrival.Worker.TryExecute(trade);
+                    }
+                    ToPrice();
+                    return;
+
+                case "ending":
+                    if (act != Act.ChoicePending) { return; }
+                    // An answer naming a faction this world does not have is the free clan:
+                    // nobody to ally with, and nobody else to pay for it.
+                    if (answer == "ares" && Ares == null) { answer = "free"; }
+                    if (answer == "dominion" && Dominion == null) { answer = "free"; }
+                    if (answer != "ares" && answer != "dominion") { answer = "free"; }
+                    ending = answer;
+                    if (answer == "ares")
+                    {
+                        Ares?.TryAffectGoodwillWith(Faction.OfPlayer, 200, canSendMessage: false, canSendHostilityLetter: false);
+                    }
+                    else if (answer == "dominion")
+                    {
+                        Dominion?.TryAffectGoodwillWith(Faction.OfPlayer, 200, canSendMessage: false, canSendHostilityLetter: false);
+                        Ares?.TryAffectGoodwillWith(Faction.OfPlayer, -60, canSendMessage: false, canSendHostilityLetter: false);
+                    }
+                    act = Act.Won;
+                    Send("RR_Campaign_EndLabel", ("RR_Campaign_End_" + answer).Translate(), LetterDefOf.PositiveEvent);
+                    return;
+
                 case "contact":
                     if (act != Act.ContactPending) { return; }
                     if (!accepted)
@@ -391,6 +523,23 @@ namespace RimRising
             return made;
         }
 
+        /// <summary>What another clan can spare, dropped beside the colony.</summary>
+        public static void DropSupplies(Map map)
+        {
+            List<Thing> things = new List<Thing>();
+            void Add(ThingDef def, int count)
+            {
+                Thing t = ThingMaker.MakeThing(def);
+                t.stackCount = count;
+                things.Add(t);
+            }
+            Add(ThingDefOf.MealSurvivalPack, 20);
+            Add(ThingDefOf.MedicineIndustrial, 6);
+            Add(ThingDefOf.ComponentIndustrial, 8);
+            Add(ThingDefOf.Steel, 150);
+            DropPodUtility.DropThingsNear(DropCellFinder.TradeDropSpot(map), map, things, forbid: false);
+        }
+
         // ------------------------------------------------------------------ raids
 
         private void StartRaid(Map map, string incidentDefName, Act fightAct)
@@ -434,7 +583,7 @@ namespace RimRising
             Find.LetterStack.ReceiveLetter(labelKey.Translate(), text, def);
         }
 
-        private static void SendOffer(string beat, string labelKey, TaggedString text, Faction from)
+        private static void SendOffer(string beat, string labelKey, TaggedString text, Faction from, List<string> answers = null)
         {
             LetterDef def = DefDatabase<LetterDef>.GetNamedSilentFail("RR_CampaignOffer");
             TaggedString label = labelKey.Translate();
@@ -445,11 +594,12 @@ namespace RimRising
                 // The def is missing or has the wrong class: say so, and do not strand the story.
                 Log.Error("[RimRising] Campaign: RR_CampaignOffer letter def missing; accepting '" + beat + "' by default.");
                 Find.LetterStack.ReceiveLetter(label, text, LetterDefOf.NeutralEvent);
-                RR_Campaign.Director?.Resolve(beat, true);
+                RR_Campaign.Director?.Resolve(beat, answers != null ? answers[0] : Accept);
                 return;
             }
             letter.title = label;
             letter.beat = beat;
+            letter.answers = answers;
             Find.LetterStack.ReceiveLetter(letter);
         }
 
@@ -467,6 +617,7 @@ namespace RimRising
         {
             act = to;
             hero = null;
+            ending = null;
             quotaMet = false;
             nextTick = 0;
             raidTick = 0;
@@ -515,6 +666,11 @@ namespace RimRising
     public class ChoiceLetter_CampaignOffer : ChoiceLetter
     {
         public string beat;
+        /// <summary>
+        /// The answers on offer, each passed back to the director as written. Null means
+        /// accept and refuse. Anything else is labelled from RR_Campaign_Option_&lt;answer&gt;.
+        /// </summary>
+        public List<string> answers;
 
         public override bool CanDismissWithRightClick => false;
 
@@ -527,20 +683,25 @@ namespace RimRising
                     yield return Option_Close;
                     yield break;
                 }
-                yield return Answer("AcceptButton", true);
-                yield return Answer("RejectLetter", false);
+                foreach (string answer in answers ?? new List<string> { GameComponent_Campaign.Accept, GameComponent_Campaign.Refuse })
+                {
+                    yield return Answer(answer);
+                }
                 yield return Option_Postpone;
             }
         }
 
-        private DiaOption Answer(string key, bool accepted)
+        private DiaOption Answer(string answer)
         {
+            string key = answer == GameComponent_Campaign.Accept ? "AcceptButton"
+                       : answer == GameComponent_Campaign.Refuse ? "RejectLetter"
+                       : "RR_Campaign_Option_" + answer;
             return new DiaOption(key.Translate())
             {
                 action = delegate
                 {
                     Find.LetterStack.RemoveLetter(this);
-                    RR_Campaign.Director?.Resolve(beat, accepted);
+                    RR_Campaign.Director?.Resolve(beat, answer);
                 },
                 resolveTree = true
             };
@@ -550,6 +711,7 @@ namespace RimRising
         {
             base.ExposeData();
             Scribe_Values.Look(ref beat, "beat");
+            Scribe_Collections.Look(ref answers, "answers", LookMode.Value);
         }
     }
 }

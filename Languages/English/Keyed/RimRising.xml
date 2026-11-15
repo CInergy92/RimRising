@@ -187,7 +187,7 @@ This is an Iron Rain: the Society coming down out of orbit onto the heads of peo
 
 Everything the clan has done since the quota comes down to this hour.</RR_Campaign_RainText>
 
-  <!-- The end. {PAWN} is the stranger, if still alive. -->
+  <!-- After the Rain. {PAWN} is the stranger, if still alive. The epilogue follows. -->
   <RR_Campaign_WonLabel>After the Rain</RR_Campaign_WonLabel>
   <RR_Campaign_WonText>The last of them is down, and the ship above the claim has gone.
 
@@ -195,12 +195,87 @@ It will be reported as a withdrawal. Everyone who matters will know what it was:
 
 There will be other clans. Some of them are already asking how it was done.
 
-The story told here is finished. The colony is yours, for as long as you can keep it.</RR_Campaign_WonText>
+The Rain is over. What the claim becomes now is still to be settled.</RR_Campaign_WonText>
   <RR_Campaign_WonTextNoHero>The last of them is down, and the ship above the claim has gone.
 
 It will be reported as a withdrawal. Everyone who matters will know what it was: the Society dropped its best onto a mining clan, and the mining clan is still here. The stranger they came for did not live to see it. It turns out not to have depended on one person after all.
 
 There will be other clans. Some of them are already asking how it was done.
 
-The story told here is finished. The colony is yours, for as long as you can keep it.</RR_Campaign_WonTextNoHero>
+The Rain is over. What the claim becomes now is still to be settled.</RR_Campaign_WonTextNoHero>
+
+  <!-- ===== The epilogue and the ending (Campaign.cs) ===== -->
+  <RR_Campaign_ClansLabel>From the next claim</RR_Campaign_ClansLabel>
+  <RR_Campaign_ClansText>The Rain was seen from three claims away, and so was the morning after it.
+
+Two Reds have walked in from the next seam along. Their clan could not spare them and sent them anyway, with a pod of what it could gather: rations, medicine, parts, steel. Nobody gave an order. A clan that has never won anything heard that one finally had.
+
+They want to dig here, and to stand here the next time the sky opens.
+
+Accept: two Reds join the colony, and the supplies come down beside it.
+Refuse: they go home with their pod. The story continues either way.</RR_Campaign_ClansText>
+
+  <!-- {0} = the merchant house's name. -->
+  <RR_Campaign_HouseLabel>A commercial proposal</RR_Campaign_HouseLabel>
+  <RR_Campaign_HouseText>A factor of {0} has arrived with a contract and no visible opinion about the war.
+
+The Society's tithe-men no longer collect here, which means the helium under your claim currently belongs to nobody the markets recognise. {0} would like to be first in the queue. They offer open trade and their goodwill, and a caravan is already waiting over the ridge in case you say yes.
+
+The Sons of Ares will not like it. They do not trust anyone who can count that fast.
+
+Accept: {0} thinks better of you and sends a trade caravan now. The Sons of Ares think slightly less of you.
+Refuse: the factor leaves. The story continues either way.</RR_Campaign_HouseText>
+
+  <!-- {PAWN} = the stranger. Sent only while the sigil still does not match. -->
+  <RR_Campaign_PriceLabel>A price</RR_Campaign_PriceLabel>
+  <RR_Campaign_PriceText>The Society has stopped sending armies. It has started sending a number.
+
+There is now a standing price on {PAWN_nameDef}, payable to any Lurcher who brings back the hand with the Red sigil on it. No more ships will come for the claim. Hunters will come for {PAWN_objective}, and keep coming, for exactly as long as that hand says Red and that body says Gold.
+
+It is the mismatch they are paid for. A Violet with a steady hand could rewrite the mark so the paper and the body agree - "forge a sigil", on an operating table - and the hunters would have nothing left to look for.
+
+Until then, expect Lurchers.</RR_Campaign_PriceText>
+
+  <RR_Campaign_EndingLabel>What the claim becomes</RR_Campaign_EndingLabel>
+  <RR_Campaign_EndingText>The fighting has stopped for long enough that people have started asking what it was for.
+
+Messengers are waiting on an answer, and they will not wait much longer.
+
+The Sons of Ares want the claim as an open ally: a place on the map where the Rising is not hiding. It would mean their friendship, and it would mean never being let alone by the Society again.
+
+The Rim Dominion has sent an envoy too. Its Golds are no kinder than the Society's, only further away and at odds with them. They offer their protection and their friendship. The Sons of Ares would not forgive it.
+
+Or the claim can belong to nobody. A clan that digs its own helium and answers to no Color at all - which has not existed anywhere for eight hundred years.
+
+Belong to nobody: nothing changes.
+Stand with the Sons of Ares: they become your allies.
+Take the Rim Dominion's hand: it becomes your ally, and the Sons of Ares think much less of you.
+
+Whichever you choose ends the story told here.</RR_Campaign_EndingText>
+  <RR_Campaign_Option_free>Belong to nobody</RR_Campaign_Option_free>
+  <RR_Campaign_Option_ares>Stand with the Sons of Ares</RR_Campaign_Option_ares>
+  <RR_Campaign_Option_dominion>Take the Rim Dominion's hand</RR_Campaign_Option_dominion>
+
+  <RR_Campaign_EndLabel>The claim</RR_Campaign_EndLabel>
+  <RR_Campaign_End_free>The messengers were sent home with the same answer.
+
+No banner goes up over the rig. No sigil is painted on the gate. The clan digs, and what it digs is its own, and when someone asks whose claim this is the answer is a list of first names.
+
+It may not last. Nothing like it has, yet.
+
+The story told here is finished. The colony is yours, for as long as you can keep it.</RR_Campaign_End_free>
+  <RR_Campaign_End_ares>The answer went back to the Sons of Ares the same night: yes, and openly.
+
+They are your allies now. Their people will come when you call and trade when you ask, and the Society will never again mistake this claim for a mining clan with a grievance. It is a piece of the Rising with a map reference.
+
+That was always the risk. It was also always the point.
+
+The story told here is finished. The colony is yours, for as long as you can keep it.</RR_Campaign_End_ares>
+  <RR_Campaign_End_dominion>The Dominion's envoy bowed, a little, which Golds do not do to Reds, and left with the claim's answer.
+
+The Rim Dominion is your ally now, and its ships are a thing the Society must think about before it thinks about you. The Sons of Ares have been told. Their reply was one word and it was not a kind one.
+
+The clan has a protector. It has not yet learned what protectors cost.
+
+The story told here is finished. The colony is yours, for as long as you can keep it.</RR_Campaign_End_dominion>
 </LanguageData>

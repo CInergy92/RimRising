@@ -20,8 +20,9 @@ endorsed by the author or his publishers. No text or artwork from the books is r
 - **Drugs** — zoladone, mjolnir-6, nazopran, god's bread and fever cloud.
 - **World** — five scenarios and two biomes.
 - **Campaign** — "The Quota", a fifth start that tells a story in acts: a Red mining clan, a helium
-  quota, a reprisal, a carved stranger, a hunt, a rising and an Iron Rain. Each act waits for the
-  colony, and the turning points are offers the player may refuse.
+  quota, a reprisal, a carved stranger, a hunt, a rising, an Iron Rain, and a choice of what the
+  claim becomes afterwards. Each act waits for the colony, and the turning points are offers the
+  player may refuse.
 
 ## Requirements
 

@@ -5,8 +5,10 @@
 - New scenario, **The Quota (campaign)**: a story told in acts. Four Reds on a helium claim are set
   a quota; meeting it or not, the Laurel goes elsewhere, and what follows is a reprisal, an offer
   from the Sons of Ares, a Red carved Gold with a sigil that no longer matches, the Lurchers that
-  come for it, recruits, the garrison, and an Iron Rain. Each act waits for its own condition,
-  never a calendar. The turning points are accept-or-refuse letters: refusing the stranger ends
+  come for it, recruits, the garrison, and an Iron Rain. After the Rain comes a short epilogue -
+  Reds from other claims, a merchant house's offer, a price on the stranger - and a last choice
+  of what the claim becomes: a free clan, an ally of the Sons of Ares, or under the Rim Dominion's
+  protection. Each act waits for its own condition, never a calendar. The turning points are accept-or-refuse letters: refusing the stranger ends
   the story quietly and the colony plays on as a sandbox. The other four scenarios are unchanged,
   and the campaign does nothing in them or in existing saves.
 - Fixed: a pawn BORN a Color and carved into another with the Carver's surgery still read as its
